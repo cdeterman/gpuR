@@ -9,7 +9,8 @@ setMethod('as.gpuVector',
               }
               
               gpuVector(object)
-          })
+          },
+          valueClass = "gpuVector")
 
 #' @export
 setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
@@ -20,5 +21,6 @@ setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
                      `+` = gpu_vec_add(e1@object, e2@object),
                      stop("Undefined operation")
                      )
-          }
+          },
+          valueClass = "gpuVector"
 )

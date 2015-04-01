@@ -21,6 +21,6 @@ gpu_vec_add <- function(A, B){
     
     kernel <- readChar(file, file.info(file)$size)
     
-    out <- cpp_gpu_vec_add(A,B,C,kernel)
+    out <- as.gpuVector(cpp_gpu_vec_add(A,B,C,kernel))
     return(out)
 }
