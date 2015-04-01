@@ -2,7 +2,7 @@ Package: bigGPU
 Type: Package
 Title: GPU functions for R Objects
 Version: 1.0
-Date: 2015-03-20
+Date: 2015-03-31
 Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 Description: This package was developed to provide GPU enabled functions
