@@ -3,7 +3,8 @@
 #' @useDynLib bigGPU
 #' @importFrom Rcpp evalCpp
 
-
+#' @title GPU Vector Addition
+#' @description vector addition
 #' @export
 gpu_vec_add <- function(A, B){
     
