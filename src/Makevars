@@ -1,0 +1,2 @@
+PKG_CXXFLAGS=-I${CUDA_HOME}/include -I../inst/include
+PKG_LIBS=-lOpenCL

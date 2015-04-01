@@ -1,0 +1,13 @@
+Package: bigGPU
+Type: Package
+Title: GPU functions for R Objects
+Version: 1.0
+Date: 2015-03-20
+Author: Charles Determan Jr.
+Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
+Description: This package was developed to provide GPU enabled functions
+for R objects.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.11.5)
+LinkingTo: BH, Rcpp
+Suggests: testthat
