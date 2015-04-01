@@ -1,8 +1,6 @@
 #define __NO_STD_VECTOR // Use cl::vector instead of STL version
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
-#include <fstream>
-#include <unistd.h>
 
 #include <Rcpp.h>
 
@@ -15,7 +13,7 @@ using namespace Rcpp;
 //[[Rcpp::export]]
 IntegerVector cpp_gpu_vec_add(IntegerVector A_, IntegerVector B_, IntegerVector C_, SEXP sourceCode_)
 {
-
+    // declarations
     cl_int err;
     std::string sourceCode = as<std::string>(sourceCode_);
 
@@ -24,13 +22,7 @@ IntegerVector cpp_gpu_vec_add(IntegerVector A_, IntegerVector B_, IntegerVector 
     const std::vector<cl_int> B = as<std::vector<cl_int> >(B_);
     std::vector<cl_int> C = as<std::vector<cl_int> >(C_);
     
-//    char *path=NULL;
-//    std::size_t size;
-//    path=getcwd(path,size);
-//    std::cout<<"\n current Path"<<path;
-
     const int LIST_SIZE = A.size();
-//    std::cout << LIST_SIZE << std::endl;
     
     try {
         // Get available platforms
