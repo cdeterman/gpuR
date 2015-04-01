@@ -16,11 +16,10 @@ test_that("vector additonal successful", {
     gpuB <- as.gpuVector(B)
     
     # manual call
-    gpuC <- gpu_vec_add(A, B)
+    #gpuC <- gpu_vec_add(A, B)
     
     # generic call
-    gpuC2 <- gpuA + gpuB
+    gpuC <- gpuA + gpuB
 
-    expect_equivalent(gpuC, C)
-    expect_equivalent(gpuC2, C)
+    expect_equivalent(gpuC@object, C)
 })
