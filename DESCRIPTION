@@ -8,6 +8,7 @@ Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 Description: This package was developed to provide GPU enabled functions
     for R objects.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.5)
+Imports: Rcpp (>= 0.11.5),
+    assertive
 LinkingTo: BH, Rcpp
 Suggests: testthat
