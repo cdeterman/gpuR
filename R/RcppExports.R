@@ -14,6 +14,10 @@ detectPlatforms <- function() {
     .Call('gpuR_detectPlatforms', PACKAGE = 'gpuR')
 }
 
+cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
+    .Call('gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
+}
+
 cpp_gpu_two_vec <- function(A_, B_, C_, sourceCode_, kernel_function_) {
     .Call('gpuR_cpp_gpu_two_vec', PACKAGE = 'gpuR', A_, B_, C_, sourceCode_, kernel_function_)
 }
