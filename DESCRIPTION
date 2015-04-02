@@ -1,4 +1,4 @@
-Package: bigGPU
+Package: gpuR
 Type: Package
 Title: GPU functions for R Objects
 Version: 1.0

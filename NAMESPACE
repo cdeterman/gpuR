@@ -2,9 +2,8 @@
 
 export(as.gpuVector)
 export(gpuVector)
-export(gpu_vec_add)
 exportClasses(gpuVector)
 exportClasses(igpuVector)
 exportMethods(Arith)
 importFrom(Rcpp,evalCpp)
-useDynLib(bigGPU)
+useDynLib(gpuR)

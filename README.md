@@ -1,4 +1,4 @@
-# bigGPU
+# gpuR
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
 to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this

@@ -11,11 +11,23 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-IntegerVector cpp_gpu_vec_add(IntegerVector A_, IntegerVector B_, IntegerVector C_, SEXP sourceCode_)
+IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_, 
+    IntegerVector C_, SEXP sourceCode_, SEXP kernel_function_)
 {
     // declarations
     cl_int err;
     std::string sourceCode = as<std::string>(sourceCode_);
+    
+    std::string kernel_string = as<std::string>(kernel_function_);
+    const char* kernel_function = (const char*)kernel_string.c_str();
+//    const char kernel_char[] = as<char>(kernel_function_);
+//    const char* kernel_function = &kernel_char[0];
+    
+//    const char* kernel_function2 = "vector_add";
+    
+//    std::cout << kernel_char << std::endl;
+//    std::cout << kernel_function << std::endl;
+//    std::cout << kernel_function2 << std::endl;
 
     // Convert input vectors to cl equivalent
     const std::vector<cl_int> A = as<std::vector<cl_int> >(A_);
@@ -66,7 +78,8 @@ IntegerVector cpp_gpu_vec_add(IntegerVector A_, IntegerVector B_, IntegerVector 
         //std::cout << "Program built" << std::endl;
 
         // Make kernel
-        Kernel kernel(program, "vector_add", &err);
+//        Kernel kernel(program, "vector_add", &err);
+        Kernel kernel(program, kernel_function, &err);
         checkErr(err, "Kernel::Kernel()");
         
 //        std::cout << "Kernel made" << std::endl;

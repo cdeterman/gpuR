@@ -8,10 +8,10 @@
 #' AMD, Intel).  This package removes the complex code needed for GPU 
 #' computing and provides easier to use functions to apply on R objects.
 #' 
-#' \tabular{ll}{ Package: \tab bigGPU\cr Type: \tab Package\cr 
+#' \tabular{ll}{ Package: \tab gpuR\cr Type: \tab Package\cr 
 #' Version: \tab 1.0.0\cr Date: \tab 2015-03-31\cr License: \tab GPL-3\cr
 #' Copyright: \tab (c) 2015 Charles E. Determan Jr.\cr URL: \tab 
-#' \url{http://www.github.com/cdeterman/bigGPU}\cr LazyLoad: \tab yes\cr
+#' \url{http://www.github.com/cdeterman/gpuR}\cr LazyLoad: \tab yes\cr
 #' }
 #' 
 #' 
@@ -41,6 +41,6 @@
 #' 
 #' Maintainer: Charles Determan \email{cdetermanjr@@gmail.com}
 #' @docType package
-#' @name bigGPU-package
-#' @aliases bigGPU-package bigGPU
+#' @name gpuR-package
+#' @aliases gpuR-package gpuR
 NULL
