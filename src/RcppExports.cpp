@@ -5,6 +5,16 @@
 
 using namespace Rcpp;
 
+// detectGPUs
+SEXP detectGPUs();
+RcppExport SEXP gpuR_detectGPUs() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(detectGPUs());
+    return __result;
+END_RCPP
+}
 // cpp_gpu_two_vec
 IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_, IntegerVector C_, SEXP sourceCode_, SEXP kernel_function_);
 RcppExport SEXP gpuR_cpp_gpu_two_vec(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
