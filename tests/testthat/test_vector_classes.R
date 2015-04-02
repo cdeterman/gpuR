@@ -1,8 +1,9 @@
-library(bigGPU)
+library(gpuR)
 context("vector classes")
 
-A <- seq.int(from=0, to=999)
-B <- seq.int(from=1000, to=1)
+set.seed(123)
+A <- sample(seq.int(10), 1000, replace = TRUE)
+B <- sample(seq.int(10), 1000, replace = TRUE)
 
 test_that("integer vector class present", {
     A <- seq.int(10)    
@@ -19,6 +20,8 @@ test_that("gpuVector class returned from Arith methods", {
     
     # generic call
     gpuC <- gpuA + gpuB
+    gpuC2 <- gpuA - gpuB
     expect_is(gpuC, "gpuVector")
     expect_is(gpuC, "igpuVector")
+    expect_is(gpuC2, "igpuVector")
 })

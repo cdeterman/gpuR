@@ -19,7 +19,10 @@ setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
               op = .Generic[[1]]
               switch(op,
                      `+` = gpu_vec_add(e1@object, e2@object),
-                     stop("Undefined operation")
+                     `-` = gpu_vec_subtr(e1@object, e2@object),
+                     {
+                        stop("undefined operation")
+                     }
                      )
           },
           valueClass = "gpuVector"
