@@ -3,6 +3,20 @@
 #' @useDynLib gpuR
 #' @importFrom Rcpp evalCpp
 
+#' @title Detect Available GPUs
+#' @description Find out how many GPUs available
+#' @param platform_idx An integer value indicating which platform to query.
+#' @return An integer representing the number of available GPUs
+#' @seealso \link{detectPlatforms}
+#' @export
+detectGPUs <- function(platform_idx=1L){
+    assert_is_integer(platform_idx)
+    assert_all_are_positive(platform_idx)
+    
+    out <- cpp_detectGPUs(platform_idx)
+    return(out)
+}
+
 #' @title GPU Vector Addition
 #' @description vector addition
 # ' @export

@@ -2,6 +2,7 @@
 
 export(as.gpuVector)
 export(detectGPUs)
+export(detectPlatforms)
 export(gpuVector)
 exportClasses(gpuVector)
 exportClasses(igpuVector)

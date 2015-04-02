@@ -5,13 +5,24 @@
 
 using namespace Rcpp;
 
-// detectGPUs
-SEXP detectGPUs();
-RcppExport SEXP gpuR_detectGPUs() {
+// cpp_detectGPUs
+SEXP cpp_detectGPUs(SEXP platform_idx);
+RcppExport SEXP gpuR_cpp_detectGPUs(SEXP platform_idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(detectGPUs());
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx(platform_idxSEXP);
+    __result = Rcpp::wrap(cpp_detectGPUs(platform_idx));
+    return __result;
+END_RCPP
+}
+// detectPlatforms
+SEXP detectPlatforms();
+RcppExport SEXP gpuR_detectPlatforms() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(detectPlatforms());
     return __result;
 END_RCPP
 }

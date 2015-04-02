@@ -20,14 +20,6 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     
     std::string kernel_string = as<std::string>(kernel_function_);
     const char* kernel_function = (const char*)kernel_string.c_str();
-//    const char kernel_char[] = as<char>(kernel_function_);
-//    const char* kernel_function = &kernel_char[0];
-    
-//    const char* kernel_function2 = "vector_add";
-    
-//    std::cout << kernel_char << std::endl;
-//    std::cout << kernel_function << std::endl;
-//    std::cout << kernel_function2 << std::endl;
 
     // Convert input vectors to cl equivalent
     const std::vector<cl_int> A = as<std::vector<cl_int> >(A_);
@@ -41,7 +33,8 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
         vector<Platform> platforms;
         Platform::get(&platforms);
         
-        checkErr(platforms.size()!=0 ? CL_SUCCESS : -1, "cl::Platform::get");
+        checkErr(platforms.size()!=0 ? CL_SUCCESS : -1, 
+        "No platforms found. Check OpenCL installation!\n");
 
         // Select the default platform and create a context using this platform and the GPU
         cl_context_properties cps[3] = {
@@ -56,7 +49,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
         // Get a list of devices on this platform
         vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
         
-        checkErr(devices.size() > 0 ? CL_SUCCESS : -1, "devices.size() > 0");
+        checkErr(devices.size() > 0 ? CL_SUCCESS : -1, "No devices found!\n");
 
         // check how many devices found
         //std::cout << devices.size() << std::endl;
