@@ -1,4 +1,3 @@
-#define __NO_STD_VECTOR // Use cl::vector instead of STL version
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
@@ -16,7 +15,7 @@ using namespace Rcpp;
 SEXP detectPlatforms()
 {
     // Get available platforms
-    vector<Platform> platforms;
+    std::vector<Platform> platforms;
     Platform::get(&platforms);
     
     return(wrap(platforms.size()));

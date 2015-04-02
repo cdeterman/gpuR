@@ -1,4 +1,3 @@
-#define __NO_STD_VECTOR // Use cl::vector instead of STL version
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
@@ -30,7 +29,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     
     try {
         // Get available platforms
-        vector<Platform> platforms;
+        std::vector<Platform> platforms;
         Platform::get(&platforms);
         
         checkErr(platforms.size()!=0 ? CL_SUCCESS : -1, 
@@ -47,7 +46,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
         checkErr(err, "Conext::Context()"); 
 
         // Get a list of devices on this platform
-        vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+        std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
         
         checkErr(devices.size() > 0 ? CL_SUCCESS : -1, "No devices found!\n");
 
@@ -112,7 +111,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
         return wrap(C);
 
     } catch(Error error) {
-       std::cout << error.what() << "(" << error.err() << ")" << std::endl;
+        std::cout << error.what() << "(" << error.err() << ")" << std::endl;
     }
-
+    return EXIT_FAILURE;
 }

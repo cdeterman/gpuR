@@ -1,5 +1,4 @@
 
-#define __NO_STD_VECTOR // Use cl::vector instead of STL version
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
@@ -20,7 +19,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
     
     // Get available platforms
-    vector<Platform> platforms;
+    std::vector<Platform> platforms;
     Platform::get(&platforms);
     
     checkErr(platforms.size()!=0 ? CL_SUCCESS : -1, 
@@ -44,7 +43,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     checkErr(err, "Conext::Context()"); 
 
     // Get a list of devices on this platform
-    vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+    std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
     
     return(wrap(devices.size()));
 }
