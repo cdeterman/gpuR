@@ -21,9 +21,11 @@ all(C == gpuC@object)
 ```
 
 # INSTALL
+
 The only verified installation at present is using a NVIDIA Graphics Card
 on a Ubuntu 14.04 system.  The installation consisted of:
 
+### NVIDIA Driver and CUDA/OpenCL
 1. Purge existing nvidia and cuda implementations 
 (`sudo apt-get purge cuda* nvidia-*`)
 2. Download appropriate CUDA toolkit for the specific card.  You can figure 
@@ -46,6 +48,15 @@ Once downloaded, run the .run file.
 to include `/usr/local/cuda-6.5/lib64`
 11. Reboot again
 
+### C++ OpenCL API
+You then need to have the C++ API header file.  To my knowledge, NVIDIA only
+supports OpenCL 1.1.  You can get the hpp file from the 
+[Khronos registry](https://www.khronos.org/registry/cl/api/1.1/cl.hpp).  Once
+you have downloaded the file you need to put it with the other OpenCL headers.
+In the case of NVIDIA, the location of the OpenCL headers is 
+`/usr/local/cuda-x.x/include/CL`.
+
+### Rstudio settings
 If installing with Rstudio it won't recongize your `CUDA_HOME` by default.  
 You must currently update your `${R_HOME}/etc/Renviron` to include the variable 
 in order for Rstudio to find it.  I am hoping to have the package set this
