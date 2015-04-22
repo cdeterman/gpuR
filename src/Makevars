@@ -1,5 +1,6 @@
+# NVIDIA example for cuda-6.5
 #PKG_CXXFLAGS=-std=c++11 -I${CUDA_HOME}/include -I../inst/include -I../inst/CUDA/common/inc
-CXXFLAGS=-ggdb -O0
-PKG_CXXFLAGS=-std=c++11 -I../inst/include -Wall -Wextra -pedantic -O0 -ggdb
 #PKG_LIBS=-L/usr/local/cuda-6.5/lib64 -lOpenCL -lclBLAS -lcudart -lcuda -lcublas
+
+PKG_CXXFLAGS=-std=c++11 -I../inst/include -Wall -Wextra -pedantic -O0 -ggdb
 PKG_LIBS=-lclBLAS
