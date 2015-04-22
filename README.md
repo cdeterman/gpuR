@@ -20,10 +20,40 @@ all(C == gpuC@object)
 [1] TRUE
 ```
 
-# INSTALL
+# Existing BUGS!!!
+1. Curiously, multiplying two `gpuMatrix` objects works correctly but if the 
+user reassigns the object the program will segfault.  Some initial debugging
+shows that the program is crashing when the OpenCL program is being built
+(`program.build(devices)`) **Could definitely use help by anyone very familiar 
+with OpenCL code structure**.  For example:
 
-The only verified installation at present is using a NVIDIA Graphics Card
-on a Ubuntu 14.04 system.  The installation consisted of:
+```r
+ORDER = 32
+
+Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+
+igpuA <- gpuMatrix(Aint, type="integer")
+igpuB <- gpuMatrix(Bint, type="integer")
+
+igpuC <- igpuA %*% igpuB
+
+# Let's reassign the values
+Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+
+igpuA <- gpuMatrix(Aint, type="integer")
+igpuB <- gpuMatrix(Bint, type="integer")
+
+# THIS WILL SEGFAULT!!!
+igpuC <- igpuA %*% igpuB
+```
+
+# INSTALL (also see the INSTALL file)
+
+The only verified installations at present consisted of using a NVIDIA GTX or
+AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
+consisted of:
 
 ### NVIDIA Driver and CUDA/OpenCL
 1. Purge existing nvidia and cuda implementations 
@@ -48,6 +78,14 @@ Once downloaded, run the .run file.
 to include `/usr/local/cuda-6.5/lib64`
 11. Reboot again
 
+### AMD Driver and OpenCL
+1. Purge existing fglrx drivers (`sudo sh /usr/share/ati/fglrx_uninstall.sh`)
+2. Install current fglrx drivers (`sudo apt-get install fglrx-updates`)
+3. Install opencl-headers (`sudo apt-get install opencl-headers`)
+
+### Install clBLAS
+1. See INSTALL file
+
 ### C++ OpenCL API
 You then need to have the C++ API header file.  To my knowledge, NVIDIA only
 supports OpenCL 1.1.  You can get the hpp file from the 
@@ -62,10 +100,14 @@ You must currently update your `${R_HOME}/etc/Renviron` to include the variable
 in order for Rstudio to find it.  I am hoping to have the package set this
 by default for whichever GPU you are utilizing in the future.
 
-Once all these things are set you should be able to install the package
+Once all these things are set you should be able to install the package 
 and begin using your GPU :)
 
 # Things to Do
 1. Create configure file for .Renviron and possibly makevars?
 2. Package OpenCL headers in package (similar to ROpenCL?)?
 3. Obviously more vector functions and matrix implementations
+4. Conditional `double` data types if device supports them
+5. Implement clBLAS?  Appears to only be for AMD though :(  Other alternatives
+appeart to be MAGMA (also AMD).
+6. Alternative approach, optimized code for each Vendor Type (NVIDIA, AMD, etc.)

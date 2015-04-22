@@ -27,3 +27,21 @@ setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
           },
           valueClass = "gpuVector"
 )
+
+#' @export
+setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              return(gpu_mat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+
+# #' @export
+# setMethod("dim", signature(x="gpuMatrix"),
+#           function(x) return(x@Dim)
+# )

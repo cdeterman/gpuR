@@ -1,0 +1,138 @@
+
+R version 3.1.3 (2015-03-09) -- "Smooth Sidewalk"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(gpuR)
+> 
+> ORDER <- 512
+> 
+> # Base R objects
+> A <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> B <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> 
+> # GPU matrix objects
+> gpuA <- gpuMatrix(A)
+> gpuB <- gpuMatrix(B)
+> 
+> system.time(gpuA %*% gpuB)
+read matrices
+declared all vars
+found platform
+found device
+created context
+opencl setup
+clblas setup
+wrote matrices
+finished sgemm
+read output
+released objects
+   user  system elapsed 
+  1.302   0.033   1.331 
+> 
+
+R version 3.1.3 (2015-03-09) -- "Smooth Sidewalk"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(gpuR)
+> 
+> ORDER <- 512
+> 
+> # Base R objects
+> A <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> B <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> 
+> # GPU matrix objects
+> gpuA <- gpuMatrix(A)
+> gpuB <- gpuMatrix(B)
+> 
+> system.time(gpuA %*% gpuB)
+read matrices
+declared all vars
+found platform
+found device
+created context
+opencl setup
+clblas setup
+wrote matrices
+finished sgemm
+read output
+released objects
+   user  system elapsed 
+  1.344   0.056   1.396 
+> 
+
+R version 3.1.3 (2015-03-09) -- "Smooth Sidewalk"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(gpuR)
+> 
+> ORDER <- 512
+> 
+> # Base R objects
+> A <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> B <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+> 
+> # GPU matrix objects
+> gpuA <- gpuMatrix(A)
+> gpuB <- gpuMatrix(B)
+> 
+> system.time(gpuA %*% gpuB)
+read matrices
+declared all vars
+found platform
+found device
+created context
+opencl setup
+clblas setup
+wrote matrices
+finished sgemm
+read output
+released objects
+   user  system elapsed 
+  1.373   0.020   1.390 
+> 

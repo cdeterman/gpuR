@@ -1,7 +1,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 #include "opencl_utils.h"
 
@@ -21,9 +21,12 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     const char* kernel_function = (const char*)kernel_string.c_str();
 
     // Convert input vectors to cl equivalent
-    const std::vector<cl_int> A = as<std::vector<cl_int> >(A_);
-    const std::vector<cl_int> B = as<std::vector<cl_int> >(B_);
-    std::vector<cl_int> C = as<std::vector<cl_int> >(C_);
+//    const std::vector<int> A = as<std::vector<int> >(A_);
+//    const std::vector<int> B = as<std::vector<int> >(B_);
+//    std::vector<int> C = as<std::vector<int> >(C_);
+    const arma::ivec A = as<arma::ivec >(A_);
+    const arma::ivec B = as<arma::ivec >(B_);
+    arma::ivec C = as<arma::ivec >(C_);
     
     const int LIST_SIZE = A.size();
     
@@ -77,11 +80,11 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
 //        std::cout << "Kernel made" << std::endl;
 
         // Create memory buffers
-        Buffer bufferA = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), &err);
+        Buffer bufferA = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
         checkErr(err, "Buffer::BufferA()");
-        Buffer bufferB = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), &err);
+        Buffer bufferB = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
         checkErr(err, "Buffer::BufferB()");
-        Buffer bufferC = Buffer(context, CL_MEM_WRITE_ONLY, LIST_SIZE * sizeof(int), &err);
+        Buffer bufferC = Buffer(context, CL_MEM_WRITE_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
         checkErr(err, "Buffer::BufferC()");
 
 //        std::cout << "memory mapped" << std::endl;

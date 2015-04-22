@@ -1,0 +1,24 @@
+gpuR
+
+========
+
+This package is currently only functional for Linux systems.
+In order for it to work you will need to install the
+clBLAS library which is managed by another GPU library (ArrayFire).
+
+To install follow this short script
+
+# Install Boost & OpenCL headers
+sudo apt-get install libboost-all-dev opencl-headers
+
+# Install clBLAS
+git clone https://github.com/arrayfire/clBLAS.git
+cd clBLAS
+mkdir build && cd build
+cmake ../src -DCMAKE_BUILD_TYPE=Release
+make
+sudo make install # installs to build/package
+
+Afterwards, the package should function correctly.  This 
+package is in its very early stages and therefore subject
+to many changes.

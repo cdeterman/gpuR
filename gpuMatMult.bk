@@ -1,0 +1,228 @@
+#define __CL_ENABLE_EXCEPTIONS
+
+#include <clBLAS.h>
+
+#include <RcppArmadillo.h>
+
+#include "opencl_utils.h"
+
+using namespace Rcpp;
+
+
+//[[Rcpp::export]]
+SEXP cpp_gpu_two_mat2(IntegerMatrix A_, IntegerMatrix B_, 
+    IntegerMatrix C_, SEXP sourceCode_, SEXP kernel_function_)
+{
+    // declarations
+    cl_int err;
+//    int ret = 0;
+//    std::vector platforms = [10];   // unlikely to ever have more
+    cl_platform_id platform = 0;
+    cl_device_id device = 0;
+    cl_context_properties cps[3] = { CL_CONTEXT_PLATFORM, 0, 0 };    
+    cl_context context = 0;
+    cl_command_queue queue = 0;
+    cl_mem bufferA, bufferB, bufferC;
+    cl_event event = NULL;
+    int szA, szB, szC;
+    
+    // Convert input matrices to arma objects
+//    const arma::imat Am = as<arma::imat >(A_);
+//    const arma::imat Bm = as<arma::imat >(B_);
+//    const arma::imat Cm = as<arma::imat >(C_);
+    
+////    const arma::imat A = as<arma::imat >(A_);
+////    const arma::imat B = as<arma::imat >(B_);
+////    const arma::imat C = as<arma::imat >(C_);
+////    
+////    int Ndim = A.n_cols;
+////    int Mdim = B.n_rows;
+////    int Pdim = A.n_rows;
+//    
+//    // Convert matrices to vectors for OpenCL code
+////    const arma::irowvec A = arma::vectorise(Am, 1);
+////    const arma::irowvec B = arma::vectorise(Bm, 1);
+
+//    const arma::ivec A = arma::vectorise(Am);
+//    const arma::ivec B = arma::vectorise(Bm);
+//    arma::ivec C = arma::vectorise(Cm);
+//    
+//    int Ndim = Am.n_cols;
+//    int Mdim = Bm.n_rows;
+//    int Pdim = Am.n_rows;
+    
+    int Ndim = 3;
+    int Mdim = 3;
+    int Pdim = 9;
+    
+    static const int A[9] = {
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9,
+    };
+    
+    static const int B[9] = {
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9,
+    };
+    
+    static const int C[9] = {
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+    };
+    
+    
+    static const clblasOrder order = clblasColumnMajor;
+    
+    szA = 9;
+    szB = 9;
+    szC = 9;
+    
+//    szA = Ndim * Pdim;
+//    szB = Pdim * Mdim;
+//    szC = Ndim * Mdim;
+    
+    static IntegerVector result(Mdim*Ndim);
+    std::cout << "start result size" << std::endl;
+    std::cout << result.size() << std::endl;
+    
+//    static cl_int result[Mdim*Ndim];
+    
+    // clBLAS options
+    static const int lda = Pdim;        /* i.e. lda = K */
+    static const int ldb = Ndim;        /* i.e. lda = N */
+    static const int ldc= Ndim;        /* i.e. lda = N */
+    
+    int alpha = 1;
+    int beta = 0;
+    
+    static const clblasTranspose transA = clblasNoTrans;
+    static const clblasTranspose transB = clblasNoTrans;
+    
+    static const int off  = 1;
+    static const int offA = Pdim + 1;   /* K + off */
+    static const int offB = Ndim + 1;   /* N + off */
+    static const int offC = Ndim + 1;   /* N + off */
+
+    // Get available platforms
+//        std::vector<Platform> platforms;
+//        Platform::get(&platforms);
+    
+    err = clGetPlatformIDs(1, &platform, NULL);
+    
+    if (err != CL_SUCCESS){
+        printf("No platforms found. Check OpenCL installation!\n");
+        return wrap(1);
+    }
+
+    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
+    checkErr(err, "clGetDeviceIDs() failed");
+
+    // Get a list of devices on this platform
+//        std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+    
+//        checkErr(devices.size() > 0 ? CL_SUCCESS : -1, "No devices found!\n");
+
+
+    cps[1] = (cl_context_properties)platform;   
+    context = clCreateContext( cps, 1, &device, NULL, NULL, &err);
+    checkErr(err, "Conext::Context()"); 
+
+    // Create a command queue and use the first device
+    queue = clCreateCommandQueue(context, device, 0, &err);
+    checkErr(err, "CommandQueue::CommandQueue()");
+    
+    err = clblasSetup();
+    if (err != CL_SUCCESS) {
+        printf("clblasSetup() failed with %d\n", err);
+        clReleaseCommandQueue(queue);
+        clReleaseContext(context);
+        return wrap(1);
+    }
+    
+    // Create memory buffers
+    bufferA = clCreateBuffer(context, CL_MEM_READ_ONLY, 10*szA * sizeof(*A), 
+                            NULL, &err);
+    checkErr(err, "Buffer::BufferA()");
+    bufferB = clCreateBuffer(context, CL_MEM_READ_ONLY, 10*szB * sizeof(*B), 
+                            NULL, &err);
+    checkErr(err, "Buffer::BufferB()");
+    bufferC = clCreateBuffer(context, CL_MEM_READ_WRITE, 10*szC * sizeof(*C), 
+                            NULL, &err);
+    checkErr(err, "Buffer::BufferC()");
+
+//        std::cout << "memory mapped" << std::endl;
+   
+
+    // Copy lists A and B to the memory buffers
+//    err = clEnqueueWriteBuffer(queue, bufferA, CL_TRUE, 0, 
+//                                szA * sizeof(int), &A[0], 0, NULL, NULL);
+//    checkErr(err, "WriteBufferA");
+//    err = clEnqueueWriteBuffer(queue, bufferB, CL_TRUE, 0, 
+//                                szB * sizeof(int), &B[0], 0, NULL, NULL);
+//    checkErr(err, "WriteBufferB");
+//    err = clEnqueueWriteBuffer(queue, bufferC, CL_TRUE, 0, 
+//                                szC * sizeof(int), &C[0], 0, NULL, NULL);
+//    checkErr(err, "WriteBufferC");
+    
+     err = clEnqueueWriteBuffer(queue, bufferA, CL_TRUE, 0, 
+                                szA * sizeof(*A), A, 0, NULL, NULL);
+    checkErr(err, "WriteBufferA");
+    err = clEnqueueWriteBuffer(queue, bufferB, CL_TRUE, 0, 
+                                szB * sizeof(*B), B, 0, NULL, NULL);
+    checkErr(err, "WriteBufferB");
+    err = clEnqueueWriteBuffer(queue, bufferC, CL_TRUE, 0, 
+                                szC * sizeof(*C), C, 0, NULL, NULL);
+    checkErr(err, "WriteBufferC");
+
+    /* Call clblas extended function. Perform gemm for the lower right sub-matrices */
+    err = clblasSgemm(order, transA, transB, 
+                        Mdim-off, Ndim-off, Pdim-off,
+                         alpha, bufferA, offA, lda,
+                         bufferB, offB, ldb, beta,
+                         bufferC, offC, ldc,
+                         1, &queue, 0, NULL, &event);
+    if (err != CL_SUCCESS) {
+        printf("clblasSgemmEx() failed with %d\n", err);
+        //ret = 1;
+        stop("clblasSgemmEx failed");
+    }
+    else {
+        /* Wait for calculations to be finished. */
+        err = clWaitForEvents(1, &event);
+        // Read buffer C into a local list     
+        err = clEnqueueReadBuffer(queue, bufferC, CL_TRUE, 0, 
+                                    szC * sizeof(int), result,
+                                    0, NULL, NULL);
+        checkErr(err, "CommandQueue::enqueueReadBuffer()");
+        /* Fetch results of calculations from GPU memory. */
+//            err = clEnqueueReadBuffer(queue, bufferC, CL_TRUE, 0,
+//                                      Mdim * Ndim * sizeof(*result),
+//                                      result, 0, NULL, NULL);
+        /* At this point you will get the result of SGEMM placed in 'result' array. */
+//            puts("");
+//            printResult("clblasSgemmEx result");
+    }
+        
+//        arma::imat out = arma::imat(&C[0], Ndim, Mdim, false);
+//        arma::imat out = arma::imat(result, Ndim, Mdim, false);
+
+        std::cout << "result size" << std::endl;
+        std::cout << result.size() << std::endl;
+        
+        for(int i=0; i < 10; i++){
+            std::cout << result[i] << std::endl;
+        }
+        
+        NumericVector out = wrap(result);
+        out.attr("dim") = Dimension(result.size(), 32);
+        return out;
+
+//        return wrap(C);
+//        return wrap(C.reshape(Ndim, Mdim));
+//        return wrap(arma::imat(&C[0], Ndim, Mdim, false));
+
+
+}

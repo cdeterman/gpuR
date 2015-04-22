@@ -3,3 +3,8 @@
 setGeneric("as.gpuVector", function(object, type){
     standardGeneric("as.gpuVector")
 })
+
+#' @export
+setGeneric("as.gpuMatrix", function(object, type){
+    standardGeneric("as.gpuMatrix")
+})

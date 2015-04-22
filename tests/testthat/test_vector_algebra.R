@@ -1,14 +1,9 @@
 library(gpuR)
-context("vector algebra")
+context("Vector algebra")
 
 set.seed(123)
 A <- sample(seq.int(10), 1000, replace = TRUE)
 B <- sample(seq.int(10), 1000, replace = TRUE)
-
-
-# test_that("can read cl file", {
-#     print(test())
-# })
 
 test_that("vector additonal successful", {
     gpuA <- as.gpuVector(A)
@@ -24,6 +19,8 @@ test_that("vector additonal successful", {
     gpuC <- gpuA + gpuB
 
     expect_equivalent(gpuC@object, C)
+    expect_is(gpuC, "gpuVector", "following vector addition")
+    expect_is(gpuC, "igpuVector", "following vector addition")
 })
 
 test_that("vector subtraction successful", {
@@ -37,4 +34,6 @@ test_that("vector subtraction successful", {
     gpuC <- gpuA - gpuB
     
     expect_equivalent(gpuC@object, C)
+    expect_is(gpuC, "gpuVector", "following vector subtraction")
+    expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
