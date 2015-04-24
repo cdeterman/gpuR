@@ -24,16 +24,16 @@ detectPlatforms <- function() {
     .Call('gpuR_detectPlatforms', PACKAGE = 'gpuR')
 }
 
+cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
+    .Call('gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
+}
+
 cpp_gpu_dgemm <- function(A_, B_, C_, A_isBM, B_isBM, C_isBM) {
     .Call('gpuR_cpp_gpu_dgemm', PACKAGE = 'gpuR', A_, B_, C_, A_isBM, B_isBM, C_isBM)
 }
 
 cpp_gpu_igemm <- function(A_, B_, C_) {
     .Call('gpuR_cpp_gpu_igemm', PACKAGE = 'gpuR', A_, B_, C_)
-}
-
-cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
-    .Call('gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
 cpp_gpu_mat_mult <- function(A_, B_, C_, sourceCode_, kernel_function_, A_isBM, B_isBM, C_isBM) {

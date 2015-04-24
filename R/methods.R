@@ -29,6 +29,36 @@ setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
 )
 
 #' @export
+setMethod("Compare", c(e1="vector", e2="gpuVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `==` = {e1 == e2@object},
+                    {
+                        stop("undefined operation")
+                    }
+              )
+          },
+valueClass = "vector"
+)
+
+#' @export
+setMethod("Compare", c(e1="gpuVector", e2="vector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `==` = {e1@object == e2},
+                    {
+                        stop("undefined operation")
+                    }
+              )
+          },
+valueClass = "vector"
+)
+
+#' @export
 setMethod("%*%", signature(x="gpuBigMatrix", y = "gpuBigMatrix"),
           function(x,y)
           {
