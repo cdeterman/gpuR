@@ -14,9 +14,9 @@ gpuA <- as.gpuVector(A)
 gpuB <- as.gpuVector(B)
 
 C <- A + B
-Cgpu <- gpuA + gpuB
+gpuC <- gpuA + gpuB
 
-all(C == gpuC@object)
+all(C == gpuC)
 [1] TRUE
 ```
 
