@@ -21,33 +21,11 @@ all(C == gpuC@object)
 ```
 
 # Existing BUGS!!!
-1. Curiously, multiplying two `gpuMatrix` objects works correctly but if the 
-user reassigns the object the program will segfault.  Some initial debugging
+1. Curiously, multiplying two `gpuMatrix` objects works correctly but when
+I try to run all my tests the program will segfault.  Some initial debugging
 shows that the program is crashing when the OpenCL program is being built
 (`program.build(devices)`) **Could definitely use help by anyone very familiar 
-with OpenCL code structure**.  For example:
-
-```r
-ORDER = 32
-
-Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
-Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
-
-igpuA <- gpuMatrix(Aint, type="integer")
-igpuB <- gpuMatrix(Bint, type="integer")
-
-igpuC <- igpuA %*% igpuB
-
-# Let's reassign the values
-Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
-Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
-
-igpuA <- gpuMatrix(Aint, type="integer")
-igpuB <- gpuMatrix(Bint, type="integer")
-
-# THIS WILL SEGFAULT!!!
-igpuC <- igpuA %*% igpuB
-```
+with OpenCL code structure**.  Please see Issue#1 for further details.
 
 # INSTALL (also see the INSTALL file)
 
@@ -83,7 +61,8 @@ to include `/usr/local/cuda-6.5/lib64`
 ### AMD Driver and OpenCL
 1. Purge existing fglrx drivers (`sudo sh /usr/share/ati/fglrx_uninstall.sh`)
 2. Install current fglrx drivers (`sudo apt-get install fglrx-updates`)
-3. Install opencl-headers (`sudo apt-get install opencl-headers`)
+3. Install opencl-headers (`sudo apt-get install opencl-headers`) -- needed
+to install clBLAS
 
 ### Install clBLAS
 1. See INSTALL file
