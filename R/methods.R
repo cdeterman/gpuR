@@ -29,16 +29,60 @@ setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
 )
 
 #' @export
+setMethod("%*%", signature(x="gpuBigMatrix", y = "gpuBigMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              return(gpu_BigMat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+
+#' @export
 setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           function(x,y)
           {
               if( dim(x)[2] != dim(y)[1]){
                   stop("Non-conformant matrices")
               }
-              return(gpu_mat_mult(x, y))
+              return(gpu_Mat_mult(x, y))
           },
           valueClass = "gpuMatrix"
 )
+
+#' @export
+setMethod('typeof', signature(x="gpuMatrix"),
+          function(x) {
+              return(x@type)
+          }
+)
+
+#' @export
+setMethod('ncol', signature(x="gpuMatrix"),
+          function(x) return(ncol(x@x)))
+
+#' @export
+setMethod('nrow', signature(x="gpuMatrix"), 
+          function(x) return(nrow(x@x)))
+
+#' @export
+setMethod('dim', signature(x="gpuMatrix"),
+          function(x) return(c(nrow(x), ncol(x))))
+
+# #' @export
+# setMethod("%*%", signature(x="matrix", y = "matrix"),
+#           function(x,y)
+#           {
+#               if( dim(x)[2] != dim(y)[1]){
+#                   stop("Non-conformant matrices")
+#               }
+#               return(gpu_mat_mult(x, y))
+#           },
+#           valueClass = "gpuMatrix"
+# )
 
 
 # #' @export

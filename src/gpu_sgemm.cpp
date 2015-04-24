@@ -7,13 +7,16 @@
 
 #include <bigmemory/MatrixAccessor.hpp>
 
+#include "arma_helpers.hpp"
+
 using namespace Rcpp;
 
 // can add more arguments for more control of sgemm call
 // e.g. if transpose needed?
 
 //[[Rcpp::export]]
-SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_)
+SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_,
+                    bool A_isBM, bool B_isBM, bool C_isBM)
 {
     
     static const clblasOrder order = clblasColumnMajor;
@@ -36,25 +39,43 @@ SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_)
 //    static const arma::fmat Bm = as<arma::fmat>((NumericMatrix)B_);
 //    static arma::fmat Cm = as<arma::fmat>((NumericMatrix)C_);
     
-    Rcpp::XPtr<BigMatrix> xpA(A_);
-    Rcpp::XPtr<BigMatrix> xpB(B_);
-    Rcpp::XPtr<BigMatrix> xpC(C_);
-        
-    static const arma::fmat Am = arma::fmat( (float*) xpA->matrix(),
-                              xpA->nrow(),
-                              xpA->ncol(),
-                              false);
+//    Rcpp::XPtr<BigMatrix> xpA(A_);
+//    Rcpp::XPtr<BigMatrix> xpB(B_);
+//    Rcpp::XPtr<BigMatrix> xpC(C_);
+    
+    // declare as S4 object
+//    Rcpp::S4 As4(A_);
+//    SEXP A_address = As4.slot("address");
+//    Rcpp::XPtr<BigMatrix> xpA(A_address);
+//    
+//    Rcpp::S4 Bs4(B_);
+//    SEXP B_address = Bs4.slot("address");
+//    Rcpp::XPtr<BigMatrix> xpB(B_address);
+//    
+//    Rcpp::S4 Cs4(A_);
+//    SEXP C_address = Cs4.slot("address");
+//    Rcpp::XPtr<BigMatrix> xpC(C_address);
+//    
+//    static const arma::fmat Am = arma::fmat( (float*) xpA->matrix(),
+//                              xpA->nrow(),
+//                              xpA->ncol(),
+//                              false);
+//                              
+//    static const arma::fmat Bm = arma::fmat( (float*) xpB->matrix(),
+//                              xpB->nrow(),
+//                              xpB->ncol(),
+//                              false);
+//                              
+//    static arma::fmat Cm = arma::fmat( (float*) xpC->matrix(),
+//                              xpC->nrow(),
+//                              xpC->ncol(),
+//                              false);
                               
-    static const arma::fmat Bm = arma::fmat( (float*) xpB->matrix(),
-                              xpB->nrow(),
-                              xpB->ncol(),
-                              false);
+    static const arma::Mat<float> Am = ( A_isBM ? ConvertBMtoArma<float>(A_) : as<arma::fmat>(A_) );
+    static const arma::Mat<float> Bm = ( B_isBM ? ConvertBMtoArma<float>(B_) : as<arma::fmat>(B_) );
+    static arma::Mat<float> Cm = ( C_isBM ? ConvertBMtoArma<float>(C_) : as<arma::fmat>(C_) );
                               
-    static arma::fmat Cm = arma::fmat( (float*) xpC->matrix(),
-                              xpC->nrow(),
-                              xpC->ncol(),
-                              false);
-                              
+    
     int M = Am.n_cols;
     int N = Bm.n_rows;
     int K = Am.n_rows;
@@ -207,5 +228,9 @@ SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_)
 //    arma::inplace_trans(Cm);
 //    Cm.print("final matrix");
 //    return wrap(Cm);
-    return C_;
+    if(C_isBM){
+        return C_;
+    }else{
+        return wrap(Cm);
+    }
 }

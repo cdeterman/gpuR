@@ -24,10 +24,46 @@ setClass("igpuVector",
          })
 
 
+# The primary class for all gpuBigMatrix objects
+
+#' @export
+setClass('gpuBigMatrix', contains = "big.matrix")
+
+#' @export
+setClass("igpuBigMatrix",
+         contains = "gpuBigMatrix",
+         validity = function(object) {
+             if( typeof(object) != "integer"){
+                 return("igpuBigMatrix must be of type 'integer'")
+             }
+             TRUE
+         })
+
+#' @export
+setClass("fgpuBigMatrix",
+         contains = "gpuBigMatrix",
+         validity = function(object) {
+             if( typeof(object) != "float"){
+                 return("fgpuBigMatrix must be of type 'float'")
+             }
+             TRUE
+         })
+
+#' @export
+setClass("dgpuBigMatrix",
+         contains = "gpuBigMatrix",
+         validity = function(object) {
+             if( typeof(object) != "double"){
+                 return("dgpuBigMatrix must be of type 'double'")
+             }
+             TRUE
+         })
+
 # The primary class for all gpuMatrix objects
 
 #' @export
-setClass('gpuMatrix', contains = "big.matrix")
+setClass('gpuMatrix', 
+         slots = c(x="matrix", type="character"))
 
 #' @export
 setClass("igpuMatrix",

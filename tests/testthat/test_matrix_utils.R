@@ -12,7 +12,7 @@ B <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 C <- A %*% B
 
 # GPU matrix objects
-gpuA <- gpuMatrix(A)
+gpuA <- gpuBigMatrix(A)
 # gpuB <- gpuMatrix(B)
 
 test_that("Matrix accession successful", {

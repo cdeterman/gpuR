@@ -49,28 +49,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// cpp_gpuInfo
-List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_);
-RcppExport SEXP gpuR_cpp_gpuInfo(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
-    __result = Rcpp::wrap(cpp_gpuInfo(platform_idx_, gpu_idx_));
-    return __result;
-END_RCPP
-}
 // cpp_gpu_dgemm
-SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_);
-RcppExport SEXP gpuR_cpp_gpu_dgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP) {
+SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_, bool A_isBM, bool B_isBM, bool C_isBM);
+RcppExport SEXP gpuR_cpp_gpu_dgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP, SEXP A_isBMSEXP, SEXP B_isBMSEXP, SEXP C_isBMSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type C_(C_SEXP);
-    __result = Rcpp::wrap(cpp_gpu_dgemm(A_, B_, C_));
+    Rcpp::traits::input_parameter< bool >::type A_isBM(A_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type B_isBM(B_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type C_isBM(C_isBMSEXP);
+    __result = Rcpp::wrap(cpp_gpu_dgemm(A_, B_, C_, A_isBM, B_isBM, C_isBM));
     return __result;
 END_RCPP
 }
@@ -87,9 +78,21 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_gpuInfo
+List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_);
+RcppExport SEXP gpuR_cpp_gpuInfo(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
+    __result = Rcpp::wrap(cpp_gpuInfo(platform_idx_, gpu_idx_));
+    return __result;
+END_RCPP
+}
 // cpp_gpu_mat_mult
-SEXP cpp_gpu_mat_mult(SEXP A_, SEXP B_, SEXP C_, SEXP sourceCode_, SEXP kernel_function_);
-RcppExport SEXP gpuR_cpp_gpu_mat_mult(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
+SEXP cpp_gpu_mat_mult(SEXP A_, SEXP B_, SEXP C_, SEXP sourceCode_, SEXP kernel_function_, bool A_isBM, bool B_isBM, bool C_isBM);
+RcppExport SEXP gpuR_cpp_gpu_mat_mult(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP, SEXP A_isBMSEXP, SEXP B_isBMSEXP, SEXP C_isBMSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -98,20 +101,26 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type C_(C_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
-    __result = Rcpp::wrap(cpp_gpu_mat_mult(A_, B_, C_, sourceCode_, kernel_function_));
+    Rcpp::traits::input_parameter< bool >::type A_isBM(A_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type B_isBM(B_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type C_isBM(C_isBMSEXP);
+    __result = Rcpp::wrap(cpp_gpu_mat_mult(A_, B_, C_, sourceCode_, kernel_function_, A_isBM, B_isBM, C_isBM));
     return __result;
 END_RCPP
 }
 // cpp_gpu_sgemm
-SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_);
-RcppExport SEXP gpuR_cpp_gpu_sgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP) {
+SEXP cpp_gpu_sgemm(SEXP A_, SEXP B_, SEXP C_, bool A_isBM, bool B_isBM, bool C_isBM);
+RcppExport SEXP gpuR_cpp_gpu_sgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP, SEXP A_isBMSEXP, SEXP B_isBMSEXP, SEXP C_isBMSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type C_(C_SEXP);
-    __result = Rcpp::wrap(cpp_gpu_sgemm(A_, B_, C_));
+    Rcpp::traits::input_parameter< bool >::type A_isBM(A_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type B_isBM(B_isBMSEXP);
+    Rcpp::traits::input_parameter< bool >::type C_isBM(C_isBMSEXP);
+    __result = Rcpp::wrap(cpp_gpu_sgemm(A_, B_, C_, A_isBM, B_isBM, C_isBM));
     return __result;
 END_RCPP
 }

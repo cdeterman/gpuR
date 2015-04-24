@@ -8,13 +8,16 @@
 #include <bigmemory/BigMatrix.h>
 #include <bigmemory/MatrixAccessor.hpp>
 
+#include "arma_helpers.hpp"
+
 using namespace cl;
 using namespace Rcpp;
 
 
 //[[Rcpp::export]]
 SEXP cpp_gpu_mat_mult(SEXP A_, SEXP B_, 
-    SEXP C_, SEXP sourceCode_, SEXP kernel_function_)
+    SEXP C_, SEXP sourceCode_, SEXP kernel_function_,
+    bool A_isBM, bool B_isBM, bool C_isBM)
 {
     //std::cout << "called the function" << std::endl;
     // declarations
@@ -27,25 +30,29 @@ SEXP cpp_gpu_mat_mult(SEXP A_, SEXP B_,
 //    const char* kernel_function = (const char*)kernel_string.c_str();
 
     // Convert input matrices to arma objects
-    Rcpp::XPtr<BigMatrix> xpA(A_);
-    Rcpp::XPtr<BigMatrix> xpB(B_);
-    Rcpp::XPtr<BigMatrix> xpC(C_);
-    
-    // create arma objects using auxilliary memory
-    static const arma::imat Am = arma::imat( (int*) xpA->matrix(),
-                              xpA->nrow(),
-                              xpA->ncol(),
-                              false);
+//    Rcpp::XPtr<BigMatrix> xpA(A_);
+//    Rcpp::XPtr<BigMatrix> xpB(B_);
+//    Rcpp::XPtr<BigMatrix> xpC(C_);
+//    
+//    // create arma objects using auxilliary memory
+//    static const arma::imat Am = arma::imat( (int*) xpA->matrix(),
+//                              xpA->nrow(),
+//                              xpA->ncol(),
+//                              false);
+//                              
+//    static const arma::imat Bm = arma::imat( (int*) xpB->matrix(),
+//                              xpB->nrow(),
+//                              xpB->ncol(),
+//                              false);
+//                              
+//    static arma::imat Cm = arma::imat( (int*) xpC->matrix(),
+//                              xpC->nrow(),
+//                              xpC->ncol(),
+//                              false);
                               
-    static const arma::imat Bm = arma::imat( (int*) xpB->matrix(),
-                              xpB->nrow(),
-                              xpB->ncol(),
-                              false);
-                              
-    static arma::imat Cm = arma::imat( (int*) xpC->matrix(),
-                              xpC->nrow(),
-                              xpC->ncol(),
-                              false);
+    static const arma::Mat<int> Am = ( A_isBM ? ConvertBMtoArma<int>(A_) : as<arma::imat>(A_) );
+    static const arma::Mat<int> Bm = ( B_isBM ? ConvertBMtoArma<int>(B_) : as<arma::imat>(B_) );
+    static arma::Mat<int> Cm = ( C_isBM ? ConvertBMtoArma<int>(C_) : as<arma::imat>(C_) );
                               
 //    std::cout << "armadillo auxillary memory" << std::endl;
                               
@@ -185,7 +192,11 @@ SEXP cpp_gpu_mat_mult(SEXP A_, SEXP B_,
         // Read buffer C into a local list        
         err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, szC * sizeof(int), &Cm[0]);
         
-        return C_;
+        if(C_isBM){
+            return C_;
+        }else{
+            return wrap(Cm);
+        }
 //        Rcpp::XPtr<BigMatrix> out(Cm);
 //        return out;
 

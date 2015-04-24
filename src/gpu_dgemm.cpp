@@ -7,6 +7,8 @@
 
 #include <bigmemory/MatrixAccessor.hpp>
 
+#include "arma_helpers.hpp"
+
 using namespace Rcpp;
 
 
@@ -25,7 +27,8 @@ HAS_DOUBLE = 0
 // e.g. if transpose needed?
 
 //[[Rcpp::export]]
-SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
+SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_,
+                    bool A_isBM, bool B_isBM, bool C_isBM)
 {
     if(HAS_DOUBLE == 0){
         Rcpp::stop("GPU does not support double precision");
@@ -46,31 +49,36 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     
     // use armadillo to mat
     
-    Rcpp::XPtr<BigMatrix> xpA(A_);
-    Rcpp::XPtr<BigMatrix> xpB(B_);
-    Rcpp::XPtr<BigMatrix> xpC(C_);
+//    Rcpp::XPtr<BigMatrix> xpA(A_);
+//    Rcpp::XPtr<BigMatrix> xpB(B_);
+//    Rcpp::XPtr<BigMatrix> xpC(C_);
+//        
+//    static const arma::mat Am = arma::mat( (double*) xpA->matrix(),
+//                              xpA->nrow(),
+//                              xpA->ncol(),
+//                              false);
+//                              
+//    static const arma::mat Bm = arma::mat( (double*) xpB->matrix(),
+//                              xpB->nrow(),
+//                              xpB->ncol(),
+//                              false);
+//                              
+//    static arma::mat Cm = arma::mat( (double*) xpC->matrix(),
+//                              xpC->nrow(),
+//                              xpC->ncol(),
+//                              false);
+                              
+    static const arma::Mat<double> Am = ( A_isBM ? ConvertBMtoArma<double>(A_) : as<arma::mat>(A_) );
+    static const arma::Mat<double> Bm = ( B_isBM ? ConvertBMtoArma<double>(B_) : as<arma::mat>(B_) );
+    static arma::Mat<double> Cm = ( C_isBM ? ConvertBMtoArma<double>(C_) : as<arma::mat>(C_) );
         
-    static const arma::mat Am = arma::mat( (double*) xpA->matrix(),
-                              xpA->nrow(),
-                              xpA->ncol(),
-                              false);
-                              
-    static const arma::mat Bm = arma::mat( (double*) xpB->matrix(),
-                              xpB->nrow(),
-                              xpB->ncol(),
-                              false);
-                              
-    static arma::mat Cm = arma::mat( (double*) xpC->matrix(),
-                              xpC->nrow(),
-                              xpC->ncol(),
-                              false);
-                              
+    
     int M = Am.n_cols;
     int N = Bm.n_rows;
     int K = Am.n_rows;
     
-    Am.print("A Matrix");
-    Bm.print("B Matrix");
+//    Am.print("A Matrix");
+//    Bm.print("B Matrix");
     
 //    static const arma::mat Am(A_.begin(), 
 //                                            A_.nrow(),
@@ -85,7 +93,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
 //                                        C_.ncol(),
 //                                        false);
 
-    std::cout << "read matrices" << std::endl;
+//    std::cout << "read matrices" << std::endl;
 
     static const std::size_t lda = K;        /* i.e. lda = K */
     static const clblasTranspose transB = clblasNoTrans;
@@ -106,7 +114,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     cl_event event = NULL;
     
     
-    std::cout << "declared all vars" << std::endl;
+//    std::cout << "declared all vars" << std::endl;
     
     /* Setup OpenCL environment. */
     err = clGetPlatformIDs(1, &platform, NULL);
@@ -114,14 +122,14 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
         stop("clGetPlatformIDs() failed with " + err);
     }
     
-    std::cout << "found platform" << std::endl;
+//    std::cout << "found platform" << std::endl;
     
     err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
     if (err != CL_SUCCESS) {
         stop("clGetDeviceIDs() failed with " + err);
     }
     
-    std::cout << "found device" << std::endl;
+//    std::cout << "found device" << std::endl;
     
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
@@ -132,7 +140,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
         stop("clCreateContext() failed");
     }
     
-    std::cout << "created context" << std::endl;
+//    std::cout << "created context" << std::endl;
     
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {
@@ -141,7 +149,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     }
     
     
-    std::cout << "opencl setup" << std::endl;
+//    std::cout << "opencl setup" << std::endl;
     
     /* Setup clblas. */
     err = clblasSetup();
@@ -152,7 +160,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     }
     
     
-    std::cout << "clblas setup" << std::endl;
+//    std::cout << "clblas setup" << std::endl;
     
     /* Prepare OpenCL memory objects and place matrices inside them. */
     bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * K * sizeof(Am[0]),
@@ -170,7 +178,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
         M * N * sizeof(Cm[0]), &Cm[0], 0, NULL, NULL);
         
     
-    std::cout << "wrote matrices" << std::endl;
+//    std::cout << "wrote matrices" << std::endl;
     
     /* Call clblas extended function. Perform gemm */
     err = clblasDgemm(order, transA, transB, M, N, K,
@@ -184,7 +192,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     }
     else {
         
-        std::cout << "finished sgemm" << std::endl;
+//        std::cout << "finished sgemm" << std::endl;
         
         /* Wait for calculations to be finished. */
         err = clWaitForEvents(1, &event);                                  
@@ -194,7 +202,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     }
     
     
-    std::cout << "read output" << std::endl;
+//    std::cout << "read output" << std::endl;
     
     /* Release OpenCL memory objects. */
     clReleaseMemObject(bufC);
@@ -207,7 +215,7 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
     clReleaseContext(ctx);
     
     
-    std::cout << "released objects" << std::endl;
+//    std::cout << "released objects" << std::endl;
     
     // For some reason clBLAS always returns in Row Major format
     // so must be transposed at end here
@@ -218,5 +226,9 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_)
 
 //    Cm.print("final matrix");
 //    return wrap(Cm);
-    return C_;
+    if(C_isBM){
+        return C_;
+    }else{
+        return wrap(Cm);
+    }
 }

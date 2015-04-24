@@ -109,7 +109,7 @@ gpu_vec_subtr <- function(A, B){
 #' @import bigalgebra 
 #' @import bigmemory
 # ' @export
-gpu_mat_mult <- function(A, B){
+gpu_BigMat_mult <- function(A, B){
     
     nrA = nrow(A)
     ncA = ncol(A)
@@ -126,35 +126,33 @@ gpu_mat_mult <- function(A, B){
     kernel <- readChar(file, file.info(file)$size)
     
     type <- typeof(A)
-    C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
+#     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
+
+
+    C <- big.matrix(nrB, ncA, type=type)
+
+#     print(C@address)
     
 #     newMat <- as.integer(cpp_gpu_two_mat2(A,B,C,kernel, "iMatMult"))
 #     newMat <- as.integer(cpp_gpu_sgemm(A@address,B@address,C@address))
 
     out <- switch(typeof(C),
                   integer = {
-                      new("igpuMatrix", 
-                          address=cpp_gpu_mat_mult(A@address,B@address,C@address, kernel, "iMatMult")
+                      new("igpuBigMatrix", 
+                          address=cpp_gpu_mat_mult(A,B,C, kernel, "iMatMult",
+                                                   TRUE, TRUE, TRUE)@address
                       )
                   },
                   float = {
-                      new("fgpuMatrix", 
-                          address=cpp_gpu_sgemm(A@address,B@address,C@address)
+                      new("fgpuBigMatrix", 
+                          address=cpp_gpu_sgemm(A,B,C,TRUE, TRUE, TRUE)@address
                       )
                   },
                   double = {
-                      new("dgpuMatrix", 
-                          address=cpp_gpu_dgemm(A@address,B@address,C@address)
+                      new("dgpuBigMatrix", 
+                          address=cpp_gpu_dgemm(A,B,C, TRUE, TRUE, TRUE)@address
                       )
                   })
-#     out <- new("igpuMatrix", 
-#                address=cpp_gpu_sgemm(A@address,B@address,C@address)
-#     )
-
-#     print("New Size")
-#     print(length(newMat))
-#     print(newMat)
-#     print(str(newMat))
 
 #     out <- gpuMatrix(newMat, 
 #                      nrow=nrA, ncol=ncB,
@@ -165,17 +163,78 @@ gpu_mat_mult <- function(A, B){
     return(out)
 }
 
-#' @export
-test_tmp_matrix <- function(A, B){
+
+#' @title GPU Matrix Multiplication
+#' @description matrix multiplication
+#' @import bigalgebra 
+#' @import bigmemory
+# ' @export
+gpu_Mat_mult <- function(A, B){
     
+    nrA = nrow(A)
     ncA = ncol(A)
     nrB = nrow(B)
+    ncB = ncol(B)
+    
+    pkg_path <- find.package("gpuR", .libPaths())
+    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
+    file <- file.path(pkg_path, "CL", "basic_gemm.cl")
+    
+    if(!file_test("-f", file)){
+        stop("kernel file does not exist")
+    }
+    kernel <- readChar(file, file.info(file)$size)
     
     type <- typeof(A)
-    C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
-
-    out <- new("igpuMatrix", address=C@address)
+    #     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
+    
+    
+    C <- gpuMatrix(matrix(0, nrow=nrB, ncol=ncA), type=type)
+    
+    out <- switch(typeof(C),
+                  integer = {
+                      new("igpuMatrix", 
+                          x=cpp_gpu_mat_mult(A@x,B@x,C@x, kernel, "iMatMult",
+                                             FALSE, FALSE, FALSE),
+                          type="integer"
+                      )
+                  },
+                  float = {
+                      new("fgpuMatrix", 
+                          x=cpp_gpu_sgemm(A@x,B@x,C@x,FALSE, FALSE, FALSE),
+                          type="float"
+                      )
+                  },
+                  double = {
+                      new("dgpuMatrix", 
+                          x=cpp_gpu_dgemm(A@x,B@x,C@x, FALSE, FALSE, FALSE),
+                          type="double"
+                      )
+                  },
+                  {
+                      stop("type not recognized")
+                  })
+    
+    #     out <- gpuMatrix(newMat, 
+    #                      nrow=nrA, ncol=ncB,
+    #                      byrow=TRUE)
+    # cleanup
+    #     gc()
+    
     return(out)
 }
+
+# #' @export
+# test_tmp_matrix <- function(A, B){
+#     
+#     ncA = ncol(A)
+#     nrB = nrow(B)
+#     
+#     type <- typeof(A)
+#     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
+# 
+#     out <- new("igpuMatrix", address=C@address)
+#     return(out)
+# }
 
 
