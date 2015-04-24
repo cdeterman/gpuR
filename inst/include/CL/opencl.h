@@ -30,6 +30,8 @@
 extern "C" {
 #endif
 
+/* Remove the APPLE condition as headers are local
+
 #ifdef __APPLE__
 
 #include <OpenCL/cl.h>
@@ -38,13 +40,14 @@ extern "C" {
 #include <OpenCL/cl_ext.h>
 
 #else
+*/
 
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
 #include <CL/cl_gl_ext.h>
 #include <CL/cl_ext.h>
 
-#endif
+//#endif
 
 #ifdef __cplusplus
 }

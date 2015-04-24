@@ -24,11 +24,13 @@
 #ifndef __OPENCL_CL_H
 #define __OPENCL_CL_H
 
+/* Remove APPLE condition, headers local
 #ifdef __APPLE__
 #include <OpenCL/cl_platform.h>
 #else
+*/
 #include <CL/cl_platform.h>
-#endif	
+//#endif	
 
 #ifdef __cplusplus
 extern "C" {

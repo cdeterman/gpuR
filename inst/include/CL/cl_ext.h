@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #ifdef __APPLE__
-        #include <OpenCL/cl.h>
+    //#include <OpenCL/cl.h> should use local header file
     #include <AvailabilityMacros.h>
 #else
         #include <CL/cl.h>

@@ -33,11 +33,13 @@
 extern "C" {
 #endif
 
+/* should use local header
 #ifdef __APPLE__
     #include <OpenCL/cl_gl.h>
 #else
+*/
     #include <CL/cl_gl.h>
-#endif
+//#endif
 
 /*
  * For each extension, follow this template

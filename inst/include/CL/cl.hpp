@@ -168,14 +168,16 @@
 #include <CL/cl_ext.h>
 #endif
 
+/* Remove apple condition, should just use local headers
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenGL/OpenGL.h>
 #include <OpenCL/opencl.h>
 #include <libkern/OSAtomic.h>
 #else
+*/
 #include <GL/gl.h> 
 #include <CL/opencl.h>
-#endif // !__APPLE__
+//#endif // !__APPLE__
 
 // To avoid accidentally taking ownership of core OpenCL types
 // such as cl_kernel constructors are made explicit
