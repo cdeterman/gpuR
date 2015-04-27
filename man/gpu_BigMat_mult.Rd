@@ -2,11 +2,11 @@
 % Please edit documentation in R/wrappers.R
 \name{gpu_BigMat_mult}
 \alias{gpu_BigMat_mult}
-\title{GPU Matrix Multiplication}
+\title{GPU Big Matrix Multiplication}
 \usage{
 gpu_BigMat_mult(A, B)
 }
 \description{
-matrix multiplication
+big matrix gpu multiplication
 }
 

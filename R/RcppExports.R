@@ -24,12 +24,24 @@ detectPlatforms <- function() {
     .Call('gpuR_detectPlatforms', PACKAGE = 'gpuR')
 }
 
+cpp_gpuBigMatrix_daxpy <- function(alpha_, A_, B_) {
+    invisible(.Call('gpuR_cpp_gpuBigMatrix_daxpy', PACKAGE = 'gpuR', alpha_, A_, B_))
+}
+
 cpp_gpuBigMatrix_dgemm <- function(A_, B_, C_) {
     invisible(.Call('gpuR_cpp_gpuBigMatrix_dgemm', PACKAGE = 'gpuR', A_, B_, C_))
 }
 
+cpp_gpuBigMatrix_iaxpy <- function(alpha_, A_, B_, sourceCode_, kernel_function_) {
+    invisible(.Call('gpuR_cpp_gpuBigMatrix_iaxpy', PACKAGE = 'gpuR', alpha_, A_, B_, sourceCode_, kernel_function_))
+}
+
 cpp_gpuBigMatrix_igemm <- function(A_, B_, C_, sourceCode_, kernel_function_) {
     invisible(.Call('gpuR_cpp_gpuBigMatrix_igemm', PACKAGE = 'gpuR', A_, B_, C_, sourceCode_, kernel_function_))
+}
+
+cpp_gpuBigMatrix_saxpy <- function(alpha_, A_, B_) {
+    invisible(.Call('gpuR_cpp_gpuBigMatrix_saxpy', PACKAGE = 'gpuR', alpha_, A_, B_))
 }
 
 cpp_gpuBigMatrix_sgemm <- function(A_, B_, C_) {
@@ -40,12 +52,24 @@ cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
+cpp_gpuMatrix_daxpy <- function(alpha_, A_, B_) {
+    .Call('gpuR_cpp_gpuMatrix_daxpy', PACKAGE = 'gpuR', alpha_, A_, B_)
+}
+
 cpp_gpuMatrix_dgemm <- function(A_, B_, C_) {
     .Call('gpuR_cpp_gpuMatrix_dgemm', PACKAGE = 'gpuR', A_, B_, C_)
 }
 
+cpp_gpuMatrix_iaxpy <- function(alpha_, A_, B_, sourceCode_, kernel_function_) {
+    .Call('gpuR_cpp_gpuMatrix_iaxpy', PACKAGE = 'gpuR', alpha_, A_, B_, sourceCode_, kernel_function_)
+}
+
 cpp_gpuMatrix_igemm <- function(A_, B_, C_, sourceCode_, kernel_function_) {
     .Call('gpuR_cpp_gpuMatrix_igemm', PACKAGE = 'gpuR', A_, B_, C_, sourceCode_, kernel_function_)
+}
+
+cpp_gpuMatrix_saxpy <- function(alpha_, A_, B_) {
+    .Call('gpuR_cpp_gpuMatrix_saxpy', PACKAGE = 'gpuR', alpha_, A_, B_)
 }
 
 cpp_gpuMatrix_sgemm <- function(A_, B_, C_) {

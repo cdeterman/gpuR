@@ -49,6 +49,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_gpuBigMatrix_daxpy
+void cpp_gpuBigMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_gpuBigMatrix_daxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    cpp_gpuBigMatrix_daxpy(alpha_, A_, B_);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuBigMatrix_dgemm
 void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_);
 RcppExport SEXP gpuR_cpp_gpuBigMatrix_dgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP) {
@@ -58,6 +70,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type C_(C_SEXP);
     cpp_gpuBigMatrix_dgemm(A_, B_, C_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuBigMatrix_iaxpy
+void cpp_gpuBigMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_, SEXP sourceCode_, SEXP kernel_function_);
+RcppExport SEXP gpuR_cpp_gpuBigMatrix_iaxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
+    cpp_gpuBigMatrix_iaxpy(alpha_, A_, B_, sourceCode_, kernel_function_);
     return R_NilValue;
 END_RCPP
 }
@@ -72,6 +98,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
     cpp_gpuBigMatrix_igemm(A_, B_, C_, sourceCode_, kernel_function_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuBigMatrix_saxpy
+void cpp_gpuBigMatrix_saxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_gpuBigMatrix_saxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    cpp_gpuBigMatrix_saxpy(alpha_, A_, B_);
     return R_NilValue;
 END_RCPP
 }
@@ -99,6 +137,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_gpuMatrix_daxpy
+SEXP cpp_gpuMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_gpuMatrix_daxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    __result = Rcpp::wrap(cpp_gpuMatrix_daxpy(alpha_, A_, B_));
+    return __result;
+END_RCPP
+}
 // cpp_gpuMatrix_dgemm
 SEXP cpp_gpuMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_);
 RcppExport SEXP gpuR_cpp_gpuMatrix_dgemm(SEXP A_SEXP, SEXP B_SEXP, SEXP C_SEXP) {
@@ -109,6 +160,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type C_(C_SEXP);
     __result = Rcpp::wrap(cpp_gpuMatrix_dgemm(A_, B_, C_));
+    return __result;
+END_RCPP
+}
+// cpp_gpuMatrix_iaxpy
+SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_, SEXP sourceCode_, SEXP kernel_function_);
+RcppExport SEXP gpuR_cpp_gpuMatrix_iaxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
+    __result = Rcpp::wrap(cpp_gpuMatrix_iaxpy(alpha_, A_, B_, sourceCode_, kernel_function_));
     return __result;
 END_RCPP
 }
@@ -124,6 +190,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
     __result = Rcpp::wrap(cpp_gpuMatrix_igemm(A_, B_, C_, sourceCode_, kernel_function_));
+    return __result;
+END_RCPP
+}
+// cpp_gpuMatrix_saxpy
+SEXP cpp_gpuMatrix_saxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_gpuMatrix_saxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    __result = Rcpp::wrap(cpp_gpuMatrix_saxpy(alpha_, A_, B_));
     return __result;
 END_RCPP
 }

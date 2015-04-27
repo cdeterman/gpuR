@@ -84,6 +84,38 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
 )
 
 #' @export
+setMethod("Arith", c(e1="gpuBigMatrix", e2="gpuBigMatrix"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = gpu_BigMat_axpy(1, e1, e2),
+                     `-` = gpu_BigMat_axpy(-1, e2, e1),
+                    {
+                        stop("undefined operation")
+                    }
+              )
+          },
+valueClass = "gpuBigMatrix"
+)
+
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     {
+                         stop("undefined operation")
+                     }
+              )
+          },
+valueClass = "gpuMatrix"
+)
+
+#' @export
 setMethod('typeof', signature(x="gpuMatrix"),
           function(x) {
               return(x@type)

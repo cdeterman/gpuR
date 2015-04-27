@@ -22,9 +22,9 @@ void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
     static const cl_float alpha = 1;
     static const clblasTranspose transA = clblasNoTrans;
 
-    static const arma::Mat<float> Am = ConvertBMtoArma<float>(A_);
-    static const arma::Mat<float> Bm = ConvertBMtoArma<float>(B_);
-    static arma::Mat<float> Cm = ConvertBMtoArma<float>(C_);
+    const arma::Mat<float> Am = ConvertBMtoArma<float>(A_);
+    const arma::Mat<float> Bm = ConvertBMtoArma<float>(B_);
+    arma::Mat<float> Cm = ConvertBMtoArma<float>(C_);
                               
     int M = Am.n_cols;
     int N = Bm.n_rows;
@@ -35,13 +35,13 @@ void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
     
 //    std::cout << "read matrices" << std::endl;
 
-    static const std::size_t lda = K;        /* i.e. lda = K */
+    const std::size_t lda = K;        /* i.e. lda = K */
     static const clblasTranspose transB = clblasNoTrans;
 
-    static const std::size_t ldb = N;        /* i.e. ldb = N */
+    const std::size_t ldb = N;        /* i.e. ldb = N */
     static const cl_float beta = 0;
     
-    static const std::size_t ldc = N;        /* i.e. ldc = N */
+    const std::size_t ldc = N;        /* i.e. ldc = N */
 
     // declare OpenCL objects
     cl_int err;

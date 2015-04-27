@@ -104,8 +104,8 @@ gpu_vec_subtr <- function(A, B){
 }
 
 
-#' @title GPU Matrix Multiplication
-#' @description matrix multiplication
+#' @title GPU Big Matrix Multiplication
+#' @description big matrix gpu multiplication
 #' @import bigalgebra 
 #' @import bigmemory
 # ' @export
@@ -219,6 +219,120 @@ gpu_Mat_mult <- function(A, B){
                   })
     
     return(out)
+}
+
+
+#' @title GPU Matrix Multiplication
+#' @description matrix multiplication
+#' @import bigalgebra 
+#' @import bigmemory
+# ' @export
+gpu_Mat_axpy <- function(alpha, A, B){
+    
+    nrA = nrow(A)
+    ncA = ncol(A)
+    nrB = nrow(B)
+    ncB = ncol(B)
+    
+    pkg_path <- find.package("gpuR", .libPaths())
+    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
+    file <- file.path(pkg_path, "CL", "basic_axpy.cl")
+    
+    if(!file_test("-f", file)){
+        stop("kernel file does not exist")
+    }
+    kernel <- readChar(file, file.info(file)$size)
+    
+    type <- typeof(A)
+    
+    Z <- matrix(0, nrow=nrB, ncol=ncA)
+    if(!missing(B))
+    {
+        if(length(B@x) != length(A@x)) stop("Lengths of matrices must match")
+        Z <- B@x
+    }
+    
+    out <- switch(type,
+                  integer = {
+                      new("igpuMatrix", 
+                          x=cpp_gpuMatrix_iaxpy(alpha, A@x,Z, kernel, "iaxpy"),
+                          type="integer"
+                      )
+                  },
+                  float = {
+                      new("fgpuMatrix", 
+                          x=cpp_gpuMatrix_saxpy(alpha, A@x, Z),
+                          type="float"
+                      )
+                  },
+                  double = {
+                      new("dgpuMatrix", 
+                          x=cpp_gpuMatrix_daxpy(alpha, A@x,Z),
+                          type="double"
+                      )
+                  },
+                  {
+                      stop("type not recognized")
+                  }
+            )
+
+    return(out)
+}
+
+
+#' @title GPU Big Matrix DAXPY
+#' @description big matrix gpu daxpy
+#' @import bigalgebra 
+#' @import bigmemory
+# ' @export
+gpu_BigMat_axpy <- function(alpha, A, B){
+    
+    nrA = nrow(A)
+    ncA = ncol(A)
+    nrB = nrow(B)
+    ncB = ncol(B)
+    
+    if(abs(alpha) != 1){
+        stop("alpha can only be 1 or -1")
+    }
+    
+    pkg_path <- find.package("gpuR", .libPaths())
+    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
+    file <- file.path(pkg_path, "CL", "basic_axpy.cl")
+    
+    if(!file_test("-f", file)){
+        stop("kernel file does not exist")
+    }
+    kernel <- readChar(file, file.info(file)$size)
+    
+    type <- typeof(A)    
+    
+#     options(bigmemory.typecast.warning=FALSE)
+    
+    Z <- gpuBigMatrix(big.matrix(nrB, ncA, type=type), type=type)
+    if(!missing(B))
+    {
+#         options(bigmemory.typecast.warning=FALSE)
+        if(length(B) != length(A)) stop("Lengths of matrices must match")
+        Z[] <- B[]
+    }
+    
+    switch(typeof(Z),
+           integer = {
+               cpp_gpuBigMatrix_iaxpy(alpha, A, Z, kernel, "iaxpy")
+           },
+           float = {
+               cpp_gpuBigMatrix_saxpy(alpha, A, Z)
+           },
+           double = {
+               cpp_gpuBigMatrix_daxpy(alpha, A, Z)
+           },
+           {
+               stop("matrix type not defined")
+           }
+    )
+
+    return(Z)
 }
 
 # #' @export

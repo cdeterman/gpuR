@@ -28,9 +28,9 @@ void cpp_gpuBigMatrix_igemm(SEXP A_, SEXP B_,
     const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
                               
-    static const arma::Mat<int> Am = ConvertBMtoArma<int>(A_);
-    static const arma::Mat<int> Bm = ConvertBMtoArma<int>(B_);
-    static arma::Mat<int> Cm = ConvertBMtoArma<int>(C_);
+    const arma::Mat<int> Am = ConvertBMtoArma<int>(A_);
+    const arma::Mat<int> Bm = ConvertBMtoArma<int>(B_);
+    arma::Mat<int> Cm = ConvertBMtoArma<int>(C_);
     
     int Mdim = Am.n_cols;
     int Ndim = Bm.n_rows;

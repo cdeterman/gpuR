@@ -26,10 +26,9 @@ SEXP cpp_gpuMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     static const cl_float alpha = 1;
     static const clblasTranspose transA = clblasNoTrans;
                               
-    static const arma::Mat<double> Am = as<arma::mat>(A_);
-    static const arma::Mat<double> Bm = as<arma::mat>(B_);
-    static arma::Mat<double> Cm = as<arma::mat>(C_);
-        
+    const arma::Mat<double> Am = as<arma::mat>(A_);
+    const arma::Mat<double> Bm = as<arma::mat>(B_);
+    arma::Mat<double> Cm = as<arma::mat>(C_);      
     
     int M = Am.n_cols;
     int N = Bm.n_rows;
@@ -37,29 +36,14 @@ SEXP cpp_gpuMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     
 //    Am.print("A Matrix");
 //    Bm.print("B Matrix");
-    
-//    static const arma::mat Am(A_.begin(), 
-//                                            A_.nrow(),
-//                                            A_.ncol(),
-//                                            false);
-//    static const arma::mat Bm(B_.begin(), 
-//                                            B_.nrow(),
-//                                            B_.ncol(),
-//                                            false);
-//    static arma::mat Cm(C_.begin(), 
-//                                        C_.nrow(),
-//                                        C_.ncol(),
-//                                        false);
 
-//    std::cout << "read matrices" << std::endl;
-
-    static const std::size_t lda = K;        /* i.e. lda = K */
+    const std::size_t lda = K;        /* i.e. lda = K */
     static const clblasTranspose transB = clblasNoTrans;
 
-    static const std::size_t ldb = N;        /* i.e. ldb = N */
+    const std::size_t ldb = N;        /* i.e. ldb = N */
     static const cl_float beta = 0;
     
-    static const std::size_t ldc = N;        /* i.e. ldc = N */
+    const std::size_t ldc = N;        /* i.e. ldc = N */
 
     // declare OpenCL objects
     cl_int err;

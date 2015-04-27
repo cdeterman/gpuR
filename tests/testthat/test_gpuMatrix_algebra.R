@@ -21,15 +21,7 @@ B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 # print(Bint)
 
 Cint <- Aint %*% Bint
-C <- A %*% B
 
-### For some strange reason, testthat crashes out when this
-### run alongside the gpuBigMatrix implementation.  This is in contrast
-### to the initial bug the crashed following reassignement (which no longer
-### appears to be a problem???)
-
-### tentatively working correctly now with separated calls for 
-### gpuMatrix and gpuBigMatrix objects
 test_that("gpuMatrix Integer Matrix multiplication successful", {
     
     igpuA <- gpuMatrix(Aint, type="integer")
@@ -43,6 +35,8 @@ test_that("gpuMatrix Integer Matrix multiplication successful", {
 
 test_that("gpuMatrix Single Precision Matrix multiplication successful", {
     
+    C <- A %*% B
+    
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
     
@@ -51,4 +45,60 @@ test_that("gpuMatrix Single Precision Matrix multiplication successful", {
     expect_is(fgpuC, "fgpuMatrix")
     expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
+    
+    C <- A - B
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuB <- gpuMatrix(B, type="float")
+
+    fgpuC <- fgpuA - fgpuB
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision Matrix Addition successful", {
+    
+    C <- A + B
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuB <- gpuMatrix(B, type="float")
+    
+    fgpuC <- fgpuA + fgpuB
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Integer Matrix Subtraction successful", {
+    
+    Cint <- Aint - Bint
+    
+    igpuA <- gpuMatrix(Aint, type="integer")
+    igpuB <- gpuMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA - igpuB
+    
+    expect_is(igpuC, "igpuMatrix")
+    expect_equal(igpuC@x[,], Cint, 
+                 info="integer matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Integer Matrix Addition successful", {
+    
+    Cint <- Aint + Bint
+    
+    igpuA <- gpuMatrix(Aint, type="integer")
+    igpuB <- gpuMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA + igpuB
+    
+    expect_is(igpuC, "igpuMatrix")
+    expect_equal(igpuC@x[,], Cint,
+                 info="integer matrix elements not equivalent")  
 })
