@@ -23,13 +23,6 @@ all(C == gpuC)
 [1] TRUE
 ```
 
-# Existing BUGS!!!
-1. Curiously, multiplying two `gpuMatrix` objects works correctly but when
-I try to run all my tests the program will segfault.  Some initial debugging
-shows that the program is crashing when the OpenCL program is being built
-(`program.build(devices)`) **Could definitely use help by anyone very familiar 
-with OpenCL code structure**.  Please see Issue#1 for further details.
-
 # INSTALL (also see the INSTALL file)
 
 The only verified installations at present consisted of using a NVIDIA GTX or
