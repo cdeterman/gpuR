@@ -129,30 +129,36 @@ gpu_BigMat_mult <- function(A, B){
 #     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
 
 
-    C <- big.matrix(nrB, ncA, type=type)
+    C <- gpuBigMatrix(big.matrix(nrB, ncA, type=type), type=type)
 
-#     print(C@address)
-    
-#     newMat <- as.integer(cpp_gpu_two_mat2(A,B,C,kernel, "iMatMult"))
-#     newMat <- as.integer(cpp_gpu_sgemm(A@address,B@address,C@address))
+    switch(typeof(C),
+           integer = {cpp_gpuBigMatrix_igemm(A,B,C, kernel, "iMatMult")
+           },
+           float = {cpp_gpuBigMatrix_sgemm(A,B,C)
+           },
+           double = {cpp_gpuBigMatrix_dgemm(A,B,C)
+           },
+           {
+               stop("matrix type not defined")
+           })
 
-    out <- switch(typeof(C),
-                  integer = {
-                      new("igpuBigMatrix", 
-                          address=cpp_gpu_mat_mult(A,B,C, kernel, "iMatMult",
-                                                   TRUE, TRUE, TRUE)@address
-                      )
-                  },
-                  float = {
-                      new("fgpuBigMatrix", 
-                          address=cpp_gpu_sgemm(A,B,C,TRUE, TRUE, TRUE)@address
-                      )
-                  },
-                  double = {
-                      new("dgpuBigMatrix", 
-                          address=cpp_gpu_dgemm(A,B,C, TRUE, TRUE, TRUE)@address
-                      )
-                  })
+#     out <- switch(typeof(C),
+#                   integer = {
+#                       new("igpuBigMatrix", 
+#                           address=cpp_gpu_mat_mult(A,B,C, kernel, "iMatMult",
+#                                                    TRUE, TRUE, TRUE)@address
+#                       )
+#                   },
+#                   float = {
+#                       new("fgpuBigMatrix", 
+#                           address=cpp_gpu_sgemm(A,B,C,TRUE, TRUE, TRUE)@address
+#                       )
+#                   },
+#                   double = {
+#                       new("dgpuBigMatrix", 
+#                           address=cpp_gpu_dgemm(A,B,C, TRUE, TRUE, TRUE)@address
+#                       )
+#                   })
 
 #     out <- gpuMatrix(newMat, 
 #                      nrow=nrA, ncol=ncB,
@@ -160,7 +166,7 @@ gpu_BigMat_mult <- function(A, B){
     # cleanup
 #     gc()
 
-    return(out)
+    return(C)
 }
 
 
@@ -186,40 +192,31 @@ gpu_Mat_mult <- function(A, B){
     kernel <- readChar(file, file.info(file)$size)
     
     type <- typeof(A)
-    #     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
     
-    
-    C <- gpuMatrix(matrix(0, nrow=nrB, ncol=ncA), type=type)
-    
-    out <- switch(typeof(C),
+    C <- matrix(0, nrow=nrB, ncol=ncA)
+
+    out <- switch(type,
                   integer = {
                       new("igpuMatrix", 
-                          x=cpp_gpu_mat_mult(A@x,B@x,C@x, kernel, "iMatMult",
-                                             FALSE, FALSE, FALSE),
+                          x=cpp_gpuMatrix_igemm(A@x,B@x,C, kernel, "iMatMult"),
                           type="integer"
                       )
                   },
                   float = {
                       new("fgpuMatrix", 
-                          x=cpp_gpu_sgemm(A@x,B@x,C@x,FALSE, FALSE, FALSE),
+                          x=cpp_gpuMatrix_sgemm(A@x,B@x,C),
                           type="float"
                       )
                   },
                   double = {
                       new("dgpuMatrix", 
-                          x=cpp_gpu_dgemm(A@x,B@x,C@x, FALSE, FALSE, FALSE),
+                          x=cpp_gpuMatrix_dgemm(A@x,B@x,C),
                           type="double"
                       )
                   },
                   {
                       stop("type not recognized")
                   })
-    
-    #     out <- gpuMatrix(newMat, 
-    #                      nrow=nrA, ncol=ncB,
-    #                      byrow=TRUE)
-    # cleanup
-    #     gc()
     
     return(out)
 }

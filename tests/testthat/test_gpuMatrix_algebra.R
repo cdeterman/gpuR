@@ -28,25 +28,18 @@ C <- A %*% B
 ### to the initial bug the crashed following reassignement (which no longer
 ### appears to be a problem???)
 
-# test_that("gpuMatrix Integer Matrix multiplication successful", {
-#     
-#     igpuA <- gpuMatrix(Aint, type="integer")
-#     igpuB <- gpuMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA %*% igpuB
-#     
-#     #rm(igpuC)
-#     #gc()
-#     
-#     #igpuA <- gpuBigMatrix(Aint, type="integer")
-#     #igpuB <- gpuBigMatrix(Bint, type="integer")
-#     
-#     #igpuC <- igpuA %*% igpuB
-#     
-# #     expect_true(TRUE)
-#     expect_equivalent(igpuC@x[,], Cint, 
-#                       info="float matrix elements not equivalent")      
-# })
+### tentatively working correctly now with separated calls for 
+### gpuMatrix and gpuBigMatrix objects
+test_that("gpuMatrix Integer Matrix multiplication successful", {
+    
+    igpuA <- gpuMatrix(Aint, type="integer")
+    igpuB <- gpuMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA %*% igpuB
+    
+    expect_equivalent(igpuC@x[,], Cint, 
+                      info="float matrix elements not equivalent")      
+})
 
 test_that("gpuMatrix Single Precision Matrix multiplication successful", {
     

@@ -11,68 +11,21 @@
 
 using namespace Rcpp;
 
-
-int HAS_DOUBLE;
-
-#ifdef cl_khr_fp64
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-HAS_DOUBLE = 1
-#elif defined(cl_amd_fp64)
-HAS_DOUBLE = 1
-#pragma OPENCL EXTENSION cl_amd_fp64 : enable
-HAS_DOUBLE = 0
-#endif
-
 // can add more arguments for more control of sgemm call
 // e.g. if transpose needed?
 
 //[[Rcpp::export]]
-SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_,
-                    bool A_isBM, bool B_isBM, bool C_isBM)
+void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
 {
-    if(HAS_DOUBLE == 0){
-        Rcpp::stop("GPU does not support double precision");
-    }
     
     static const clblasOrder order = clblasColumnMajor;
     static const cl_float alpha = 1;
     static const clblasTranspose transA = clblasNoTrans;
 
-    // matrix dimensions
-//    int M = A_.nrow();
-//    int N = B_.ncol();
-//    int K = A_.ncol();
-    
-//    int M = A_.ncol();
-//    int N = B_.nrow();
-//    int K = A_.nrow();
-    
-    // use armadillo to mat
-    
-//    Rcpp::XPtr<BigMatrix> xpA(A_);
-//    Rcpp::XPtr<BigMatrix> xpB(B_);
-//    Rcpp::XPtr<BigMatrix> xpC(C_);
-//        
-//    static const arma::mat Am = arma::mat( (double*) xpA->matrix(),
-//                              xpA->nrow(),
-//                              xpA->ncol(),
-//                              false);
-//                              
-//    static const arma::mat Bm = arma::mat( (double*) xpB->matrix(),
-//                              xpB->nrow(),
-//                              xpB->ncol(),
-//                              false);
-//                              
-//    static arma::mat Cm = arma::mat( (double*) xpC->matrix(),
-//                              xpC->nrow(),
-//                              xpC->ncol(),
-//                              false);
+    static const arma::Mat<float> Am = ConvertBMtoArma<float>(A_);
+    static const arma::Mat<float> Bm = ConvertBMtoArma<float>(B_);
+    static arma::Mat<float> Cm = ConvertBMtoArma<float>(C_);
                               
-    static const arma::Mat<double> Am = ( A_isBM ? ConvertBMtoArma<double>(A_) : as<arma::mat>(A_) );
-    static const arma::Mat<double> Bm = ( B_isBM ? ConvertBMtoArma<double>(B_) : as<arma::mat>(B_) );
-    static arma::Mat<double> Cm = ( C_isBM ? ConvertBMtoArma<double>(C_) : as<arma::mat>(C_) );
-        
-    
     int M = Am.n_cols;
     int N = Bm.n_rows;
     int K = Am.n_rows;
@@ -80,19 +33,6 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_,
 //    Am.print("A Matrix");
 //    Bm.print("B Matrix");
     
-//    static const arma::mat Am(A_.begin(), 
-//                                            A_.nrow(),
-//                                            A_.ncol(),
-//                                            false);
-//    static const arma::mat Bm(B_.begin(), 
-//                                            B_.nrow(),
-//                                            B_.ncol(),
-//                                            false);
-//    static arma::mat Cm(C_.begin(), 
-//                                        C_.nrow(),
-//                                        C_.ncol(),
-//                                        false);
-
 //    std::cout << "read matrices" << std::endl;
 
     static const std::size_t lda = K;        /* i.e. lda = K */
@@ -181,14 +121,14 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_,
 //    std::cout << "wrote matrices" << std::endl;
     
     /* Call clblas extended function. Perform gemm */
-    err = clblasDgemm(order, transA, transB, M, N, K,
+    err = clblasSgemm(order, transA, transB, M, N, K,
                          alpha, bufA, 0, lda,
                          bufB, 0, ldb, beta,
                          bufC, 0, ldc,
                          1, &queue, 0, NULL, &event);
     if (err != CL_SUCCESS) {
         std::cout << err << std::endl;
-        stop("clblasDgemmEx() failed");
+        stop("clblasSgemmEx() failed");
     }
     else {
         
@@ -223,12 +163,12 @@ SEXP cpp_gpu_dgemm(SEXP A_, SEXP B_, SEXP C_,
     // use inplace to save memory space
     // additional option to specify 'lowmem' method but much slower
 //    arma::inplace_trans(Cm);
-
 //    Cm.print("final matrix");
 //    return wrap(Cm);
-    if(C_isBM){
-        return C_;
-    }else{
-        return wrap(Cm);
-    }
+
+//    if(C_isBM){
+//        return C_;
+//    }else{
+//        return wrap(Cm);
+//    }
 }
