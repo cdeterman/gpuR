@@ -8,16 +8,18 @@ compiler:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq fglrx opencl-headers libboost-program-options-dev
-  - git clone http://github.com/arrayfire/clBLAS.git
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
+
+before_script:
+  - git clone http://github.com/arrayfire/clBLAS.git
   - cd clBLAS
   - mkdir -p bin/clBLAS
   - cd bin/clBLAS
   - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST=OFF -DBUILD_CLIENT=ON -DCMAKE_INSTALL_PREFIX:PATH=$PWD/package ../../src
   - make install
-  - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/bin/clBLAS/package/lib64:${LD_LIBRARY_PATH}
+  - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/clBLAS/bin/clBLAS/package/lib64:${LD_LIBRARY_PATH}
   - cd ${TRAVIS_BUILD_DIR}
 
 install:
