@@ -12,8 +12,6 @@ before_install:
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
-
-before_script:
   - cd clBLAS
   - mkdir -p bin/clBLAS
   - cd bin/clBLAS
