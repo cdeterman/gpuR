@@ -117,10 +117,7 @@ valueClass = "gpuMatrix"
 
 #' @export
 setMethod('typeof', signature(x="gpuMatrix"),
-          function(x) {
-              return(x@type)
-          }
-)
+          function(x) return(x@type))
 
 #' @export
 setMethod('ncol', signature(x="gpuMatrix"),
@@ -133,21 +130,3 @@ setMethod('nrow', signature(x="gpuMatrix"),
 #' @export
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
-
-# #' @export
-# setMethod("%*%", signature(x="matrix", y = "matrix"),
-#           function(x,y)
-#           {
-#               if( dim(x)[2] != dim(y)[1]){
-#                   stop("Non-conformant matrices")
-#               }
-#               return(gpu_mat_mult(x, y))
-#           },
-#           valueClass = "gpuMatrix"
-# )
-
-
-# #' @export
-# setMethod("dim", signature(x="gpuMatrix"),
-#           function(x) return(x@Dim)
-# )

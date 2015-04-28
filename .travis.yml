@@ -21,7 +21,7 @@ before_script:
   - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/bin/clBLAS/package/lib64:${LD_LIBRARY_PATH}
 
 install:
-  - ./travis-tools.sh install_deps
+  - ./travis-tool.sh install_deps
 
 script: 
   - ./travis-tool.sh run_tests
