@@ -1,0 +1,39 @@
+language: cpp
+
+sudo: required
+
+compiler:
+  - g++
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq fglrx opencl-headers libboost-program-options-dev
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+
+before_script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir -p bin/clBLAS
+  - cd bin/clBLAS
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST=OFF -DBUILD_CLIENT=ON -DCMAKE_INSTALL_PREFIX:PATH=$PWD/package ../../src
+  - make install
+  - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/bin/clBLAS/package/lib64:${LD_LIBRARY_PATH}
+
+install:
+  - ./travis-tools.sh install_deps
+
+script: 
+  - ./travis-tool.sh run_tests
+
+after_success:
+  - cd ${TRAVIS_BUILD_DIR}/bin/clBLAS
+  - make package
+
+after_failure:
+  - ./travis-tool.sh dump_logs
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
