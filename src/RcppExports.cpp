@@ -6,28 +6,6 @@
 
 using namespace Rcpp;
 
-// test_double
-void test_double(SEXP A_, SEXP B_);
-RcppExport SEXP gpuR_test_double(SEXP A_SEXP, SEXP B_SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
-    test_double(A_, B_);
-    return R_NilValue;
-END_RCPP
-}
-// test_float
-void test_float(SEXP A_, SEXP B_);
-RcppExport SEXP gpuR_test_float(SEXP A_SEXP, SEXP B_SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
-    test_float(A_, B_);
-    return R_NilValue;
-END_RCPP
-}
 // cpp_detectGPUs
 SEXP cpp_detectGPUs(SEXP platform_idx);
 RcppExport SEXP gpuR_cpp_detectGPUs(SEXP platform_idxSEXP) {
@@ -242,16 +220,6 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
     __result = Rcpp::wrap(cpp_platformInfo(platform_idx_));
-    return __result;
-END_RCPP
-}
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP gpuR_rcpp_hello_world() {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(rcpp_hello_world());
     return __result;
 END_RCPP
 }

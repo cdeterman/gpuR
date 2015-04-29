@@ -1,4 +1,4 @@
 library(testthat)
-library(bigGPU)
+library(gpuR)
 
-test_check("bigGPU")
+test_check("gpuR")

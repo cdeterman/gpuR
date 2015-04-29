@@ -1,6 +1,7 @@
 
 
-
+#' @rdname as.gpuVector-methods
+#' @aliases as.gpuVector,vector
 setMethod('as.gpuVector', 
           signature(object = 'vector'),
           function(object, type=NULL){
@@ -11,6 +12,7 @@ setMethod('as.gpuVector',
               gpuVector(object)
           },
           valueClass = "gpuVector")
+
 
 #' @export
 setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),

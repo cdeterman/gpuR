@@ -1,12 +1,28 @@
 
 # need code to reshape if dimensions differ from input
 
+#' @title Construct a gpuBigMatrix
+#' @description Construct a gpuBigMatrix of a class that inherits
+#' from \code{gpuBigMatrix}
+#' @param data A matrix object that is or can be converted to a 
+#' \code{big.matrix} object
+#' @param ncol An integer specifying the number of columns
+#' @param nrow An integer specifying the number of rows
+#' @param type A character string specifying the type of gpuMatrix.  Default
+#' is NULL where type is inherited from the source data type.
+#' @param ... Additional method to pass to gpuBigMatrix methods
+#' @return A gpuBigMatrix object
+#' @docType methods
+#' @rdname gpuBigMatrix-methods
+#' @author Charles Determan Jr.
 #' @export
 setGeneric("gpuBigMatrix", function(data = NA, ncol=NA, nrow=NA, type=NULL, ...){
     standardGeneric("gpuBigMatrix")
 })
 
 #' @import bigmemory
+#' @rdname gpuBigMatrix-methods
+#' @aliases gpuBigMatrix,matrix
 setMethod('gpuBigMatrix', 
           signature(data = 'matrix'),
           function(data, ncol=NA, nrow=NA, type=NULL){
@@ -51,6 +67,8 @@ setMethod('gpuBigMatrix',
           valueClass = "gpuBigMatrix")
 
 #' @import bigmemory
+#' @rdname gpuBigMatrix-methods
+#' @aliases gpuBigMatrix,big.matrix
 setMethod('gpuBigMatrix', 
           signature(data = 'big.matrix'),
           function(data, ncol=NA, nrow=NA, type=NULL){

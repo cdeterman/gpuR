@@ -76,8 +76,7 @@ SEXP cpp_gpuMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
-        std::cout << "unable to create context" << std::endl;
+//        std::cout << err << std::endl;
         clReleaseContext(ctx);
         stop("clCreateContext() failed");
     }
@@ -129,7 +128,7 @@ SEXP cpp_gpuMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
                          bufC, 0, ldc,
                          1, &queue, 0, NULL, &event);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
+//        std::cout << err << std::endl;
         stop("clblasDgemmEx() failed");
     }
     else {

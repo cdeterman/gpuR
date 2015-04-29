@@ -6,7 +6,18 @@
 \usage{
 gpu_vec_subtr(A, B)
 }
+\arguments{
+\item{A}{A gpuVector object}
+
+\item{B}{A gpuVector object}
+}
+\value{
+A gpuVector object
+}
 \description{
 vector subtraction
+}
+\author{
+Charles Determan Jr.
 }
 

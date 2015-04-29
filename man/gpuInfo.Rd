@@ -43,6 +43,9 @@ piece (bytes)}
 \description{
 Get basic information about selected GPU
 }
+\author{
+Charles Determan Jr.
+}
 \seealso{
 \link{detectPlatforms} \link{detectGPUs}
 }

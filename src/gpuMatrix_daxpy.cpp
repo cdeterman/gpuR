@@ -15,7 +15,7 @@ using namespace Rcpp;
 SEXP cpp_gpuMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
 {
     if(GPU_HAS_DOUBLE == 0){
-        Rcpp::stop("GPU does not support double precision");
+        stop("GPU does not support double precision");
     }
     
     const cl_double alpha = as<cl_double>(alpha_);
@@ -55,8 +55,7 @@ SEXP cpp_gpuMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
-        std::cout << "unable to create context" << std::endl;
+//        std::cout << err << std::endl;
         clReleaseContext(ctx);
         stop("clCreateContext() failed");
     }
@@ -94,7 +93,7 @@ SEXP cpp_gpuMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
                          bufB, 0, incy, 1,
                          &queue, 0, NULL, &event);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
+//        std::cout << err << std::endl;
         stop("clblasSaxpy() failed");
     }
     else {

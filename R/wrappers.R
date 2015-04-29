@@ -40,6 +40,7 @@ detectGPUs <- function(platform_idx=1L){
 #' piece (bytes)}
 #' @return \item{available}{Whether the device is available}
 #' @seealso \link{detectPlatforms} \link{detectGPUs}
+#' @author Charles Determan Jr.
 #' @export
 gpuInfo <- function(platform_idx=1L, gpu_idx=1L){
     assert_is_integer(platform_idx)
@@ -54,6 +55,12 @@ gpuInfo <- function(platform_idx=1L, gpu_idx=1L){
 
 #' @title OpenCL Platform Information
 #' @description Get basic information about the OpenCL platform
+#' @param platform_idx An integer value to specify which platform to check
+#' @author Charles Determan Jr.
+#' @return \item{platformName}{Platform Name}
+#' @return \item{platformVendor}{Platform Vendor}
+#' @return \item{platformVersion}{Platform OpenCL Version}
+#' @return \item{platformExtensions}{Avaiable platform extensions}
 #' @export
 platformInfo <- function(platform_idx=1L){
     assert_is_integer(platform_idx)
@@ -66,7 +73,10 @@ platformInfo <- function(platform_idx=1L){
 
 #' @title GPU Vector Addition
 #' @description vector addition
-# ' @export
+#' @param A A gpuVector object
+#' @param B A gpuVector object
+#' @return A gpuVector object
+#' @author Charles Determan Jr.
 gpu_vec_add <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
@@ -86,7 +96,10 @@ gpu_vec_add <- function(A, B){
 
 #' @title GPU Vector Subtraction
 #' @description vector subtraction
-# ' @export
+#' @param A A gpuVector object
+#' @param B A gpuVector object
+#' @return A gpuVector object
+#' @author Charles Determan Jr.
 gpu_vec_subtr <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
@@ -106,9 +119,12 @@ gpu_vec_subtr <- function(A, B){
 
 #' @title GPU Big Matrix Multiplication
 #' @description big matrix gpu multiplication
+#' @param A A gpuBigMatrix object
+#' @param B A gpuBigMatrix object
+#' @return A gpuBigMatrix object
 #' @import bigalgebra 
 #' @import bigmemory
-# ' @export
+#' @author Charles Determan Jr.
 gpu_BigMat_mult <- function(A, B){
     
     nrA = nrow(A)
@@ -172,9 +188,12 @@ gpu_BigMat_mult <- function(A, B){
 
 #' @title GPU Matrix Multiplication
 #' @description matrix multiplication
+#' @param A A gpuMatrix object
+#' @param B A gpuMatrix object
+#' @return A gpuMatrix object
 #' @import bigalgebra 
 #' @import bigmemory
-# ' @export
+#' @author Charles Determan Jr.
 gpu_Mat_mult <- function(A, B){
     
     nrA = nrow(A)
@@ -224,9 +243,13 @@ gpu_Mat_mult <- function(A, B){
 
 #' @title GPU Matrix Multiplication
 #' @description matrix multiplication
+#' @param alpha Numeric value to multiply the A matrix
+#' @param A A gpuMatrix object
+#' @param B A gpuMatrix object
+#' @return A gpuMatrix object
 #' @import bigalgebra 
 #' @import bigmemory
-# ' @export
+#' @author Charles Determan Jr.
 gpu_Mat_axpy <- function(alpha, A, B){
     
     nrA = nrow(A)
@@ -282,9 +305,13 @@ gpu_Mat_axpy <- function(alpha, A, B){
 
 #' @title GPU Big Matrix DAXPY
 #' @description big matrix gpu daxpy
+#' @param alpha Numeric value to multiple the A matrix
+#' @param A A gpuBigMatrix object
+#' @param B A gpuBigMatrix object
+#' @return A gpuBigMatrix object
 #' @import bigalgebra 
 #' @import bigmemory
-# ' @export
+#' @author Charles Determan Jr.
 gpu_BigMat_axpy <- function(alpha, A, B){
     
     nrA = nrow(A)

@@ -6,7 +6,20 @@
 \usage{
 gpu_BigMat_axpy(alpha, A, B)
 }
+\arguments{
+\item{alpha}{Numeric value to multiple the A matrix}
+
+\item{A}{A gpuBigMatrix object}
+
+\item{B}{A gpuBigMatrix object}
+}
+\value{
+A gpuBigMatrix object
+}
 \description{
 big matrix gpu daxpy
+}
+\author{
+Charles Determan Jr.
 }
 

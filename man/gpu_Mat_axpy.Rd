@@ -6,7 +6,20 @@
 \usage{
 gpu_Mat_axpy(alpha, A, B)
 }
+\arguments{
+\item{alpha}{Numeric value to multiply the A matrix}
+
+\item{A}{A gpuMatrix object}
+
+\item{B}{A gpuMatrix object}
+}
+\value{
+A gpuMatrix object
+}
 \description{
 matrix multiplication
+}
+\author{
+Charles Determan Jr.
 }
 

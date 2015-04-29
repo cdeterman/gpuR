@@ -20,7 +20,7 @@ using namespace Rcpp;
 void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
 {
     if(GPU_HAS_DOUBLE == 0){
-        Rcpp::stop("GPU does not support double precision");
+        stop("GPU does not support double precision");
     }
     
     static const clblasOrder order = clblasColumnMajor;
@@ -72,29 +72,22 @@ void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     if (err != CL_SUCCESS) {
         stop("clGetDeviceIDs() failed with " + err);
     }
-    
-//    std::cout << "found device" << std::endl;
-    
+        
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
-        std::cout << "unable to create context" << std::endl;
+//        std::cout << err << std::endl;
         clReleaseContext(ctx);
         stop("clCreateContext() failed");
     }
-    
-//    std::cout << "created context" << std::endl;
-    
+        
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {
         clReleaseContext(ctx);
         stop("clCreateCommandQueue() failed");
     }
     
-    
-//    std::cout << "opencl setup" << std::endl;
-    
+        
     /* Setup clblas. */
     err = clblasSetup();
     if (err != CL_SUCCESS) {
@@ -131,7 +124,7 @@ void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
                          bufC, 0, ldc,
                          1, &queue, 0, NULL, &event);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
+//        std::cout << err << std::endl;
         stop("clblasDgemmEx() failed");
     }
     else {

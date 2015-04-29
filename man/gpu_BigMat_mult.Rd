@@ -6,7 +6,18 @@
 \usage{
 gpu_BigMat_mult(A, B)
 }
+\arguments{
+\item{A}{A gpuBigMatrix object}
+
+\item{B}{A gpuBigMatrix object}
+}
+\value{
+A gpuBigMatrix object
+}
 \description{
 big matrix gpu multiplication
+}
+\author{
+Charles Determan Jr.
 }
 

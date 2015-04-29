@@ -6,7 +6,22 @@
 \usage{
 platformInfo(platform_idx = 1L)
 }
+\arguments{
+\item{platform_idx}{An integer value to specify which platform to check}
+}
+\value{
+\item{platformName}{Platform Name}
+
+\item{platformVendor}{Platform Vendor}
+
+\item{platformVersion}{Platform OpenCL Version}
+
+\item{platformExtensions}{Avaiable platform extensions}
+}
 \description{
 Get basic information about the OpenCL platform
+}
+\author{
+Charles Determan Jr.
 }
 

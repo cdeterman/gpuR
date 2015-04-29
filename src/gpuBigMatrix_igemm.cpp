@@ -102,7 +102,7 @@ void cpp_gpuBigMatrix_igemm(SEXP A_, SEXP B_,
         {
             // Get the build log for the first device
             std::string log = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
-            std::cerr << log << std::endl;
+            stop(log);
         }
         stop("program failed to build");
     }

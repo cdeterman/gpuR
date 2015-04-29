@@ -6,7 +6,18 @@
 \usage{
 gpu_Mat_mult(A, B)
 }
+\arguments{
+\item{A}{A gpuMatrix object}
+
+\item{B}{A gpuMatrix object}
+}
+\value{
+A gpuMatrix object
+}
 \description{
 matrix multiplication
+}
+\author{
+Charles Determan Jr.
 }
 

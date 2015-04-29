@@ -4,8 +4,6 @@
 
 #include <Rcpp.h>
 
-#include "opencl_utils.h"
-
 using namespace cl;
 using namespace Rcpp;
 
@@ -22,13 +20,12 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     std::vector<Platform> platforms;
     Platform::get(&platforms);
     
-    checkErr(platforms.size()!=0 ? CL_SUCCESS : -1, 
-        "No platforms found. Check OpenCL installation!\n");
-
+    if(platforms.size() == 0){
+        stop("No platforms found. Check OpenCL installation!\n");
+    } 
+        
     if (plat_idx > platforms.size()){
-        std::cerr << "ERROR: platform index greater than number of platforms." 
-        << std::endl;
-        exit(EXIT_FAILURE);
+        stop("platform index greater than number of platforms.");
     }
 
     // Select the platform and create a context using this platform 
@@ -40,7 +37,13 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     };
 
     Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
-    checkErr(err, "Conext::Context()"); 
+
+    // More error checks to be added
+    if (err != CL_SUCCESS)
+    {
+        stop("context failed to be created");
+        //if(err = CL_INVALID_PLATFORM) stop("Not a valid platform!\n");
+    }
 
     // Get a list of devices on this platform
     std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();

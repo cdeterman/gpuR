@@ -80,7 +80,8 @@ SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
         {
             // Get the build log for the first device
             std::string log = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
-            std::cerr << log << std::endl;
+            stop(log);
+            //std::cerr << log << std::endl;
         }
         stop("program failed to build");
     }

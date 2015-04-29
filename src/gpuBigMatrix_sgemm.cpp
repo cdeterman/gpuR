@@ -74,8 +74,7 @@ void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
-        std::cout << "unable to create context" << std::endl;
+//        std::cout << err << std::endl;
         clReleaseContext(ctx);
         stop("clCreateContext() failed");
     }
@@ -127,7 +126,7 @@ void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
                          bufC, 0, ldc,
                          1, &queue, 0, NULL, &event);
     if (err != CL_SUCCESS) {
-        std::cout << err << std::endl;
+//        std::cout << err << std::endl;
         stop("clblasSgemmEx() failed");
     }
     else {
@@ -153,22 +152,4 @@ void cpp_gpuBigMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
     /* Release OpenCL working objects. */
     clReleaseCommandQueue(queue);
     clReleaseContext(ctx);
-    
-    
-//    std::cout << "released objects" << std::endl;
-    
-    // For some reason clBLAS always returns in Row Major format
-    // so must be transposed at end here
-    
-    // use inplace to save memory space
-    // additional option to specify 'lowmem' method but much slower
-//    arma::inplace_trans(Cm);
-//    Cm.print("final matrix");
-//    return wrap(Cm);
-
-//    if(C_isBM){
-//        return C_;
-//    }else{
-//        return wrap(Cm);
-//    }
 }
