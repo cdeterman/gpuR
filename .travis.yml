@@ -16,11 +16,10 @@ before_install:
 
 install:
   - cd clBLAS
-  - mkdir -p bin/clBLAS
-  - cd bin/clBLAS
-  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST=OFF -DBUILD_CLIENT=ON -DCMAKE_INSTALL_PREFIX:PATH=$PWD/package ../../src
-  - make install
-  - export LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/clBLAS/bin/clBLAS/package/lib64:${LD_LIBRARY_PATH}
+  - mkdir -p build && cd build
+  - cmake ../src -DCMAKE_BUILD_TYPE=Release
+  - make && sudo make install
+  - export LD_LIBRARY_PATH=/usr/local/lib64:${LD_LIBRARY_PATH}
   - cd ${TRAVIS_BUILD_DIR}
   - ./travis-tool.sh install_deps
 
