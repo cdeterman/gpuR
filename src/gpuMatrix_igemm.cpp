@@ -28,9 +28,9 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
     const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
                               
-    const arma::Mat<int> Am = as<arma::imat>(A_);
-    const arma::Mat<int> Bm = as<arma::imat>(B_);
-    static arma::Mat<int> Cm = as<arma::imat>(C_);
+    const arma::Mat<int> Am = as<arma::Mat<int> >(A_);
+    const arma::Mat<int> Bm = as<arma::Mat<int> >(B_);
+    static arma::Mat<int> Cm = as<arma::Mat<int> >(C_);
     
     int Mdim = Am.n_cols;
     int Ndim = Bm.n_rows;

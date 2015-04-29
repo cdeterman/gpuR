@@ -4,6 +4,6 @@
 
 #PKG_CXXFLAGS=-std=c++11 -I../inst/include -Wall -Wextra -pedantic -O0 -ggdb
 
-CXX_STD = CXX11
+#CXX_STD = CXX11
 PKG_CXXFLAGS=-I../inst/include
 PKG_LIBS=-lclBLAS
