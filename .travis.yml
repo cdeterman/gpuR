@@ -22,6 +22,8 @@ install:
   - export LD_LIBRARY_PATH=/usr/local/lib64:${LD_LIBRARY_PATH}
   - cd ${TRAVIS_BUILD_DIR}
   - ./travis-tool.sh install_deps
+  - ./travis-tool.sh install_github cdeterman/bigmemory
+  - ./travis-tool.sh install_github cdeterman/bigalgebra
 
 script: 
   - ./travis-tool.sh run_tests
