@@ -5,10 +5,12 @@ sudo: required
 compiler:
   - g++
 
+r_packages:
+  - assertive
+
 r_binary_packages:
   - Rcpp
   - RcppArmadillo
-  - assertive
   - BH
   - bigmemory.sri
 
