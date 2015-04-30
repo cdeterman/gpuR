@@ -1,35 +1,33 @@
-language: cpp
+language: r
 
 sudo: required
 
 compiler:
   - g++
 
+r_binary_packages:
+  - Rcpp
+  - RcppArmadillo
+  - assertive
+  - BH
+  - bigmemory.sri
+
+r_github_packages:
+  - kaneplusplus/bigmemory
+  - cdeterman/bigalgebra
+
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq fglrx opencl-headers libboost-program-options-dev
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
   - cd ..
   - git clone http://github.com/arrayfire/clBLAS.git
-
-install:
   - cd clBLAS
   - mkdir -p build && cd build
   - cmake ../src -DCMAKE_BUILD_TYPE=Release
   - make && sudo make install
   - export LD_LIBRARY_PATH=/usr/local/lib64:${LD_LIBRARY_PATH}
+  - export LD_RUN_PATH=/usr/local/lib64:${LD_RUN_PATH}
   - cd ${TRAVIS_BUILD_DIR}
-  - ./travis-tool.sh install_deps
-  - ./travis-tool.sh install_github cdeterman/bigmemory
-  - ./travis-tool.sh install_github cdeterman/bigalgebra
-
-script: 
-  - ./travis-tool.sh run_tests
-
-after_failure:
-  - ./travis-tool.sh dump_logs
 
 notifications:
   email:
