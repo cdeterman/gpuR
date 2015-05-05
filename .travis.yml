@@ -32,10 +32,12 @@ before_install:
   - export LD_LIBRARY_PATH=/usr/local/lib64:${LD_LIBRARY_PATH}
   - export LD_RUN_PATH=/usr/local/lib64:${LD_RUN_PATH}
   - cd ${TRAVIS_BUILD_DIR}
-
-install:
   - sudo apt-get install -qq g++-4.8
   - export CXX="g++-4.8"
+
+env:
+ global:
+   - CRAN: http://cran.rstudio.com
 
 notifications:
   email:
