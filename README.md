@@ -1,6 +1,5 @@
 # gpuR
-
-[![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/badge.svg)](https://coveralls.io/r/cdeterman/gpuR)
+[![Travis-CI Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR)
 
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
