@@ -9,6 +9,7 @@ r_packages:
   - assertive
 
 r_binary_packages:
+  - devtools
   - Rcpp
   - RcppArmadillo
   - BH
