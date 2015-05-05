@@ -8,6 +8,7 @@
 #include <bigmemory/MatrixAccessor.hpp>
 
 #include "arma_helpers.hpp"
+#include "cl_helpers.hpp"
 
 using namespace Rcpp;
 
@@ -53,12 +54,7 @@ void cpp_gpuBigMatrix_saxpy(SEXP alpha_, SEXP A_, SEXP B_)
     }
     
     props[1] = (cl_context_properties)platform;
-    ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
-    if (err != CL_SUCCESS) {
-//        std::cout << err << std::endl;
-        clReleaseContext(ctx);
-        stop("clCreateContext() failed");
-    }
+    ctx = c_createContext(ctx, props, device, err);
     
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {

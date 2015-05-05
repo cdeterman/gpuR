@@ -7,6 +7,8 @@
 
 #include <bigmemory/MatrixAccessor.hpp>
 
+#include "cl_helpers.hpp"
+
 using namespace Rcpp;
 
 // can add more arguments for more control of sgemm call
@@ -70,12 +72,7 @@ SEXP cpp_gpuMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
 //    std::cout << "found device" << std::endl;
     
     props[1] = (cl_context_properties)platform;
-    ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
-    if (err != CL_SUCCESS) {
-//        std::cout << err << std::endl;
-        clReleaseContext(ctx);
-        stop("clCreateContext() failed");
-    }
+    ctx = c_createContext(ctx, props, device, err);
     
 //    std::cout << "created context" << std::endl;
     

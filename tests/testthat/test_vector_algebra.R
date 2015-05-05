@@ -5,15 +5,9 @@ set.seed(123)
 A <- sample(seq.int(10), 1000, replace = TRUE)
 B <- sample(seq.int(10), 1000, replace = TRUE)
 
-check_for_gpu <- function() {
-    if (detectGPUs() == 0) {
-        skip("No GPUs available")
-    }
-}
-
 test_that("vector additonal successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     gpuA <- as.gpuVector(A)
     gpuB <- as.gpuVector(B)
@@ -34,7 +28,7 @@ test_that("vector additonal successful", {
 
 test_that("vector subtraction successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     gpuA <- as.gpuVector(A)
     gpuB <- as.gpuVector(B)

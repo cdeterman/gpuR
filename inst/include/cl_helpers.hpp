@@ -1,17 +1,102 @@
 #ifndef CL_HELPERS
 #define CL_HELPERS
 
-// global variable for gpu/opencl related code
+#include <memory>
 
-// global double check
-#ifdef cl_khr_fp64
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-static int GPU_HAS_DOUBLE = 1;
-#elif defined(cl_amd_fp64)
-static int GPU_HAS_DOUBLE = 1;
-#pragma OPENCL EXTENSION cl_amd_fp64 : enable
-#else
-static int GPU_HAS_DOUBLE = 0;
-#endif
+#include <CL/cl.hpp>
+
+#include <Rcpp.h>
+
+using namespace cl;
+using namespace Rcpp;
+
+/* C++ create context function to return
+ * a user friendly error message if it fails.
+ */
+inline
+Context createContext(
+    cl_device_type deviceType, 
+    cl_context_properties* cps,
+    cl_int err)
+    {
+        std::unique_ptr<Context> p_context;
+        
+        try
+        {
+            p_context.reset(new Context( deviceType, cps, NULL, NULL, &err));
+        }
+        catch (cl::Error error)
+        {
+            switch(error.err()){
+                case CL_INVALID_PLATFORM:
+                    stop("Platform not found or not valid");
+                case CL_INVALID_PROPERTY:
+                    stop("Unsupported property name");
+                case CL_INVALID_DEVICE_TYPE:
+                    stop("Invalid device type");
+                case CL_DEVICE_NOT_AVAILABLE:
+                    stop("Device not currently available");
+                case CL_DEVICE_NOT_FOUND:
+                    stop("Device not found");
+                case CL_OUT_OF_RESOURCES:
+                    stop("Unable to allocate sufficient resources on device");
+                case CL_OUT_OF_HOST_MEMORY:
+                    stop("Unable to allocate sufficient resources on the host");
+                default:
+                    stop("unrecognized error");
+            }
+            stop("program failed to build");
+        }
+    
+    Context& context = *p_context;
+    
+    return context;
+}
+
+/* Function to evaluate the err returned by clCreateContext (C OpenCL API).
+ * It provides a user friendly error message if the context failed and
+ * automatically releases the previous context.
+ */
+inline
+cl_context c_createContext(
+    cl_context ctx,
+    cl_context_properties* props, 
+    cl_device_id device,
+    cl_int err
+    )
+{
+    ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
+
+    if (err != CL_SUCCESS) {
+        switch(err){
+            case CL_INVALID_PLATFORM:
+                clReleaseContext(ctx);
+                stop("Platform not found or not valid");
+            case CL_INVALID_PROPERTY:
+                clReleaseContext(ctx);
+                stop("Unsupported property name");
+            case CL_INVALID_DEVICE_TYPE:
+                clReleaseContext(ctx);
+                stop("Invalid device type");
+            case CL_DEVICE_NOT_AVAILABLE:
+                clReleaseContext(ctx);
+                stop("Device not currently available");
+            case CL_DEVICE_NOT_FOUND:
+                clReleaseContext(ctx);
+                stop("Device not found");
+            case CL_OUT_OF_RESOURCES:
+                clReleaseContext(ctx);
+                stop("Unable to allocate sufficient resources on device");
+            case CL_OUT_OF_HOST_MEMORY:
+                clReleaseContext(ctx);
+                stop("Unable to allocate sufficient resources on the host");
+            default:
+                clReleaseContext(ctx);
+                stop("unrecognized error");
+        }
+    }
+    
+    return ctx;
+}
 
 #endif

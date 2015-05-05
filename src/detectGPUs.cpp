@@ -2,6 +2,10 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
+#include <memory>
+
+#include "cl_helpers.hpp"
+
 #include <Rcpp.h>
 
 using namespace cl;
@@ -35,15 +39,8 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
         (cl_context_properties)(platforms[plat_idx])(),
         0
     };
-
-    Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
-
-    // More error checks to be added
-    if (err != CL_SUCCESS)
-    {
-        stop("context failed to be created");
-        //if(err = CL_INVALID_PLATFORM) stop("Not a valid platform!\n");
-    }
+    
+    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
 
     // Get a list of devices on this platform
     std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();

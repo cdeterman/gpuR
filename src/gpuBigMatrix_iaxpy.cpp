@@ -9,6 +9,7 @@
 #include <bigmemory/MatrixAccessor.hpp>
 
 #include "arma_helpers.hpp"
+#include "cl_helpers.hpp"
 
 using namespace cl;
 using namespace Rcpp;
@@ -45,7 +46,7 @@ void cpp_gpuBigMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
         0
     };
 
-    Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
+    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
         
     // Get a list of devices on this platform
     std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();

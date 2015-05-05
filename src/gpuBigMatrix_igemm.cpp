@@ -9,6 +9,7 @@
 #include <bigmemory/MatrixAccessor.hpp>
 
 #include "arma_helpers.hpp"
+#include "cl_helpers.hpp"
 
 using namespace cl;
 using namespace Rcpp;
@@ -35,7 +36,7 @@ void cpp_gpuBigMatrix_igemm(SEXP A_, SEXP B_,
     int Mdim = Am.n_cols;
     int Ndim = Bm.n_rows;
     int Pdim = Am.n_rows;
-    int WB = Bm.n_cols;
+//    int WB = Bm.n_cols;
     
 //    Am.print("A Matrix");
 //    Bm.print("B Matrix");
@@ -56,7 +57,7 @@ void cpp_gpuBigMatrix_igemm(SEXP A_, SEXP B_,
         0
     };
 
-    Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
+    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
         
 //        std::cout << "Context Made" << std::endl;
 

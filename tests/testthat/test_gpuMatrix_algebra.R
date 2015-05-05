@@ -22,15 +22,9 @@ B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 
 Cint <- Aint %*% Bint
 
-check_for_gpu <- function() {
-    if (detectGPUs() == 0) {
-        skip("No GPUs available")
-    }
-}
-
 test_that("gpuMatrix Integer Matrix multiplication successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     igpuA <- gpuMatrix(Aint, type="integer")
     igpuB <- gpuMatrix(Bint, type="integer")
@@ -43,7 +37,7 @@ test_that("gpuMatrix Integer Matrix multiplication successful", {
 
 test_that("gpuMatrix Single Precision Matrix multiplication successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     C <- A %*% B
     
@@ -59,7 +53,7 @@ test_that("gpuMatrix Single Precision Matrix multiplication successful", {
 
 test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     C <- A - B
     
@@ -75,7 +69,7 @@ test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
 
 test_that("gpuMatrix Single Precision Matrix Addition successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     C <- A + B
     
@@ -91,7 +85,7 @@ test_that("gpuMatrix Single Precision Matrix Addition successful", {
 
 test_that("gpuMatrix Integer Matrix Subtraction successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     Cint <- Aint - Bint
     
@@ -107,7 +101,7 @@ test_that("gpuMatrix Integer Matrix Subtraction successful", {
 
 test_that("gpuMatrix Integer Matrix Addition successful", {
     
-    check_for_gpu()
+    has_gpu_skip()
     
     Cint <- Aint + Bint
     

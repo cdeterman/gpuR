@@ -7,6 +7,7 @@
 
 #include <bigmemory/MatrixAccessor.hpp>
 
+#include "cl_checks.hpp"
 #include "cl_helpers.hpp"
 
 using namespace Rcpp;
@@ -53,12 +54,7 @@ SEXP cpp_gpuMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
     }
     
     props[1] = (cl_context_properties)platform;
-    ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
-    if (err != CL_SUCCESS) {
-//        std::cout << err << std::endl;
-        clReleaseContext(ctx);
-        stop("clCreateContext() failed");
-    }
+    ctx = c_createContext(ctx, props, device, err);
     
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {
