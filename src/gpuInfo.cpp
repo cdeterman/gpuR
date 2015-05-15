@@ -1,6 +1,8 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
+#include "cl_helpers.hpp"
+
 #include <Rcpp.h>
 
 using namespace cl;
@@ -19,7 +21,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     
     // Get available platforms
     std::vector<Platform> platforms;
-    Platform::get(&platforms);
+    getPlatforms(platforms); // cl_helpers.hpp
     
     if(platforms.size() == 0){
         stop("No platforms found. Check OpenCL installation!");

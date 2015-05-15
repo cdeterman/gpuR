@@ -1,6 +1,8 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
+#include "cl_helpers.hpp"
+
 #include <Rcpp.h>
 
 using namespace cl;
@@ -16,7 +18,8 @@ SEXP detectPlatforms()
 {
     // Get available platforms
     std::vector<Platform> platforms;
-    Platform::get(&platforms);
+
+    getPlatforms(platforms); // cl_helpers.hpp
     
     return(wrap(platforms.size()));
 }

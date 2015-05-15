@@ -3,6 +3,8 @@
 
 #include <RcppArmadillo.h>
 
+#include "cl_helpers.hpp"
+
 using namespace cl;
 using namespace Rcpp;
 
@@ -30,7 +32,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     
     // Get available platforms
     std::vector<Platform> platforms;
-    Platform::get(&platforms);
+    getPlatforms(platforms); // cl_helpers.hpp
     
     if(platforms.size() == 0){
         stop("No platforms found. Check OpenCL installation!");

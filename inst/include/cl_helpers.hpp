@@ -10,6 +10,22 @@
 using namespace cl;
 using namespace Rcpp;
 
+/* C++ get platforms function to return
+ * a user friendly error message if fails.
+ */
+inline
+void getPlatforms(std::vector<Platform> &platforms)
+{
+    try
+    {
+        Platform::get(&platforms);
+    }
+    catch (cl::Error error)
+    {
+        stop("No platforms detected.  Verify your SDK installation.");
+    }
+}
+
 /* C++ create context function to return
  * a user friendly error message if it fails.
  */

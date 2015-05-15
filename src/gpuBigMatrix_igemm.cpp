@@ -48,7 +48,7 @@ void cpp_gpuBigMatrix_igemm(SEXP A_, SEXP B_,
     
     // Get available platforms
     std::vector<Platform> platforms;
-    Platform::get(&platforms);        
+    getPlatforms(platforms); // cl_helpers.hpp       
     
     // Select the default platform and create a context using this platform and the GPU
     cl_context_properties cps[3] = {

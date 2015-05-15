@@ -4,6 +4,7 @@
 #include <Rcpp.h>
 
 #include <boost/algorithm/string.hpp>
+#include "cl_helpers.hpp"
 
 using namespace cl;
 using namespace Rcpp;
@@ -25,7 +26,7 @@ List cpp_platformInfo(SEXP platform_idx_)
 
     // Discover number of platforms
     std::vector<cl::Platform> platforms;
-    cl::Platform::get(&platforms);
+    getPlatforms(platforms); // cl_helpers.hpp
     
     if(platforms.size() == 0){
         stop("No platforms found! Check OpenCL installation");

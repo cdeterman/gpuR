@@ -22,7 +22,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     
     // Get available platforms
     std::vector<Platform> platforms;
-    Platform::get(&platforms);
+    getPlatforms(platforms); // cl_helpers.hpp
     
     if(platforms.size() == 0){
         stop("No platforms found. Check OpenCL installation!\n");
