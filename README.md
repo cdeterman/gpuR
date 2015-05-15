@@ -28,6 +28,11 @@ The only verified installations at present consisted of using a NVIDIA GTX or
 AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
 consisted of:
 
+### Dependencies
+1. opencl-headers (shared library)
+2. clBLAS (maintained by [ArrayFire](https://github.com/arrayfire/clBLAS))
+3. An OpenCL SDK specific to your GPU vender (AMD, NVIDIA, Intel, etc.)
+
 #### Note, you currently can only have one type installed (NVIDIA or AMD)
 
 ### NVIDIA Driver and CUDA/OpenCL
@@ -86,7 +91,6 @@ and begin using your GPU :)
 1. Create configure file for .Renviron and possibly makevars?
 2. Package OpenCL headers in package (similar to ROpenCL?)?
 3. Obviously more vector functions and matrix implementations
-4. Conditional `double` data types if device supports them
-5. Implement clBLAS?  Appears to only be for AMD though :(  Other alternatives
+4. Implement clBLAS?  Appears to only be for AMD though :(  Other alternatives
 appeart to be MAGMA (also AMD).
-6. Alternative approach, optimized code for each Vendor Type (NVIDIA, AMD, etc.)
+5. Make CUDA available for NVIDIA otherwise OpenCL
