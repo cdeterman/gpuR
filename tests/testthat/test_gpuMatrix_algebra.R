@@ -15,16 +15,12 @@ Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 
-# print("R A matrix")
-# print(Aint)
-# print("R B matrix")
-# print(Bint)
-
-Cint <- Aint %*% Bint
 
 test_that("gpuMatrix Integer Matrix multiplication successful", {
     
     has_gpu_skip()
+    
+    Cint <- Aint %*% Bint
     
     igpuA <- gpuMatrix(Aint, type="integer")
     igpuB <- gpuMatrix(Bint, type="integer")
@@ -113,4 +109,55 @@ test_that("gpuMatrix Integer Matrix Addition successful", {
     expect_is(igpuC, "igpuMatrix")
     expect_equal(igpuC@x[,], Cint,
                  info="integer matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix multiplication successful", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A %*% B
+    
+    dgpuA <- gpuMatrix(A, type="double")
+    dgpuB <- gpuMatrix(B, type="double")
+    
+    dgpuC <- dgpuA %*% dgpuB
+    
+    expect_is(dgpuC, "dgpuMatrix")
+    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix Subtraction successful", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A - B
+    
+    dgpuA <- gpuMatrix(A, type="double")
+    dgpuB <- gpuMatrix(B, type="double")
+    
+    dgpuC <- dgpuA - dgpuB
+    
+    expect_is(dgpuC, "dgpuMatrix")
+    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix Addition successful", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A + B
+    
+    dgpuA <- gpuMatrix(A, type="double")
+    dgpuB <- gpuMatrix(B, type="double")
+    
+    dgpuC <- dgpuA + dgpuB
+    
+    expect_is(dgpuC, "dgpuMatrix")
+    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
 })

@@ -70,6 +70,24 @@ platformInfo <- function(platform_idx=1L){
     return(out)
 }
 
+#' @title Check GPU double precision support
+#' @description This function checks the GPU device extensions for the
+#' variable cl_khr_fp64 which means the device supports double precision.
+#' @param platform_idx An integer value indicating which platform to query.
+#' @param gpu_idx An integer value indicating which gpu to query.
+#' @return A boolean designating whether the device supports double precision
+#' @seealso \link{gpuInfo}
+#' @export
+deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
+    assert_is_integer(platform_idx)
+    assert_all_are_positive(platform_idx)
+    assert_is_integer(gpu_idx)
+    assert_all_are_positive(gpu_idx)
+    
+    out <- cpp_device_has_double(platform_idx, gpu_idx)
+    return(out)
+}
+
 
 #' @title GPU Vector Addition
 #' @description vector addition
@@ -196,11 +214,6 @@ gpu_BigMat_mult <- function(A, B){
 #' @author Charles Determan Jr.
 gpu_Mat_mult <- function(A, B){
     
-    nrA = nrow(A)
-    ncA = ncol(A)
-    nrB = nrow(B)
-    ncB = ncol(B)
-    
     pkg_path <- find.package("gpuR", .libPaths())
     #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
     file <- file.path(pkg_path, "CL", "basic_gemm.cl")
@@ -211,32 +224,34 @@ gpu_Mat_mult <- function(A, B){
     kernel <- readChar(file, file.info(file)$size)
     
     type <- typeof(A)
-    
-    C <- matrix(0, nrow=nrB, ncol=ncA)
 
     out <- switch(type,
                   integer = {
                       new("igpuMatrix", 
-                          x=cpp_gpuMatrix_igemm(A@x,B@x,C, kernel, "iMatMult"),
+                          x=cpp_gpuMatrix_igemm(A@x,B@x, kernel, "iMatMult"),
                           type="integer"
                       )
                   },
                   float = {
                       new("fgpuMatrix", 
-                          x=cpp_gpuMatrix_sgemm(A@x,B@x,C),
+                          x=cpp_gpuMatrix_sgemm(A@x,B@x),
                           type="float"
                       )
                   },
                   double = {
-                      new("dgpuMatrix", 
-                          x=cpp_gpuMatrix_dgemm(A@x,B@x,C),
-                          type="double"
-                      )
+                      if(!deviceHasDouble()){
+                          stop("Selected GPU does not support double precision")
+                      }else{
+                          new("dgpuMatrix", 
+                              x=cpp_gpuMatrix_dgemm(A@x,B@x),
+                              type="double"
+                          )
+                      }
                   },
                   {
                       stop("type not recognized")
                   })
-    
+#     rm(C)
     return(out)
 }
 
@@ -258,7 +273,6 @@ gpu_Mat_axpy <- function(alpha, A, B){
     ncB = ncol(B)
     
     pkg_path <- find.package("gpuR", .libPaths())
-    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
     file <- file.path(pkg_path, "CL", "basic_axpy.cl")
     
     if(!file_test("-f", file)){
@@ -303,7 +317,7 @@ gpu_Mat_axpy <- function(alpha, A, B){
 }
 
 
-#' @title GPU Big Matrix DAXPY
+#' @title GPU Big Matrix (X)AXPY
 #' @description big matrix gpu daxpy
 #' @param alpha Numeric value to multiple the A matrix
 #' @param A A gpuBigMatrix object

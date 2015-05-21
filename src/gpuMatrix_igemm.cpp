@@ -17,12 +17,11 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_, 
-    SEXP C_, SEXP sourceCode_, SEXP kernel_function_)
+    SEXP sourceCode_, SEXP kernel_function_)
 {
     //std::cout << "called the function" << std::endl;
     // declarations
     cl_int err;
-    int szA, szB, szC;
     std::string sourceCode = as<std::string>(sourceCode_);
     
     std::string kernel_string = as<std::string>(kernel_function_);
@@ -31,20 +30,19 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
                               
     const arma::Mat<int> Am = as<arma::Mat<int> >(A_);
     const arma::Mat<int> Bm = as<arma::Mat<int> >(B_);
-    static arma::Mat<int> Cm = as<arma::Mat<int> >(C_);
+//    arma::Mat<int> Cm = as<arma::Mat<int> >(C_);
     
     int Mdim = Am.n_cols;
     int Ndim = Bm.n_rows;
     int Pdim = Am.n_rows;
-//    int WB = Bm.n_cols;
+    int Kdim = Bm.n_cols;
+
+    arma::Mat<int> Cm = arma::Mat<int>(Pdim, Kdim);
+    Cm.zeros();
     
-//    Am.print("A Matrix");
-//    Bm.print("B Matrix");
-    
-    szA = Ndim * Pdim;
-    szB = Pdim * Mdim;
-    szC = Ndim * Mdim;
-    
+    const int szA = Am.n_elem;
+    const int szB = Bm.n_elem;
+    const int szC = Cm.n_elem;
     
     // Get available platforms
     std::vector<Platform> platforms;
@@ -159,7 +157,8 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
 //        err = queue.enqueueNDRangeKernel(kernel, NullRange, global, NullRange);
         
     // Read buffer C into a local list        
-    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, szC * sizeof(int), &Cm[0]);
+    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, 
+                                szC * sizeof(int), &Cm[0]);
 
     return wrap(Cm);
 }

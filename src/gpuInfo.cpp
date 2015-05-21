@@ -1,6 +1,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
+#include <boost/algorithm/string.hpp>
 #include "cl_helpers.hpp"
 
 #include <Rcpp.h>
@@ -12,7 +13,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 {
-     // declarations
+    // declarations
     cl_int err;
     
     // subtract one for zero indexing
@@ -59,7 +60,11 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     cl_uint maxWorkGroupSize = working_device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     cl_uint maxWorkItemDim = working_device.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>();
     std::vector<cl_ulong> maxWorkItemSizes = working_device.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
-    
+    std::string deviceExtensions = working_device.getInfo<CL_DEVICE_EXTENSIONS>();
+
+
+    std::vector<std::string> extensionsVector;
+    boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
     std::string available_str = (available == 1) ? "yes" : "no";
     
     //Named("maxWorkItemSizes") = maxWorkItemSizes,
@@ -73,5 +78,6 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
                         Named("clockFreq") = clockFreq,
                         Named("localMem") = localMem,
                         Named("maxAllocatableMem") = maxAlocatableMem,
-                        Named("available") = available_str);
+                        Named("available") = available_str,
+                        Named("deviceExtensions") = extensionsVector);
 }

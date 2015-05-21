@@ -1,10 +1,10 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
-#include <Rcpp.h>
-
 #include <boost/algorithm/string.hpp>
 #include "cl_helpers.hpp"
+
+#include <Rcpp.h>
 
 using namespace cl;
 using namespace Rcpp;

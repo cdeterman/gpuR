@@ -8,7 +8,6 @@
 #include <bigmemory/MatrixAccessor.hpp>
 
 #include "arma_helpers.hpp"
-#include "cl_checks.hpp"
 #include "cl_helpers.hpp"
 
 using namespace Rcpp;
@@ -19,14 +18,10 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
-{
-    if(GPU_HAS_DOUBLE == 0){
-        stop("GPU does not support double precision");
-    }
-    
-    static const clblasOrder order = clblasColumnMajor;
-    static const cl_float alpha = 1;
-    static const clblasTranspose transA = clblasNoTrans;
+{    
+    const clblasOrder order = clblasColumnMajor;
+    const cl_float alpha = 1;
+    const clblasTranspose transA = clblasNoTrans;
                               
     const arma::Mat<double> Am = ConvertBMtoArma<double>(A_);
     const arma::Mat<double> Bm = ConvertBMtoArma<double>(B_);
@@ -36,15 +31,12 @@ void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     int M = Am.n_cols;
     int N = Bm.n_rows;
     int K = Am.n_rows;
-    
-//    Am.print("A Matrix");
-//    Bm.print("B Matrix");
 
     const std::size_t lda = K;        /* i.e. lda = K */
-    static const clblasTranspose transB = clblasNoTrans;
+    const clblasTranspose transB = clblasNoTrans;
 
     const std::size_t ldb = N;        /* i.e. ldb = N */
-    static const cl_float beta = 0;
+    const cl_float beta = 0;
     
     const std::size_t ldc = N;        /* i.e. ldc = N */
 
@@ -53,7 +45,7 @@ void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     cl_platform_id platform = 0;
     cl_device_id device = 0;
     cl_context_properties props[3] = { CL_CONTEXT_PLATFORM, 0, 0 };
-    cl_context ctx = 0;
+    cl_context ctx;
     cl_command_queue queue = 0;
     cl_mem bufA, bufB, bufC;
     cl_event event = NULL;
@@ -75,7 +67,7 @@ void cpp_gpuBigMatrix_dgemm(SEXP A_, SEXP B_, SEXP C_)
     }
         
     props[1] = (cl_context_properties)platform;
-    ctx = c_createContext(ctx, props, device, err);
+    ctx = c_createContext(props, device, err);
         
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {

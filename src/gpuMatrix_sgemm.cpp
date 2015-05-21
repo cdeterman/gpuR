@@ -1,5 +1,5 @@
 #define __CL_ENABLE_EXCEPTIONS
-
+#include <CL/cl.hpp>
 // clBLAS and OpenCL headers
 #include <clBLAS.h>
 // armadillo headers for handling the R input data
@@ -15,139 +15,92 @@ using namespace Rcpp;
 // e.g. if transpose needed?
 
 //[[Rcpp::export]]
-SEXP cpp_gpuMatrix_sgemm(SEXP A_, SEXP B_, SEXP C_)
-{
-    
-    static const clblasOrder order = clblasColumnMajor;
-    static const cl_float alpha = 1;
-    static const clblasTranspose transA = clblasNoTrans;
+SEXP cpp_gpuMatrix_sgemm(SEXP A_, SEXP B_)
+{    
+    const clblasOrder order = clblasColumnMajor;
+    const cl_float alpha = 1;
+    const clblasTranspose transA = clblasNoTrans;
 
-                              
-    const arma::Mat<float> Am = as<arma::fmat>(A_);
-    const arma::Mat<float> Bm = as<arma::fmat>(B_);
-    arma::Mat<float> Cm = as<arma::fmat>(C_);
-                              
+    const arma::Mat<float> Am = as<arma::Mat<float> >(A_);
+    const arma::Mat<float> Bm = as<arma::Mat<float> >(B_);
     
     int M = Am.n_cols;
-    int N = Bm.n_rows;
     int K = Am.n_rows;
+    int N = Bm.n_rows;
+    int P = Bm.n_cols;
     
-//    Am.print("A Matrix");
-//    Bm.print("B Matrix");
+    int szA = M * N;
+    int szB = N * P;
+    int szC = K * P;
+    
+    arma::Mat<float> Cm = arma::Mat<float>(K, P);
+    Cm.zeros();
 
     const std::size_t lda = K;        /* i.e. lda = K */
-    static const clblasTranspose transB = clblasNoTrans;
+    const clblasTranspose transB = clblasNoTrans;
 
     const std::size_t ldb = N;        /* i.e. ldb = N */
-    static const cl_float beta = 0;
+    const cl_float beta = 0;
     
     const std::size_t ldc = N;        /* i.e. ldc = N */
 
     // declare OpenCL objects
     cl_int err;
-    cl_platform_id platform = 0;
-    cl_device_id device = 0;
-    cl_context_properties props[3] = { CL_CONTEXT_PLATFORM, 0, 0 };
-    cl_context ctx = 0;
-    cl_command_queue queue = 0;
-    cl_mem bufA, bufB, bufC;
-    cl_event event = NULL;
+
+    // Get available platforms
+    std::vector<Platform> platforms;
+    getPlatforms(platforms); // cl_helpers.hpp      
     
+    // Select the default platform and create a context using this platform and the GPU
+    cl_context_properties cps[3] = {
+        CL_CONTEXT_PLATFORM,
+        (cl_context_properties)(platforms[0])(),
+        0
+    };
+
+    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
+            
+    // Get a list of devices on this platform
+    std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
     
-//    std::cout << "declared all vars" << std::endl;
-    
-    /* Setup OpenCL environment. */
-    err = clGetPlatformIDs(1, &platform, NULL);
-    if (err != CL_SUCCESS) {
-        stop("clGetPlatformIDs() failed with " + err);
-    }
-    
-//    std::cout << "found platform" << std::endl;
-    
-    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
-    if (err != CL_SUCCESS) {
-        stop("clGetDeviceIDs() failed with " + err);
-    }
-    
-//    std::cout << "found device" << std::endl;
-    
-    props[1] = (cl_context_properties)platform;
-    ctx = c_createContext(ctx, props, device, err);
-    
-//    std::cout << "created context" << std::endl;
-    
-    queue = clCreateCommandQueue(ctx, device, 0, &err);
-    if (err != CL_SUCCESS) {
-        clReleaseContext(ctx);
-        stop("clCreateCommandQueue() failed");
-    }
-    
-    
-//    std::cout << "opencl setup" << std::endl;
+    // Create a command queue and use the first device
+    CommandQueue queue = CommandQueue(context, devices[0], 0, &err);
     
     /* Setup clblas. */
     err = clblasSetup();
     if (err != CL_SUCCESS) {
-        clReleaseCommandQueue(queue);
-        clReleaseContext(ctx);
         stop("clblasSetup() failed with " + err);
     }
-    
-    
-//    std::cout << "clblas setup" << std::endl;
-    
-    /* Prepare OpenCL memory objects and place matrices inside them. */
-    bufA = clCreateBuffer(ctx, CL_MEM_READ_ONLY, M * K * sizeof(Am[0]),
-                          NULL, &err);
-    bufB = clCreateBuffer(ctx, CL_MEM_READ_ONLY, K * N * sizeof(Bm[0]),
-                          NULL, &err);
-    bufC = clCreateBuffer(ctx, CL_MEM_READ_WRITE, M * N * sizeof(Cm[0]),
-                          NULL, &err);
-                          
-    err = clEnqueueWriteBuffer(queue, bufA, CL_TRUE, 0,
-        M * K * sizeof(Am[0]), &Am[0], 0, NULL, NULL);
-    err = clEnqueueWriteBuffer(queue, bufB, CL_TRUE, 0,
-        K * N * sizeof(Bm[0]), &Bm[0], 0, NULL, NULL);
-    err = clEnqueueWriteBuffer(queue, bufC, CL_TRUE, 0,
-        M * N * sizeof(Cm[0]), &Cm[0], 0, NULL, NULL);
         
+    // Create memory buffers
+    Buffer bufA = Buffer(context, CL_MEM_READ_ONLY, szA * sizeof(float), NULL, &err);
+    Buffer bufB = Buffer(context, CL_MEM_READ_ONLY, szB * sizeof(float), NULL, &err);
+    Buffer bufC = Buffer(context, CL_MEM_READ_WRITE, szC * sizeof(float), NULL, &err);
     
-//    std::cout << "wrote matrices" << std::endl;
+    // Copy lists A and B to the memory buffers
+    queue.enqueueWriteBuffer(bufA, CL_TRUE, 0, szA * sizeof(float), &Am[0]);
+    queue.enqueueWriteBuffer(bufB, CL_TRUE, 0, szB * sizeof(float), &Bm[0]);
     
     /* Call clblas extended function. Perform gemm */
     err = clblasSgemm(order, transA, transB, M, N, K,
-                         alpha, bufA, 0, lda,
-                         bufB, 0, ldb, beta,
-                         bufC, 0, ldc,
-                         1, &queue, 0, NULL, &event);
+                         alpha, bufA(), 0, lda,
+                         bufB(), 0, ldb, beta,
+                         bufC(), 0, ldc,
+                         1, &queue(), 0, NULL, 0);
     if (err != CL_SUCCESS) {
-//        std::cout << err << std::endl;
+        std::cout << err << std::endl;
         stop("clblasSgemmEx() failed");
     }
     else {
-        
-//        std::cout << "finished sgemm" << std::endl;
-        
         /* Wait for calculations to be finished. */
-        err = clWaitForEvents(1, &event);                                  
-        err = clEnqueueReadBuffer(queue, bufC, CL_TRUE, 0,
-                                  M * N * sizeof(Cm[0]),
-                                  &Cm[0], 0, NULL, NULL);
+        err = queue.enqueueReadBuffer(bufC, CL_TRUE, 0, 
+                                    szC * sizeof(float), 
+                                    &Cm[0]);
     }
     
-    
-//    std::cout << "read output" << std::endl;
-    
     /* Release OpenCL memory objects. */
-    clReleaseMemObject(bufC);
-    clReleaseMemObject(bufB);
-    clReleaseMemObject(bufA);
     /* Finalize work with clblas. */
     clblasTeardown();
-    /* Release OpenCL working objects. */
-    clReleaseCommandQueue(queue);
-    clReleaseContext(ctx);
-    
-
+        
     return wrap(Cm);
 }

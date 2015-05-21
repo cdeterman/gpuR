@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{gpu_BigMat_axpy}
 \alias{gpu_BigMat_axpy}
-\title{GPU Big Matrix DAXPY}
+\title{GPU Big Matrix (X)AXPY}
 \usage{
 gpu_BigMat_axpy(alpha, A, B)
 }

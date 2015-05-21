@@ -8,7 +8,6 @@
 #include <bigmemory/MatrixAccessor.hpp>
 
 #include "arma_helpers.hpp"
-#include "cl_checks.hpp"
 #include "cl_helpers.hpp"
 
 using namespace Rcpp;
@@ -18,14 +17,10 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_gpuBigMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
-{
-    if(GPU_HAS_DOUBLE == 0){
-        Rcpp::stop("GPU does not support double precision");
-    }
-    
+{    
     const cl_double alpha = as<cl_double>(alpha_);
-    static const int incx = 1;
-    static const int incy = 1;
+    const int incx = 1;
+    const int incy = 1;
 
     const arma::Mat<double> Am = ConvertBMtoArma<double>(A_);
     arma::Mat<double> Bm = ConvertBMtoArma<double>(B_);
@@ -33,15 +28,12 @@ void cpp_gpuBigMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
     // total number of elements
     const int N = Am.n_elem;
     
-//    Am.print("A Matrix");
-//    Bm.print("B Matrix");
-    
     // declare OpenCL objects
     cl_int err;
     cl_platform_id platform = 0;
     cl_device_id device = 0;
     cl_context_properties props[3] = { CL_CONTEXT_PLATFORM, 0, 0 };
-    cl_context ctx = 0;
+    cl_context ctx;
     cl_command_queue queue = 0;
     cl_mem bufA, bufB;
     cl_event event = NULL;
@@ -58,7 +50,7 @@ void cpp_gpuBigMatrix_daxpy(SEXP alpha_, SEXP A_, SEXP B_)
     }
     
     props[1] = (cl_context_properties)platform;
-    ctx = c_createContext(ctx, props, device, err);
+    ctx = c_createContext(props, device, err);
     
     queue = clCreateCommandQueue(ctx, device, 0, &err);
     if (err != CL_SUCCESS) {

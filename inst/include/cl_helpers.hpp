@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <boost/scoped_ptr.hpp> //scoped_ptr
+
 #include <CL/cl.hpp>
 
 #include <Rcpp.h>
@@ -35,7 +37,7 @@ Context createContext(
     cl_context_properties* cps,
     cl_int err)
     {
-        std::unique_ptr<Context> p_context;
+        boost::scoped_ptr<Context> p_context;
         
         try
         {
@@ -75,12 +77,12 @@ Context createContext(
  */
 inline
 cl_context c_createContext(
-    cl_context ctx,
     cl_context_properties* props, 
     cl_device_id device,
     cl_int err
     )
 {
+    cl_context ctx = 0;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
 
     if (err != CL_SUCCESS) {
