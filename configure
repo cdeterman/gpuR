@@ -1,0 +1,22 @@
+####################################
+# configure for package gpuR
+# Charles Determan Jr.
+
+CXX_STD="CXX_STD=CXX11"
+PKG_CXXFLAGS="PKG_CXXFLAGS=-I../inst/include -g"
+PKG_LIBS="PKG_LIBS="
+
+DEFAULT_CUDA=/usr/local/cuda
+
+if test -n "$DEFAULT_CUDA"; then
+    echo "cuda is installed"
+    #PKG_LIBS=-lcublas
+    PKG_LIBS="${PKG_LIBS} -lclBLAS"
+else
+    echo "cuda is not installed"
+    PKG_LIBS="${PKG_LIBS} -lclBLAS"
+fi
+
+echo "${CXX_STD}" > src/Makevars
+echo "${PKG_CXXFLAGS}" >> src/Makevars
+echo "${PKG_LIBS}" >> src/Makevars
