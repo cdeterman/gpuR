@@ -36,7 +36,24 @@ consisted of:
 #### Note, you currently can only have one type installed (NVIDIA or AMD)
 
 ### NVIDIA Driver and CUDA/OpenCL
-1. Purge existing nvidia and cuda implementations 
+#### Up-to-date Card
+If you are fortunate enough to have a very recent card that you can
+use the most recent drivers.  THis install is much more simple
+```
+# Install Boost & OpenCL headers
+sudo apt-get install opencl-headers
+
+# Install NVIDIA Drivers and CUDA
+sudo add-apt-repository -y ppa:xorg-edgers/ppa
+sudo apt-get update
+sudo apt-get install nvidia-346 nvidia-settings
+sudo apt-get install cuda
+```
+
+#### Older Card
+If you have an older card that doesn't support the newest drivers:
+
+1. Purge any existing nvidia and cuda implementations 
 (`sudo apt-get purge cuda* nvidia-*`)
 2. Download appropriate CUDA toolkit for the specific card.  You can figure 
 this out by first checking which NVIDIA driver is compatible with your card
@@ -65,17 +82,18 @@ to include `/usr/local/cuda-6.5/lib64`
 to install clBLAS
 
 ### Install clBLAS
-1. See INSTALL file
+```
+# Install Boost & OpenCL headers
+sudo apt-get install libboost-all-dev opencl-headers
 
-### C++ OpenCL API
-**If using an AMD card, ignore this secion.**
-You then may need to have the C++ API header file.  if your GPU only
-supports OpenCL 1.1.  You can get the hpp file from the 
-[Khronos registry](https://www.khronos.org/registry/cl/api/1.1/cl.hpp).  Once
-you have downloaded the file you need to put it with the other OpenCL headers.
-In the case of NVIDIA, the location of the OpenCL headers is 
-`/usr/local/cuda-x.x/include/CL`.  You will then need to modify the Makevars
-file (see the current Makevars file for an example).
+# Install clBLAS
+git clone https://github.com/arrayfire/clBLAS.git
+cd clBLAS
+mkdir build && cd build
+cmake ../src -DCMAKE_BUILD_TYPE=Release
+make
+sudo make install
+```
 
 ### Rstudio settings
 **If using an AMD card, ignore this secion.**
@@ -88,9 +106,6 @@ Once all these things are set you should be able to install the package
 and begin using your GPU :)
 
 # Things to Do
-1. Create configure file for .Renviron and possibly makevars?
-2. Package OpenCL headers in package (similar to ROpenCL?)?
-3. Obviously more vector functions and matrix implementations
-4. Implement clBLAS?  Appears to only be for AMD though :(  Other alternatives
-appeart to be MAGMA (also AMD).
-5. Make CUDA available for NVIDIA otherwise OpenCL
+1. Obviously more vector functions and matrix implementations
+2. Implement clMAGMA?  
+3. Make CUDA available for NVIDIA otherwise OpenCL
