@@ -12,8 +12,8 @@ pleasing sytax.  For example, to perform vector addition the syntax is:
 ```r
 A <- seq.int(from=0, to=999)
 B <- seq.int(from=1000, to=1)
-gpuA <- as.gpuVector(A)
-gpuB <- as.gpuVector(B)
+gpuA <- gpuVector(A)
+gpuB <- gpuVector(B)
 
 C <- A + B
 gpuC <- gpuA + gpuB
@@ -21,6 +21,12 @@ gpuC <- gpuA + gpuB
 all(C == gpuC)
 [1] TRUE
 ```
+
+Please note, all the functions herein use an OpenCL backend.  If you prefer
+to have a CUDA based backend, please see my other package 
+[gpuRcuda](http://github.com/cdeterman/gpuRcuda) which is simply an extension
+on top of this package where all functions herein are still applicable
+but also have the CUDA option available.  
 
 # INSTALL (also see the INSTALL file)
 
@@ -107,5 +113,4 @@ and begin using your GPU :)
 
 # Things to Do
 1. Obviously more vector functions and matrix implementations
-2. Implement clMAGMA?  
-3. Make CUDA available for NVIDIA otherwise OpenCL
+2. Implement clMAGMA?  Probably going to use ViennaCL and avoid clBLAS too.

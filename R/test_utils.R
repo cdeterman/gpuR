@@ -10,6 +10,7 @@
 # relevant functions can be evaluated.
 
 # check if any GPUs can be found
+#' @export
 has_gpu_skip <- function() {
     gpuCheck <- try(detectGPUs(), silent=TRUE)
     if(class(gpuCheck)[1] == "try-error"){
@@ -22,6 +23,7 @@ has_gpu_skip <- function() {
 }
 
 # check if GPU supports double precision
+#' @export
 has_double_skip <- function() {
     gpuCheck <- try(deviceHasDouble(), silent=TRUE)
     if(class(gpuCheck)[1] == "try-error"){
