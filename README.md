@@ -101,13 +101,6 @@ make
 sudo make install
 ```
 
-### Rstudio settings
-**If using an AMD card, ignore this secion.**
-If installing with Rstudio it won't recongize your `CUDA_HOME` by default.  
-You must currently update your `${R_HOME}/etc/Renviron` to include the variable 
-in order for Rstudio to find it.  I am hoping to have the package set this
-by default for whichever GPU you are utilizing in the future.
-
 Once all these things are set you should be able to install the package 
 and begin using your GPU :)
 
