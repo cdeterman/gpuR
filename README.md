@@ -5,7 +5,10 @@ Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
 to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this
 package is to provide the user a very simple R API.  This is accomplished by
-creating new classes similar to the structure of the [Matrix](http://cran.r-project.org/web/packages/Matrix/index.html)
+interfacing with the ViennaCL library that I have packaged in the R package
+[RViennaCL](http://github.com/cdeterman/RViennaCL).  To make the R API simple,
+I created new classes similar to the structure of the 
+[Matrix](http://cran.r-project.org/web/packages/Matrix/index.html)
 package.  By doing so, typical methods may be overloaded to make for a very
 pleasing sytax.  For example, to perform vector addition the syntax is: 
 
@@ -28,7 +31,7 @@ to have a CUDA based backend, please see my other package
 on top of this package where all functions herein are still applicable
 but also have the CUDA option available.  
 
-# INSTALL (also see the INSTALL file)
+# INSTALL
 
 The only verified installations at present consisted of using a NVIDIA GTX or
 AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
@@ -36,15 +39,14 @@ consisted of:
 
 ### Dependencies
 1. opencl-headers (shared library)
-2. clBLAS (maintained by [ArrayFire](https://github.com/arrayfire/clBLAS))
-3. An OpenCL SDK specific to your GPU vender (AMD, NVIDIA, Intel, etc.)
+2. An OpenCL SDK specific to your GPU vender (AMD, NVIDIA, Intel, etc.)
 
 #### Note, you currently can only have one type installed (NVIDIA or AMD)
 
 ### NVIDIA Driver and CUDA/OpenCL
 #### Up-to-date Card
 If you are fortunate enough to have a very recent card that you can
-use the most recent drivers.  THis install is much more simple
+use the most recent drivers.  This install is much more simple
 ```
 # Install Boost & OpenCL headers
 sudo apt-get install opencl-headers
@@ -84,26 +86,15 @@ to include `/usr/local/cuda-6.5/lib64`
 ### AMD Driver and OpenCL
 1. Purge existing fglrx drivers (`sudo sh /usr/share/ati/fglrx_uninstall.sh`)
 2. Install current fglrx drivers (`sudo apt-get install fglrx-updates`)
-3. Install opencl-headers (`sudo apt-get install opencl-headers`) -- needed
-to install clBLAS
+3. Install opencl-headers (`sudo apt-get install opencl-headers`)
 
-### Install clBLAS
-```
 # Install Boost & OpenCL headers
 sudo apt-get install libboost-all-dev opencl-headers
 
-# Install clBLAS
-git clone https://github.com/arrayfire/clBLAS.git
-cd clBLAS
-mkdir build && cd build
-cmake ../src -DCMAKE_BUILD_TYPE=Release
-make
-sudo make install
-```
 
 Once all these things are set you should be able to install the package 
 and begin using your GPU :)
 
 # Things to Do
 1. Obviously more vector functions and matrix implementations
-2. Implement clMAGMA?  Probably going to use ViennaCL and avoid clBLAS too.
+2. Would love any suggestions :) (submit in the issues)
