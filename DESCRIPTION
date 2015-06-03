@@ -16,7 +16,7 @@ Imports: Rcpp (>= 0.11.5),
     RcppArmadillo,
     bigmemory,
     bigalgebra
-LinkingTo: BH, bigmemory, Rcpp, RcppArmadillo
+LinkingTo: BH, bigmemory, Rcpp, RcppArmadillo, RViennaCL
 Suggests: testthat
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new

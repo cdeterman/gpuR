@@ -1,12 +1,11 @@
-####################################
+################################
 # configure for package gpuR
-# Charles Determan Jr.
+# Charles Determan Jr.        
+################################
 
 CXX_STD="CXX_STD=CXX11"
 PKG_CXXFLAGS="PKG_CXXFLAGS=-I../inst/include"
-PKG_LIBS="PKG_LIBS="
-
-PKG_LIBS="${PKG_LIBS} -Wl,-rpath,/usr/local/lib64 -lclBLAS"
+PKG_LIBS="PKG_LIBS=-lOpenCL"
 
 echo "${CXX_STD}" > src/Makevars
 echo "${PKG_CXXFLAGS}" >> src/Makevars

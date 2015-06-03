@@ -117,6 +117,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
 valueClass = "gpuMatrix"
 )
 
+setOldClass("typeof")
 #' @export
 setMethod('typeof', signature(x="gpuMatrix"),
           function(x) return(x@type))

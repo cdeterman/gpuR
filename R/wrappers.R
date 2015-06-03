@@ -168,37 +168,13 @@ gpu_BigMat_mult <- function(A, B){
     switch(typeof(C),
            integer = {cpp_gpuBigMatrix_igemm(A,B,C, kernel, "iMatMult")
            },
-           float = {cpp_gpuBigMatrix_sgemm(A,B,C)
+           float = {cpp_vienna_gpuBigMatrix_sgemm(A,B,C)
            },
-           double = {cpp_gpuBigMatrix_dgemm(A,B,C)
+           double = {cpp_vienna_gpuBigMatrix_dgemm(A,B,C)
            },
            {
                stop("matrix type not defined")
            })
-
-#     out <- switch(typeof(C),
-#                   integer = {
-#                       new("igpuBigMatrix", 
-#                           address=cpp_gpu_mat_mult(A,B,C, kernel, "iMatMult",
-#                                                    TRUE, TRUE, TRUE)@address
-#                       )
-#                   },
-#                   float = {
-#                       new("fgpuBigMatrix", 
-#                           address=cpp_gpu_sgemm(A,B,C,TRUE, TRUE, TRUE)@address
-#                       )
-#                   },
-#                   double = {
-#                       new("dgpuBigMatrix", 
-#                           address=cpp_gpu_dgemm(A,B,C, TRUE, TRUE, TRUE)@address
-#                       )
-#                   })
-
-#     out <- gpuMatrix(newMat, 
-#                      nrow=nrA, ncol=ncB,
-#                      byrow=TRUE)
-    # cleanup
-#     gc()
 
     return(C)
 }
@@ -215,7 +191,6 @@ gpu_BigMat_mult <- function(A, B){
 gpu_Mat_mult <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
-    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
     file <- file.path(pkg_path, "CL", "basic_gemm.cl")
     
     if(!file_test("-f", file)){
@@ -234,7 +209,7 @@ gpu_Mat_mult <- function(A, B){
                   },
                   float = {
                       new("fgpuMatrix", 
-                          x=cpp_gpuMatrix_sgemm(A@x,B@x),
+                          x=cpp_vienna_gpuMatrix_sgemm(A@x,B@x),
                           type="float"
                       )
                   },
@@ -243,7 +218,7 @@ gpu_Mat_mult <- function(A, B){
                           stop("Selected GPU does not support double precision")
                       }else{
                           new("dgpuMatrix", 
-                              x=cpp_gpuMatrix_dgemm(A@x,B@x),
+                              x=cpp_vienna_gpuMatrix_dgemm(A@x,B@x),
                               type="double"
                           )
                       }
@@ -298,13 +273,13 @@ gpu_Mat_axpy <- function(alpha, A, B){
                   },
                   float = {
                       new("fgpuMatrix", 
-                          x=cpp_gpuMatrix_saxpy(alpha, A@x, Z),
+                          x=cpp_vienna_gpuMatrix_saxpy(alpha, A@x, Z),
                           type="float"
                       )
                   },
                   double = {
                       new("dgpuMatrix", 
-                          x=cpp_gpuMatrix_daxpy(alpha, A@x,Z),
+                          x=cpp_vienna_gpuMatrix_daxpy(alpha, A@x,Z),
                           type="double"
                       )
                   },
@@ -363,10 +338,10 @@ gpu_BigMat_axpy <- function(alpha, A, B){
                cpp_gpuBigMatrix_iaxpy(alpha, A, Z, kernel, "iaxpy")
            },
            float = {
-               cpp_gpuBigMatrix_saxpy(alpha, A, Z)
+               cpp_vienna_gpuBigMatrix_saxpy(alpha, A, Z)
            },
            double = {
-               cpp_gpuBigMatrix_daxpy(alpha, A, Z)
+               cpp_vienna_gpuBigMatrix_daxpy(alpha, A, Z)
            },
            {
                stop("matrix type not defined")
