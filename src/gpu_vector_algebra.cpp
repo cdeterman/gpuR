@@ -4,8 +4,6 @@
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
-#include <RcppArmadillo.h>
-
 #include "cl_helpers.hpp"
 
 using namespace cl;
@@ -24,13 +22,15 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     const char* kernel_function = (const char*)kernel_string.c_str();
 
     // Convert input vectors to cl equivalent
-//    const std::vector<int> A = as<std::vector<int> >(A_);
-//    const std::vector<int> B = as<std::vector<int> >(B_);
-//    std::vector<int> C = as<std::vector<int> >(C_);
-    const arma::ivec A = as<arma::ivec >(A_);
-    const arma::ivec B = as<arma::ivec >(B_);
-    arma::ivec C = as<arma::ivec >(C_);
-    
+    const std::vector<int> A = as<std::vector<int> >(A_);
+    const std::vector<int> B = as<std::vector<int> >(B_);
+    std::vector<int> C = as<std::vector<int> >(C_);
+//    const arma::ivec A = as<arma::ivec >(A_);
+//    const arma::ivec B = as<arma::ivec >(B_);
+//    arma::ivec C = as<arma::ivec >(C_);
+//    
+//    const int LIST_SIZE = A.n_elem;
+
     const int LIST_SIZE = A.size();
     
     // Get available platforms
@@ -118,7 +118,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     err = queue.enqueueNDRangeKernel(kernel, NullRange, global, local);
     
     // Read buffer C into a local list        
-    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, LIST_SIZE * sizeof(cl_int), &C[0]);
-    
+    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, LIST_SIZE * sizeof(int), &C[0]);
+//    C.print("C vector!");
     return wrap(C);
 }

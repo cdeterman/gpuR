@@ -234,3 +234,29 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_vienna_gpuVector_daxpy
+SEXP cpp_vienna_gpuVector_daxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_vienna_gpuVector_daxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    __result = Rcpp::wrap(cpp_vienna_gpuVector_daxpy(alpha_, A_, B_));
+    return __result;
+END_RCPP
+}
+// cpp_vienna_gpuVector_saxpy
+SEXP cpp_vienna_gpuVector_saxpy(SEXP alpha_, SEXP A_, SEXP B_);
+RcppExport SEXP gpuR_cpp_vienna_gpuVector_saxpy(SEXP alpha_SEXP, SEXP A_SEXP, SEXP B_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type A_(A_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type B_(B_SEXP);
+    __result = Rcpp::wrap(cpp_vienna_gpuVector_saxpy(alpha_, A_, B_));
+    return __result;
+END_RCPP
+}

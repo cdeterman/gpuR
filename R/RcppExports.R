@@ -78,3 +78,11 @@ cpp_vienna_gpuMatrix_sgemm <- function(A_, B_) {
     .Call('gpuR_cpp_vienna_gpuMatrix_sgemm', PACKAGE = 'gpuR', A_, B_)
 }
 
+cpp_vienna_gpuVector_daxpy <- function(alpha_, A_, B_) {
+    .Call('gpuR_cpp_vienna_gpuVector_daxpy', PACKAGE = 'gpuR', alpha_, A_, B_)
+}
+
+cpp_vienna_gpuVector_saxpy <- function(alpha_, A_, B_) {
+    .Call('gpuR_cpp_vienna_gpuVector_saxpy', PACKAGE = 'gpuR', alpha_, A_, B_)
+}
+

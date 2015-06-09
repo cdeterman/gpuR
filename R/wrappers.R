@@ -103,6 +103,7 @@ gpu_vec_add <- function(A, B){
     if(!file_test("-f", file)){
         stop("kernel file does not exist")
     }
+
     C <- vector(mode = "integer", length=length(A))
     
     kernel <- readChar(file, file.info(file)$size)

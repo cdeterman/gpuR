@@ -2,8 +2,9 @@ library(gpuR)
 context("Vector algebra")
 
 set.seed(123)
-A <- sample(seq.int(10), 1000, replace = TRUE)
-B <- sample(seq.int(10), 1000, replace = TRUE)
+ORDER <- 100
+A <- sample(seq.int(10), ORDER, replace = TRUE)
+B <- sample(seq.int(10), ORDER, replace = TRUE)
 
 test_that("vector additonal successful", {
     
