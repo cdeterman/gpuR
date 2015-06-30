@@ -142,8 +142,6 @@ gpu_vec_subtr <- function(A, B){
 #' @param A A gpuMatrix object
 #' @param B A gpuMatrix object
 #' @return A gpuMatrix object
-#' @import bigalgebra 
-#' @import bigmemory
 #' @author Charles Determan Jr.
 gpu_Mat_mult <- function(A, B){
     
@@ -192,8 +190,6 @@ gpu_Mat_mult <- function(A, B){
 #' @param A A gpuMatrix object
 #' @param B A gpuMatrix object
 #' @return A gpuMatrix object
-#' @import bigalgebra 
-#' @import bigmemory
 #' @author Charles Determan Jr.
 gpu_Mat_axpy <- function(alpha, A, B){
     

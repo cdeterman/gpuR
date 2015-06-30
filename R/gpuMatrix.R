@@ -20,7 +20,6 @@ setGeneric("gpuMatrix", function(data = NA, ncol=NA, nrow=NA, type=NULL, ...){
     standardGeneric("gpuMatrix")
 })
 
-#' @import bigmemory
 #' @rdname gpuMatrix-methods
 #' @aliases gpuMatrix,matrix
 setMethod('gpuMatrix', 
