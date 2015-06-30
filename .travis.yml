@@ -9,13 +9,9 @@ r_packages:
   - assertive
   - devtools
   - Rcpp
-  - RcppArmadillo
-  - BH
-  - bigmemory.sri
+  - RcppEigen
 
 r_github_packages:
-  - kaneplusplus/bigmemory
-  - cdeterman/bigalgebra
   - cdeterman/RViennaCL
 
 before_install:

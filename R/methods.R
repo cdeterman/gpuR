@@ -60,18 +60,6 @@ setMethod("Compare", c(e1="gpuVector", e2="vector"),
 valueClass = "vector"
 )
 
-#' @export
-setMethod("%*%", signature(x="gpuBigMatrix", y = "gpuBigMatrix"),
-          function(x,y)
-          {
-              if( dim(x)[2] != dim(y)[1]){
-                  stop("Non-conformant matrices")
-              }
-              return(gpu_BigMat_mult(x, y))
-          },
-          valueClass = "gpuMatrix"
-)
-
 
 #' @export
 setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
@@ -83,22 +71,6 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
               return(gpu_Mat_mult(x, y))
           },
           valueClass = "gpuMatrix"
-)
-
-#' @export
-setMethod("Arith", c(e1="gpuBigMatrix", e2="gpuBigMatrix"),
-          function(e1, e2)
-          {
-              op = .Generic[[1]]
-              switch(op,
-                     `+` = gpu_BigMat_axpy(1, e1, e2),
-                     `-` = gpu_BigMat_axpy(-1, e2, e1),
-                    {
-                        stop("undefined operation")
-                    }
-              )
-          },
-valueClass = "gpuBigMatrix"
 )
 
 #' @export
@@ -124,12 +96,86 @@ setMethod('typeof', signature(x="gpuMatrix"),
 
 #' @export
 setMethod('ncol', signature(x="gpuMatrix"),
-          function(x) return(ncol(x@x)))
+          function(x) {
+              switch(typeof(x),
+                     "integer" = return(cpp_incol(x@address)),
+                     "float" = return(cpp_fncol(x@address)),
+                     "double" = return(cpp_dncol(x@address))
+              )
+          }
+)
 
 #' @export
 setMethod('nrow', signature(x="gpuMatrix"), 
-          function(x) return(nrow(x@x)))
+          function(x) {
+              switch(typeof(x),
+                     "integer" = return(cpp_inrow(x@address)),
+                     "float" = return(cpp_fnrow(x@address)),
+                     "double" = return(cpp_dnrow(x@address))
+              )
+          }
+)
 
 #' @export
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
+
+
+#' @export
+setMethod("[",
+          signature(x = "gpuMatrix", i="missing", j="missing", drop = "missing"),
+          function(x) {
+              switch(typeof(x),
+                     "integer" = return(iXptrToSEXP(x@address)),
+                     "float" = return(fXptrToSEXP(x@address)),
+                     "double" = return(dXptrToSEXP(x@address))
+              )
+          })
+
+
+#' @export
+print.gpuMatrix <- function(x, ..., n = NULL, width = NULL) {
+    cat("Source: gpuR Matrix ", dim_desc(x), "\n", sep = "")
+    cat("\n")
+    
+    if(!is.null(n)){
+        assert_is_integer(n)   
+    }else{
+        n <- ifelse(nrow(x) >= 5, 5L, nrow(x))
+    }
+    if(!is.null(width)){
+        assert_is_integer(width)    
+    }else{
+        width <- ifelse(ncol(x) >= 5, 5L, ncol(x))
+    }
+    
+    if(width > ncol(x)) stop("width greater than number of columns")
+    
+    tab <- switch(typeof(x),
+                  "integer" = truncIntgpuMat(x@address, n, width),
+                  "float" = truncFloatgpuMat(x@address, n, width),
+                  "double" = truncDoublegpuMat(x@address, n, width)
+                  )
+    
+    block = structure(
+        list(table = tab, extra = ncol(x)-width), 
+        class = "trunc_gpuTable")
+    
+    print(block)    
+    
+    invisible(x)
+}
+
+
+print.trunc_gpuTable <- function(x, ...) {
+    if (!is.null(x$table)) {
+        print(x$table)
+    }
+    
+    if (x$extra > 0) {
+        nvars <- x$extra
+        cat("\n", paste0(nvars, " variables not shown"), "\n", sep = "")
+    }
+
+    invisible()
+}

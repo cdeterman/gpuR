@@ -8,15 +8,14 @@ Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 Description: This package was developed to provide GPU enabled functions
     for R objects in the most simple and approachable manner possible.  New
     gpu classes have been provided to wrap typical R objects 
-    (e.g. vector, matrix) and big.matrix objects and utilize typical R
+    (e.g. vector, matrix) and utilize typical R
     syntax without the need to know OpenCL.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.5),
-    assertive,
-    RcppArmadillo,
-    bigmemory,
-    bigalgebra
-LinkingTo: BH, bigmemory, Rcpp, RcppArmadillo, RViennaCL
+    assertive
+LinkingTo: Rcpp, 
+    RcppEigen, 
+    RViennaCL
 Suggests: testthat
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new

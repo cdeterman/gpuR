@@ -4,14 +4,9 @@
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
-//#include <CL/cl.h>
+#include <RcppEigen.h>
 
-#include <RcppArmadillo.h>
-
-#include <bigmemory/BigMatrix.h>
-#include <bigmemory/MatrixAccessor.hpp>
-
-#include "arma_helpers.hpp"
+#include "eigen_helpers.hpp"
 #include "cl_helpers.hpp"
 
 using namespace cl;
@@ -19,7 +14,7 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
+void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     SEXP sourceCode_, SEXP kernel_function_)
 {
     // declarations
@@ -28,15 +23,15 @@ SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
     
     std::string kernel_string = as<std::string>(kernel_function_);
     const char* kernel_function = kernel_string.data();
-                              
-    const arma::Mat<int> Am = as<arma::Mat<int> >(A_);
-    arma::Mat<int> Bm = as<arma::Mat<int> >(B_);
+        
+    Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     
-    const int N = Am.n_elem;
+    MapMat<int> Am = MapMat<int>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<int> Bm = MapMat<int>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    
+    const int N = Am.size();
     const int alpha = as<int>(alpha_);
-
-//    Am.print("A Matrix");
-//    Bm.print("B Matrix");
     
     // Get available platforms
     std::vector<Platform> platforms;
@@ -85,7 +80,6 @@ SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
             // Get the build log for the first device
             std::string log = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
             stop(log);
-            //std::cerr << log << std::endl;
         }
         stop("program failed to build");
     }
@@ -109,8 +103,8 @@ SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
     Buffer bufferB = Buffer(context, CL_MEM_READ_WRITE, N * sizeof(int), NULL, &err);
 
     // Copy lists A and B to the memory buffers
-    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, N * sizeof(int), &Am[0]);
-    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm[0]);
+    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, N * sizeof(int), &Am(0));
+    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm(0));
 
     // Set arguments to kernel
     err = kernel.setArg(0, alpha);
@@ -125,7 +119,5 @@ SEXP cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP A_, SEXP B_,
 //        err = queue.enqueueNDRangeKernel(kernel, NullRange, global, NullRange);
         
     // Read buffer C into a local list        
-    err = queue.enqueueReadBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm[0]);
-    
-    return wrap(Bm);
+    err = queue.enqueueReadBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm(0));
 }

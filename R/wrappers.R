@@ -136,50 +136,6 @@ gpu_vec_subtr <- function(A, B){
 }
 
 
-#' @title GPU Big Matrix Multiplication
-#' @description big matrix gpu multiplication
-#' @param A A gpuBigMatrix object
-#' @param B A gpuBigMatrix object
-#' @return A gpuBigMatrix object
-#' @import bigalgebra 
-#' @import bigmemory
-#' @author Charles Determan Jr.
-gpu_BigMat_mult <- function(A, B){
-    
-    nrA = nrow(A)
-    ncA = ncol(A)
-    nrB = nrow(B)
-    ncB = ncol(B)
-    
-    pkg_path <- find.package("gpuR", .libPaths())
-#     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
-    file <- file.path(pkg_path, "CL", "basic_gemm.cl")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-    kernel <- readChar(file, file.info(file)$size)
-    
-    type <- typeof(A)
-#     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
-
-
-    C <- gpuBigMatrix(big.matrix(nrB, ncA, type=type), type=type)
-
-    switch(typeof(C),
-           integer = {cpp_gpuBigMatrix_igemm(A,B,C, kernel, "iMatMult")
-           },
-           float = {cpp_vienna_gpuBigMatrix_sgemm(A,B,C)
-           },
-           double = {cpp_vienna_gpuBigMatrix_dgemm(A,B,C)
-           },
-           {
-               stop("matrix type not defined")
-           })
-
-    return(C)
-}
-
 
 #' @title GPU Matrix Multiplication
 #' @description matrix multiplication
@@ -200,35 +156,33 @@ gpu_Mat_mult <- function(A, B){
     kernel <- readChar(file, file.info(file)$size)
     
     type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
 
-    out <- switch(type,
-                  integer = {
-                      new("igpuMatrix", 
-                          x=cpp_gpuMatrix_igemm(A@x,B@x, kernel, "iMatMult"),
-                          type="integer"
-                      )
+    switch(type,
+                  integer = {cpp_gpuMatrix_igemm(A@address,
+                                                      B@address, 
+                                                      C@address,
+                                                      kernel, 
+                                                      "iMatMult")
                   },
-                  float = {
-                      new("fgpuMatrix", 
-                          x=cpp_vienna_gpuMatrix_sgemm(A@x,B@x),
-                          type="float"
-                      )
+                  float = {cpp_vienna_gpuMatrix_sgemm(A@address,
+                                                             B@address,
+                                                             C@address)
                   },
                   double = {
                       if(!deviceHasDouble()){
                           stop("Selected GPU does not support double precision")
-                      }else{
-                          new("dgpuMatrix", 
-                              x=cpp_vienna_gpuMatrix_dgemm(A@x,B@x),
-                              type="double"
-                          )
+                      }else{cpp_vienna_gpuMatrix_dgemm(A@address,
+                                                                 B@address,
+                                                                 C@address)
                       }
                   },
                   {
                       stop("type not recognized")
                   })
 #     rm(C)
-    return(out)
+    return(C)
 }
 
 
@@ -258,99 +212,37 @@ gpu_Mat_axpy <- function(alpha, A, B){
     
     type <- typeof(A)
     
-    Z <- matrix(0, nrow=nrB, ncol=ncA)
+    Z <- gpuMatrix(nrow=nrB, ncol=ncA, type=type)
     if(!missing(B))
     {
-        if(length(B@x) != length(A@x)) stop("Lengths of matrices must match")
-        Z <- B@x
+        if(length(B[]) != length(A[])) stop("Lengths of matrices must match")
+        Z@address <- B@address
     }
     
-    out <- switch(type,
-                  integer = {
-                      new("igpuMatrix", 
-                          x=cpp_gpuMatrix_iaxpy(alpha, A@x,Z, kernel, "iaxpy"),
-                          type="integer"
-                      )
-                  },
-                  float = {
-                      new("fgpuMatrix", 
-                          x=cpp_vienna_gpuMatrix_saxpy(alpha, A@x, Z),
-                          type="float"
-                      )
-                  },
-                  double = {
-                      new("dgpuMatrix", 
-                          x=cpp_vienna_gpuMatrix_daxpy(alpha, A@x,Z),
-                          type="double"
-                      )
-                  },
-                  {
-                      stop("type not recognized")
-                  }
-            )
-
-    return(out)
-}
-
-
-#' @title GPU Big Matrix (X)AXPY
-#' @description big matrix gpu daxpy
-#' @param alpha Numeric value to multiple the A matrix
-#' @param A A gpuBigMatrix object
-#' @param B A gpuBigMatrix object
-#' @return A gpuBigMatrix object
-#' @import bigalgebra 
-#' @import bigmemory
-#' @author Charles Determan Jr.
-gpu_BigMat_axpy <- function(alpha, A, B){
-    
-    nrA = nrow(A)
-    ncA = ncol(A)
-    nrB = nrow(B)
-    ncB = ncol(B)
-    
-    if(abs(alpha) != 1){
-        stop("alpha can only be 1 or -1")
-    }
-    
-    pkg_path <- find.package("gpuR", .libPaths())
-    #     file <- file.path(pkg_path, "CL", "basic_matrix_mult_kernel.cl")
-    file <- file.path(pkg_path, "CL", "basic_axpy.cl")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-    kernel <- readChar(file, file.info(file)$size)
-    
-    type <- typeof(A)    
-    
-#     options(bigmemory.typecast.warning=FALSE)
-    
-    Z <- gpuBigMatrix(big.matrix(nrB, ncA, type=type), type=type)
-    if(!missing(B))
-    {
-#         options(bigmemory.typecast.warning=FALSE)
-        if(length(B) != length(A)) stop("Lengths of matrices must match")
-        Z[] <- B[]
-    }
-    
-    switch(typeof(Z),
-           integer = {
-               cpp_gpuBigMatrix_iaxpy(alpha, A, Z, kernel, "iaxpy")
+    switch(type,
+           integer = {cpp_gpuMatrix_iaxpy(alpha, 
+                                          A@address,
+                                          Z@address, 
+                                          kernel, 
+                                          "iaxpy")
            },
-           float = {
-               cpp_vienna_gpuBigMatrix_saxpy(alpha, A, Z)
+           float = {cpp_vienna_gpuMatrix_saxpy(alpha, 
+                                               A@address, 
+                                               Z@address)
            },
-           double = {
-               cpp_vienna_gpuBigMatrix_daxpy(alpha, A, Z)
+           double = {cpp_vienna_gpuMatrix_daxpy(alpha, 
+                                                A@address,
+                                                Z@address)
            },
-           {
-               stop("matrix type not defined")
-           }
+        {
+            stop("type not recognized")
+        }
     )
 
     return(Z)
 }
+
+
 
 # #' @export
 # test_tmp_matrix <- function(A, B){

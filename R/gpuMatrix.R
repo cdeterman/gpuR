@@ -32,17 +32,17 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    x=data,
+                                    address=matrixToIntXptr(data),
                                     type=type)
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    x=data,
+                                    address=matrixToFloatXptr(data),
                                     type=type)
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    x = data, 
+                                    address = matrixToDoubleXptr(data), 
                                     type=type)
                             },
                             stop("this is an unrecognized 
@@ -53,3 +53,35 @@ setMethod('gpuMatrix',
           },
           valueClass = "gpuMatrix")
 
+
+#' @rdname gpuMatrix-methods
+#' @aliases gpuMatrix,missingOrNULL
+setMethod('gpuMatrix', 
+          signature(data = 'missingOrNULL'),
+          function(data, ncol=NA, nrow=NA, type=NULL){
+              
+              if (is.null(type)) type <- getOption("gpuR.default.type")
+              
+              data = switch(type,
+                            integer = {
+                                new("igpuMatrix", 
+                                    address=emptyIntXptr(nrow, ncol),
+                                    type=type)
+                            },
+                            float = {
+                                new("fgpuMatrix", 
+                                    address=emptyFloatXptr(nrow, ncol),
+                                    type=type)
+                            },
+                            double = {
+                                new("dgpuMatrix",
+                                    address = emptyDoubleXptr(nrow, ncol), 
+                                    type=type)
+                            },
+                            stop("this is an unrecognized 
+                                 or unimplemented data type")
+              )
+              
+              return(data)
+          },
+          valueClass = "gpuMatrix")

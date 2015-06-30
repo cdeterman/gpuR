@@ -27,7 +27,7 @@ test_that("gpuMatrix Integer Matrix multiplication successful", {
     
     igpuC <- igpuA %*% igpuB
     
-    expect_equivalent(igpuC@x[,], Cint, 
+    expect_equivalent(igpuC[,], Cint, 
                       info="float matrix elements not equivalent")      
 })
 
@@ -43,7 +43,7 @@ test_that("gpuMatrix Single Precision Matrix multiplication successful", {
     fgpuC <- fgpuA %*% fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
-    expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
 })
 
@@ -59,7 +59,7 @@ test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
     fgpuC <- fgpuA - fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
-    expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
 })
 
@@ -75,7 +75,7 @@ test_that("gpuMatrix Single Precision Matrix Addition successful", {
     fgpuC <- fgpuA + fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
-    expect_equal(fgpuC@x[,], C, tolerance=1e-07, 
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
 })
 
@@ -91,7 +91,7 @@ test_that("gpuMatrix Integer Matrix Subtraction successful", {
     igpuC <- igpuA - igpuB
     
     expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC@x[,], Cint, 
+    expect_equal(igpuC[,], Cint, 
                  info="integer matrix elements not equivalent")  
 })
 
@@ -107,7 +107,7 @@ test_that("gpuMatrix Integer Matrix Addition successful", {
     igpuC <- igpuA + igpuB
     
     expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC@x[,], Cint,
+    expect_equal(igpuC[,], Cint,
                  info="integer matrix elements not equivalent")  
 })
 
@@ -124,7 +124,7 @@ test_that("gpuMatrix Double Precision Matrix multiplication successful", {
     dgpuC <- dgpuA %*% dgpuB
     
     expect_is(dgpuC, "dgpuMatrix")
-    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+    expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
 })
 
@@ -141,7 +141,7 @@ test_that("gpuMatrix Double Precision Matrix Subtraction successful", {
     dgpuC <- dgpuA - dgpuB
     
     expect_is(dgpuC, "dgpuMatrix")
-    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+    expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
 })
 
@@ -158,6 +158,6 @@ test_that("gpuMatrix Double Precision Matrix Addition successful", {
     dgpuC <- dgpuA + dgpuB
     
     expect_is(dgpuC, "dgpuMatrix")
-    expect_equal(dgpuC@x[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+    expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
 })

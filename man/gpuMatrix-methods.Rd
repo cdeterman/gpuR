@@ -5,11 +5,16 @@
 \alias{gpuMatrix}
 \alias{gpuMatrix,matrix}
 \alias{gpuMatrix,matrix-method}
+\alias{gpuMatrix,missingOrNULL}
+\alias{gpuMatrix,missingOrNULL-method}
 \title{Construct a gpuMatrix}
 \usage{
 gpuMatrix(data = NA, ncol = NA, nrow = NA, type = NULL, ...)
 
 \S4method{gpuMatrix}{matrix}(data, type = NULL)
+
+\S4method{gpuMatrix}{missingOrNULL}(data, ncol = NA, nrow = NA,
+  type = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a

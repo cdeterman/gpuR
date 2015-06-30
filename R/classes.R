@@ -1,9 +1,4 @@
-# @section Slots:
-#  Common to all gpuVector objects in the package
-#  \describe{
-#      \item{\code{object}:}{vector data}
-#  }
-
+setClassUnion("missingOrNULL", c("missing", "NULL"))
 
 # The primary class for all gpuVector objects
 
@@ -54,110 +49,6 @@ setClass("igpuVector",
          })
 
 
-# The primary class for all gpuBigMatrix objects
-
-#' @title gpuBigMatrix Class
-#' @description This is the 'mother' class for all
-#' gpuBigMatrix objects.  It directly inherits from
-#' the \link[bigmemory]{big.matrix} class.  All other 
-#' gpuBigMatrix classes inherit from this class but 
-#' there are no current circumstances where this class 
-#' is used directly.
-#' 
-#' There are multiple child classes that correspond
-#' to the particular data type contained.  These include
-#' \code{igpuBigMatrix}, \code{fgpuBigMatrix}, and 
-#' \code{dgpuBigMatrix} corresponding to integer, float, and
-#' double data types respectively.
-#' @section Slots:
-#'  Common to all gpuBigMatrix objects in the package
-#'  \describe{
-#'      \item{\code{address}:}{External pointer to shared
-#'      memory matrix.}
-#'  }
-#' @name gpuBigMatrix-class
-#' @rdname gpuBigMatrix-class
-#' @author Charles Determan Jr.
-#' @seealso \code{\link{igpuBigMatrix-class}}, 
-#' \code{\link{fgpuBigMatrix-class}},
-#' \code{\link{dgpuBigMatrix-class}}
-#' @export
-setClass('gpuBigMatrix', contains = "big.matrix")
-
-
-#' @title igpuBigMatrix Class
-#' @description An integer type matrix in the S4 \code{gpuBigMatrix}
-#' representation.
-#' @section Slots:
-#'  \describe{
-#'      \item{\code{address}:}{External pointer to shared
-#'      integer type memory mapped matrix.}
-#'  }
-#' @name igpuBigMatrix-class
-#' @rdname igpuBigMatrix-class
-#' @author Charles Determan Jr.
-#' @seealso \code{\link{gpuBigMatrix-class}}, 
-#' \code{\link{fgpuBigMatrix-class}},
-#' \code{\link{dgpuBigMatrix-class}}
-#' @export
-setClass("igpuBigMatrix",
-         contains = "gpuBigMatrix",
-         validity = function(object) {
-             if( typeof(object) != "integer"){
-                 return("igpuBigMatrix must be of type 'integer'")
-             }
-             TRUE
-         })
-
-#' @title fgpuBigMatrix Class
-#' @description A float type matrix in the S4 \code{gpuBigMatrix}
-#' representation.
-#' @section Slots:
-#'  \describe{
-#'      \item{\code{address}:}{External pointer to shared
-#'      float type memory mapped matrix.}
-#'  }
-#' @name fgpuBigMatrix-class
-#' @rdname fgpuBigMatrix-class
-#' @author Charles Determan Jr.
-#' @seealso \code{\link{gpuBigMatrix-class}}, 
-#' \code{\link{fgpuBigMatrix-class}},
-#' \code{\link{dgpuBigMatrix-class}}
-#' @export
-setClass("fgpuBigMatrix",
-         contains = "gpuBigMatrix",
-         validity = function(object) {
-             if( typeof(object) != "float"){
-                 return("fgpuBigMatrix must be of type 'float'")
-             }
-             TRUE
-         })
-
-
-#' @title dgpuBigMatrix Class
-#' @description A double type matrix in the S4 \code{gpuBigMatrix}
-#' representation.
-#' @section Slots:
-#'  \describe{
-#'      \item{\code{address}:}{External pointer to shared
-#'      double type memory mapped matrix.}
-#'  }
-#' @name dgpuBigMatrix-class
-#' @rdname dgpuBigMatrix-class
-#' @author Charles Determan Jr.
-#' @seealso \code{\link{gpuBigMatrix-class}}, 
-#' \code{\link{igpuBigMatrix-class}},
-#' \code{\link{fgpuBigMatrix-class}}
-#' @export
-setClass("dgpuBigMatrix",
-         contains = "gpuBigMatrix",
-         validity = function(object) {
-             if( typeof(object) != "double"){
-                 return("dgpuBigMatrix must be of type 'double'")
-             }
-             TRUE
-         })
-
 # The primary class for all gpuMatrix objects
 
 #' @title gpuMatrix Class
@@ -195,7 +86,7 @@ setClass("dgpuBigMatrix",
 #' \code{\link{dgpuMatrix-class}}
 #' @export
 setClass('gpuMatrix', 
-         slots = c(x="matrix", type="character"))
+         slots = c(address="externalptr", type="character"))
 
 
 #' @title igpuMatrix Class

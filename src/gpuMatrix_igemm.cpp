@@ -4,14 +4,9 @@
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
-//#include <CL/cl.h>
+#include <RcppEigen.h>
 
-#include <RcppArmadillo.h>
-
-#include <bigmemory/BigMatrix.h>
-#include <bigmemory/MatrixAccessor.hpp>
-
-#include "arma_helpers.hpp"
+#include "eigen_helpers.hpp"
 #include "cl_helpers.hpp"
 
 using namespace cl;
@@ -19,10 +14,9 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_, 
+void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     SEXP sourceCode_, SEXP kernel_function_)
 {
-    //std::cout << "called the function" << std::endl;
     // declarations
     cl_int err;
     std::string sourceCode = as<std::string>(sourceCode_);
@@ -30,22 +24,23 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
     std::string kernel_string = as<std::string>(kernel_function_);
     const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
-                              
-    const arma::Mat<int> Am = as<arma::Mat<int> >(A_);
-    const arma::Mat<int> Bm = as<arma::Mat<int> >(B_);
-//    arma::Mat<int> Cm = as<arma::Mat<int> >(C_);
-    
-    int Mdim = Am.n_cols;
-    int Ndim = Bm.n_rows;
-    int Pdim = Am.n_rows;
-    int Kdim = Bm.n_cols;
 
-    arma::Mat<int> Cm = arma::Mat<int>(Pdim, Kdim);
-    Cm.zeros();
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
     
-    const int szA = Am.n_elem;
-    const int szB = Bm.n_elem;
-    const int szC = Cm.n_elem;
+    MapMat<double> Am = MapMat<double>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Bm = MapMat<double>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<double> Cm = MapMat<double>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    int Mdim = Am.cols();
+    int Ndim = Bm.rows();
+    int Pdim = Am.rows();
+    int Kdim = Bm.cols();
+    
+    const int szA = Am.size();
+    const int szB = Bm.size();
+    const int szC = Cm.size();
     
     // Get available platforms
     std::vector<Platform> platforms;
@@ -82,7 +77,7 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
        
 //        std::cout << sourceCode.c_str() << std::endl;
 
-        // Make program of the source code in the context
+    // Make program of the source code in the context
     Program program = Program(context, source);
     if (err != CL_SUCCESS)
     {
@@ -107,7 +102,7 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
         
 //        std::cout << "Program Built" << std::endl;
         
-        // Make kernel
+    // Make kernel
     Kernel kernel(program, "iMatMult", &err);
 //        Kernel kernel(program, kernel_function, &err);
     
@@ -126,8 +121,8 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
     Buffer bufferC = Buffer(context, CL_MEM_WRITE_ONLY, szC * sizeof(int), NULL, &err);
 
     // Copy lists A and B to the memory buffers
-    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, szA * sizeof(int), &Am[0]);
-    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, szB * sizeof(int), &Bm[0]);
+    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, szA * sizeof(int), &Am(0));
+    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, szB * sizeof(int), &Bm(0));
 
         // Set arguments to kernel
 //        NDRange localWorkSize = NDRange(16, 16);
@@ -161,7 +156,5 @@ SEXP cpp_gpuMatrix_igemm(SEXP A_, SEXP B_,
         
     // Read buffer C into a local list        
     err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, 
-                                szC * sizeof(int), &Cm[0]);
-
-    return wrap(Cm);
+                                szC * sizeof(int), &Cm(0));
 }

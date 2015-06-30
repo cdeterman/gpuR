@@ -1,10 +1,8 @@
 
-// Armadillo headers (disable BLAS and LAPACK to avoid linking issues)
-#define ARMA_DONT_USE_BLAS
-#define ARMA_DONT_USE_LAPACK
+// eigen headers for handling the R input data
+#include <RcppEigen.h>
 
-// armadillo headers for handling the R input data
-#include <RcppArmadillo.h>
+#include "eigen_helpers.hpp"
 
 // ViennaCL headers
 #include "vcl_gemm.hpp"
@@ -12,23 +10,34 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-SEXP cpp_vienna_gpuMatrix_dgemm(SEXP A_, SEXP B_)
+void cpp_vienna_gpuMatrix_dgemm(SEXP ptrA_, 
+                                SEXP ptrB_,
+                                SEXP ptrC_)
 {
-    const arma::Mat<double> Am = as<arma::Mat<double> >(A_);
-    const arma::Mat<double> Bm = as<arma::Mat<double> >(B_);
     
-    arma::Mat<double> Cm = cpp_arma_vienna_gemm(Am, Bm);
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
     
-    return wrap(Cm);
+    MapMat<double> Am = MapMat<double>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Bm = MapMat<double>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<double> Cm = MapMat<double>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_arma_vienna_gemm(Am, Bm, Cm);
 }
 
 //[[Rcpp::export]]
-SEXP cpp_vienna_gpuMatrix_sgemm(SEXP A_, SEXP B_)
-{
-    const arma::Mat<float> Am = as<arma::Mat<float> >(A_);
-    const arma::Mat<float> Bm = as<arma::Mat<float> >(B_);
+SEXP cpp_vienna_gpuMatrix_sgemm(SEXP ptrA_, 
+                                SEXP ptrB_, 
+                                SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
     
-    arma::Mat<float> Cm = cpp_arma_vienna_gemm(Am, Bm);
+    MapMat<float> Am = MapMat<float>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Bm = MapMat<float>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<float> Cm = MapMat<float>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
-    return wrap(Cm);
+    cpp_arma_vienna_gemm(Am, Bm, Cm);
 }
