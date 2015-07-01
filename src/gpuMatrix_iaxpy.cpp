@@ -27,8 +27,8 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     
-    MapMat<int> Am = MapMat<int>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<int> Bm = MapMat<int>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    typename MapMat<int>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    typename MapMat<int>::Type Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

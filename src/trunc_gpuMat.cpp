@@ -16,7 +16,7 @@ template<typename T>
 SEXP trunc_mat(SEXP ptrA_, int nr, int nc)
 {
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
-    MapMat<T> Am = MapMat<T>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    typename MapMat<T>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     return wrap(Am.topLeftCorner(nr, nc));
 }
 

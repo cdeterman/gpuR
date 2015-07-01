@@ -31,7 +31,7 @@ SEXP matrixToDoubleXptr(SEXP data)
 // [[Rcpp::export]]
 SEXP dXptrToSEXP(SEXP ptrA)
 {
-    MapMat<double> A = XPtrToSEXP<double>(ptrA);
+    typename MapMat<double>::Type A = XPtrToSEXP<double>(ptrA);
     return wrap(A);
 }
 
@@ -39,7 +39,7 @@ SEXP dXptrToSEXP(SEXP ptrA)
 // [[Rcpp::export]]
 SEXP fXptrToSEXP(SEXP ptrA)
 {
-    MapMat<float> A = XPtrToSEXP<float>(ptrA);
+    typename MapMat<float>::Type A = XPtrToSEXP<float>(ptrA);
     return wrap(A);
 }
 
@@ -47,7 +47,7 @@ SEXP fXptrToSEXP(SEXP ptrA)
 // [[Rcpp::export]]
 SEXP iXptrToSEXP(SEXP ptrA)
 {
-    MapMat<int> A = XPtrToSEXP<int>(ptrA);
+    typename MapMat<int>::Type A = XPtrToSEXP<int>(ptrA);
     return wrap(A);
 }
 

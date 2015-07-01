@@ -29,8 +29,8 @@ template <typename T>
 inline
 void cpp_arma_vienna_axpy(
     T const alpha, 
-    MapMat<T> &Am, 
-    MapMat<T> &Bm)
+    typename MapMat<T>::Type &Am, 
+    typename MapMat<T>::Type &Bm)
 {    
     //use only GPUs:
     long id = 0;

@@ -19,11 +19,11 @@ void cpp_vienna_gpuMatrix_dgemm(SEXP ptrA_,
     Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
     
-    MapMat<double> Am = MapMat<double>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm = MapMat<double>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<double> Cm = MapMat<double>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    typename MapMat<double>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    typename MapMat<double>::Type Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    typename MapMat<double>::Type Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
 
-    cpp_arma_vienna_gemm(Am, Bm, Cm);
+    cpp_arma_vienna_gemm<double>(Am, Bm, Cm);
 }
 
 //[[Rcpp::export]]
@@ -35,9 +35,9 @@ SEXP cpp_vienna_gpuMatrix_sgemm(SEXP ptrA_,
     Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
     
-    MapMat<float> Am = MapMat<float>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Bm = MapMat<float>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<float> Cm = MapMat<float>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    typename MapMat<float>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    typename MapMat<float>::Type Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    typename MapMat<float>::Type Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
-    cpp_arma_vienna_gemm(Am, Bm, Cm);
+    cpp_arma_vienna_gemm<float>(Am, Bm, Cm);
 }

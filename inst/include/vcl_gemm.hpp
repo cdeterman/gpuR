@@ -28,7 +28,10 @@ using namespace Rcpp;
 
 template <typename T>
 inline
-void cpp_arma_vienna_gemm(MapMat<T> &Am, MapMat<T> &Bm, MapMat<T> &Cm)
+void cpp_arma_vienna_gemm(
+    typename MapMat<T>::Type &Am, 
+    typename MapMat<T>::Type &Bm, 
+    typename MapMat<T>::Type &Cm)
 {    
     //use only GPUs:
     long id = 0;

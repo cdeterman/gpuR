@@ -6,14 +6,20 @@
 #include "dynEigen.hpp"
 
 
-template<class T>
-using MapMat = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
+// Would very much prefer to use this new C++11 syntax
+// but the Travis-CI g++ always defaults to use C++0x which is 
+// failing with this alias typedef so using the hideous struct below
+// requiring the terrible MapMat<T>::Type syntax which also requires
+// a typename declariation in each instance
 
-//template<typename T>
-//struct MapMat
-//{
-//    typedef Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Type;
-//};
+//template<class T>
+//using MapMat = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
+
+template<class T>
+struct MapMat
+{
+    typedef Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Type;
+};
 
 template <typename T>
 SEXP sexpToXptr(SEXP A)
@@ -26,10 +32,10 @@ SEXP sexpToXptr(SEXP A)
 // convert an XPtr back to a MapMat object to ultimately 
 // be returned as a SEXP object
 template <typename T>
-MapMat<T> XPtrToSEXP(SEXP ptrA_)
+typename MapMat<T>::Type XPtrToSEXP(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
-    MapMat<T> A = MapMat<T>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    typename MapMat<T>::Type A(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     return A;
 }
 
