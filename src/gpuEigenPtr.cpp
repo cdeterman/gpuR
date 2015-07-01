@@ -1,7 +1,7 @@
 
 #include <RcppEigen.h>
 
-#include "eigen_helpers.hpp"
+#include "gpuR/eigen_helpers.hpp"
 
 using namespace Rcpp;
 

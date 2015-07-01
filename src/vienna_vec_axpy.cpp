@@ -7,7 +7,7 @@
 //#include <RcppArmadillo.h>
 //
 //// ViennaCL headers
-//#include "vcl_vec_axpy.hpp"
+//#include "gpuR/vcl_vec_axpy.hpp"
 //
 //using namespace Rcpp;
 //

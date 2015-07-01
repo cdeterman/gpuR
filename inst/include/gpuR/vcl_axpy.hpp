@@ -2,7 +2,7 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "eigen_helpers.hpp"
+#include "gpuR/eigen_helpers.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -22,16 +22,15 @@
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/matrix.hpp"
-#include "viennacl/linalg/prod.hpp"
 
 using namespace Rcpp;
 
 template <typename T>
 inline
-void cpp_arma_vienna_gemm(
+void cpp_arma_vienna_axpy(
+    T const alpha, 
     typename MapMat<T>::Type &Am, 
-    typename MapMat<T>::Type &Bm, 
-    typename MapMat<T>::Type &Cm)
+    typename MapMat<T>::Type &Bm)
 {    
     //use only GPUs:
     long id = 0;
@@ -49,7 +48,7 @@ void cpp_arma_vienna_gemm(
     viennacl::copy(Am, vcl_A); 
     viennacl::copy(Bm, vcl_B); 
     
-    vcl_C = viennacl::linalg::prod(vcl_A, vcl_B);
-    
-    viennacl::copy(vcl_C, Cm);
+    vcl_B += alpha * vcl_A;
+
+    viennacl::copy(vcl_B, Bm);
 }

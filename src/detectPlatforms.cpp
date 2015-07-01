@@ -4,7 +4,7 @@
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
-#include "cl_helpers.hpp"
+#include "gpuR/cl_helpers.hpp"
 
 #include <Rcpp.h>
 

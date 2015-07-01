@@ -2,10 +2,10 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "eigen_helpers.hpp"
+#include "gpuR/eigen_helpers.hpp"
 
 // ViennaCL headers
-#include "vcl_axpy.hpp"
+#include "gpuR/vcl_axpy.hpp"
 
 using namespace Rcpp;
 

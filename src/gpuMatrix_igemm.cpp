@@ -6,8 +6,8 @@
 
 #include <RcppEigen.h>
 
-#include "eigen_helpers.hpp"
-#include "cl_helpers.hpp"
+#include "gpuR/eigen_helpers.hpp"
+#include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
 using namespace Rcpp;

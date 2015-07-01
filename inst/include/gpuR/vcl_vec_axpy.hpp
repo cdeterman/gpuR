@@ -6,7 +6,7 @@
 //#include <RcppArmadillo.h>
 #include <RcppEigen.h>
 
-#include "eigen_helpers.hpp"
+#include "gpuR/eigen_helpers.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1

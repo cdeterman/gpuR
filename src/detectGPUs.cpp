@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "cl_helpers.hpp"
+#include "gpuR/cl_helpers.hpp"
 
 #include <Rcpp.h>
 
