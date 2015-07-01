@@ -15,7 +15,7 @@ SEXP sexpToXptr(SEXP A)
 {
     dynEigen<T> *C = new dynEigen<T>(A);
     Rcpp::XPtr<dynEigen<T> > pMat(C);
-    return(pMat);
+    return pMat;
 }
 
 // convert an XPtr back to a MapMat object to ultimately 
@@ -34,7 +34,7 @@ SEXP emptyXptr(int nr, int nc)
 {
     dynEigen<T> *C = new dynEigen<T>(nr, nc);
     Rcpp::XPtr<dynEigen<T> > pMat(C);
-    return(pMat);
+    return pMat;
 }
  
 #endif

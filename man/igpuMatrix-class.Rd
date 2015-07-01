@@ -11,7 +11,7 @@ representation.
 \section{Slots}{
 
  \describe{
-     \item{\code{x}:}{A integer typed R matrix}
+     \item{\code{address}:}{Pointer to a integer typed matrix}
      \item{\code{type}:}{Character object specifying
      the type the matrix data is integer}
  }

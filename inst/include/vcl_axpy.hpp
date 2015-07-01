@@ -10,6 +10,14 @@
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1
 
+//#ifdef VIENNACL_DEBUG_ALL
+//#undef VIENNACL_DEBUG_ALL
+//#endif
+//
+//#ifdef VIENNACL_DEBUG_DEVICE
+//#undef VIENNACL_DEBUG_DEVICE
+//#endif
+
 // ViennaCL headers
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"

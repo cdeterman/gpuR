@@ -11,7 +11,7 @@ representation.
 \section{Slots}{
 
  \describe{
-     \item{\code{x}:}{A numeric R matrix}
+     \item{\code{address}:}{Pointer to a double type matrix}
      \item{\code{type}:}{Character object specifying
      the type the matrix data is double}
  }
