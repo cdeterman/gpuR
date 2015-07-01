@@ -25,13 +25,13 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
 
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<int> > ptrC(ptrC_);
     
-    MapMat<double> Am = MapMat<double>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm = MapMat<double>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<double> Cm = MapMat<double>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    MapMat<int> Am = MapMat<int>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<int> Bm = MapMat<int>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<int> Cm = MapMat<int>(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();

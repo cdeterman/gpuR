@@ -19,3 +19,4 @@ LinkingTo: Rcpp,
 Suggests: testthat
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new
+SystemRequirements: C++11

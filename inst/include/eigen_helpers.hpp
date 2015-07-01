@@ -9,6 +9,11 @@
 template<class T>
 using MapMat = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
 
+//template<typename T>
+//struct MapMat
+//{
+//    typedef Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Type;
+//};
 
 template <typename T>
 SEXP sexpToXptr(SEXP A)
