@@ -20,6 +20,7 @@ before_install:
   - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1 opencl-headers libboost-program-options-dev
   - sudo apt-get install -qq g++-4.8
   - export CXX="g++-4.8"
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 
 env:
  global:
