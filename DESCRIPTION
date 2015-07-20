@@ -12,7 +12,8 @@ Description: This package was developed to provide GPU enabled functions
     syntax without the need to know OpenCL.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.5),
-    assertive
+    assertive,
+    methods
 LinkingTo: Rcpp, 
     RcppEigen, 
     RViennaCL

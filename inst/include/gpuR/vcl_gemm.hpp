@@ -10,14 +10,6 @@
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1
 
-//#ifdef VIENNACL_DEBUG_ALL
-//#undef VIENNACL_DEBUG_ALL
-//#endif
-//
-//#ifdef VIENNACL_DEBUG_DEVICE
-//#undef VIENNACL_DEBUG_DEVICE
-//#endif
-
 // ViennaCL headers
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
@@ -29,9 +21,9 @@ using namespace Rcpp;
 template <typename T>
 inline
 void cpp_arma_vienna_gemm(
-    typename MapMat<T>::Type &Am, 
-    typename MapMat<T>::Type &Bm, 
-    typename MapMat<T>::Type &Cm)
+    MapMat<T> &Am, 
+    MapMat<T> &Bm, 
+    MapMat<T> &Cm)
 {    
     //use only GPUs:
     long id = 0;

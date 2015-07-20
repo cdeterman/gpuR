@@ -4,6 +4,9 @@
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
+#include <RcppEigen.h>
+
+#include "gpuR/eigen_helpers.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
@@ -11,8 +14,8 @@ using namespace Rcpp;
 
 
 //[[Rcpp::export]]
-IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_, 
-    IntegerVector C_, SEXP sourceCode_, SEXP kernel_function_)
+void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_, 
+    SEXP ptrC_, SEXP sourceCode_, SEXP kernel_function_)
 {
     // declarations
     cl_int err;
@@ -22,14 +25,17 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     const char* kernel_function = (const char*)kernel_string.c_str();
 
     // Convert input vectors to cl equivalent
-    const std::vector<int> A = as<std::vector<int> >(A_);
-    const std::vector<int> B = as<std::vector<int> >(B_);
-    std::vector<int> C = as<std::vector<int> >(C_);
-//    const arma::ivec A = as<arma::ivec >(A_);
-//    const arma::ivec B = as<arma::ivec >(B_);
-//    arma::ivec C = as<arma::ivec >(C_);
-//    
-//    const int LIST_SIZE = A.n_elem;
+//    const std::vector<int> A = as<std::vector<int> >(A_);
+//    const std::vector<int> B = as<std::vector<int> >(B_);
+//    std::vector<int> C = as<std::vector<int> >(C_);
+
+    Rcpp::XPtr<dynEigenVec<int> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<int> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigenVec<int> > ptrC(ptrC_);
+    
+    MapVec<int> A(ptrA->ptr(), ptrA->length());
+    MapVec<int> B(ptrB->ptr(), ptrB->length());
+    MapVec<int> C(ptrC->ptr(), ptrC->length());
 
     const int LIST_SIZE = A.size();
     
@@ -104,8 +110,8 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
 //        std::cout << "memory mapped" << std::endl;
 
     // Copy lists A and B to the memory buffers
-    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, LIST_SIZE * sizeof(int), &A[0]);
-    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, LIST_SIZE * sizeof(int), &B[0]);
+    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, LIST_SIZE * sizeof(int), &A(0));
+    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, LIST_SIZE * sizeof(int), &B(0));
 
     // Set arguments to kernel
     err = kernel.setArg(0, bufferA);
@@ -118,7 +124,7 @@ IntegerVector cpp_gpu_two_vec(IntegerVector A_, IntegerVector B_,
     err = queue.enqueueNDRangeKernel(kernel, NullRange, global, local);
     
     // Read buffer C into a local list        
-    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, LIST_SIZE * sizeof(int), &C[0]);
+    err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, LIST_SIZE * sizeof(int), &C(0));
 //    C.print("C vector!");
-    return wrap(C);
+//    return wrap(C);
 }

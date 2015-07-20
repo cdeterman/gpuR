@@ -5,6 +5,34 @@
 
 using namespace Rcpp;
 
+/*** vector imports ***/
+ 
+// [[Rcpp::export]]
+SEXP vectorToIntXptr(SEXP data)
+{
+    SEXP pMat = sexpVecToXptr<int>(data);
+    return(pMat);
+}
+
+// [[Rcpp::export]]
+SEXP vectorToFloatXptr(SEXP data)
+{
+    SEXP pMat = sexpVecToXptr<float>(data);
+    return(pMat);
+}
+
+
+// [[Rcpp::export]]
+SEXP vectorToDoubleXptr(SEXP data)
+{
+    SEXP pMat = sexpVecToXptr<double>(data);
+    return(pMat);
+}
+
+
+
+/*** matrix imports ***/
+
 // [[Rcpp::export]]
 SEXP matrixToIntXptr(SEXP data)
 {
@@ -27,11 +55,37 @@ SEXP matrixToDoubleXptr(SEXP data)
     return(pMat);
 }
 
+/*** Vector XPtr to SEXP ***/
+
+// [[Rcpp::export]]
+SEXP dXptrToVecSEXP(SEXP ptrA)
+{
+    MapVec<double> A = XPtrToVecSEXP<double>(ptrA);
+    return wrap(A);
+}
+
+
+// [[Rcpp::export]]
+SEXP fXptrToVecSEXP(SEXP ptrA)
+{
+    MapVec<float> A = XPtrToVecSEXP<float>(ptrA);
+    return wrap(A);
+}
+
+
+// [[Rcpp::export]]
+SEXP iXptrToVecSEXP(SEXP ptrA)
+{
+    MapVec<int> A = XPtrToVecSEXP<int>(ptrA);
+    return wrap(A);
+}
+
+/*** Matrix XPtr to SEXP ***/
 
 // [[Rcpp::export]]
 SEXP dXptrToSEXP(SEXP ptrA)
 {
-    typename MapMat<double>::Type A = XPtrToSEXP<double>(ptrA);
+    MapMat<double> A = XPtrToSEXP<double>(ptrA);
     return wrap(A);
 }
 
@@ -39,7 +93,7 @@ SEXP dXptrToSEXP(SEXP ptrA)
 // [[Rcpp::export]]
 SEXP fXptrToSEXP(SEXP ptrA)
 {
-    typename MapMat<float>::Type A = XPtrToSEXP<float>(ptrA);
+    MapMat<float> A = XPtrToSEXP<float>(ptrA);
     return wrap(A);
 }
 
@@ -47,14 +101,36 @@ SEXP fXptrToSEXP(SEXP ptrA)
 // [[Rcpp::export]]
 SEXP iXptrToSEXP(SEXP ptrA)
 {
-    typename MapMat<int>::Type A = XPtrToSEXP<int>(ptrA);
+    MapMat<int> A = XPtrToSEXP<int>(ptrA);
     return wrap(A);
 }
 
+/*** Empty vector initializers ***/
 
-/*
- * Empty matrix initializers
- */
+// [[Rcpp::export]]
+SEXP emptyVecIntXptr(int size)
+{
+    SEXP pVec = emptyVecXptr<int>(size);
+    return(pVec);
+}
+
+
+// [[Rcpp::export]]
+SEXP emptyVecFloatXptr(int size)
+{
+    SEXP pVec = emptyVecXptr<float>(size);
+    return(pVec);
+}
+
+
+// [[Rcpp::export]]
+SEXP emptyVecDoubleXptr(int size)
+{
+    SEXP pVec = emptyVecXptr<double>(size);
+    return(pVec);
+}
+
+/*** Empty matrix initializers ***/
 
 // [[Rcpp::export]]
 SEXP emptyIntXptr(int nr, int nc)

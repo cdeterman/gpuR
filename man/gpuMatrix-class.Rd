@@ -31,8 +31,6 @@ May also remove the type slot
  Common to all gpuMatrix objects in the package
  \describe{
      \item{\code{address}:}{Pointer to data matrix}
-     \item{\code{type}:}{Character object specifying
-     the type the matrix data will be interpreted as}
  }
 }
 \author{

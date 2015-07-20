@@ -1,9 +1,6 @@
 library(gpuR)
 context("gpuMatrix algebra")
 
-# avoid downcast warnings for single precision
-options(bigmemory.typecast.warning=FALSE)
-
 # set seed
 set.seed(123)
 

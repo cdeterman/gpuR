@@ -15,28 +15,28 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
-    SEXP sourceCode_, SEXP kernel_function_)
+    SEXP sourceCode_)
 {
     // declarations
     cl_int err;
     std::string sourceCode = as<std::string>(sourceCode_);
     
-    std::string kernel_string = as<std::string>(kernel_function_);
-    const char* kernel_function = kernel_string.data();
+//    std::string kernel_string = as<std::string>(kernel_function_);
+//    const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
 
     Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<int> > ptrC(ptrC_);
     
-    typename MapMat<int>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    typename MapMat<int>::Type Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    typename MapMat<int>::Type Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<int> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();
     int Pdim = Am.rows();
-    int Kdim = Bm.cols();
+//    int Kdim = Bm.cols();
     
     const int szA = Am.size();
     const int szB = Bm.size();

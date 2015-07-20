@@ -19,8 +19,8 @@ void cpp_vienna_gpuMatrix_daxpy(SEXP alpha_,
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
     
-    MapMat<double>::Type Am = MapMat<double>::Type(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double>::Type Bm = MapMat<double>::Type(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<double> Am = MapMat<double>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Bm = MapMat<double>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     cpp_arma_vienna_axpy(alpha, Am, Bm);
 }
@@ -35,8 +35,8 @@ void cpp_vienna_gpuMatrix_saxpy(SEXP alpha_,
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
     
-    MapMat<float>::Type Am = MapMat<float>::Type(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float>::Type Bm = MapMat<float>::Type(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<float> Am = MapMat<float>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Bm = MapMat<float>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     cpp_arma_vienna_axpy(alpha, Am, Bm);
 }

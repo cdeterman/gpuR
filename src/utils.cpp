@@ -18,6 +18,13 @@ int cpp_nrow(SEXP ptrA_)
     return ptrA->nrow();
 }
 
+template <typename T>
+int cpp_gpuVec_size(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    return ptrA->length();
+}
+
 // [[Rcpp::export]]
 int cpp_dncol(SEXP ptrA)
 {
@@ -52,4 +59,24 @@ int cpp_fnrow(SEXP ptrA)
 int cpp_inrow(SEXP ptrA)
 {
     return cpp_nrow<int>(ptrA);
+}
+
+/*** gpuVector size ***/
+
+// [[Rcpp::export]]
+int cpp_dgpuVec_size(SEXP ptrA)
+{
+    return cpp_gpuVec_size<double>(ptrA);
+}
+
+// [[Rcpp::export]]
+int cpp_fgpuVec_size(SEXP ptrA)
+{
+    return cpp_gpuVec_size<float>(ptrA);
+}
+
+// [[Rcpp::export]]
+int cpp_igpuVec_size(SEXP ptrA)
+{
+    return cpp_gpuVec_size<int>(ptrA);
 }

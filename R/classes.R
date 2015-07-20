@@ -16,14 +16,17 @@ setClassUnion("missingOrNULL", c("missing", "NULL"))
 #' @author Charles Determan Jr.
 #' @seealso \code{\link{igpuVector-class}}
 #' @export
-setClass('gpuVector',
-         representation("VIRTUAL"),
-         validity = function(object) {
-             if( !length(object@object) > 0 ){
-                 return("gpuVector must be a length greater than 0")
-             }
-             TRUE
-         })
+setClass('gpuVector', 
+         slots = c(address="externalptr"))
+
+# setClass('gpuVector',
+#          representation("VIRTUAL"),
+#          validity = function(object) {
+#              if( !length(object@object) > 0 ){
+#                  return("gpuVector must be a length greater than 0")
+#              }
+#              TRUE
+#          })
 
 
 #' @title igpuVector Class
@@ -31,7 +34,7 @@ setClass('gpuVector',
 #' representation.
 #' @section Slots:
 #'  \describe{
-#'      \item{\code{object}:}{An integer vector object}
+#'      \item{\code{address}:}{An integer vector object}
 #'  }
 #' @name igpuVector-class
 #' @rdname igpuVector-class
@@ -39,15 +42,67 @@ setClass('gpuVector',
 #' @seealso \code{\link{gpuVector-class}}
 #' @export
 setClass("igpuVector",
-         slots = c(object = "vector"),
+        contains = "gpuVector",
+        validity = function(object) {
+            if( typeof(object) != "integer"){
+                return("igpuVector must be of type 'integer'")
+            }
+            TRUE
+})
+
+# setClass("igpuVector",
+#          slots = c(object = "vector"),
+#          contains = "gpuVector",
+#          validity = function(object) {
+#              if( typeof(object) != "integer"){
+#                  return("igpuVector must be of type 'integer'")
+#              }
+#              TRUE
+#          })
+
+
+#' @title fgpuVector Class
+#' @description An float vector in the S4 \code{gpuVector}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a float typed vector}
+#'  }
+#' @name fgpuVector-class
+#' @rdname fgpuVector-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{gpuVector-class}}
+#' @export
+setClass("fgpuVector",
          contains = "gpuVector",
          validity = function(object) {
-             if( typeof(object@object) != "integer"){
-                 return("igpuVector must be of type 'integer'")
+             if( typeof(object) != "float"){
+                 return("fgpuVector must be of type 'float'")
              }
              TRUE
          })
 
+
+#' @title dgpuVector Class
+#' @description An double vector in the S4 \code{gpuVector}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a double typed vector}
+#'  }
+#' @name dgpuVector-class
+#' @rdname dgpuVector-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{gpuVector-class}}
+#' @export
+setClass("dgpuVector",
+         contains = "gpuVector",
+         validity = function(object) {
+             if( typeof(object) != "double"){
+                 return("dgpuVector must be of type 'double'")
+             }
+             TRUE
+         })
 
 # The primary class for all gpuMatrix objects
 
@@ -68,8 +123,6 @@ setClass("igpuVector",
 #'  Common to all gpuMatrix objects in the package
 #'  \describe{
 #'      \item{\code{address}:}{Pointer to data matrix}
-#'      \item{\code{type}:}{Character object specifying
-#'      the type the matrix data will be interpreted as}
 #'  }
 #' @note R does not contain a native float type.  As such,
 #' the matrix data within a \code{\link{fgpuMatrix-class}} 
@@ -86,7 +139,7 @@ setClass("igpuVector",
 #' \code{\link{dgpuMatrix-class}}
 #' @export
 setClass('gpuMatrix', 
-         slots = c(address="externalptr", type="character"))
+         slots = c(address="externalptr"))
 
 
 #' @title igpuMatrix Class
@@ -95,8 +148,6 @@ setClass('gpuMatrix',
 #' @section Slots:
 #'  \describe{
 #'      \item{\code{address}:}{Pointer to a integer typed matrix}
-#'      \item{\code{type}:}{Character object specifying
-#'      the type the matrix data is integer}
 #'  }
 #' @name igpuMatrix-class
 #' @rdname igpuMatrix-class
@@ -121,8 +172,6 @@ setClass("igpuMatrix",
 #' @section Slots:
 #'  \describe{
 #'      \item{\code{address}:}{Pointer to a float matrix.}
-#'      \item{\code{type}:}{Character object specifying
-#'      the type the matrix data is intepreted as float}
 #'  }
 #' @name fgpuMatrix-class
 #' @rdname fgpuMatrix-class
@@ -147,8 +196,6 @@ setClass("fgpuMatrix",
 #' @section Slots:
 #'  \describe{
 #'      \item{\code{address}:}{Pointer to a double type matrix}
-#'      \item{\code{type}:}{Character object specifying
-#'      the type the matrix data is double}
 #'  }
 #' @name dgpuMatrix-class
 #' @rdname dgpuMatrix-class

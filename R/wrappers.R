@@ -104,12 +104,13 @@ gpu_vec_add <- function(A, B){
         stop("kernel file does not exist")
     }
 
-    C <- vector(mode = "integer", length=length(A))
+    C <- gpuVector(length = length(A), type="integer")
     
     kernel <- readChar(file, file.info(file)$size)
     
-    out <- as.gpuVector(cpp_gpu_two_vec(A,B,C,kernel, "vector_add"))
-    return(out)
+    cpp_gpu_two_vec(A@address,B@address,C@address,
+                    kernel, "vector_add")
+    return(C)
 }
 
 
@@ -127,12 +128,14 @@ gpu_vec_subtr <- function(A, B){
     if(!file_test("-f", file)){
         stop("kernel file does not exist")
     }
-    C <- vector(mode = "integer", length=length(A))
+    
+    C <- gpuVector(length = length(A), type="integer")
     
     kernel <- readChar(file, file.info(file)$size)
     
-    out <- as.gpuVector(cpp_gpu_two_vec(A,B,C,kernel, "vector_subtr"))
-    return(out)
+    cpp_gpu_two_vec(A@address,B@address,C@address,
+                    kernel, "vector_subtr")
+    return(C)
 }
 
 
@@ -161,8 +164,7 @@ gpu_Mat_mult <- function(A, B){
                   integer = {cpp_gpuMatrix_igemm(A@address,
                                                       B@address, 
                                                       C@address,
-                                                      kernel, 
-                                                      "iMatMult")
+                                                      kernel)
                   },
                   float = {cpp_vienna_gpuMatrix_sgemm(A@address,
                                                              B@address,
@@ -219,8 +221,7 @@ gpu_Mat_axpy <- function(alpha, A, B){
            integer = {cpp_gpuMatrix_iaxpy(alpha, 
                                           A@address,
                                           Z@address, 
-                                          kernel, 
-                                          "iaxpy")
+                                          kernel)
            },
            float = {cpp_vienna_gpuMatrix_saxpy(alpha, 
                                                A@address, 

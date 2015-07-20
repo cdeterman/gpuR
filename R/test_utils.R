@@ -10,27 +10,33 @@
 # relevant functions can be evaluated.
 
 # check if any GPUs can be found
+#' @title Skip test for GPUs
+#' @description Function to skip testthat tests
+#' if no valid GPU's are detected
 #' @export
 has_gpu_skip <- function() {
     gpuCheck <- try(detectGPUs(), silent=TRUE)
     if(class(gpuCheck)[1] == "try-error"){
-        skip("No GPUs available")
+        testthat::skip("No GPUs available")
     }else{
         if (gpuCheck == 0) {
-            skip("No GPUs available")
+            testthat::skip("No GPUs available")
         }
     }
 }
 
 # check if GPU supports double precision
+#' @title Skip test for GPU double precision
+#' @description Function to skip testthat tests
+#' if the detected GPU doesn't support double precision
 #' @export
 has_double_skip <- function() {
     gpuCheck <- try(deviceHasDouble(), silent=TRUE)
     if(class(gpuCheck)[1] == "try-error"){
-        skip("No GPUs available")
+        testthat::skip("No GPUs available")
     }else{
         if (!gpuCheck) {
-            skip("GPU doesn't support double precision")
+            testthat::skip("GPU doesn't support double precision")
         }
     }
 }

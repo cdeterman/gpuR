@@ -12,8 +12,6 @@ representation.
 
  \describe{
      \item{\code{address}:}{Pointer to a integer typed matrix}
-     \item{\code{type}:}{Character object specifying
-     the type the matrix data is integer}
  }
 }
 \author{

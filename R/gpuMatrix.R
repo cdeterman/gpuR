@@ -31,18 +31,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=matrixToIntXptr(data),
-                                    type=type)
+                                    address=matrixToIntXptr(data))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=matrixToFloatXptr(data),
-                                    type=type)
+                                    address=matrixToFloatXptr(data))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = matrixToDoubleXptr(data), 
-                                    type=type)
+                                    address = matrixToDoubleXptr(data))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -64,18 +61,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=emptyIntXptr(nrow, ncol),
-                                    type=type)
+                                    address=emptyIntXptr(nrow, ncol))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=emptyFloatXptr(nrow, ncol),
-                                    type=type)
+                                    address=emptyFloatXptr(nrow, ncol))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = emptyDoubleXptr(nrow, ncol), 
-                                    type=type)
+                                    address = emptyDoubleXptr(nrow, ncol))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

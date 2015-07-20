@@ -15,20 +15,20 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
-    SEXP sourceCode_, SEXP kernel_function_)
+    SEXP sourceCode_)
 {
     // declarations
     cl_int err;
     std::string sourceCode = as<std::string>(sourceCode_);
     
-    std::string kernel_string = as<std::string>(kernel_function_);
-    const char* kernel_function = kernel_string.data();
+//    std::string kernel_string = as<std::string>(kernel_function_);
+//    const char* kernel_function = kernel_string.data();
         
     Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     
-    typename MapMat<int>::Type Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    typename MapMat<int>::Type Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

@@ -3,17 +3,23 @@
 \docType{methods}
 \name{gpuVector}
 \alias{gpuVector}
+\alias{gpuVector,missingOrNULL}
+\alias{gpuVector,missingOrNULL,ANY-method}
 \alias{gpuVector,vector}
-\alias{gpuVector,vector-method}
+\alias{gpuVector,vector,missing-method}
 \title{Construct a gpuVector}
 \usage{
-gpuVector(data, type = NULL, ...)
+gpuVector(data, length, type = NULL, ...)
 
-\S4method{gpuVector}{vector}(data, type = NULL)
+\S4method{gpuVector}{vector,missing}(data, length, type = NULL)
+
+\S4method{gpuVector}{missingOrNULL,ANY}(data, length, type = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a
 \code{vector}}
+
+\item{length}{A non-negative integer specifying the desired length.}
 
 \item{type}{A character string specifying the type of gpuVector.  Default
 is NULL where type is inherited from the source data type.}
