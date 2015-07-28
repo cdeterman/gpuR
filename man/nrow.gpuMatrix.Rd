@@ -2,15 +2,25 @@
 % Please edit documentation in R/methods_matrix.R
 \docType{methods}
 \name{nrow,gpuMatrix-method}
+\alias{ncol,gpuMatrix-method}
+\alias{nrow,gpuMatrix}
 \alias{nrow,gpuMatrix-method}
-\title{gpuMatrix nrow method}
+\title{The Number of Rows/Columns of a gpuMatrix}
 \usage{
 \S4method{nrow}{gpuMatrix}(x)
+
+\S4method{ncol}{gpuMatrix}(x)
 }
 \arguments{
 \item{x}{A gpuMatrix object}
 }
+\value{
+An integer of length 1
+}
 \description{
-gpuMatrix nrow method
+The Number of Rows/Columns of a gpuMatrix
+}
+\author{
+Charles Determan Jr.
 }
 

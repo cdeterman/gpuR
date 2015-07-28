@@ -166,6 +166,14 @@ cpp_vienna_gpuMatrix_saxpy <- function(alpha_, ptrA_, ptrB_) {
     invisible(.Call('gpuR_cpp_vienna_gpuMatrix_saxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_))
 }
 
+cpp_vienna_fgpuMatrix_colsum <- function(ptrA_, ptrC_) {
+    invisible(.Call('gpuR_cpp_vienna_fgpuMatrix_colsum', PACKAGE = 'gpuR', ptrA_, ptrC_))
+}
+
+cpp_vienna_dgpuMatrix_colsum <- function(ptrA_, ptrC_) {
+    invisible(.Call('gpuR_cpp_vienna_dgpuMatrix_colsum', PACKAGE = 'gpuR', ptrA_, ptrC_))
+}
+
 cpp_vienna_fgpuMatrix_eigen <- function(ptrA_, ptrB_, ptrC_, symmetric) {
     invisible(.Call('gpuR_cpp_vienna_fgpuMatrix_eigen', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, symmetric))
 }
@@ -180,5 +188,21 @@ cpp_vienna_gpuMatrix_dgemm <- function(ptrA_, ptrB_, ptrC_) {
 
 cpp_vienna_gpuMatrix_sgemm <- function(ptrA_, ptrB_, ptrC_) {
     invisible(.Call('gpuR_cpp_vienna_gpuMatrix_sgemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_))
+}
+
+cpp_vienna_fgpuMatrix_pmcc <- function(ptrA_, ptrB_) {
+    invisible(.Call('gpuR_cpp_vienna_fgpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA_, ptrB_))
+}
+
+cpp_vienna_dgpuMatrix_pmcc <- function(ptrA_, ptrB_) {
+    invisible(.Call('gpuR_cpp_vienna_dgpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA_, ptrB_))
+}
+
+cpp_vienna_fgpuMatrix_rowsum <- function(ptrA_, ptrC_) {
+    invisible(.Call('gpuR_cpp_vienna_fgpuMatrix_rowsum', PACKAGE = 'gpuR', ptrA_, ptrC_))
+}
+
+cpp_vienna_dgpuMatrix_rowsum <- function(ptrA_, ptrC_) {
+    invisible(.Call('gpuR_cpp_vienna_dgpuMatrix_rowsum', PACKAGE = 'gpuR', ptrA_, ptrC_))
 }
 

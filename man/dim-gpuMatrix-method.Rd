@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods_matrix.R
 \docType{methods}
 \name{dim,gpuMatrix-method}
+\alias{dim,gpuMatrix}
 \alias{dim,gpuMatrix-method}
 \title{gpuMatrix dim method}
 \usage{
@@ -10,7 +11,13 @@
 \arguments{
 \item{x}{A gpuMatrix object}
 }
+\value{
+A length 2 vector of the number of rows and columns respectively.
+}
 \description{
 gpuMatrix dim method
+}
+\author{
+Charles Determan Jr.
 }
 

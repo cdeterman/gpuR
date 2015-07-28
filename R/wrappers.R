@@ -240,18 +240,130 @@ gpu_Mat_axpy <- function(alpha, A, B){
 }
 
 
+gpu_colSums <- function(A){
+    
+    type <- typeof(A)
+    
+    if(type == "integer"){
+        stop("integer type not currently implemented")
+    }
+    
+    sums <- gpuVector(length = ncol(A), type = type)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vienna_fgpuMatrix_colsum(A@address, sums@address),
+           "double" = cpp_vienna_dgpuMatrix_colsum(A@address, sums@address)
+           )
+    
+    return(sums)
+}
 
-# #' @export
-# test_tmp_matrix <- function(A, B){
+gpu_rowSums <- function(A){
+    
+    type <- typeof(A)
+    
+    if(type == "integer"){
+        stop("integer type not currently implemented")
+    }
+    
+    sums <- gpuVector(length = nrow(A), type = type)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vienna_fgpuMatrix_rowsum(A@address, sums@address),
+           "double" = cpp_vienna_dgpuMatrix_rowsum(A@address, sums@address)
+    )
+    
+    return(sums)
+}
+
+
+gpu_pmcc <- function(A){
+    
+    type <- typeof(A)
+    
+    B <- gpuMatrix(nrow = ncol(A), ncol = ncol(A), type = type)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vienna_fgpuMatrix_pmcc(A@address, B@address),
+           "double" = cpp_vienna_dgpuMatrix_pmcc(A@address, B@address)
+    )
+    
+    return(B)
+}
+
+# #' @title GPU Pearson Covariance Calculation
+# #' @description Calculates the pairwise pearson covariance for a matrix
+# #' @param A A gpuMatrix object
+# #' @return A gpuMatrix object
+# #' @author Charles Determan Jr.
+# gpu_pmcc <- function(A){
 #     
-#     ncA = ncol(A)
-#     nrB = nrow(B)
+#     pkg_path <- find.package("gpuR", .libPaths())
+#     file <- file.path(pkg_path, "CL", "basic_pmcc.cl")
+#     
+#     if(!file_test("-f", file)){
+#         stop("kernel file does not exist")
+#     }
+#     kernel <- readChar(file, file.info(file)$size)
 #     
 #     type <- typeof(A)
-#     C <- bigalgebra:::anon_matrix(nrB, ncA, type=type)
-# 
-#     out <- new("igpuMatrix", address=C@address)
-#     return(out)
+#     
+#     B <- gpuMatrix(nrow=ncol(A), ncol=ncol(A), type=type)
+#     
+#     switch(type,
+#            integer = {
+#                stop("Integer not currently supported")
+#                cpp_gpuMatrix_ipmcc(A@address, B@address, kernel)
+#            },
+#            float = {cpp_gpuMatrix_spmcc(A@address, B@address, kernel)
+#            },
+#            double = {
+#                stop("Double not currently supported")
+#                if(!deviceHasDouble()){
+#                    stop("Selected GPU does not support double precision")
+#                }else{
+#                    cpp_gpuMatrix_dpmcc(A@address, B@address, kernel)
+#                }
+#            },
+# {
+#     stop("type not recognized")
+# })
+# return(B)
 # }
-
-
+# 
+# 
+# #' @export
+# gpu_colMeans <- function(A){
+#     
+#     pkg_path <- find.package("gpuR", .libPaths())
+#     file <- file.path(pkg_path, "CL", "basic_colMeans.cl")
+#     
+#     if(!file_test("-f", file)){
+#         stop("kernel file does not exist")
+#     }
+#     kernel <- readChar(file, file.info(file)$size)
+#     
+#     type <- typeof(A)
+#     
+#     switch(type,
+#            integer = {
+#                stop("Integer not currently supported")
+#                cpp_gpuMatrix_icolMeans(A@address, kernel)
+#            },
+#            float = {cpp_gpuMatrix_scolMeans(A@address, kernel)
+#            },
+#            double = {
+#                stop("Double not currently supported")
+#                if(!deviceHasDouble()){
+#                    stop("Selected GPU does not support double precision")
+#                }else{
+#                    cpp_gpuMatrix_dcolMeans(A@address, kernel)
+#                }
+#            },
+# {
+#     stop("type not recognized")
+# })
+# }

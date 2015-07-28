@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods_matrix.R
 \docType{methods}
 \name{[,gpuMatrix,missing,missing,missing-method}
+\alias{[,gpuMatrix}
 \alias{[,gpuMatrix,missing,missing,missing-method}
 \title{Extract all gpuMatrix elements}
 \usage{
@@ -18,5 +19,8 @@
 }
 \description{
 Extract all gpuMatrix elements
+}
+\author{
+Charles Determan Jr.
 }
 
