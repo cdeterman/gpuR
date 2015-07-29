@@ -1,5 +1,5 @@
 library(gpuR)
-context("gpuMatrix Row and Column Sums")
+context("gpuMatrix Row and Column Methods")
 
 # set seed
 set.seed(123)
@@ -12,6 +12,8 @@ A <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
 
 R <- rowSums(A)
 C <- colSums(A)
+RM <- rowMeans(A)
+CM <- colMeans(A)
 
 
 test_that("gpuMatrix Single Precision Column Sums",
@@ -72,3 +74,63 @@ test_that("gpuMatrix Double Precision Row Sums",
     expect_equal(gpuC[], R, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double colSums not equivalent")  
 })
+
+test_that("gpuMatrix Single Precision Column Means",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- gpuMatrix(A, type="float")
+    
+    gpuC <- colMeans(fgpuX)
+    
+    expect_is(gpuC, "fgpuVector")
+    expect_equal(gpuC[], CM, tolerance=1e-06, 
+                 info="float covariance values not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Column Means", 
+{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- gpuMatrix(A, type="double")
+    
+    gpuC <- colMeans(dgpuX)
+    
+    expect_is(gpuC, "dgpuVector")
+    expect_equal(gpuC[], CM, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colSums not equivalent")  
+})
+
+
+test_that("gpuMatrix Single Precision Row Means",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- gpuMatrix(A, type="float")
+    
+    gpuC <- rowMeans(fgpuX)
+    
+    expect_is(gpuC, "fgpuVector")
+    expect_equal(gpuC[], RM, tolerance=1e-06, 
+                 info="float covariance values not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Row Means", 
+{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- gpuMatrix(A, type="double")
+    
+    gpuC <- rowMeans(dgpuX)
+    
+    expect_is(gpuC, "dgpuVector")
+    expect_equal(gpuC[], RM, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colSums not equivalent")  
+})
+

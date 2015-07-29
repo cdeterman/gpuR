@@ -6,6 +6,17 @@
 
 using namespace Rcpp;
 
+// cpp_detectCPUs
+SEXP cpp_detectCPUs(SEXP platform_idx);
+RcppExport SEXP gpuR_cpp_detectCPUs(SEXP platform_idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx(platform_idxSEXP);
+    __result = Rcpp::wrap(cpp_detectCPUs(platform_idx));
+    return __result;
+END_RCPP
+}
 // cpp_detectGPUs
 SEXP cpp_detectGPUs(SEXP platform_idx);
 RcppExport SEXP gpuR_cpp_detectGPUs(SEXP platform_idxSEXP) {
@@ -465,6 +476,28 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_vienna_fgpuMatrix_colmean
+void cpp_vienna_fgpuMatrix_colmean(SEXP ptrA_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_fgpuMatrix_colmean(SEXP ptrA_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_fgpuMatrix_colmean(ptrA_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_dgpuMatrix_colmean
+void cpp_vienna_dgpuMatrix_colmean(SEXP ptrA_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_dgpuMatrix_colmean(SEXP ptrA_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_dgpuMatrix_colmean(ptrA_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_vienna_fgpuMatrix_colsum
 void cpp_vienna_fgpuMatrix_colsum(SEXP ptrA_, SEXP ptrC_);
 RcppExport SEXP gpuR_cpp_vienna_fgpuMatrix_colsum(SEXP ptrA_SEXP, SEXP ptrC_SEXP) {
@@ -556,6 +589,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
     cpp_vienna_dgpuMatrix_pmcc(ptrA_, ptrB_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_fgpuMatrix_rowmean
+void cpp_vienna_fgpuMatrix_rowmean(SEXP ptrA_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_fgpuMatrix_rowmean(SEXP ptrA_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_fgpuMatrix_rowmean(ptrA_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_dgpuMatrix_rowmean
+void cpp_vienna_dgpuMatrix_rowmean(SEXP ptrA_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_dgpuMatrix_rowmean(SEXP ptrA_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_dgpuMatrix_rowmean(ptrA_, ptrC_);
     return R_NilValue;
 END_RCPP
 }

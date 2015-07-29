@@ -4,6 +4,15 @@
 #' @importFrom Rcpp evalCpp
 #' @import assertive
 
+
+detectCPUs <- function(platform_idx=1L){
+    assert_is_integer(platform_idx)
+    assert_all_are_positive(platform_idx)
+    
+    out <- cpp_detectCPUs(platform_idx)
+    return(out)
+}
+
 #' @title Detect Available GPUs
 #' @description Find out how many GPUs available
 #' @param platform_idx An integer value indicating which platform to query.
@@ -89,12 +98,7 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
 }
 
 
-#' @title GPU Vector Addition
-#' @description vector addition
-#' @param A A gpuVector object
-#' @param B A gpuVector object
-#' @return A gpuVector object
-#' @author Charles Determan Jr.
+# GPU Vector Addition
 gpu_vec_add <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
@@ -114,12 +118,7 @@ gpu_vec_add <- function(A, B){
 }
 
 
-#' @title GPU Vector Subtraction
-#' @description vector subtraction
-#' @param A A gpuVector object
-#' @param B A gpuVector object
-#' @return A gpuVector object
-#' @author Charles Determan Jr.
+# GPU Vector Subtraction
 gpu_vec_subtr <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
@@ -139,13 +138,7 @@ gpu_vec_subtr <- function(A, B){
 }
 
 
-
-#' @title GPU Matrix Multiplication
-#' @description matrix multiplication
-#' @param A A gpuMatrix object
-#' @param B A gpuMatrix object
-#' @return A gpuMatrix object
-#' @author Charles Determan Jr.
+# GPU Matrix Multiplication
 gpu_Mat_mult <- function(A, B){
     
     pkg_path <- find.package("gpuR", .libPaths())
@@ -186,13 +179,7 @@ gpu_Mat_mult <- function(A, B){
 }
 
 
-#' @title GPU Matrix Multiplication
-#' @description matrix multiplication
-#' @param alpha Numeric value to multiply the A matrix
-#' @param A A gpuMatrix object
-#' @param B A gpuMatrix object
-#' @return A gpuMatrix object
-#' @author Charles Determan Jr.
+# GPU axpy wrapper
 gpu_Mat_axpy <- function(alpha, A, B){
     
     nrA = nrow(A)
@@ -273,6 +260,45 @@ gpu_rowSums <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vienna_fgpuMatrix_rowsum(A@address, sums@address),
            "double" = cpp_vienna_dgpuMatrix_rowsum(A@address, sums@address)
+    )
+    
+    return(sums)
+}
+
+
+gpu_colMeans <- function(A){
+    
+    type <- typeof(A)
+    
+    if(type == "integer"){
+        stop("integer type not currently implemented")
+    }
+    
+    sums <- gpuVector(length = ncol(A), type = type)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vienna_fgpuMatrix_colmean(A@address, sums@address),
+           "double" = cpp_vienna_dgpuMatrix_colmean(A@address, sums@address)
+    )
+    
+    return(sums)
+}
+
+gpu_rowMeans <- function(A){
+    
+    type <- typeof(A)
+    
+    if(type == "integer"){
+        stop("integer type not currently implemented")
+    }
+    
+    sums <- gpuVector(length = nrow(A), type = type)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vienna_fgpuMatrix_rowmean(A@address, sums@address),
+           "double" = cpp_vienna_dgpuMatrix_rowmean(A@address, sums@address)
     )
     
     return(sums)

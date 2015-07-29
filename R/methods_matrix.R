@@ -106,8 +106,8 @@ setMethod("[",
               )
           })
 
-#' @title Row and Column Sums of gpuMatrix
-#' @description Row and column sums of gpuMatrix objects
+#' @title Row and Column Sums and Means of gpuMatrix
+#' @description Row and column sums and of gpuMatrix objects
 #' @param x A gpuMatrix object
 #' @param na.rm Not currently used
 #' @param dims Not currently used
@@ -126,10 +126,30 @@ setMethod("colSums",
 
 
 #' @rdname gpuMatrix.colSums
+#' @export
 setMethod("rowSums",
           signature(x = "gpuMatrix", na.rm = "missing", dims = "missing"),
           function(x, na.rm, dims){
               gpu_rowSums(x)
+          })
+
+
+
+#' @rdname gpuMatrix.colSums
+#' @export
+setMethod("colMeans",
+          signature(x = "gpuMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              gpu_colMeans(x)
+          })
+
+
+#' @rdname gpuMatrix.colSums
+#' @export
+setMethod("rowMeans",
+          signature(x = "gpuMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              gpu_rowMeans(x)
           })
 
 
