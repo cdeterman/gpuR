@@ -5,24 +5,27 @@
 \alias{gpuMatrix}
 \alias{gpuMatrix,matrix}
 \alias{gpuMatrix,matrix-method}
-\alias{gpuMatrix,missingOrNULL}
-\alias{gpuMatrix,missingOrNULL-method}
+\alias{gpuMatrix,missing}
+\alias{gpuMatrix,missing-method}
+\alias{gpuMatrix,vector}
+\alias{gpuMatrix,vector-method}
 \title{Construct a gpuMatrix}
 \usage{
-gpuMatrix(data = NA, ncol = NA, nrow = NA, type = NULL, ...)
+gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
 \S4method{gpuMatrix}{matrix}(data, type = NULL)
 
-\S4method{gpuMatrix}{missingOrNULL}(data, ncol = NA, nrow = NA,
-  type = NULL)
+\S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL)
+
+\S4method{gpuMatrix}{vector}(data, nrow, ncol, type = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a
 \code{matrix} object}
 
-\item{ncol}{An integer specifying the number of columns}
-
 \item{nrow}{An integer specifying the number of rows}
+
+\item{ncol}{An integer specifying the number of columns}
 
 \item{type}{A character string specifying the type of gpuMatrix.  Default
 is NULL where type is inherited from the source data type.}

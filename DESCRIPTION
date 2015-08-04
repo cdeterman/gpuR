@@ -1,15 +1,16 @@
 Package: gpuR
 Type: Package
 Title: GPU functions for R Objects
-Version: 1.0.0
-Date: 2015-03-31
-Author: Charles Determan Jr.
-Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 Description: This package was developed to provide GPU enabled functions
     for R objects in the most simple and approachable manner possible.  New
     gpu classes have been provided to wrap typical R objects 
     (e.g. vector, matrix) and utilize typical R
     syntax without the need to know OpenCL.
+Version: 1.0.0
+Date: 2015-03-31
+Author: Charles Determan Jr.
+Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
+VignetteBuilder: knitr
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.5),
     assertive,
@@ -17,7 +18,7 @@ Imports: Rcpp (>= 0.11.5),
 LinkingTo: Rcpp, 
     RcppEigen, 
     RViennaCL
-Suggests: testthat
+Suggests: testthat, knitr
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new
 SystemRequirements: C++11

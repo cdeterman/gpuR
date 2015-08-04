@@ -21,11 +21,31 @@ SEXP vectorToFloatXptr(SEXP data)
     return(pMat);
 }
 
-
 // [[Rcpp::export]]
 SEXP vectorToDoubleXptr(SEXP data)
 {
     SEXP pMat = sexpVecToXptr<double>(data);
+    return(pMat);
+}
+
+// [[Rcpp::export]]
+SEXP vectorToIntMatXptr(SEXP data, int nr, int nc)
+{
+    SEXP pMat = sexpVecToMatXptr<int>(data, nr, nc);
+    return(pMat);
+}
+
+// [[Rcpp::export]]
+SEXP vectorToFloatMatXptr(SEXP data, int nr, int nc)
+{
+    SEXP pMat = sexpVecToMatXptr<float>(data, nr, nc);
+    return(pMat);
+}
+
+// [[Rcpp::export]]
+SEXP vectorToDoubleMatXptr(SEXP data, int nr, int nc)
+{
+    SEXP pMat = sexpVecToMatXptr<double>(data, nr, nc);
     return(pMat);
 }
 

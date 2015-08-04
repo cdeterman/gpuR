@@ -35,18 +35,6 @@ valueClass = "gpuMatrix"
 )
 
 
-#' @title Get gpuMatrix type
-#' @param x A gpuMatrix object
-#' @aliases typeof,gpuMatrix
-#' @export
-setMethod('typeof', signature(x="gpuMatrix"),
-          function(x) {
-              switch(class(x),
-                     "igpuMatrix" = "integer",
-                     "fgpuMatrix" = "float",
-                     "dgpuMatrix" = "double")
-          })
-
 
 #' @title The Number of Rows/Columns of a gpuMatrix
 #' @param x A gpuMatrix object
@@ -105,6 +93,7 @@ setMethod("[",
                      "double" = return(dXptrToSEXP(x@address))
               )
           })
+
 
 #' @title Row and Column Sums and Means of gpuMatrix
 #' @description Row and column sums and of gpuMatrix objects
@@ -182,5 +171,50 @@ setMethod("cov",
                   stop("Only pearson covariance implemented")
               }
               return(gpu_pmcc(x))
+          })
+
+
+#' @title gpuMatrix Crossproduct
+#' @description Return the matrix cross-product of two conformable
+#' matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
+#' or x %*% t(t) (tcrossprod) but faster as no data transfer between
+#' device and host is required.
+#' @param x A gpuMatrix
+#' @param y A gpuMatrix
+#' @return A gpuMatrix
+#' @author Charles Determan Jr.
+#' @docType methods
+#' @rdname gpuMatrix-crossprod
+#' @aliases crossprod,gpuMatrix
+#' @export
+setMethod("crossprod",
+          signature(x = "gpuMatrix", y = "missing"),
+          function(x, y){
+              gpu_crossprod(x, x)
+          })
+
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "gpuMatrix", y = "gpuMatrix"),
+          function(x, y){
+              gpu_crossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+setMethod("tcrossprod",
+          signature(x = "gpuMatrix", y = "missing"),
+          function(x, y){
+              gpu_tcrossprod(x, x)
+          })
+
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "gpuMatrix", y = "gpuMatrix"),
+          function(x, y){
+              gpu_tcrossprod(x, y)
           })
 

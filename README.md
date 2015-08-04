@@ -25,6 +25,13 @@ all(C == gpuC)
 [1] TRUE
 ```
 
+I also recommend you read the vignette I included with this package to
+get a better understanding of its' capabilities.
+
+```r
+vignette("gpuR")
+```
+
 Please note, all the functions herein use an OpenCL backend.  If you prefer
 to have a CUDA based backend, please see my other package 
 [gpuRcuda](http://github.com/cdeterman/gpuRcuda) which is simply an extension
@@ -94,6 +101,19 @@ sudo apt-get install libboost-all-dev opencl-headers
 
 Once all these things are set you should be able to install the package 
 and begin using your GPU :)
+
+# Installing the package
+### Stable
+Will be posted to CRAN following completion of version 1.0.0
+
+### Development
+```
+# Dev RViennaCL
+devtools::install_github("cdeterman/RViennaCL")
+
+# Dev gpuR
+devtools::install_github("cdeterman/gpuR")
+```
 
 # Things to Do
 1. Obviously more vector functions and matrix implementations

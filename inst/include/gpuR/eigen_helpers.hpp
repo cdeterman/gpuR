@@ -50,6 +50,15 @@ SEXP sexpVecToXptr(SEXP A)
     return pVec;
 }
 
+// convert SEXP Vector to Eigen matrix
+template <typename T>
+SEXP sexpVecToMatXptr(SEXP A, int nr, int nc)
+{
+    dynEigen<T> *C = new dynEigen<T>(A, nr, nc);
+    Rcpp::XPtr<dynEigen<T> > pMat(C);
+    return pMat;
+}
+
 // convert an XPtr back to a MapMat object to ultimately 
 // be returned as a SEXP object
 template <typename T>
@@ -59,6 +68,7 @@ MapMat<T> XPtrToSEXP(SEXP ptrA_)
     MapMat<T> A(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     return A;
 }
+
 
 // convert an XPtr back to a MapVec object to ultimately 
 // be returned as a SEXP object

@@ -6,9 +6,10 @@
         \item Implemented Features:
         \itemize{
             \item gpu* classes for vector and matrix objects
+            \item vcl* classes for matrix objects
             \item Support for 'integer', 'float' and 'double' data types
             \item gpuVector functions (addition, subtraction)
-            \item gpuMatrix functions (multiplication, addition, subtraction)
+            \item gpuMatrix & vclMatrix functions (multiplication, addition, subtraction)
             \item gpuMatrix eigen decomposition (values and vectors)
             \item print method for gpuMatrix objects
         }

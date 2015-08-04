@@ -83,6 +83,45 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// vectorToIntMatXptr
+SEXP vectorToIntMatXptr(SEXP data, int nr, int nc);
+RcppExport SEXP gpuR_vectorToIntMatXptr(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(vectorToIntMatXptr(data, nr, nc));
+    return __result;
+END_RCPP
+}
+// vectorToFloatMatXptr
+SEXP vectorToFloatMatXptr(SEXP data, int nr, int nc);
+RcppExport SEXP gpuR_vectorToFloatMatXptr(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(vectorToFloatMatXptr(data, nr, nc));
+    return __result;
+END_RCPP
+}
+// vectorToDoubleMatXptr
+SEXP vectorToDoubleMatXptr(SEXP data, int nr, int nc);
+RcppExport SEXP gpuR_vectorToDoubleMatXptr(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(vectorToDoubleMatXptr(data, nr, nc));
+    return __result;
+END_RCPP
+}
 // matrixToIntXptr
 SEXP matrixToIntXptr(SEXP data);
 RcppExport SEXP gpuR_matrixToIntXptr(SEXP dataSEXP) {
@@ -452,6 +491,174 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// vcl_dncol
+int vcl_dncol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_dncol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_dncol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_fncol
+int vcl_fncol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_fncol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_fncol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_incol
+int vcl_incol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_incol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_incol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_dnrow
+int vcl_dnrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_dnrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_dnrow(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_fnrow
+int vcl_fnrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_fnrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_fnrow(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_inrow
+int vcl_inrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_inrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_inrow(ptrA));
+    return __result;
+END_RCPP
+}
+// matrixToIntVCL
+SEXP matrixToIntVCL(SEXP data);
+RcppExport SEXP gpuR_matrixToIntVCL(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(matrixToIntVCL(data));
+    return __result;
+END_RCPP
+}
+// matrixToFloatVCL
+SEXP matrixToFloatVCL(SEXP data);
+RcppExport SEXP gpuR_matrixToFloatVCL(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(matrixToFloatVCL(data));
+    return __result;
+END_RCPP
+}
+// matrixToDoubleVCL
+SEXP matrixToDoubleVCL(SEXP data);
+RcppExport SEXP gpuR_matrixToDoubleVCL(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(matrixToDoubleVCL(data));
+    return __result;
+END_RCPP
+}
+// dVCLtoSEXP
+SEXP dVCLtoSEXP(SEXP ptrA);
+RcppExport SEXP gpuR_dVCLtoSEXP(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(dVCLtoSEXP(ptrA));
+    return __result;
+END_RCPP
+}
+// fVCLtoSEXP
+SEXP fVCLtoSEXP(SEXP ptrA);
+RcppExport SEXP gpuR_fVCLtoSEXP(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(fVCLtoSEXP(ptrA));
+    return __result;
+END_RCPP
+}
+// iVCLtoSEXP
+SEXP iVCLtoSEXP(SEXP ptrA);
+RcppExport SEXP gpuR_iVCLtoSEXP(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(iVCLtoSEXP(ptrA));
+    return __result;
+END_RCPP
+}
+// emptyIntVCL
+SEXP emptyIntVCL(int nr, int nc);
+RcppExport SEXP gpuR_emptyIntVCL(SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(emptyIntVCL(nr, nc));
+    return __result;
+END_RCPP
+}
+// emptyFloatVCL
+SEXP emptyFloatVCL(int nr, int nc);
+RcppExport SEXP gpuR_emptyFloatVCL(SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(emptyFloatVCL(nr, nc));
+    return __result;
+END_RCPP
+}
+// emptyDoubleVCL
+SEXP emptyDoubleVCL(int nr, int nc);
+RcppExport SEXP gpuR_emptyDoubleVCL(SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(emptyDoubleVCL(nr, nc));
+    return __result;
+END_RCPP
+}
 // cpp_vienna_gpuMatrix_daxpy
 void cpp_vienna_gpuMatrix_daxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_);
 RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_daxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP) {
@@ -520,6 +727,54 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_vienna_gpuMatrix_dcrossprod
+void cpp_vienna_gpuMatrix_dcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_dcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_gpuMatrix_dcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_gpuMatrix_scrossprod
+void cpp_vienna_gpuMatrix_scrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_scrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_gpuMatrix_scrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_gpuMatrix_dtcrossprod
+void cpp_vienna_gpuMatrix_dtcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_dtcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_gpuMatrix_dtcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_gpuMatrix_stcrossprod
+void cpp_vienna_gpuMatrix_stcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_stcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_gpuMatrix_stcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_vienna_fgpuMatrix_eigen
 void cpp_vienna_fgpuMatrix_eigen(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, bool symmetric);
 RcppExport SEXP gpuR_cpp_vienna_fgpuMatrix_eigen(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP symmetricSEXP) {
@@ -567,6 +822,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
     cpp_vienna_gpuMatrix_sgemm(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_gpuMatrix_igemm
+void cpp_vienna_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_gpuMatrix_igemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_gpuMatrix_igemm(ptrA_, ptrB_, ptrC_);
     return R_NilValue;
 END_RCPP
 }
@@ -633,6 +900,102 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
     cpp_vienna_dgpuMatrix_rowsum(ptrA_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_daxpy
+void cpp_vclMatrix_daxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_);
+RcppExport SEXP gpuR_cpp_vclMatrix_daxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    cpp_vclMatrix_daxpy(alpha_, ptrA_, ptrB_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_saxpy
+void cpp_vclMatrix_saxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_);
+RcppExport SEXP gpuR_cpp_vclMatrix_saxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    cpp_vclMatrix_saxpy(alpha_, ptrA_, ptrB_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_dcrossprod
+void cpp_vclMatrix_dcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vclMatrix_dcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vclMatrix_dcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_scrossprod
+void cpp_vclMatrix_scrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vclMatrix_scrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vclMatrix_scrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_dtcrossprod
+void cpp_vclMatrix_dtcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vclMatrix_dtcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vclMatrix_dtcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_stcrossprod
+void cpp_vclMatrix_stcrossprod(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vclMatrix_stcrossprod(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vclMatrix_stcrossprod(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_vclMatrix_dgemm
+void cpp_vienna_vclMatrix_dgemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_vclMatrix_dgemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_vclMatrix_dgemm(ptrA_, ptrB_, ptrC_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vienna_vclMatrix_sgemm
+void cpp_vienna_vclMatrix_sgemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_);
+RcppExport SEXP gpuR_cpp_vienna_vclMatrix_sgemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    cpp_vienna_vclMatrix_sgemm(ptrA_, ptrB_, ptrC_);
     return R_NilValue;
 END_RCPP
 }

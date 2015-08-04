@@ -20,7 +20,7 @@ using namespace Rcpp;
 
 template <typename T>
 inline
-void cpp_arma_vienna_gemm(
+void cpp_vienna_gemm(
     MapMat<T> &Am, 
     MapMat<T> &Bm, 
     MapMat<T> &Cm)

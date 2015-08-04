@@ -29,3 +29,10 @@ setGeneric("as.gpuVector", function(object, type){
 setGeneric("as.gpuMatrix", function(object, type){
     standardGeneric("as.gpuMatrix")
 })
+
+
+# #' @export
+# setGeneric("colSums", function(x, na.rm, dims){
+#     standardGeneric("colSums")
+# }, useAsDefault=base::colSums)
+

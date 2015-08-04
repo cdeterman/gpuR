@@ -158,3 +158,111 @@ test_that("gpuMatrix Double Precision Matrix Addition successful", {
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
 })
+
+
+test_that("gpuMatrix Single Precision crossprod successful", {
+    
+    has_gpu_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- matrix(rnorm(10), nrow=2)
+    Z <- matrix(rnorm(10), nrow=5)
+    
+    C <- crossprod(X,Y)
+    Cs <- crossprod(X)
+    
+    fgpuX <- gpuMatrix(X, type="float")
+    fgpuY <- gpuMatrix(Y, type="float")
+    fgpuZ <- gpuMatrix(Z, type="float")
+    
+    fgpuC <- crossprod(fgpuX, fgpuY)
+    fgpuCs <- crossprod(fgpuX)
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuCs[,], Cs, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_error(crossprod(fgpuX, fgpuZ))
+})
+
+
+test_that("gpuMatrix Double Precision crossprod successful", {
+    
+    has_gpu_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- matrix(rnorm(10), nrow=2)
+    Z <- matrix(rnorm(10), nrow=5)
+    
+    C <- crossprod(X,Y)
+    Cs <- crossprod(X)
+    
+    fgpuX <- gpuMatrix(X, type="double")
+    fgpuY <- gpuMatrix(Y, type="double")
+    fgpuZ <- gpuMatrix(Z, type="double")
+    
+    fgpuC <- crossprod(fgpuX, fgpuY)
+    fgpuCs <- crossprod(fgpuX)
+    
+    expect_is(fgpuC, "dgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_equal(fgpuCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_error(crossprod(fgpuX, fgpuZ))
+})
+
+
+test_that("gpuMatrix Single Precision tcrossprod successful", {
+    
+    has_gpu_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- matrix(rnorm(10), nrow=2)
+    Z <- matrix(rnorm(10), nrow=5)
+    
+    C <- tcrossprod(X,Y)
+    Cs <- tcrossprod(X)
+    
+    fgpuX <- gpuMatrix(X, type="float")
+    fgpuY <- gpuMatrix(Y, type="float")
+    fgpuZ <- gpuMatrix(Z, type="float")
+    
+    fgpuC <- tcrossprod(fgpuX, fgpuY)
+    fgpuCs <- tcrossprod(fgpuX)
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuCs[,], Cs, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_error(crossprod(fgpuX, fgpuZ))
+})
+
+
+test_that("gpuMatrix Double Precision tcrossprod successful", {
+    
+    has_gpu_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- matrix(rnorm(10), nrow=2)
+    Z <- matrix(rnorm(10), nrow=5)
+    
+    C <- tcrossprod(X,Y)
+    Cs <- tcrossprod(X)
+    
+    fgpuX <- gpuMatrix(X, type="double")
+    fgpuY <- gpuMatrix(Y, type="double")
+    fgpuZ <- gpuMatrix(Z, type="double")
+    
+    fgpuC <- tcrossprod(fgpuX, fgpuY)
+    fgpuCs <- tcrossprod(fgpuX)
+    
+    expect_is(fgpuC, "dgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_equal(fgpuCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_error(crossprod(fgpuX, fgpuZ))
+})
