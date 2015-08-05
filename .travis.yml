@@ -29,11 +29,6 @@ before_install:
 after_success:
   - Rscript -e 'library(covr);coveralls()'
 
-env:
- global:
-   - CRAN: http://cran.rstudio.com
-   - R_CHECK_ARGS="--no-build-vignettes --no-manual"
-
 notifications:
   email:
     on_success: change
