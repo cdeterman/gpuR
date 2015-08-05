@@ -33,3 +33,8 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
+env:
+  global:
+    - R_BUILD_ARGS="--no-build-vignettes --no-manual --no-resave-data"
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual"
