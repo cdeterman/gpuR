@@ -5,6 +5,9 @@ sudo: required
 compiler:
   - g++
 
+r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_check_args: --no-build-vignettes --no-manual
+
 r_binary_packages:
   - devtools
   - Rcpp
@@ -33,8 +36,3 @@ notifications:
   email:
     on_success: change
     on_failure: change
-
-env:
-  global:
-    - R_BUILD_ARGS="--no-build-vignettes --no-manual --no-resave-data"
-    - R_CHECK_ARGS="--no-build-vignettes --no-manual"
