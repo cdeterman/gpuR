@@ -5,7 +5,7 @@ sudo: required
 compiler:
   - g++
 
-r_binary_packages
+r_binary_packages:
   - devtools
   - Rcpp
   - RcppEigen
