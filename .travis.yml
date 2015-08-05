@@ -32,6 +32,7 @@ after_success:
 env:
  global:
    - CRAN: http://cran.rstudio.com
+   - R_CHECK_ARGS="--no-build-vignettes --no-manual"
 
 notifications:
   email:
