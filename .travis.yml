@@ -5,15 +5,17 @@ sudo: required
 compiler:
   - g++
 
-r_packages:
-  - assertive
+r_binary_packages
   - devtools
   - Rcpp
   - RcppEigen
+  - covr
+
+r_packages:
+  - assertive
 
 r_github_packages:
   - cdeterman/RViennaCL
-  - jimhester/covr
 
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
