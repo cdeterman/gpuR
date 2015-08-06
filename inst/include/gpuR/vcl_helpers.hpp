@@ -1,3 +1,4 @@
+#pragma once
 #ifndef VCL_HELPERS
 #define VCL_HELPERS
 
@@ -12,8 +13,7 @@
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/matrix.hpp"
 
-// local Eigen helpers
-#include "eigen_helpers.hpp"
+#include <RcppEigen.h>
 
 // convert SEXP Matrix to ViennaCL matrix
 template <typename T>

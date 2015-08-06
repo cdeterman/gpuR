@@ -1,24 +1,12 @@
+#pragma once
 #ifndef EIGEN_HELPERS
 #define EIGEN_HELPERS
 
 #include <RcppEigen.h>
 
+#include "eigen_templates.hpp"
 #include "dynEigen.hpp"
 #include "dynEigenVec.hpp"
-
-
-// Would very much prefer to use this new C++11 syntax
-// but the Travis-CI g++ always defaults to use C++0x which is 
-// failing with this alias typedef so using the hideous struct below
-// requiring the terrible MapMat<T>::Type syntax which also requires
-// a typename declaration in each instance
-
-template<class T>
-using MapMat = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
-
-
-template<class T>
-using MapVec = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >;
 
 //template<class T>
 //struct MapMat
