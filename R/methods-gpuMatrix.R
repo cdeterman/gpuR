@@ -18,6 +18,7 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
 #' @title gpuMatrix Arith methods
 #' @param e1 A gpuMatrix object
 #' @param e2 A gpuMatrix object
+#' @return A gpuMatrix object
 #' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
           function(e1, e2)
@@ -26,6 +27,8 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
               switch(op,
                      `+` = gpu_Mat_axpy(1, e1, e2),
                      `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
                      {
                          stop("undefined operation")
                      }
@@ -34,6 +37,26 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
 valueClass = "gpuMatrix"
 )
 
+
+#' @title gpuMatrix Math methods
+#' @param x A gpuMatrix object
+#' @return A gpuMatrix object
+#' @export
+setMethod("Math", c(x="gpuMatrix"),
+          function(x)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `sin` = gpuMatElemSin(x),
+                     `cos` = gpuMatElemCos(x),
+                     `tan` = gpuMatElemTan(x),
+{
+    stop("undefined operation")
+}
+              )
+          },
+valueClass = "gpuMatrix"
+)
 
 
 #' @title The Number of Rows/Columns of a gpuMatrix

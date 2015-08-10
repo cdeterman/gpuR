@@ -11,24 +11,11 @@ Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
+E <- matrix(rnorm(15), nrow=5)
 
 
-test_that("gpuMatrix Integer Matrix multiplication successful", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint %*% Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA %*% igpuB
-    
-    expect_equivalent(igpuC[,], Cint, 
-                      info="float matrix elements not equivalent")      
-})
 
-test_that("gpuMatrix Single Precision Matrix multiplication successful", {
+test_that("gpuMatrix Single Precision Matrix multiplication", {
     
     has_gpu_skip()
     
@@ -44,7 +31,7 @@ test_that("gpuMatrix Single Precision Matrix multiplication successful", {
                  info="float matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
+test_that("gpuMatrix Single Precision Matrix Subtraction", {
     
     has_gpu_skip()
     
@@ -52,15 +39,17 @@ test_that("gpuMatrix Single Precision Matrix Subtraction successful", {
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
+    fgpuE <- gpuMatrix(E, type="float")
 
     fgpuC <- fgpuA - fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_error(fgpuA - fgpuE)
 })
 
-test_that("gpuMatrix Single Precision Matrix Addition successful", {
+test_that("gpuMatrix Single Precision Matrix Addition", {
     
     has_gpu_skip()
     
@@ -68,15 +57,91 @@ test_that("gpuMatrix Single Precision Matrix Addition successful", {
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
+    fgpuE <- gpuMatrix(E, type="float")
     
     fgpuC <- fgpuA + fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_error(fgpuA + fgpuE)
 })
 
-test_that("gpuMatrix Integer Matrix Subtraction successful", {
+test_that("gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
+    
+    has_gpu_skip()
+    
+    C <- A * B
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuB <- gpuMatrix(B, type="float")
+    fgpuE <- gpuMatrix(E, type="float")
+    
+    fgpuC <- fgpuA * fgpuB
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_error(fgpuA * fgpuE)
+})
+
+test_that("gpuMatrix Single Precision Matrix Element-Wise Division", {
+    
+    has_gpu_skip()
+    
+    C <- A / B
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuB <- gpuMatrix(B, type="float")
+    fgpuE <- gpuMatrix(E, type="float")
+    
+    fgpuC <- fgpuA / fgpuB
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_error(fgpuA * fgpuE)
+})
+
+test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
+    
+    has_gpu_skip()
+    
+    Sin <- sin(A)
+    Cos <- cos(A)
+    Tan <- tan(A) 
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpuS <- sin(fgpuA)
+    fgpuC <- cos(fgpuA)
+    fgpuT <- tan(fgpuA)
+    
+    expect_is(fgpuC, "fgpuMatrix")
+    expect_equal(fgpuS[,], Sin, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuC[,], Cos, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuT[,], Tan, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Integer Matrix multiplication", {
+    
+    has_gpu_skip()
+    
+    Cint <- Aint %*% Bint
+    
+    igpuA <- gpuMatrix(Aint, type="integer")
+    igpuB <- gpuMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA %*% igpuB
+    
+    expect_equivalent(igpuC[,], Cint, 
+                      info="float matrix elements not equivalent")      
+})
+
+test_that("gpuMatrix Integer Matrix Subtraction", {
     
     has_gpu_skip()
     
@@ -92,7 +157,7 @@ test_that("gpuMatrix Integer Matrix Subtraction successful", {
                  info="integer matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Integer Matrix Addition successful", {
+test_that("gpuMatrix Integer Matrix Addition", {
     
     has_gpu_skip()
     
@@ -108,7 +173,7 @@ test_that("gpuMatrix Integer Matrix Addition successful", {
                  info="integer matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Double Precision Matrix multiplication successful", {
+test_that("gpuMatrix Double Precision Matrix multiplication", {
     
     has_gpu_skip()
     has_double_skip()
@@ -125,7 +190,7 @@ test_that("gpuMatrix Double Precision Matrix multiplication successful", {
                  info="double matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Double Precision Matrix Subtraction successful", {
+test_that("gpuMatrix Double Precision Matrix Subtraction", {
     
     has_gpu_skip()
     has_double_skip()
@@ -134,15 +199,17 @@ test_that("gpuMatrix Double Precision Matrix Subtraction successful", {
     
     dgpuA <- gpuMatrix(A, type="double")
     dgpuB <- gpuMatrix(B, type="double")
+    dgpuE <- gpuMatrix(E, type="double")
     
     dgpuC <- dgpuA - dgpuB
     
     expect_is(dgpuC, "dgpuMatrix")
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
+    expect_error(dgpuA - dgpuE)
 })
 
-test_that("gpuMatrix Double Precision Matrix Addition successful", {
+test_that("gpuMatrix Double Precision Matrix Addition", {
     
     has_gpu_skip()
     has_double_skip()
@@ -151,16 +218,78 @@ test_that("gpuMatrix Double Precision Matrix Addition successful", {
     
     dgpuA <- gpuMatrix(A, type="double")
     dgpuB <- gpuMatrix(B, type="double")
+    dgpuE <- gpuMatrix(E, type="double")
     
     dgpuC <- dgpuA + dgpuB
     
     expect_is(dgpuC, "dgpuMatrix")
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
+    expect_error(dgpuA + dgpuE)
 })
 
+test_that("gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A * B
+    
+    dgpuA <- gpuMatrix(A, type="double")
+    dgpuB <- gpuMatrix(B, type="double")
+    dgpuE <- gpuMatrix(E, type="double")
+    
+    dgpuC <- dgpuA * dgpuB
+    
+    expect_is(dgpuC, "dgpuMatrix")
+    expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_error(dgpuA * dgpuE)
+})
 
-test_that("gpuMatrix Single Precision crossprod successful", {
+test_that("gpuMatrix Double Precision Matrix Element-Wise Division", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A / B
+    
+    dgpuA <- gpuMatrix(A, type="double")
+    dgpuB <- gpuMatrix(B, type="double")
+    dgpuE <- gpuMatrix(E, type="double")
+    
+    dgpuC <- dgpuA / dgpuB
+    
+    expect_is(dgpuC, "dgpuMatrix")
+    expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_error(dgpuA * dgpuE)
+})
+
+test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
+    
+    has_gpu_skip()
+    
+    Sin <- sin(A)
+    Cos <- cos(A)
+    Tan <- tan(A) 
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpuS <- sin(fgpuA)
+    fgpuC <- cos(fgpuA)
+    fgpuT <- tan(fgpuA)
+    
+    expect_is(fgpuC, "dgpuMatrix")
+    expect_equal(fgpuS[,], Sin, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuC[,], Cos, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuT[,], Tan, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision crossprod", {
     
     has_gpu_skip()
     
@@ -186,8 +315,7 @@ test_that("gpuMatrix Single Precision crossprod successful", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-
-test_that("gpuMatrix Double Precision crossprod successful", {
+test_that("gpuMatrix Double Precision crossprod", {
     
     has_gpu_skip()
     
@@ -213,8 +341,7 @@ test_that("gpuMatrix Double Precision crossprod successful", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-
-test_that("gpuMatrix Single Precision tcrossprod successful", {
+test_that("gpuMatrix Single Precision tcrossprod", {
     
     has_gpu_skip()
     
@@ -240,8 +367,7 @@ test_that("gpuMatrix Single Precision tcrossprod successful", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-
-test_that("gpuMatrix Double Precision tcrossprod successful", {
+test_that("gpuMatrix Double Precision tcrossprod", {
     
     has_gpu_skip()
     

@@ -12,6 +12,9 @@
 
 \item{e2}{A gpuMatrix object}
 }
+\value{
+A gpuMatrix object
+}
 \description{
 gpuMatrix Arith methods
 }
