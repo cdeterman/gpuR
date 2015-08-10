@@ -7,6 +7,9 @@ D <- matrix(rnorm(100), nrow=5)
 
 
 test_that("vclMatrix integer class initializer" ,{
+    
+    has_gpu_skip()
+    
     vclA <- vclMatrix(A)
     
     expect_is(vclA, "ivclMatrix")
@@ -19,6 +22,9 @@ test_that("vclMatrix integer class initializer" ,{
 })
 
 test_that("vclMatrix float class initializer" ,{
+    
+    has_gpu_skip()
+    
     vclD <- vclMatrix(D, type="float")
     
     expect_is(vclD, "fvclMatrix")
@@ -31,6 +37,9 @@ test_that("vclMatrix float class initializer" ,{
 })
 
 test_that("vclMatrix double class initializer" ,{
+    
+    has_gpu_skip()
+    
     vclD <- vclMatrix(D)
     
     expect_is(vclD, "dvclMatrix")

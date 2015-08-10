@@ -15,7 +15,6 @@ C <- cov(A)
 
 test_that("gpuMatrix Single Precision Pearson Covariance",
 {
-    
     has_gpu_skip()
     
     fgpuX <- gpuMatrix(A, type="float")

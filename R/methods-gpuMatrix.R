@@ -48,8 +48,14 @@ setMethod("Math", c(x="gpuMatrix"),
               op = .Generic[[1]]
               switch(op,
                      `sin` = gpuMatElemSin(x),
+                     `asin` = gpuMatElemArcSin(x),
+                     `sinh` = gpuMatElemHypSin(x),
                      `cos` = gpuMatElemCos(x),
+                     `acos` = gpuMatElemArcCos(x),
+                     `cosh` = gpuMatElemHypCos(x),
                      `tan` = gpuMatElemTan(x),
+                     `atan` = gpuMatElemArcTan(x),
+                     `tanh` = gpuMatElemHypTan(x),
 {
     stop("undefined operation")
 }

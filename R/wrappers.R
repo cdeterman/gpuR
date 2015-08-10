@@ -253,7 +253,7 @@ return(C)
 }
 
 
-# GPU Element-Wise Sin
+# GPU Element-Wise Sine
 gpuMatElemSin <- function(A){
     
     type <- typeof(A)
@@ -271,6 +271,60 @@ gpuMatElemSin <- function(A){
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_sin(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Arc Sine
+gpuMatElemArcSin <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_asin(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_asin(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Hyperbolic Sine
+gpuMatElemHypSin <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_sinh(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_sinh(A@address,
                                                     C@address)
                }
            },
@@ -307,6 +361,60 @@ gpuMatElemCos <- function(A){
 return(C)
 }
 
+# GPU Element-Wise Arc Cos
+gpuMatElemArcCos <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_acos(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_acos(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Hyperbolic Cos
+gpuMatElemHypCos <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_cosh(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_cosh(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
 # GPU Element-Wise Tan
 gpuMatElemTan <- function(A){
     
@@ -325,6 +433,60 @@ gpuMatElemTan <- function(A){
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_tan(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Arc Tan
+gpuMatElemArcTan <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_atan(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_atan(A@address,
+                                                    C@address)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Hyperbolic Tan
+gpuMatElemHypTan <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_tanh(A@address,
+                                                   C@address)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_tanh(A@address,
                                                     C@address)
                }
            },

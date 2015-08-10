@@ -122,6 +122,50 @@ void cpp_vienna_elem_sin(
 }
 
 template <typename T>
+void cpp_vienna_elem_asin(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_asin(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_sinh(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_sinh(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
 void cpp_vienna_elem_cos(
     MapMat<T> &Am, 
     MapMat<T> &Cm)
@@ -144,6 +188,50 @@ void cpp_vienna_elem_cos(
 }
 
 template <typename T>
+void cpp_vienna_elem_acos(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_acos(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_cosh(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_cosh(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
 void cpp_vienna_elem_tan(
     MapMat<T> &Am, 
     MapMat<T> &Cm)
@@ -161,6 +249,50 @@ void cpp_vienna_elem_tan(
     viennacl::copy(Am, vcl_A); 
     
     vcl_C = viennacl::linalg::element_tan(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_atan(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_atan(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_tanh(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm)
+{    
+    //use only GPUs:
+    long id = 0;
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_tanh(vcl_A);
     
     viennacl::copy(vcl_C, Cm);
 }
@@ -269,6 +401,269 @@ void cpp_vienna_sgpuMatrix_elem_div(
     cpp_vienna_elem_div<float>(Am, Bm, Cm);
 }
 
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_sin(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_sin<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_asin(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_asin<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_sinh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_sinh<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_sin(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_sin<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_asin(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_asin<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_sinh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_sinh<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_cos(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_cos<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_acos(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_acos<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_cosh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_cosh<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_cos(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_cos<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_acos(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_acos<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_cosh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_cosh<float>(Am, Cm);
+}
+
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_tan(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_tan<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_atan(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_atan<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_tanh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_tanh<double>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_tan(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_tan<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_atan(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_atan<float>(Am, Cm);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_tanh(
+    SEXP ptrA_, 
+    SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_tanh<float>(Am, Cm);
+}
+
 /*** vclMatrix Functions ***/
 
 //[[Rcpp::export]]
@@ -298,91 +693,4 @@ void cpp_vclMatrix_saxpy(SEXP alpha_,
 }
 
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_elem_sin(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{
-    
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-
-    cpp_vienna_elem_sin<double>(Am, Cm);
-}
-
-//[[Rcpp::export]]
-void cpp_vienna_sgpuMatrix_elem_sin(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_elem_sin<float>(Am, Cm);
-}
-
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_elem_cos(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{
-    
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-
-    cpp_vienna_elem_cos<double>(Am, Cm);
-}
-
-//[[Rcpp::export]]
-void cpp_vienna_sgpuMatrix_elem_cos(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_elem_cos<float>(Am, Cm);
-}
-
-
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_elem_tan(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{
-    
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-
-    cpp_vienna_elem_tan<double>(Am, Cm);
-}
-
-//[[Rcpp::export]]
-void cpp_vienna_sgpuMatrix_elem_tan(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_elem_tan<float>(Am, Cm);
-}
 
