@@ -1,5 +1,8 @@
 library(gpuR)
-context("gpuMatrix algebra")
+context("CPU gpuMatrix algebra")
+
+# set option to use CPU instead of GPU
+options(gpuR.default.device = "cpu")
 
 # set seed
 set.seed(123)
@@ -13,10 +16,7 @@ A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
 
-
-test_that("gpuMatrix Single Precision Matrix multiplication", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision CPU Matrix multiplication", {
     
     C <- A %*% B
     
@@ -30,16 +30,14 @@ test_that("gpuMatrix Single Precision Matrix multiplication", {
                  info="float matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Single Precision Matrix Subtraction", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision Matrix Subtraction", {
     
     C <- A - B
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
     fgpuE <- gpuMatrix(E, type="float")
-
+    
     fgpuC <- fgpuA - fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
@@ -48,9 +46,7 @@ test_that("gpuMatrix Single Precision Matrix Subtraction", {
     expect_error(fgpuA - fgpuE)
 })
 
-test_that("gpuMatrix Single Precision Matrix Addition", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision Matrix Addition", {
     
     C <- A + B
     
@@ -66,9 +62,7 @@ test_that("gpuMatrix Single Precision Matrix Addition", {
     expect_error(fgpuA + fgpuE)
 })
 
-test_that("gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
     
     C <- A * B
     
@@ -84,9 +78,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
     expect_error(fgpuA * fgpuE)
 })
 
-test_that("gpuMatrix Single Precision Matrix Element-Wise Division", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Division", {
     
     C <- A / B
     
@@ -102,57 +94,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Division", {
     expect_error(fgpuA * fgpuE)
 })
 
-test_that("gpuMatrix Integer Matrix multiplication", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint %*% Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA %*% igpuB
-    
-    expect_equivalent(igpuC[,], Cint, 
-                      info="integer matrix elements not equivalent")      
-})
-
-test_that("gpuMatrix Integer Matrix Subtraction", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint - Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA - igpuB
-    
-    expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC[,], Cint, 
-                 info="integer matrix elements not equivalent")  
-})
-
-test_that("gpuMatrix Integer Matrix Addition", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint + Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA + igpuB
-    
-    expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC[,], Cint,
-                 info="integer matrix elements not equivalent")  
-})
-
-test_that("gpuMatrix Double Precision Matrix multiplication", {
-    
-    has_gpu_skip()
-    has_double_skip()
+test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     
     C <- A %*% B
     
@@ -166,10 +108,7 @@ test_that("gpuMatrix Double Precision Matrix multiplication", {
                  info="double matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Double Precision Matrix Subtraction", {
-    
-    has_gpu_skip()
-    has_double_skip()
+test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
     
     C <- A - B
     
@@ -185,10 +124,7 @@ test_that("gpuMatrix Double Precision Matrix Subtraction", {
     expect_error(dgpuA - dgpuE)
 })
 
-test_that("gpuMatrix Double Precision Matrix Addition", {
-    
-    has_gpu_skip()
-    has_double_skip()
+test_that("CPU gpuMatrix Double Precision Matrix Addition", {
     
     C <- A + B
     
@@ -204,10 +140,7 @@ test_that("gpuMatrix Double Precision Matrix Addition", {
     expect_error(dgpuA + dgpuE)
 })
 
-test_that("gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
-    
-    has_gpu_skip()
-    has_double_skip()
+test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
     
     C <- A * B
     
@@ -223,10 +156,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
     expect_error(dgpuA * dgpuE)
 })
 
-test_that("gpuMatrix Double Precision Matrix Element-Wise Division", {
-    
-    has_gpu_skip()
-    has_double_skip()
+test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Division", {
     
     C <- A / B
     
@@ -242,9 +172,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Division", {
     expect_error(dgpuA * dgpuE)
 })
 
-test_that("gpuMatrix Single Precision crossprod", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision crossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -268,9 +196,7 @@ test_that("gpuMatrix Single Precision crossprod", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-test_that("gpuMatrix Double Precision crossprod", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Double Precision crossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -294,9 +220,7 @@ test_that("gpuMatrix Double Precision crossprod", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-test_that("gpuMatrix Single Precision tcrossprod", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Single Precision tcrossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -320,9 +244,7 @@ test_that("gpuMatrix Single Precision tcrossprod", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
-test_that("gpuMatrix Double Precision tcrossprod", {
-    
-    has_gpu_skip()
+test_that("CPU gpuMatrix Double Precision tcrossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -345,3 +267,8 @@ test_that("gpuMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(fgpuX, fgpuZ))
 })
+
+
+
+# set option back to GPU
+options(gpuR.default.device = "gpu")

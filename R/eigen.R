@@ -35,6 +35,14 @@ setOldClass("eigen")
 setMethod("eigen", signature(x="gpuMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
           {
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
               }
@@ -62,11 +70,13 @@ setMethod("eigen", signature(x="gpuMatrix"),
                      "float" = cpp_vienna_fgpuMatrix_eigen(x@address, 
                                                            Q@address, 
                                                            V@address,
-                                                           symmetric),
+                                                           symmetric,
+                                                           device_flag),
                      "double" = cpp_vienna_dgpuMatrix_eigen(x@address,
                                                             Q@address, 
                                                             V@address, 
-                                                            symmetric)
+                                                            symmetric,
+                                                            device_flag)
                      )
               
               if(only.values){

@@ -25,11 +25,14 @@ void cpp_vienna_eigen(
     MapMat<T> &Am, 
     MapMat<T> &Qm,
     MapVec<T> &eigenvalues,
-    bool symmetric)
+    bool symmetric,
+    int device_flag)
 {    
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -55,7 +58,7 @@ void cpp_vienna_eigen(
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_eigen(
     SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, 
-    bool symmetric)
+    bool symmetric, int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -66,13 +69,13 @@ void cpp_vienna_fgpuMatrix_eigen(
     MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     MapVec<float> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_eigen<float>(Am, Bm, Cm, symmetric);
+    cpp_vienna_eigen<float>(Am, Bm, Cm, symmetric, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_eigen(
     SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
-    bool symmetric)
+    bool symmetric, int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -83,5 +86,5 @@ void cpp_vienna_dgpuMatrix_eigen(
     MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     MapVec<double> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_eigen<double>(Am, Bm, Cm, symmetric);
+    cpp_vienna_eigen<double>(Am, Bm, Cm, symmetric, device_flag);
 }

@@ -4,12 +4,9 @@ context("gpuMatrix classes")
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
 D <- matrix(rnorm(100), 10)
-# B <- sample(seq.int(10000), 100, replace = TRUE)
 
 
 test_that("gpuMatrix class contains correct information", {
-    
-    has_gpu_skip()
     
     B <- as.numeric(rnorm(10))
     gpuA <- gpuMatrix(A)
@@ -33,8 +30,6 @@ test_that("gpuMatrix class contains correct information", {
 })
 
 test_that("gpuMatrix vector initializers", {
-    
-    has_gpu_skip()
     
     v <- rnorm(10)
     vi <- seq.int(10)

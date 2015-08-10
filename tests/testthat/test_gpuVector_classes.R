@@ -1,5 +1,5 @@
 library(gpuR)
-context("Vector classes")
+context("gpuVector classes")
 
 set.seed(123)
 

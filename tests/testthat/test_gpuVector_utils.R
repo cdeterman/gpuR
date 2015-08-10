@@ -1,5 +1,5 @@
 library(gpuR)
-context("Vector Utility Functions")
+context("gpuVector Utility Functions")
 
 set.seed(123)
 ORDER <- 100

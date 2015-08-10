@@ -22,11 +22,14 @@ using namespace Rcpp;
 template <typename T>
 void cpp_vienna_colmean(
     MapMat<T> &Am, 
-    MapVec<T> &colMeans)
+    MapVec<T> &colMeans,
+    int device_flag)
 {    
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -46,11 +49,14 @@ void cpp_vienna_colmean(
 template <typename T>
 void cpp_vienna_colsum(
     MapMat<T> &Am, 
-    MapVec<T> &colSums)
+    MapVec<T> &colSums,
+    int device_flag)
 {    
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -69,11 +75,14 @@ void cpp_vienna_colsum(
 template <typename T>
 void cpp_vienna_rowmean(
     MapMat<T> &Am, 
-    MapVec<T> &rowMeans)
+    MapVec<T> &rowMeans,
+    int device_flag)
 {    
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -93,11 +102,14 @@ void cpp_vienna_rowmean(
 template <typename T>
 void cpp_vienna_rowsum(
     MapMat<T> &Am, 
-    MapVec<T> &rowSums)
+    MapVec<T> &rowSums,
+    int device_flag)
 {    
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -116,7 +128,8 @@ void cpp_vienna_rowsum(
 
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_colmean(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -125,12 +138,13 @@ void cpp_vienna_fgpuMatrix_colmean(
     MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<float> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_colmean<float>(Am, Cm);
+    cpp_vienna_colmean<float>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_colmean(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -139,12 +153,13 @@ void cpp_vienna_dgpuMatrix_colmean(
     MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<double> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_colmean<double>(Am, Cm);
+    cpp_vienna_colmean<double>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_colsum(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -153,12 +168,13 @@ void cpp_vienna_fgpuMatrix_colsum(
     MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<float> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_colsum<float>(Am, Cm);
+    cpp_vienna_colsum<float>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_colsum(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -167,12 +183,13 @@ void cpp_vienna_dgpuMatrix_colsum(
     MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<double> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_colsum<double>(Am, Cm);
+    cpp_vienna_colsum<double>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_rowmean(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -181,12 +198,13 @@ void cpp_vienna_fgpuMatrix_rowmean(
     MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<float> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_rowmean<float>(Am, Cm);
+    cpp_vienna_rowmean<float>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_rowmean(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -195,12 +213,13 @@ void cpp_vienna_dgpuMatrix_rowmean(
     MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<double> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_rowmean<double>(Am, Cm);
+    cpp_vienna_rowmean<double>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_rowsum(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -209,12 +228,13 @@ void cpp_vienna_fgpuMatrix_rowsum(
     MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<float> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_rowsum<float>(Am, Cm);
+    cpp_vienna_rowsum<float>(Am, Cm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_rowsum(
-    SEXP ptrA_, SEXP ptrC_)
+    SEXP ptrA_, SEXP ptrC_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -223,5 +243,5 @@ void cpp_vienna_dgpuMatrix_rowsum(
     MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapVec<double> Cm(ptrC->ptr(), ptrC->length());
 
-    cpp_vienna_rowsum<double>(Am, Cm);
+    cpp_vienna_rowsum<double>(Am, Cm, device_flag);
 }

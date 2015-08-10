@@ -23,11 +23,14 @@ using namespace Rcpp;
 template <typename T>
 void cpp_vienna_pmcc(
     MapMat<T> &Am, 
-    MapMat<T> &Bm)
+    MapMat<T> &Bm,
+    int device_flag)
 {    
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.cols();
     int K = Am.rows();
@@ -61,7 +64,9 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_pmcc(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
@@ -70,12 +75,14 @@ void cpp_vienna_fgpuMatrix_pmcc(
     MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
 
-    cpp_vienna_pmcc<float>(Am, Bm);
+    cpp_vienna_pmcc<float>(Am, Bm, device_flag);
 }
 
 //[[Rcpp::export]]
 void cpp_vienna_dgpuMatrix_pmcc(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    int device_flag)
 {
     
     Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
@@ -84,5 +91,5 @@ void cpp_vienna_dgpuMatrix_pmcc(
     MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
 
-    cpp_vienna_pmcc<double>(Am, Bm);
+    cpp_vienna_pmcc<double>(Am, Bm, device_flag);
 }

@@ -1,5 +1,5 @@
 library(gpuR)
-context("Vector algebra")
+context("gpuVector algebra")
 
 set.seed(123)
 ORDER <- 100
