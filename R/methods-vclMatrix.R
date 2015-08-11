@@ -46,12 +46,62 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
               switch(op,
                      `+` = vclMat_axpy(1, e1, e2),
                      `-` = vclMat_axpy(-1, e2, e1),
+                     `*` = vclMatElemMult(e1, e2),
+                     `/` = vclMatElemDiv(e1,e2),
 {
     stop("undefined operation")
 }
               )
           },
 valueClass = "vclMatrix"
+)
+
+
+#' @title vclMatrix Math methods
+#' @param x A vclMatrix object
+#' @return A vclMatrix object
+#' @export
+setMethod("Math", c(x="vclMatrix"),
+          function(x)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `sin` = vclMatElemSin(x),
+                     `asin` = vclMatElemArcSin(x),
+                     `sinh` = vclMatElemHypSin(x),
+                     `cos` = vclMatElemCos(x),
+                     `acos` = vclMatElemArcCos(x),
+                     `cosh` = vclMatElemHypCos(x),
+                     `tan` = vclMatElemTan(x),
+                     `atan` = vclMatElemArcTan(x),
+                     `tanh` = vclMatElemHypTan(x),
+                     `log10` = vclMatElemLog10(x),
+                     `exp` = vclMatElemExp(x),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @title vclMatrix Logarithms
+#' @param x A vclMatrix object
+#' @return A vclMatrix object
+#' @param base A positive number (complex not currently supported by OpenCL):
+#' the base with respect to which logarithms are computed.  Defaults to the
+#' natural log.
+#' @export
+setMethod("log", c(x="vclMatrix"),
+          function(x, base=NULL)
+          {
+              if(is.null(base)){
+                  vclMatElemLog(x) 
+              }else{
+                  assert_is_numeric(base)
+                  vclMatElemLogBase(x, base)
+              }
+              
+          },
+          valueClass = "vclMatrix"
 )
 
 

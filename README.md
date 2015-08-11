@@ -40,8 +40,8 @@ but also have the CUDA option available.
 
 # INSTALL
 
-The only verified installations at present consisted of using a NVIDIA GTX or
-AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
+The only verified installations at present consisted of using a NVIDIA 970 GTX 
+or a AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
 consisted of:
 
 ### Dependencies
@@ -80,7 +80,7 @@ The cuda-6.5 toolkit was appropriate for me which you can download from the
 Once downloaded, run the .run file.
 3. Reboot computer
 4. Switch to ttyl (Ctrl-Alt-F1)
-5. Stop the X server (sudo stop lightdm)
+5. Stop the X server (`sudo stop lightdm`)
 6. Run the cuda run file (`sh cuda_6.5.14_linux_64.run`)
 7. Select 'yes' and accept all defaults
 8. Required reboot
@@ -96,18 +96,16 @@ to include `/usr/local/cuda-6.5/lib64`
 3. Install opencl-headers (`sudo apt-get install opencl-headers`)
 
 # Install Boost & OpenCL headers
+```
 sudo apt-get install libboost-all-dev opencl-headers
-
-
-Once all these things are set you should be able to install the package 
-and begin using your GPU :)
+```
 
 # Installing the package
 ### Stable
 Will be posted to CRAN following completion of version 1.0.0
 
 ### Development
-```
+```r
 # Dev RViennaCL
 devtools::install_github("cdeterman/RViennaCL")
 
@@ -115,6 +113,12 @@ devtools::install_github("cdeterman/RViennaCL")
 devtools::install_github("cdeterman/gpuR")
 ```
 
+Once all these things are set you should be able to install the package 
+and begin using your GPU :)
+
 # Things to Do
 1. Obviously more vector functions and matrix implementations
+2. My resources limit how much I can test (e.g. OS, GPU vendors).  Would
+appreciate any feedback on how the installation and use fairs with other
+platforms and GPUs.
 2. Would love any suggestions :) (submit in the issues)

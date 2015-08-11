@@ -4,6 +4,9 @@ context("gpuMatrix math operations")
 # set seed
 set.seed(123)
 
+# ignore warnings (logs and arc trigs)
+options(warn=-1)
+
 ORDER <- 4
 
 # Base R objects
@@ -105,3 +108,55 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
     expect_equal(fgpuHT[,], Htan, tolerance=.Machine$double.eps ^ 0.5, 
                  info="hyperbolic tan float matrix elements not equivalent") 
 })
+
+
+test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
+    
+    has_gpu_skip()
+    
+    R_log <- log(A)
+    R_log10 <- log10(A)
+    R_log2 <- log(A, base=2)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_log <- log(fgpuA)
+    fgpu_log10 <- log10(fgpuA)
+    fgpu_log2 <- log(fgpuA, base=2)
+    
+    expect_is(fgpu_log, "fgpuMatrix")
+    expect_is(fgpu_log10, "fgpuMatrix")
+    expect_is(fgpu_log2, "fgpuMatrix")
+    expect_equal(fgpu_log[,], R_log, tolerance=1e-07, 
+                 info="log float matrix elements not equivalent")  
+    expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
+                 info="log10 float matrix elements not equivalent")  
+    expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
+                 info="base log float matrix elements not equivalent") 
+})
+
+test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
+    
+    has_gpu_skip()
+    
+    R_log <- log(A)
+    R_log10 <- log10(A)
+    R_log2 <- log(A, base=2)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_log <- log(fgpuA)
+    fgpu_log10 <- log10(fgpuA)
+    fgpu_log2 <- log(fgpuA, base=2)
+    
+    expect_is(fgpu_log, "dgpuMatrix")
+    expect_is(fgpu_log10, "dgpuMatrix")
+    expect_is(fgpu_log2, "dgpuMatrix")
+    expect_equal(fgpu_log[,], R_log, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="log float matrix elements not equivalent")  
+    expect_equal(fgpu_log10[,], R_log10, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="log10 float matrix elements not equivalent")  
+    expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="base log float matrix elements not equivalent") 
+})
+

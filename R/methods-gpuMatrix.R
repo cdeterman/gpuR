@@ -56,12 +56,33 @@ setMethod("Math", c(x="gpuMatrix"),
                      `tan` = gpuMatElemTan(x),
                      `atan` = gpuMatElemArcTan(x),
                      `tanh` = gpuMatElemHypTan(x),
-{
-    stop("undefined operation")
-}
+                     `log10` = gpuMatElemLog10(x),
+                     `exp` = gpuMatElemExp(x),
+                     stop("undefined operation")
               )
           },
 valueClass = "gpuMatrix"
+)
+
+#' @title gpuMatrix Logarithms
+#' @param x A gpuMatrix object
+#' @param base A positive number (complex not currently supported by OpenCL):
+#' the base with respect to which logarithms are computed.  Defaults to the
+#' natural log.
+#' @return A gpuMatrix object
+#' @export
+setMethod("log", c(x="gpuMatrix"),
+          function(x, base=NULL)
+          {
+              if(is.null(base)){
+                  gpuMatElemLog(x) 
+              }else{
+                  assert_is_numeric(base)
+                  gpuMatElemLogBase(x, base)
+              }
+              
+          },
+          valueClass = "gpuMatrix"
 )
 
 

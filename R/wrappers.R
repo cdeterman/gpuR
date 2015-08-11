@@ -9,8 +9,12 @@ detectCPUs <- function(platform_idx=1L){
     assert_is_integer(platform_idx)
     assert_all_are_positive(platform_idx)
     
-    out <- cpp_detectCPUs(platform_idx)
-    return(out)
+    cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
+    if(class(cpus)[1] == "try-error"){
+        return(0)
+    }else{
+        return(cpus)
+    }
 }
 
 #' @title Detect Available GPUs
@@ -611,6 +615,157 @@ gpuMatElemHypTan <- function(A){
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_tanh(A@address,
+                                                    C@address,
+                                                    device_flag)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Natural Log
+gpuMatElemLog <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_log(A@address,
+                                                    C@address,
+                                                    device_flag)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_log(A@address,
+                                                     C@address,
+                                                     device_flag)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+
+# GPU Element-Wise Log Base
+gpuMatElemLogBase <- function(A, base){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_log_base(A@address,
+                                                   C@address,
+                                                   base,
+                                                   device_flag)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_log_base(A@address,
+                                                    C@address,
+                                                    base,
+                                                    device_flag)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Base 10 Log
+gpuMatElemLog10 <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_log10(A@address,
+                                                   C@address,
+                                                   device_flag)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_log10(A@address,
+                                                    C@address,
+                                                    device_flag)
+               }
+           },
+{
+    stop("type not recognized")
+})
+return(C)
+}
+
+# GPU Element-Wise Exponential
+gpuMatElemExp <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vienna_sgpuMatrix_elem_exp(A@address,
+                                                   C@address,
+                                                   device_flag)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_dgpuMatrix_elem_exp(A@address,
                                                     C@address,
                                                     device_flag)
                }

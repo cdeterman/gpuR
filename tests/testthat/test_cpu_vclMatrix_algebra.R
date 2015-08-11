@@ -1,5 +1,8 @@
 library(gpuR)
-context("vclMatrix algebra")
+context("CPU vclMatrix algebra")
+
+# set option to use CPU instead of GPU
+options(gpuR.default.device = "cpu")
 
 # set seed
 set.seed(123)
@@ -16,8 +19,6 @@ E <- matrix(rnorm(15), nrow=5)
 
 test_that("vclMatrix Single Precision Matrix multiplication successful", {
     
-    has_gpu_skip()
-    
     C <- A %*% B
     
     fvclA <- vclMatrix(A, type="float")
@@ -31,9 +32,6 @@ test_that("vclMatrix Single Precision Matrix multiplication successful", {
 })
 
 test_that("vclMatrix Double Precision Matrix multiplication successful", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A %*% B
     
@@ -49,8 +47,6 @@ test_that("vclMatrix Double Precision Matrix multiplication successful", {
 
 test_that("vclMatrix Single Precision Matrix Subtraction successful", {
     
-    has_gpu_skip()
-    
     C <- A - B
     
     fvclA <- vclMatrix(A, type="float")
@@ -64,8 +60,6 @@ test_that("vclMatrix Single Precision Matrix Subtraction successful", {
 })
 
 test_that("vclMatrix Single Precision Matrix Addition successful", {
-    
-    has_gpu_skip()
     
     C <- A + B
     
@@ -81,9 +75,6 @@ test_that("vclMatrix Single Precision Matrix Addition successful", {
 
 test_that("vclMatrix Double Precision Matrix Subtraction successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     C <- A - B
     
     dvclA <- vclMatrix(A, type="double")
@@ -98,9 +89,6 @@ test_that("vclMatrix Double Precision Matrix Subtraction successful", {
 
 test_that("vclMatrix Double Precision Matrix Addition successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     C <- A + B
     
     dvclA <- vclMatrix(A, type="double")
@@ -114,8 +102,6 @@ test_that("vclMatrix Double Precision Matrix Addition successful", {
 })
 
 test_that("vclMatrix Single Precision crossprod successful", {
-    
-    has_gpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -141,8 +127,6 @@ test_that("vclMatrix Single Precision crossprod successful", {
 
 test_that("vclMatrix Double Precision crossprod successful", {
     
-    has_gpu_skip()
-    
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
     Z <- matrix(rnorm(10), nrow=5)
@@ -166,8 +150,6 @@ test_that("vclMatrix Double Precision crossprod successful", {
 })
 
 test_that("vclMatrix Single Precision tcrossprod successful", {
-    
-    has_gpu_skip()
     
     X <- matrix(rnorm(10), nrow=5)
     Y <- matrix(rnorm(10), nrow=5)
@@ -193,8 +175,6 @@ test_that("vclMatrix Single Precision tcrossprod successful", {
 
 test_that("vclMatrix Double Precision tcrossprod successful", {
     
-    has_gpu_skip()
-    
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
     Z <- matrix(rnorm(10), nrow=5)
@@ -219,8 +199,6 @@ test_that("vclMatrix Double Precision tcrossprod successful", {
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Multiplication", {
     
-    has_gpu_skip()
-    
     C <- A * B
     
     fvclA <- vclMatrix(A, type="float")
@@ -236,8 +214,6 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Multiplication", {
 })
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Division", {
-    
-    has_gpu_skip()
     
     C <- A / B
     
@@ -255,9 +231,6 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Division", {
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Multiplication", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     C <- A * B
     
     dvclA <- vclMatrix(A, type="double")
@@ -273,9 +246,6 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Multiplication", {
 })
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Division", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A / B
     
@@ -340,3 +310,5 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Division", {
 #     expect_equal(igpuC[,], Cint,
 #                  info="integer matrix elements not equivalent")  
 # })
+
+options(gpuR.default.device = "gpu")

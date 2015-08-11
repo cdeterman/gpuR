@@ -1,5 +1,5 @@
 library(gpuR)
-context("gpuMatrix Row and Column Methods")
+context("CPU gpuMatrix Row and Column Methods")
 
 # set option to use CPU instead of GPU
 options(gpuR.default.device = "cpu")

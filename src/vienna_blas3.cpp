@@ -244,10 +244,18 @@ void cpp_vienna_gpuMatrix_stcrossprod(
 /*** vclMatrix Functions ***/
 
 //[[Rcpp::export]]
-void cpp_vienna_vclMatrix_dgemm(SEXP ptrA_, 
-                                SEXP ptrB_,
-                                SEXP ptrC_)
+void cpp_vclMatrix_dgemm(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
     Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
@@ -256,10 +264,18 @@ void cpp_vienna_vclMatrix_dgemm(SEXP ptrA_,
 }
 
 //[[Rcpp::export]]
-void cpp_vienna_vclMatrix_sgemm(SEXP ptrA_, 
-                                SEXP ptrB_, 
-                                SEXP ptrC_)
+void cpp_vclMatrix_sgemm(
+    SEXP ptrA_, 
+    SEXP ptrB_, 
+    SEXP ptrC_,
+    int device_flag)
 {    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
@@ -288,8 +304,14 @@ void cpp_vienna_vclMatrix_sgemm(SEXP ptrA_,
 void cpp_vclMatrix_dcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_)
+    SEXP ptrC_,
+    int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
@@ -302,8 +324,15 @@ void cpp_vclMatrix_dcrossprod(
 void cpp_vclMatrix_scrossprod(
     SEXP ptrA_, 
     SEXP ptrB_, 
-    SEXP ptrC_)
+    SEXP ptrC_,
+    int device_flag)
 {    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
@@ -315,8 +344,14 @@ void cpp_vclMatrix_scrossprod(
 void cpp_vclMatrix_dtcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_)
+    SEXP ptrC_,
+    int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
@@ -329,8 +364,15 @@ void cpp_vclMatrix_dtcrossprod(
 void cpp_vclMatrix_stcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_, 
-    SEXP ptrC_)
+    SEXP ptrC_,
+    int device_flag)
 {   
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
     Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);

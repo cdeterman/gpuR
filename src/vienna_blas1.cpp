@@ -333,6 +333,108 @@ void cpp_vienna_elem_tanh(
     viennacl::copy(vcl_C, Cm);
 }
 
+template <typename T>
+void cpp_vienna_elem_log(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_log(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_log_base(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm,
+    T base,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_log10(vcl_A);
+    vcl_C /= log10(base);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_log10(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_log10(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void cpp_vienna_elem_exp(
+    MapMat<T> &Am, 
+    MapMat<T> &Cm,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_C(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_exp(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
 /*** gpuMatrix functions ***/
 
 //[[Rcpp::export]]
@@ -726,13 +828,150 @@ void cpp_vienna_sgpuMatrix_elem_tanh(
     cpp_vienna_elem_tanh<float>(Am, Cm, device_flag);
 }
 
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_log(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_log<float>(Am, Cm, device_flag);
+}
+
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_log10(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_log10<float>(Am, Cm, device_flag);
+}
+
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_log_base(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    float base,
+    int device_flag)
+{
+    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_log_base<float>(Am, Cm, base, device_flag);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_sgpuMatrix_elem_exp(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    
+    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    
+    cpp_vienna_elem_exp<float>(Am, Cm, device_flag);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_log(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_log<double>(Am, Cm, device_flag);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_log10(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_log10<double>(Am, Cm, device_flag);
+}
+
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_log_base(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    double base,
+    int device_flag)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_log_base<double>(Am, Cm, base, device_flag);
+}
+
+//[[Rcpp::export]]
+void cpp_vienna_dgpuMatrix_elem_exp(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    
+    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    
+    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    cpp_vienna_elem_exp<double>(Am, Cm, device_flag);
+}
+
 /*** vclMatrix Functions ***/
 
 //[[Rcpp::export]]
 void cpp_vclMatrix_daxpy(SEXP alpha_, 
                         SEXP ptrA_, 
-                        SEXP ptrB_)
+                        SEXP ptrB_,
+                        int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     const double alpha = as<double>(alpha_);
     
     Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
@@ -742,10 +981,18 @@ void cpp_vclMatrix_daxpy(SEXP alpha_,
 }
 
 //[[Rcpp::export]]
-void cpp_vclMatrix_saxpy(SEXP alpha_, 
-                            SEXP ptrA_, 
-                            SEXP ptrB_)
+void cpp_vclMatrix_saxpy(
+    SEXP alpha_, 
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
     const float alpha = as<float>(alpha_);
 
     Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
@@ -755,4 +1002,560 @@ void cpp_vclMatrix_saxpy(SEXP alpha_,
 }
 
 
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_prod(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_prod(*ptrA, *ptrB);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_prod(
+    SEXP ptrA_, 
+    SEXP ptrB_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_prod(*ptrA, *ptrB);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_div(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_div(*ptrA, *ptrB);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_div(
+    SEXP ptrA_, 
+    SEXP ptrB_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_div(*ptrA, *ptrB);
+}
+
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_sin(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{ 
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_sin(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_asin(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_asin(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_sinh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_sinh(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_sin(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_sin(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_asin(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_asin(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_sinh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_sinh(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_cos(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_cos(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_acos(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_acos(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_cosh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_cosh(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_cos(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_cos(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_acos(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_acos(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_cosh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_cosh(*ptrA);
+}
+
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_tan(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_tan(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_atan(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_atan(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_tanh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_tanh(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_tan(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_tan(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_atan(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_atan(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_tanh(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_tanh(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_log(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log(*ptrA);
+}
+
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_log10(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log10(*ptrA);
+}
+
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_log_base(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    float base,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log10(*ptrA);
+    *ptrC /= log10(base);
+}
+
+//[[Rcpp::export]]
+void cpp_svclMatrix_elem_exp(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_exp(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_log(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log(*ptrA);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_log10(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{ 
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log10(*ptrA);
+}
+
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_log_base(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    double base,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_log(*ptrA);
+    *ptrC /= log10(base);
+}
+
+//[[Rcpp::export]]
+void cpp_dvclMatrix_elem_exp(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
+
+    *ptrC = viennacl::linalg::element_exp(*ptrA);
+}
 

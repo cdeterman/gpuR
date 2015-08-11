@@ -124,11 +124,15 @@ gpuB <- gpuA %*% gpuA
 @
 
 Most linear algebra methods have been created to be executed for the 
-\Rclass{gpuMatrix} and \Rclass{gpuVector} objects.  These methods include
-\Rcode{\%*\%}, \Rcode{'+'}, \Rcode{'-'}, \Rcode{crossprod}, \Rcode{tcrossprod}, 
-\Rcode{colMeans}, \Rcode{colSums}, \Rcode{rowMean}, \Rcode{rowSums}, 
-\Rcode{cov} (Pearson Covariance), and \Rcode{eigen}. With many more in 
-development.
+\Rclass{gpuMatrix} and \Rclass{gpuVector} objects.  These methods include basic 
+Aithmetic functions \Rcode{\%*\%}, \Rcode{+}, \Rcode{-}, \Rcode{*}, 
+\Rcode{/}, \Rcode{crossprod}, \Rcode{tcrossprod}, \Rcode{colMeans},
+\Rcode{colSums}, \Rcode{rowMean}, and \Rcode{rowSums}.  Math functions include 
+\Rcode{sin}, \Rcode{asin}, \Rcode{sinh}, \Rcode{cos}, \Rcode{acos},
+\Rcode{cosh}, \Rcode{tan}, \Rcode{atan}, \Rcode{tanh}, \Rcode{exp}, 
+\Rcode{log}, \Rcode{log10}.  Additional operations include some linear algebra 
+routines such as \Rcode{cov} (Pearson Covariance) and \Rcode{eigen}. With many 
+more in development.
 
 The objects may also be created specifying data type including int, float, and 
 double.  Float type was included to provide a smaller memory footprint and also 
