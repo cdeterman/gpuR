@@ -19,8 +19,6 @@ E <- rnorm(ORDER-1)
 
 test_that("vclVector Single Precision Inner Product successful", {
     
-    has_gpu_skip()
-    
     C <- A %*% B
     
     fvclA <- vclVector(A, type="float")
@@ -34,9 +32,6 @@ test_that("vclVector Single Precision Inner Product successful", {
 })
 
 test_that("vclVector Double Precision Inner Product successful", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A %*% B
     
@@ -52,8 +47,6 @@ test_that("vclVector Double Precision Inner Product successful", {
 
 test_that("vclVector Single Precision Outer Product successful", {
     
-    has_gpu_skip()
-    
     C <- A %o% B
     
     fvclA <- vclVector(A, type="float")
@@ -67,9 +60,6 @@ test_that("vclVector Single Precision Outer Product successful", {
 })
 
 test_that("vclVector Double Precision Outer Product successful", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A %o% B
     
@@ -85,8 +75,6 @@ test_that("vclVector Double Precision Outer Product successful", {
 
 test_that("vclVector Single Precision Vector Subtraction successful", {
     
-    has_gpu_skip()
-    
     C <- A - B
     
     fvclA <- vclVector(A, type="float")
@@ -100,8 +88,6 @@ test_that("vclVector Single Precision Vector Subtraction successful", {
 })
 
 test_that("vclVector Single Precision Vector Addition successful", {
-    
-    has_gpu_skip()
     
     C <- A + B
     
@@ -117,9 +103,6 @@ test_that("vclVector Single Precision Vector Addition successful", {
 
 test_that("vclVector Double Precision Vector Subtraction successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     C <- A - B
     
     dvclA <- vclVector(A, type="double")
@@ -133,9 +116,6 @@ test_that("vclVector Double Precision Vector Subtraction successful", {
 })
 
 test_that("vclVector Double Precision Vector Addition successful", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A + B
     
@@ -151,8 +131,6 @@ test_that("vclVector Double Precision Vector Addition successful", {
 
 
 test_that("vclVector Single Precision Vector Element-Wise Multiplication", {
-    
-    has_gpu_skip()
     
     C <- A * B
     
@@ -170,8 +148,6 @@ test_that("vclVector Single Precision Vector Element-Wise Multiplication", {
 
 test_that("vclVector Single Precision Vector Element-Wise Division", {
     
-    has_gpu_skip()
-    
     C <- A / B
     
     fvclA <- vclVector(A, type="float")
@@ -188,9 +164,6 @@ test_that("vclVector Single Precision Vector Element-Wise Division", {
 
 test_that("vclVector Double Precision Vector Element-Wise Multiplication", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     C <- A * B
     
     dvclA <- vclVector(A, type="double")
@@ -206,9 +179,6 @@ test_that("vclVector Double Precision Vector Element-Wise Multiplication", {
 })
 
 test_that("vclVector Double Precision Vector Element-Wise Division", {
-    
-    has_gpu_skip()
-    has_double_skip()
     
     C <- A / B
     
