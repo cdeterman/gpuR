@@ -55,7 +55,7 @@ consisted of:
 If you are fortunate enough to have a very recent card that you can
 use the most recent drivers.  This install is much more simple
 ```
-# Install Boost & OpenCL headers
+# Install OpenCL headers
 sudo apt-get install opencl-headers
 
 # Install NVIDIA Drivers and CUDA

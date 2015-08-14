@@ -89,6 +89,9 @@ setMethod("Math", c(x="gpuVector"),
           valueClass = "gpuVector"
 )
 
+# These compare functions need improvement to have
+# a C++ backend function to make faster and more efficient
+
 #' @title Compare vector and gpuVector elements
 #' @param e1 A vector object
 #' @param e2 A gpuVector object
@@ -98,7 +101,7 @@ setMethod("Compare", c(e1="vector", e2="gpuVector"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `==` = {e1 == e2@object},
+                     `==` = {e1 == e2[]},
 {
     stop("undefined operation")
 }
@@ -116,7 +119,7 @@ setMethod("Compare", c(e1="gpuVector", e2="vector"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `==` = {e1@object == e2},
+                     `==` = {e1[] == e2},
 {
     stop("undefined operation")
 }

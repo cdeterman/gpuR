@@ -7,7 +7,16 @@ Aint <- sample(seq.int(10), ORDER, replace = TRUE)
 Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
+E <- rnorm(ORDER-1)
 
+test_that("comparison operator", {
+    gpuA <- gpuVector(A)
+    
+    expect_true(all(A == gpuA), 
+                info = "vector/gpuVector== operator not working correctly")
+    expect_true(all(gpuA == A), 
+                info = "gpuVector/vector == operator not working correctly")
+})
 
 test_that("integer vector additonal successful", {
     
@@ -126,6 +135,79 @@ test_that("double precision vector subtraction successful", {
               info="is not a dgpuVector object")
 })
 
+test_that("gpuVector Single Precision Vector Element-Wise Multiplication", {
+    
+    has_gpu_skip()
+    
+    C <- A * B
+    
+    fvclA <- gpuVector(A, type="float")
+    fvclB <- gpuVector(B, type="float")
+    fvclE <- gpuVector(E, type="float")
+    
+    fvclC <- fvclA * fvclB
+    
+    expect_is(fvclC, "fgpuVector")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float vcl vector elements not equivalent")  
+    expect_error(fvclA * fvclE)
+})
+
+test_that("gpuVector Single Precision Vector Element-Wise Division", {
+    
+    has_gpu_skip()
+    
+    C <- A / B
+    
+    fvclA <- gpuVector(A, type="float")
+    fvclB <- gpuVector(B, type="float")
+    fvclE <- gpuVector(E, type="float")
+    
+    fvclC <- fvclA / fvclB
+    
+    expect_is(fvclC, "fgpuVector")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float vcl vector elements not equivalent")  
+    expect_error(fvclA * fvclE)
+})
+
+test_that("gpuVector Double Precision Vector Element-Wise Multiplication", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A * B
+    
+    dvclA <- gpuVector(A, type="double")
+    dvclB <- gpuVector(B, type="double")
+    dvclE <- gpuVector(E, type="double")
+    
+    dvclC <- dvclA * dvclB
+    
+    expect_is(dvclC, "dgpuVector")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double vcl vector elements not equivalent")  
+    expect_error(dvclA * dvclE)
+})
+
+test_that("gpuVector Double Precision Vector Element-Wise Division", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A / B
+    
+    dvclA <- gpuVector(A, type="double")
+    dvclB <- gpuVector(B, type="double")
+    dvclE <- gpuVector(E, type="double")
+    
+    dvclC <- dvclA / dvclB
+    
+    expect_is(dvclC, "dgpuVector")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double vcl vector elements not equivalent")  
+    expect_error(dvclA * dvclE)
+})
 
 test_that("gpuVector single precision inner product", {
     C <- A %*% B
