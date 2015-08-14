@@ -3,7 +3,8 @@
 
 #' @title Construct a vclMatrix
 #' @description Construct a vclMatrix of a class that inherits
-#' from \code{vclMatrix}
+#' from \code{vclMatrix}.  This class points to memory directly on
+#' the GPU to avoid the cost of data transfer between host and device.
 #' @param data An object that is or can be converted to a 
 #' \code{matrix} object
 #' @param nrow An integer specifying the number of rows

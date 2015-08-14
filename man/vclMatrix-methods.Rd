@@ -33,7 +33,8 @@ A vclMatrix object
 }
 \description{
 Construct a vclMatrix of a class that inherits
-from \code{vclMatrix}
+from \code{vclMatrix}.  This class points to memory directly on
+the GPU to avoid the cost of data transfer between host and device.
 }
 \author{
 Charles Determan Jr.

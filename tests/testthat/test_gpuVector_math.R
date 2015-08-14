@@ -1,5 +1,5 @@
 library(gpuR)
-context("gpuMatrix math operations")
+context("gpuVector math operations")
 
 # set seed
 set.seed(123)
@@ -10,12 +10,11 @@ options(warn=-1)
 ORDER <- 4
 
 # Base R objects
-A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
-B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
-E <- matrix(rnorm(15), nrow=5)
+A <- rnorm(ORDER)
+B <- rnorm(ORDER)
 
 
-test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
+test_that("gpuVector Single Precision Matrix Element-Wise Trignometry", {
     
     has_gpu_skip()
     
@@ -29,7 +28,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
     Atan <- atan(A)
     Htan <- tanh(A)
     
-    fgpuA <- gpuMatrix(A, type="float")
+    fgpuA <- gpuVector(A, type="float")
     
     fgpuS <- sin(fgpuA)
     fgpuAS <- asin(fgpuA)
@@ -41,7 +40,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
     fgpuAT <- atan(fgpuA)
     fgpuHT <- tanh(fgpuA)
     
-    expect_is(fgpuC, "fgpuMatrix")
+    expect_is(fgpuS, "fgpuVector")
     expect_equal(fgpuS[,], Sin, tolerance=1e-07, 
                  info="sin float matrix elements not equivalent")  
     expect_equal(fgpuAS[,], Asin, tolerance=1e-07, 
@@ -62,7 +61,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan float matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
+test_that("gpuVector Double Precision Matrix Element-Wise Trignometry", {
     
     has_gpu_skip()
     
@@ -76,7 +75,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
     Atan <- atan(A)
     Htan <- tanh(A) 
     
-    fgpuA <- gpuMatrix(A, type="double")
+    fgpuA <- gpuVector(A, type="double")
     
     fgpuS <- sin(fgpuA)
     fgpuAS <- asin(fgpuA)
@@ -88,7 +87,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
     fgpuAT <- atan(fgpuA)
     fgpuHT <- tanh(fgpuA)
     
-    expect_is(fgpuC, "dgpuMatrix")    
+    expect_is(fgpuS, "dgpuVector")    
     expect_equal(fgpuS[,], Sin, tolerance=.Machine$double.eps ^ 0.5,
                  info="sin double matrix elements not equivalent")  
     expect_equal(fgpuAS[,], Asin, tolerance=.Machine$double.eps ^ 0.5,
@@ -109,54 +108,53 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan double matrix elements not equivalent") 
 })
 
-
-test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
-    
-    has_gpu_skip()
-    
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
-    
-    fgpuA <- gpuMatrix(A, type="float")
-    
-    fgpu_log <- log(fgpuA)
-    fgpu_log10 <- log10(fgpuA)
-    fgpu_log2 <- log(fgpuA, base=2)
-    
-    expect_is(fgpu_log, "fgpuMatrix")
-    expect_is(fgpu_log10, "fgpuMatrix")
-    expect_is(fgpu_log2, "fgpuMatrix")
-    expect_equal(fgpu_log[,], R_log, tolerance=1e-07, 
-                 info="log float matrix elements not equivalent")  
-    expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
-                 info="log10 float matrix elements not equivalent")  
-    expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
-                 info="base log float matrix elements not equivalent") 
-})
-
-test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
-    
-    has_gpu_skip()
-    
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
-    
-    fgpuA <- gpuMatrix(A, type="double")
-    
-    fgpu_log <- log(fgpuA)
-    fgpu_log10 <- log10(fgpuA)
-    fgpu_log2 <- log(fgpuA, base=2)
-    
-    expect_is(fgpu_log, "dgpuMatrix")
-    expect_is(fgpu_log10, "dgpuMatrix")
-    expect_is(fgpu_log2, "dgpuMatrix")
-    expect_equal(fgpu_log[,], R_log, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="log double matrix elements not equivalent")  
-    expect_equal(fgpu_log10[,], R_log10, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="log10 double matrix elements not equivalent")  
-    expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="base log double matrix elements not equivalent") 
-})
-
+# 
+# test_that("gpuVector Single Precision Matrix Element-Wise Logs", {
+#     
+#     has_gpu_skip()
+#     
+#     R_log <- log(A)
+#     R_log10 <- log10(A)
+#     R_log2 <- log(A, base=2)
+#     
+#     fgpuA <- gpuVector(A, type="float")
+#     
+#     fgpu_log <- log(fgpuA)
+#     fgpu_log10 <- log10(fgpuA)
+#     fgpu_log2 <- log(fgpuA, base=2)
+#     
+#     expect_is(fgpu_log, "fgpuVector")
+#     expect_is(fgpu_log10, "fgpuVector")
+#     expect_is(fgpu_log2, "fgpuVector")
+#     expect_equal(fgpu_log[,], R_log, tolerance=1e-07, 
+#                  info="log float matrix elements not equivalent")  
+#     expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
+#                  info="log10 float matrix elements not equivalent")  
+#     expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
+#                  info="base log float matrix elements not equivalent") 
+# })
+# 
+# test_that("gpuVector Double Precision Matrix Element-Wise Logs", {
+#     
+#     has_gpu_skip()
+#     
+#     R_log <- log(A)
+#     R_log10 <- log10(A)
+#     R_log2 <- log(A, base=2)
+#     
+#     fgpuA <- gpuVector(A, type="double")
+#     
+#     fgpu_log <- log(fgpuA)
+#     fgpu_log10 <- log10(fgpuA)
+#     fgpu_log2 <- log(fgpuA, base=2)
+#     
+#     expect_is(fgpu_log, "dgpuVector")
+#     expect_is(fgpu_log10, "dgpuVector")
+#     expect_is(fgpu_log2, "dgpuVector")
+#     expect_equal(fgpu_log[,], R_log, tolerance=.Machine$double.eps ^ 0.5, 
+#                  info="log double matrix elements not equivalent")  
+#     expect_equal(fgpu_log10[,], R_log10, tolerance=.Machine$double.eps ^ 0.5, 
+#                  info="log10 double matrix elements not equivalent")  
+#     expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
+#                  info="base log double matrix elements not equivalent") 
+# })

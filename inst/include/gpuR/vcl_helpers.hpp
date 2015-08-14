@@ -12,6 +12,7 @@
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/matrix.hpp"
+#include "viennacl/vector.hpp"
 
 #include <RcppEigen.h>
 
@@ -69,6 +70,7 @@ SEXP emptyVCL(int nr, int nc)
     Rcpp::XPtr<viennacl::matrix<T> > pMat(vcl_A);
     return pMat;
 }
+
 
 
 #endif

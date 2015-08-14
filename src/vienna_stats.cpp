@@ -59,9 +59,6 @@ void cpp_vienna_pmcc(
 }
 
 
-using namespace Rcpp;
-
-
 //[[Rcpp::export]]
 void cpp_vienna_fgpuMatrix_pmcc(
     SEXP ptrA_, 

@@ -2,150 +2,12 @@
 
 #' @useDynLib gpuR
 #' @importFrom Rcpp evalCpp
-#' @import assertive
 
 
-detectCPUs <- function(platform_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    
-    cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
-    if(class(cpus)[1] == "try-error"){
-        return(0)
-    }else{
-        return(cpus)
-    }
-}
-
-#' @title Detect Available GPUs
-#' @description Find out how many GPUs available
-#' @param platform_idx An integer value indicating which platform to query.
-#' @return An integer representing the number of available GPUs
-#' @seealso \link{detectPlatforms}
-#' @export
-detectGPUs <- function(platform_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    
-    out <- cpp_detectGPUs(platform_idx)
-    return(out)
-}
-
-#' @title GPU Information
-#' @description Get basic information about selected GPU
-#' @param platform_idx An integer value indicating which platform to query.
-#' @param gpu_idx An integer value indicating which gpu to query.
-#' @return \item{deviceName}{GPU Name}
-#' @return \item{deviceVendor}{GPU Vendor}
-#' @return \item{numberOfCores}{Number of Computing Units 
-#'  (which execute the work groups)}
-#' @return \item{maxWorkGroupSize}{Maximum number of work items
-#'  per group}
-#' @return \item{maxWorkItemDim}{Number of dimensions}
-#' @return \item{maxWorkItemSizes}{Maximum number of works items
-#'  per dimension}
-#' @return \item{deviceMemory}{Global amount of memory (bytes)}
-#' @return \item{clockFreq}{Maximum configured clock frequency of the 
-#' device in MHz}
-#' @return \item{localMem}{Maximum amount of local memory for each work 
-#' group (bytes)}
-#' @return \item{maxAllocatableMem}{Maximum amount of memory in a single 
-#' piece (bytes)}
-#' @return \item{available}{Whether the device is available}
-#' @seealso \link{detectPlatforms} \link{detectGPUs}
-#' @author Charles Determan Jr.
-#' @export
-gpuInfo <- function(platform_idx=1L, gpu_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    assert_is_integer(gpu_idx)
-    assert_all_are_positive(gpu_idx)
-    
-    out <- cpp_gpuInfo(platform_idx, gpu_idx)
-    return(out)
-}
+### gpuMatrix Wrappers ###
 
 
-#' @title OpenCL Platform Information
-#' @description Get basic information about the OpenCL platform
-#' @param platform_idx An integer value to specify which platform to check
-#' @author Charles Determan Jr.
-#' @return \item{platformName}{Platform Name}
-#' @return \item{platformVendor}{Platform Vendor}
-#' @return \item{platformVersion}{Platform OpenCL Version}
-#' @return \item{platformExtensions}{Avaiable platform extensions}
-#' @export
-platformInfo <- function(platform_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    
-    out <- cpp_platformInfo(platform_idx)
-    return(out)
-}
-
-#' @title Check GPU double precision support
-#' @description This function checks the GPU device extensions for the
-#' variable cl_khr_fp64 which means the device supports double precision.
-#' @param platform_idx An integer value indicating which platform to query.
-#' @param gpu_idx An integer value indicating which gpu to query.
-#' @return A boolean designating whether the device supports double precision
-#' @seealso \link{gpuInfo}
-#' @export
-deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    assert_is_integer(gpu_idx)
-    assert_all_are_positive(gpu_idx)
-    
-    if(options("gpuR.default.device") == "cpu"){
-        return(TRUE)
-    }else{
-        out <- cpp_device_has_double(platform_idx, gpu_idx)
-        return(out)
-    }
-    
-}
-
-
-# GPU Vector Addition
-gpu_vec_add <- function(A, B){
-    
-    pkg_path <- find.package("gpuR", .libPaths())
-    file <- file.path(pkg_path, "CL", "vector_add_kernel.cl")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-
-    C <- gpuVector(length = length(A), type="integer")
-    
-    kernel <- readChar(file, file.info(file)$size)
-    
-    cpp_gpu_two_vec(A@address,B@address,C@address,
-                    kernel, "vector_add")
-    return(C)
-}
-
-
-# GPU Vector Subtraction
-gpu_vec_subtr <- function(A, B){
-    
-    pkg_path <- find.package("gpuR", .libPaths())
-    file <- file.path(pkg_path, "CL", "vector_subtr_kernel.cl")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-    
-    C <- gpuVector(length = length(A), type="integer")
-    
-    kernel <- readChar(file, file.info(file)$size)
-    
-    cpp_gpu_two_vec(A@address,B@address,C@address,
-                    kernel, "vector_subtr")
-    return(C)
-}
-
+#' @importFrom Rcpp evalCpp
 
 # GPU Matrix Multiplication
 gpu_Mat_mult <- function(A, B){
@@ -163,46 +25,46 @@ gpu_Mat_mult <- function(A, B){
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
-                    )
                )
+        )
     
     type <- typeof(A)
     
     C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
-# 
-#     integer = {cpp_gpuMatrix_igemm(A@address,
-#                                    B@address, 
-#                                    C@address,
-#                                    kernel)
+    # 
+    #     integer = {cpp_gpuMatrix_igemm(A@address,
+    #                                    B@address, 
+    #                                    C@address,
+    #                                    kernel)
     switch(type,
-                 integer = {
-                     cpp_gpuMatrix_igemm(A@address,
-                                         B@address, 
-                                         C@address,
-                                         kernel)
-#                      cpp_vienna_gpuMatrix_igemm(A@address,
-#                                                        B@address,
-#                                                        C@address)
-                  },
-                  float = {cpp_vienna_gpuMatrix_sgemm(A@address,
-                                                      B@address,
-                                                      C@address,
-                                                      device_flag)
-                  },
-                  double = {
-                      if(!deviceHasDouble()){
-                          stop("Selected GPU does not support double precision")
-                      }else{cpp_vienna_gpuMatrix_dgemm(A@address,
-                                                       B@address,
-                                                       C@address,
-                                                       device_flag)
-                      }
-                  },
-                  {
-                      stop("type not recognized")
-                  })
+           integer = {
+               cpp_gpuMatrix_igemm(A@address,
+                                   B@address, 
+                                   C@address,
+                                   kernel)
+               #                      cpp_vienna_gpuMatrix_igemm(A@address,
+               #                                                        B@address,
+               #                                                        C@address)
+           },
+           float = {cpp_vienna_gpuMatrix_sgemm(A@address,
+                                               B@address,
+                                               C@address,
+                                               device_flag)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_vienna_gpuMatrix_dgemm(A@address,
+                                                B@address,
+                                                C@address,
+                                                device_flag)
+               }
+           },
+{
+    stop("type not recognized")
+})
 #     rm(C)
-    return(C)
+return(C)
 }
 
 # GPU Element-Wise Multiplication
@@ -229,17 +91,17 @@ gpuMatElemMult <- function(A, B){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_prod(A@address,
-                                               B@address,
-                                               C@address,
-                                               device_flag)
+                                                    B@address,
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_prod(A@address,
-                                                B@address,
-                                                C@address,
-                                                device_flag)
+                                                     B@address,
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -272,16 +134,16 @@ gpuMatElemDiv <- function(A, B){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_div(A@address,
-                                                    B@address,
-                                                    C@address,
+                                                   B@address,
+                                                   C@address,
                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_div(A@address,
-                                                     B@address,
-                                                     C@address,
+                                                    B@address,
+                                                    C@address,
                                                     device_flag)
                }
            },
@@ -290,7 +152,6 @@ gpuMatElemDiv <- function(A, B){
 })
 return(C)
 }
-
 
 # GPU Element-Wise Sine
 gpuMatElemSin <- function(A){
@@ -349,15 +210,15 @@ gpuMatElemArcSin <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_asin(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_asin(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -386,15 +247,15 @@ gpuMatElemHypSin <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_sinh(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_sinh(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -460,15 +321,15 @@ gpuMatElemArcCos <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_acos(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_acos(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -497,15 +358,15 @@ gpuMatElemHypCos <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_cosh(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_cosh(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -571,15 +432,15 @@ gpuMatElemArcTan <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_atan(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_atan(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -608,15 +469,15 @@ gpuMatElemHypTan <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_tanh(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                    C@address,
+                                                    device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_tanh(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                     C@address,
+                                                     device_flag)
                }
            },
 {
@@ -645,15 +506,15 @@ gpuMatElemLog <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_log(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                   C@address,
+                                                   device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_log(A@address,
-                                                     C@address,
-                                                     device_flag)
+                                                    C@address,
+                                                    device_flag)
                }
            },
 {
@@ -683,17 +544,17 @@ gpuMatElemLogBase <- function(A, base){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_log_base(A@address,
-                                                   C@address,
-                                                   base,
-                                                   device_flag)
+                                                        C@address,
+                                                        base,
+                                                        device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_log_base(A@address,
-                                                    C@address,
-                                                    base,
-                                                    device_flag)
+                                                         C@address,
+                                                         base,
+                                                         device_flag)
                }
            },
 {
@@ -722,15 +583,15 @@ gpuMatElemLog10 <- function(A){
                stop("integer not currently implemented")
            },
            float = {cpp_vienna_sgpuMatrix_elem_log10(A@address,
-                                                   C@address,
-                                                   device_flag)
+                                                     C@address,
+                                                     device_flag)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vienna_dgpuMatrix_elem_log10(A@address,
-                                                    C@address,
-                                                    device_flag)
+                                                      C@address,
+                                                      device_flag)
                }
            },
 {
@@ -825,12 +686,12 @@ gpu_Mat_axpy <- function(alpha, A, B){
                                                 Z@address,
                                                 device_flag)
            },
-        {
-            stop("type not recognized")
-        }
+{
+    stop("type not recognized")
+}
     )
 
-    return(Z)
+return(Z)
 }
 
 # GPU colSums
@@ -856,7 +717,7 @@ gpu_colSums <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vienna_fgpuMatrix_colsum(A@address, sums@address, device_flag),
            "double" = cpp_vienna_dgpuMatrix_colsum(A@address, sums@address, device_flag)
-           )
+    )
     
     return(sums)
 }

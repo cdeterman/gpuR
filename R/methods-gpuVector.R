@@ -12,23 +12,81 @@ setMethod('as.gpuVector',
           },
           valueClass = "gpuVector")
 
-#' @title gpuVector Arith methods
-#' @param e1 A igpuVector object
-#' @param e2 A igpuVector object
+#' @title gpuVector Inner Product
+#' @param x A gpuVector object
+#' @param y A gpuVector object
+#' @return A numeric value
+#' @rdname gpuVector-prods
 #' @export
-setMethod("Arith", c(e1="igpuVector", e2="igpuVector"),
+setMethod("%*%", c(x="gpuVector", y="gpuVector"),
+          function(x, y){
+              if(length(x) != length(y)){
+                  stop("non-conformable arguments")
+              }
+              
+              gpuVecInnerProd(x,y)
+          })
+
+#' @title gpuVector Outer Product
+#' @param X A gpuVector object
+#' @param Y A gpuVector object
+#' @return A gpuMatrix object
+#' @export
+setMethod("%o%", c(X="gpuVector", Y="gpuVector"),
+          function(X, Y){
+              if(length(X) != length(Y)){
+                  stop("non-conformable arguments")
+              }
+              
+              gpuVecOuterProd(X,Y)
+          })
+
+#' @title gpuVector Arith methods
+#' @param e1 A gpuVector object
+#' @param e2 A gpuVector object
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="gpuVector", e2="gpuVector"),
           function(e1, e2)
+          {
+              if(length(e1) != length(e2)){
+                  stop("non-conformable arguments")
+              }
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = gpuVec_axpy(1, e1, e2),
+                     `-` = gpuVec_axpy(-1, e2, e1),
+                     `*` = gpuVecElemMult(e1, e2),
+                     `/` = gpuVecElemDiv(e1, e2),
+                     stop("undefined operation")
+                     )
+          },
+valueClass = "gpuVector"
+)
+
+#' @title gpuVector Math methods
+#' @param x A gpuVector object
+#' @return A gpuVector object
+#' @export
+setMethod("Math", c(x="gpuVector"),
+          function(x)
           {
               op = .Generic[[1]]
               switch(op,
-                     `+` = gpu_vec_add(e1, e2),
-                     `-` = gpu_vec_subtr(e1, e2),
-{
-    stop("undefined operation")
-}
+                     `sin` = gpuVecElemSin(x),
+                     `asin` = gpuVecElemArcSin(x),
+                     `sinh` = gpuVecElemHypSin(x),
+                     `cos` = gpuVecElemCos(x),
+                     `acos` = gpuVecElemArcCos(x),
+                     `cosh` = gpuVecElemHypCos(x),
+                     `tan` = gpuVecElemTan(x),
+                     `atan` = gpuVecElemArcTan(x),
+                     `tanh` = gpuVecElemHypTan(x),
+                     stop("undefined operation")
               )
           },
-valueClass = "gpuVector"
+          valueClass = "gpuVector"
 )
 
 #' @title Compare vector and gpuVector elements
@@ -84,7 +142,8 @@ setMethod('typeof', signature(x="gpuVector"),
 # setOldClass("length")
 
 #' @title Length of gpuVector
-#' @param x A gpuVector object
+#' @param x A gpuVector or vclVector object
+#' @return A numeric value
 #' @rdname length-methods
 #' @aliases length,gpuVector
 #' @export

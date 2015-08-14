@@ -97,7 +97,7 @@ to include `/usr/local/cuda-6.5/lib64`
 
 # Install Boost & OpenCL headers
 ```
-sudo apt-get install libboost-all-dev opencl-headers
+sudo apt-get install opencl-headers
 ```
 
 # Installing the package

@@ -50,7 +50,6 @@ void cpp_vienna_gemm(
     viennacl::copy(vcl_C, Cm);
 }
 
-
 template <typename T>
 void cpp_vienna_crossprod(
     MapMat<T> &Am, 
@@ -381,3 +380,23 @@ void cpp_vclMatrix_stcrossprod(
 }
 
 
+/*** gpuVector Functions ***/
+
+
+
+////[[Rcpp::export]]
+//void cpp_vienna_gpuMatrix_sgemm(SEXP ptrA_, 
+//                                SEXP ptrB_, 
+//                                SEXP ptrC_,
+//                                int device_flag)
+//{    
+//    Rcpp::XPtr<dynEigenVec<float> > ptrA(ptrA_);
+//    Rcpp::XPtr<dynEigenVec<float> > ptrB(ptrB_);
+//    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
+//    
+//    MapVec<float> Am(ptrA->ptr(), ptrA->length());
+//    MapVec<float> Bm(ptrB->ptr(), ptrB->length());
+//    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
+//    
+//    cpp_vienna_gevm<float>(Am, Bm, Cm, device_flag);
+//}

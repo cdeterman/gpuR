@@ -18,12 +18,12 @@ int vcl_nrow(SEXP ptrA_)
     return ptrA->size1();
 }
 
-//template <typename T>
-//int vcl_gpuVec_size(SEXP ptrA_)
-//{
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    return ptrA->length();
-//}
+template <typename T>
+int vcl_gpuVec_size(SEXP ptrA_)
+{
+    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
+    return ptrA->size();
+}
 
 // [[Rcpp::export]]
 int vcl_dncol(SEXP ptrA)
@@ -63,20 +63,20 @@ int vcl_inrow(SEXP ptrA)
 
 /*** gpuVector size ***/
 
-//// [[Rcpp::export]]
-//int vcl_dgpuVec_size(SEXP ptrA)
-//{
-//    return vcl_gpuVec_size<double>(ptrA);
-//}
-//
-//// [[Rcpp::export]]
-//int vcl_fgpuVec_size(SEXP ptrA)
-//{
-//    return vcl_gpuVec_size<float>(ptrA);
-//}
-//
-//// [[Rcpp::export]]
-//int vcl_igpuVec_size(SEXP ptrA)
-//{
-//    return vcl_gpuVec_size<int>(ptrA);
-//}
+// [[Rcpp::export]]
+int vcl_dgpuVec_size(SEXP ptrA)
+{
+    return vcl_gpuVec_size<double>(ptrA);
+}
+
+// [[Rcpp::export]]
+int vcl_fgpuVec_size(SEXP ptrA)
+{
+    return vcl_gpuVec_size<float>(ptrA);
+}
+
+// [[Rcpp::export]]
+int vcl_igpuVec_size(SEXP ptrA)
+{
+    return vcl_gpuVec_size<int>(ptrA);
+}

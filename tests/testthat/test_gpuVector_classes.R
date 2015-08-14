@@ -12,6 +12,7 @@ test_that("integer vector class present", {
     expect_is(gpuA@address, "externalptr")
     expect_that(typeof(gpuA), matches("integer"))
     expect_equivalent(gpuA[,], A)
+    expect_equal(length(gpuA), length(A))
 })
 
 test_that("float vector class present", {
@@ -23,6 +24,7 @@ test_that("float vector class present", {
     expect_is(gpuA@address, "externalptr")
     expect_that(typeof(gpuA), matches("float"))
     expect_equal(gpuA[,], A, tolerance = 1e-07)
+    expect_equal(length(gpuA), length(A))
 })
 
 test_that("double vector class present", {
@@ -34,4 +36,5 @@ test_that("double vector class present", {
     expect_is(gpuA@address, "externalptr")
     expect_that(typeof(gpuA), matches("double"))
     expect_equal(gpuA[,], A, tolerance = .Machine$double.eps ^ 0.5)
+    expect_equal(length(gpuA), length(A))
 })
