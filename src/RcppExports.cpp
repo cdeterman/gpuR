@@ -50,6 +50,117 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// dGetMatRow
+SEXP dGetMatRow(const SEXP data, const int idx);
+RcppExport SEXP gpuR_dGetMatRow(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(dGetMatRow(data, idx));
+    return __result;
+END_RCPP
+}
+// fGetMatRow
+SEXP fGetMatRow(const SEXP data, const int idx);
+RcppExport SEXP gpuR_fGetMatRow(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(fGetMatRow(data, idx));
+    return __result;
+END_RCPP
+}
+// iGetMatRow
+SEXP iGetMatRow(const SEXP data, const int idx);
+RcppExport SEXP gpuR_iGetMatRow(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(iGetMatRow(data, idx));
+    return __result;
+END_RCPP
+}
+// dGetMatCol
+SEXP dGetMatCol(const SEXP data, const int idx);
+RcppExport SEXP gpuR_dGetMatCol(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(dGetMatCol(data, idx));
+    return __result;
+END_RCPP
+}
+// fGetMatCol
+SEXP fGetMatCol(const SEXP data, const int idx);
+RcppExport SEXP gpuR_fGetMatCol(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(fGetMatCol(data, idx));
+    return __result;
+END_RCPP
+}
+// iGetMatCol
+SEXP iGetMatCol(const SEXP data, const int idx);
+RcppExport SEXP gpuR_iGetMatCol(SEXP dataSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    __result = Rcpp::wrap(iGetMatCol(data, idx));
+    return __result;
+END_RCPP
+}
+// dGetMatElement
+SEXP dGetMatElement(const SEXP data, const int nr, const int nc);
+RcppExport SEXP gpuR_dGetMatElement(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(dGetMatElement(data, nr, nc));
+    return __result;
+END_RCPP
+}
+// fGetMatElement
+SEXP fGetMatElement(const SEXP data, const int nr, const int nc);
+RcppExport SEXP gpuR_fGetMatElement(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(fGetMatElement(data, nr, nc));
+    return __result;
+END_RCPP
+}
+// iGetMatElement
+SEXP iGetMatElement(const SEXP data, const int nr, const int nc);
+RcppExport SEXP gpuR_iGetMatElement(SEXP dataSEXP, SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(iGetMatElement(data, nr, nc));
+    return __result;
+END_RCPP
+}
 // vectorToIntXptr
 SEXP vectorToIntXptr(SEXP data);
 RcppExport SEXP gpuR_vectorToIntXptr(SEXP dataSEXP) {
@@ -702,6 +813,117 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
     Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
     __result = Rcpp::wrap(emptyDoubleVCL(nr, nc));
+    return __result;
+END_RCPP
+}
+// dvclGetMatCol
+SEXP dvclGetMatCol(SEXP data, const int nc);
+RcppExport SEXP gpuR_dvclGetMatCol(SEXP dataSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(dvclGetMatCol(data, nc));
+    return __result;
+END_RCPP
+}
+// fvclGetMatCol
+SEXP fvclGetMatCol(SEXP data, const int nc);
+RcppExport SEXP gpuR_fvclGetMatCol(SEXP dataSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(fvclGetMatCol(data, nc));
+    return __result;
+END_RCPP
+}
+// ivclGetMatCol
+SEXP ivclGetMatCol(SEXP data, const int nc);
+RcppExport SEXP gpuR_ivclGetMatCol(SEXP dataSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    __result = Rcpp::wrap(ivclGetMatCol(data, nc));
+    return __result;
+END_RCPP
+}
+// dvclGetMatRow
+SEXP dvclGetMatRow(SEXP data, const int nr);
+RcppExport SEXP gpuR_dvclGetMatRow(SEXP dataSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(dvclGetMatRow(data, nr));
+    return __result;
+END_RCPP
+}
+// fvclGetMatRow
+SEXP fvclGetMatRow(SEXP data, const int nr);
+RcppExport SEXP gpuR_fvclGetMatRow(SEXP dataSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(fvclGetMatRow(data, nr));
+    return __result;
+END_RCPP
+}
+// ivclGetMatRow
+SEXP ivclGetMatRow(SEXP data, const int nr);
+RcppExport SEXP gpuR_ivclGetMatRow(SEXP dataSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(ivclGetMatRow(data, nr));
+    return __result;
+END_RCPP
+}
+// dvclGetMatElement
+SEXP dvclGetMatElement(SEXP data, const int nc, const int nr);
+RcppExport SEXP gpuR_dvclGetMatElement(SEXP dataSEXP, SEXP ncSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(dvclGetMatElement(data, nc, nr));
+    return __result;
+END_RCPP
+}
+// fvclGetMatElement
+SEXP fvclGetMatElement(SEXP data, const int nc, const int nr);
+RcppExport SEXP gpuR_fvclGetMatElement(SEXP dataSEXP, SEXP ncSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(fvclGetMatElement(data, nc, nr));
+    return __result;
+END_RCPP
+}
+// ivclGetMatElement
+SEXP ivclGetMatElement(SEXP data, const int nc, const int nr);
+RcppExport SEXP gpuR_ivclGetMatElement(SEXP dataSEXP, SEXP ncSEXP, SEXP nrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    __result = Rcpp::wrap(ivclGetMatElement(data, nc, nr));
     return __result;
 END_RCPP
 }

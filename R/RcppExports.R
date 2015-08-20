@@ -22,6 +22,42 @@ cpp_device_has_double <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_device_has_double', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
+dGetMatRow <- function(data, idx) {
+    .Call('gpuR_dGetMatRow', PACKAGE = 'gpuR', data, idx)
+}
+
+fGetMatRow <- function(data, idx) {
+    .Call('gpuR_fGetMatRow', PACKAGE = 'gpuR', data, idx)
+}
+
+iGetMatRow <- function(data, idx) {
+    .Call('gpuR_iGetMatRow', PACKAGE = 'gpuR', data, idx)
+}
+
+dGetMatCol <- function(data, idx) {
+    .Call('gpuR_dGetMatCol', PACKAGE = 'gpuR', data, idx)
+}
+
+fGetMatCol <- function(data, idx) {
+    .Call('gpuR_fGetMatCol', PACKAGE = 'gpuR', data, idx)
+}
+
+iGetMatCol <- function(data, idx) {
+    .Call('gpuR_iGetMatCol', PACKAGE = 'gpuR', data, idx)
+}
+
+dGetMatElement <- function(data, nr, nc) {
+    .Call('gpuR_dGetMatElement', PACKAGE = 'gpuR', data, nr, nc)
+}
+
+fGetMatElement <- function(data, nr, nc) {
+    .Call('gpuR_fGetMatElement', PACKAGE = 'gpuR', data, nr, nc)
+}
+
+iGetMatElement <- function(data, nr, nc) {
+    .Call('gpuR_iGetMatElement', PACKAGE = 'gpuR', data, nr, nc)
+}
+
 vectorToIntXptr <- function(data) {
     .Call('gpuR_vectorToIntXptr', PACKAGE = 'gpuR', data)
 }
@@ -248,6 +284,42 @@ emptyFloatVCL <- function(nr, nc) {
 
 emptyDoubleVCL <- function(nr, nc) {
     .Call('gpuR_emptyDoubleVCL', PACKAGE = 'gpuR', nr, nc)
+}
+
+dvclGetMatCol <- function(data, nc) {
+    .Call('gpuR_dvclGetMatCol', PACKAGE = 'gpuR', data, nc)
+}
+
+fvclGetMatCol <- function(data, nc) {
+    .Call('gpuR_fvclGetMatCol', PACKAGE = 'gpuR', data, nc)
+}
+
+ivclGetMatCol <- function(data, nc) {
+    .Call('gpuR_ivclGetMatCol', PACKAGE = 'gpuR', data, nc)
+}
+
+dvclGetMatRow <- function(data, nr) {
+    .Call('gpuR_dvclGetMatRow', PACKAGE = 'gpuR', data, nr)
+}
+
+fvclGetMatRow <- function(data, nr) {
+    .Call('gpuR_fvclGetMatRow', PACKAGE = 'gpuR', data, nr)
+}
+
+ivclGetMatRow <- function(data, nr) {
+    .Call('gpuR_ivclGetMatRow', PACKAGE = 'gpuR', data, nr)
+}
+
+dvclGetMatElement <- function(data, nc, nr) {
+    .Call('gpuR_dvclGetMatElement', PACKAGE = 'gpuR', data, nc, nr)
+}
+
+fvclGetMatElement <- function(data, nc, nr) {
+    .Call('gpuR_fvclGetMatElement', PACKAGE = 'gpuR', data, nc, nr)
+}
+
+ivclGetMatElement <- function(data, nc, nr) {
+    .Call('gpuR_ivclGetMatElement', PACKAGE = 'gpuR', data, nc, nr)
 }
 
 vectorToIntVCL <- function(data) {

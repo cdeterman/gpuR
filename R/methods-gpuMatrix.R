@@ -126,13 +126,14 @@ setMethod('ncol', signature(x="gpuMatrix"),
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
 
-#' @title Extract all gpuMatrix elements
+#' @title Extract gpuMatrix elements
 #' @param x A gpuMatrix object
-#' @param i missing
-#' @param j missing
+#' @param i indices specifying rows
+#' @param j indices specifying columns
 #' @param drop missing
 #' @aliases [,gpuMatrix
 #' @author Charles Determan Jr.
+#' @rdname extract-gpuMatrix
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "missing", drop = "missing"),
@@ -144,6 +145,42 @@ setMethod("[",
               )
           })
 
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[",
+          signature(x = "gpuMatrix", i = "missing", j = "numeric", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(iGetMatCol(x@address, j)),
+                     "float" = return(fGetMatCol(x@address, j)),
+                     "double" = return(dGetMatCol(x@address, j))
+              )
+          })
+
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[",
+          signature(x = "gpuMatrix", i = "numeric", j = "missing", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(iGetMatRow(x@address, i)),
+                     "float" = return(fGetMatRow(x@address, i)),
+                     "double" = return(dGetMatRow(x@address, i))
+              )
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[",
+          signature(x = "gpuMatrix", i = "numeric", j = "numeric", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(iGetMatElement(x@address, i, j)),
+                     "float" = return(fGetMatElement(x@address, i, j)),
+                     "double" = return(dGetMatElement(x@address, i, j))
+              )
+          })
 
 #' @title Row and Column Sums and Means of gpuMatrix
 #' @description Row and column sums and of gpuMatrix objects

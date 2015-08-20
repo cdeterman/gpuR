@@ -5,6 +5,88 @@
 
 using namespace Rcpp;
 
+// [[Rcpp::export]]
+SEXP 
+dGetMatRow(const SEXP data, const int idx)
+{    
+    MapMat<double> A = XPtrToSEXP<double>(data);
+    Eigen::VectorXd Am = A.row(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+fGetMatRow(const SEXP data, const int idx)
+{    
+    MapMat<float> A = XPtrToSEXP<float>(data);
+    Eigen::VectorXf Am = A.row(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+iGetMatRow(const SEXP data, const int idx)
+{    
+    MapMat<int> A = XPtrToSEXP<int>(data);
+    Eigen::VectorXi Am = A.row(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+dGetMatCol(const SEXP data, const int idx)
+{        
+    MapMat<double> A = XPtrToSEXP<double>(data);
+    Eigen::VectorXd Am = A.col(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+fGetMatCol(const SEXP data, const int idx)
+{    
+    MapMat<float> A = XPtrToSEXP<float>(data);
+    Eigen::VectorXf Am = A.col(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+iGetMatCol(const SEXP data, const int idx)
+{    
+    MapMat<int> A = XPtrToSEXP<int>(data);
+    Eigen::VectorXi Am = A.col(idx-1);
+    return(wrap(Am));
+}
+
+// [[Rcpp::export]]
+SEXP 
+dGetMatElement(const SEXP data, const int nr, const int nc)
+{        
+    MapMat<double> A = XPtrToSEXP<double>(data);
+    double value = A(nr-1, nc-1);
+    return(wrap(value));
+}
+
+// [[Rcpp::export]]
+SEXP 
+fGetMatElement(const SEXP data, const int nr, const int nc)
+{        
+    MapMat<float> A = XPtrToSEXP<float>(data);
+    float value = A(nr-1, nc-1);
+    return(wrap(value));
+}
+
+// [[Rcpp::export]]
+SEXP 
+iGetMatElement(const SEXP data, const int nr, const int nc)
+{        
+    MapMat<int> A = XPtrToSEXP<int>(data);
+    int value = A(nr-1, nc-1);
+    return(wrap(value));
+}
+
+
 /*** vector imports ***/
  
 // [[Rcpp::export]]

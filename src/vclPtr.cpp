@@ -67,6 +67,62 @@ SEXP emptyVecVCL(int length)
     return pMat;
 }
 
+//// update viennacl column elements
+//template <typename T>
+//void
+//vclMatColUpdate(SEXP &data, SEXP &newdata, const int &nc)
+//{
+//    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+//    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+//    Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
+//    
+//    *pA(,nc) = Am;
+//}
+
+// Get viennacl column elements
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+vclGetMatCol(SEXP &data, const int &nc)
+{
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+    Am = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(pA->size1());
+    
+    viennacl::vector<T> vcl_A(pA->size1());
+    vcl_A = viennacl::column(*pA, nc-1);
+    
+    copy(vcl_A, Am);
+    return(Am);
+}
+
+// Get viennacl row elements
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+vclGetMatRow(SEXP &data, const int &nr)
+{
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+    Am = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(pA->size2());
+    
+    viennacl::vector<T> vcl_A(pA->size2());
+    vcl_A = viennacl::row(*pA, nr-1);
+    
+    copy(vcl_A, Am);
+    return(Am);
+}
+
+// Get viennacl row elements
+template <typename T>
+T
+vclGetMatElement(SEXP &data, const int &nc, const int &nr)
+{
+    T value;
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    viennacl::matrix<T> &A = *pA;
+    value = A(nc-1, nr-1);
+    return(value);
+}
+
 
 /*** matrix imports ***/
 
@@ -140,6 +196,79 @@ SEXP emptyDoubleVCL(int nr, int nc)
 {
     SEXP pMat = emptyVCL<double>(nr,nc);
     return(pMat);
+}
+
+/*** matrix element updates ***/
+
+//// [[Rcpp::export]]
+//SEXP dvclMatColUpdate(SEXP data, SEXP newdata, const int nc)
+//{
+//    vclMatColUpdate(data, newdata, nc);
+//}
+
+/*** get matrix elements ***/
+
+// [[Rcpp::export]]
+SEXP dvclGetMatCol(SEXP data, const int nc)
+{
+    Eigen::VectorXd col = vclGetMatCol<double>(data, nc);    
+    return(Rcpp::wrap(col));
+}
+
+// [[Rcpp::export]]
+SEXP fvclGetMatCol(SEXP data, const int nc)
+{
+    Eigen::VectorXf col = vclGetMatCol<float>(data, nc);    
+    return(Rcpp::wrap(col));
+}
+
+// [[Rcpp::export]]
+SEXP ivclGetMatCol(SEXP data, const int nc)
+{
+    Eigen::VectorXi col = vclGetMatCol<int>(data, nc);    
+    return(Rcpp::wrap(col));
+}
+
+// [[Rcpp::export]]
+SEXP dvclGetMatRow(SEXP data, const int nr)
+{
+    Eigen::VectorXd row = vclGetMatRow<double>(data, nr);    
+    return(Rcpp::wrap(row));
+}
+
+// [[Rcpp::export]]
+SEXP fvclGetMatRow(SEXP data, const int nr)
+{
+    Eigen::VectorXf row = vclGetMatRow<float>(data, nr);    
+    return(Rcpp::wrap(row));
+}
+
+// [[Rcpp::export]]
+SEXP ivclGetMatRow(SEXP data, const int nr)
+{
+    Eigen::VectorXi row = vclGetMatRow<int>(data, nr);    
+    return(Rcpp::wrap(row));
+}
+
+// [[Rcpp::export]]
+SEXP dvclGetMatElement(SEXP data, const int nc, const int nr)
+{
+    double value = vclGetMatElement<double>(data, nc, nr);    
+    return(Rcpp::wrap(value));
+}
+
+// [[Rcpp::export]]
+SEXP fvclGetMatElement(SEXP data, const int nc, const int nr)
+{
+    float value = vclGetMatElement<float>(data, nc, nr);    
+    return(Rcpp::wrap(value));
+}
+
+// [[Rcpp::export]]
+SEXP ivclGetMatElement(SEXP data, const int nc, const int nr)
+{
+    int value = vclGetMatElement<int>(data, nc, nr);    
+    return(Rcpp::wrap(value));
 }
 
 /*** vector imports ***/

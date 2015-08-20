@@ -1,11 +1,12 @@
 
-#' @title Extract all vclMatrix elements
+#' @title Extract or Replace Parts of vclMatrix
 #' @param x A vclMatrix object
-#' @param i missing
-#' @param j missing
+#' @param i indices specifying rows
+#' @param j indices specifying columns
 #' @param drop missing
 #' @aliases [,vclMatrix
 #' @author Charles Determan Jr.
+#' @rdname extract-vclMatrix
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "missing", drop = "missing"),
@@ -17,6 +18,53 @@ setMethod("[",
               )
           })
 
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(ivclGetMatCol(x@address, j)),
+                     "float" = return(fvclGetMatCol(x@address, j)),
+                     "double" = return(dvclGetMatCol(x@address, j))
+              )
+          })
+
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[",
+          signature(x = "vclMatrix", i = "numeric", j = "missing", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(ivclGetMatRow(x@address, i)),
+                     "float" = return(fvclGetMatRow(x@address, i)),
+                     "double" = return(dvclGetMatRow(x@address, i))
+              )
+          })
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[",
+          signature(x = "vclMatrix", i = "numeric", j = "numeric", drop="missing"),
+          function(x, i, j, drop) {
+              switch(typeof(x),
+                     "integer" = return(ivclGetMatElement(x@address, i, j)),
+                     "float" = return(fvclGetMatElement(x@address, i, j)),
+                     "double" = return(dvclGetMatElement(x@address, i, j))
+              )
+          })
+
+# #' @export
+# setMethod("[<-",
+#           signature(x = "vclMatrix", i = "missing", j = "numeric"),
+#           function(x, i, j, value) {
+#               switch(typeof(x),
+#                      "integer" = return(ivclMatColUpdate(x@address, j, value)),
+#                      "float" = return(fvclMatColUpdate(x@address, j, value)),
+#                      "double" = return(dvclMatColUpdate(x@address, j, value))
+#               )
+#           })
  
 #' @title vclMatrix Multiplication
 #' @param x A vclMatrix object

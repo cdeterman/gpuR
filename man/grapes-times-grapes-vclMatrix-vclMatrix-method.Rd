@@ -16,6 +16,6 @@
 A vclMatrix
 }
 \description{
-vclMatrix Multiplication
+#
 }
 
