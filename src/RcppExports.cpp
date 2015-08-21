@@ -50,6 +50,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// SetMatRow
+void SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag);
+RcppExport SEXP gpuR_SetMatRow(SEXP ptrASEXP, SEXP idxSEXP, SEXP valueSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    SetMatRow(ptrA, idx, value, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // dGetMatRow
 SEXP dGetMatRow(const SEXP data, const int idx);
 RcppExport SEXP gpuR_dGetMatRow(SEXP dataSEXP, SEXP idxSEXP) {

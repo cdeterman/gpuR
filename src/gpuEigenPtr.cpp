@@ -5,6 +5,44 @@
 
 using namespace Rcpp;
 
+template <typename T>
+void
+SetMatRow(SEXP data, const int idx, SEXP value)
+{    
+    MapMat<T> A = XPtrToSEXP<T>(data);
+    A.row(idx-1) = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(value);
+}
+
+//template <typename T>
+//SEXP
+//GetMatRow(const SEXP data, const int idx)
+//{    
+//    MapMat<T> A = XPtrToSEXP<T>(data);
+//    Eigen::Matrix<T, Eigen::Dynamic, 1> Am = A.row(idx-1);
+//    return(wrap(Am));
+//}
+
+// [[Rcpp::export]]
+void
+SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            SetMatRow<int>(ptrA, idx, value);
+            return;
+        case 6:
+            SetMatRow<float>(ptrA, idx, value);
+            return;
+        case 8:
+            SetMatRow<double>(ptrA, idx, value);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+
+
 // [[Rcpp::export]]
 SEXP 
 dGetMatRow(const SEXP data, const int idx)

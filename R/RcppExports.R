@@ -22,6 +22,10 @@ cpp_device_has_double <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_device_has_double', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
+SetMatRow <- function(ptrA, idx, value, type_flag) {
+    invisible(.Call('gpuR_SetMatRow', PACKAGE = 'gpuR', ptrA, idx, value, type_flag))
+}
+
 dGetMatRow <- function(data, idx) {
     .Call('gpuR_dGetMatRow', PACKAGE = 'gpuR', data, idx)
 }

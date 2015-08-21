@@ -131,7 +131,9 @@ setMethod('dim', signature(x="gpuMatrix"),
 #' @param i indices specifying rows
 #' @param j indices specifying columns
 #' @param drop missing
+#' @param value data of similar type to be added to gpuMatrix object
 #' @aliases [,gpuMatrix
+#' @aliases [<-,gpuMatrix
 #' @author Charles Determan Jr.
 #' @rdname extract-gpuMatrix
 #' @export
@@ -180,6 +182,37 @@ setMethod("[",
                      "float" = return(fGetMatElement(x@address, i, j)),
                      "double" = return(dGetMatElement(x@address, i, j))
               )
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "gpuMatrix", i = "numeric", j = "missing", value="numeric"),
+          function(x, i, j, value) {
+              if(length(value) != ncol(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              switch(typeof(x),
+                     "float" = SetMatRow(x@address, i, value, 6L),
+                     "double" = SetMatRow(x@address, i, value, 8L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "gpuMatrix", i = "numeric", j = "missing", value="integer"),
+          function(x, i, j, value) {
+              if(length(value) != ncol(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              switch(typeof(x),
+                     "integer" = SetMatRow(x@address, i, value, 4L),
+                     stop("type not recognized")
+              )
+              return(x)
           })
 
 #' @title Row and Column Sums and Means of gpuMatrix
