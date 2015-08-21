@@ -1,3 +1,9 @@
+#whitelist branches
+branches:
+  only:
+    - master
+    - macosx
+
 language: r
 
 sudo: required
