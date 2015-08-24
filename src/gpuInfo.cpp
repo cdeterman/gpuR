@@ -58,7 +58,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     cl_bool available = working_device.getInfo<CL_DEVICE_AVAILABLE>();
     cl_uint maxWorkGroupSize = working_device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     cl_uint maxWorkItemDim = working_device.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>();
-    std::vector<cl_ulong> maxWorkItemSizes = working_device.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+    std::vector<std::size_t> maxWorkItemSizes = working_device.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
     std::string deviceExtensions = working_device.getInfo<CL_DEVICE_EXTENSIONS>();
 
 

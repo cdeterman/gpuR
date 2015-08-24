@@ -13,7 +13,7 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     SEXP sourceCode_)
 {
     // declarations
-    cl_int err;
+    cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
     
 //    std::string kernel_string = as<std::string>(kernel_function_);
