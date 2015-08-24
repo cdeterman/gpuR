@@ -1,5 +1,13 @@
 # gpuR
-[![Travis-CI Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR) [![Coverage Status](https://img.shields.io/coveralls/cdeterman/gpuR.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
+
+### Build Status
+|                 | Build           |
+|-----------------|-----------------|
+| Linux x86       | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR)      |
+| OSX             | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=macosx)](https://travis-ci.org/cdeterman/gpuR)          |
+| Windows         | Unsupported     |
+
+Test coverage: [![Coverage Status](https://img.shields.io/coveralls/cdeterman/gpuR.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
 
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
@@ -40,13 +48,39 @@ but also have the CUDA option available.
 
 # INSTALL
 
+### Dependencies
+1. OpenCL headers (can be found at Khronos.org)
+2. An OpenCL SDK specific to your GPU vender (AMD, NVIDIA, Intel, etc.)
+
+**Note - the package will install if you have the headers above but will be
+essentially non-functional.**
+
+## Windows
+Currently unsupported :( This package requires C++11 and until 
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/) has a more recent 
+compiler that fully supports C++11 there is no clean way to install this
+package.
+
+## OSX
+OpenCL should be present by default but you likely will not have the C++ API.
+This is required currently until I find a cleaner way to include this (possibly
+in the includes of this package, TBD).
+
+You can download it on the Khronos downloads page [here](https://www.khronos.org/registry/cl/)
+which provides all the OpenCL headers.  You will want whichever is the most
+recent version you currently have.  To find this out, on a Mac OSX 10.10 you
+open the `/System/Library/Frameworks/OpenCL.framework/Headers/cl.h` file in
+your favorite text editor and find the `/* OpenCL Version */` section.  Choose
+the highest version, download the corresponding `cl.hpp` file and put it in
+that directory.
+
+That is all you need for the install on a Mac :)
+
+## Linux
+
 The only verified installations at present consisted of using a NVIDIA 970 GTX 
 or a AMD Radeon Graphics Card on a Ubuntu 14.04 system.  The installation 
 consisted of:
-
-### Dependencies
-1. opencl-headers (shared library)
-2. An OpenCL SDK specific to your GPU vender (AMD, NVIDIA, Intel, etc.)
 
 #### Note, you currently can only have one type installed (NVIDIA or AMD)
 
@@ -95,7 +129,7 @@ to include `/usr/local/cuda-6.5/lib64`
 2. Install current fglrx drivers (`sudo apt-get install fglrx-updates`)
 3. Install opencl-headers (`sudo apt-get install opencl-headers`)
 
-# Install Boost & OpenCL headers
+# Install OpenCL headers
 ```
 sudo apt-get install opencl-headers
 ```
