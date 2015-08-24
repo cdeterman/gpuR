@@ -11,7 +11,7 @@ using namespace Rcpp;
 //[[Rcpp::export]]
 bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_){
     // declarations
-    cl_int err;
+    cl_int err = 0;
 //    std::vector<std::string> extensionsVector;
     std::string deviceExtensions;
     

@@ -210,6 +210,9 @@ test_that("gpuVector Double Precision Vector Element-Wise Division", {
 })
 
 test_that("gpuVector single precision inner product", {
+    
+    has_gpu_skip()
+    
     C <- A %*% B
     gpuA <- gpuVector(A, type="float")
     gpuB <- gpuVector(B, type="float")
@@ -222,6 +225,10 @@ test_that("gpuVector single precision inner product", {
 })
 
 test_that("gpuVector double precision inner product", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
     C <- A %*% B
     gpuA <- gpuVector(A, type="double")
     gpuB <- gpuVector(B, type="double")
@@ -234,6 +241,9 @@ test_that("gpuVector double precision inner product", {
 })
 
 test_that("gpuVector single precision outer product", {
+    
+    has_gpu_skip()
+    
     C <- A %o% B
     gpuA <- gpuVector(A, type="float")
     gpuB <- gpuVector(B, type="float")
@@ -246,6 +256,10 @@ test_that("gpuVector single precision outer product", {
 })
 
 test_that("gpuVector double precision outer product", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
     C <- A %o% B
     gpuA <- gpuVector(A, type="double")
     gpuB <- gpuVector(B, type="double")

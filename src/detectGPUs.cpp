@@ -10,7 +10,7 @@ using namespace Rcpp;
 SEXP cpp_detectGPUs(SEXP platform_idx)
 {
     // declarations
-    cl_int err;
+    cl_int err = 0;
     
     // subtract one for zero indexing
     unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;

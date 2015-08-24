@@ -13,7 +13,7 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
     SEXP ptrC_, SEXP sourceCode_, SEXP kernel_function_)
 {
     // declarations
-    cl_int err;
+    cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
     
     std::string kernel_string = as<std::string>(kernel_function_);

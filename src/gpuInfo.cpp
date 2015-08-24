@@ -13,7 +13,7 @@ using namespace Rcpp;
 List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 {
     // declarations
-    cl_int err;
+    cl_int err = 0;
     
     // subtract one for zero indexing
     unsigned int platform_idx = as<unsigned int>(platform_idx_) - 1;
