@@ -4,21 +4,20 @@
 ################################
 
 CXX_STD="CXX_STD=CXX11"
-PKG_CXXFLAGS="PKG_CXXFLAGS=-I../inst/include"
-#PKG_LIBS="PKG_LIBS=-lOpenCL"
-
-echo "${CXX_STD}" > src/Makevars
 
 echo -n "  checking for OS..."
 if test `uname` = "Linux" ; then
   echo "Linux"
   LIBS="PKG_LIBS=-lOpenCL"
+  FLAGS="PKG_CXXFLAGS=-I../inst/include"
 elif test `uname` = "Darwin" ; then
   echo "Darwin"
   LIBS="PKG_LIBS=-framework OpenCL"
+  FLAGS="PKG_CXXFLAGS=-I../inst/include"
 else
   echo "Other:" `uname`
 fi
 
-echo "${PKG_CXXFLAGS}" >> src/Makevars
+echo "${CXX_STD}" > src/Makevars
+echo "${FLAGS}" >> src/Makevars
 echo "${LIBS}" >> src/Makevars

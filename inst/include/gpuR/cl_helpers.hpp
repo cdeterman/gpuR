@@ -1,12 +1,23 @@
 #ifndef CL_HELPERS
 #define CL_HELPERS
 
-#include <memory>
+#define __CL_ENABLE_EXCEPTIONS
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 
-#include <boost/scoped_ptr.hpp> //scoped_ptr
+#if defined(__APPLE__) || defined(__MACOSX)
+#include <OpenCL/cl.h>
+#else
+#include <CL/cl.h>
+#endif
 
+#if defined(__APPLE__) || defined(__MACOSX)
+#include <OpenCL/cl.hpp>
+#else
 #include <CL/cl.hpp>
+#endif
 
+#include <memory>
+#include <boost/scoped_ptr.hpp> //scoped_ptr
 #include <Rcpp.h>
 
 using namespace cl;

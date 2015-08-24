@@ -1,29 +1,4 @@
 
-#define __CL_ENABLE_EXCEPTIONS
-#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
-
-#if defined(__APPLE__) || defined(__MACOSX)
-#include <OpenCL/cl.h>
-#else
-#include <CL/cl.h>
-#endif
-
-#ifdef CL_VERSION_1_3
-#undef CL_VERSION_1_3
-#endif
-
-#ifdef CL_VERSION_1_2
-#undef CL_VERSION_1_2
-#endif
-
-#if defined(__APPLE__) || defined(__MACOSX)
-#include <OpenCL/cl.hpp>
-#else
-#include <CL/cl.hpp>
-#endif
-
-#include <memory>
-
 #include "gpuR/cl_helpers.hpp"
 
 #include <Rcpp.h>
