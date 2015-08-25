@@ -7,7 +7,7 @@
 | OSX             | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=macosx)](https://travis-ci.org/cdeterman/gpuR)          |
 | Windows         | Unsupported     |
 
-Test coverage: [![Coverage Status](https://img.shields.io/coveralls/cdeterman/gpuR.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
+Test coverage: [![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/badge.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
 
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
