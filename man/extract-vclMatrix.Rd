@@ -43,6 +43,8 @@
 \item{j}{indices specifying columns}
 
 \item{drop}{missing}
+
+\item{value}{data of similar type to be added to vclMatrix object}
 }
 \description{
 Extract or Replace Parts of vclMatrix

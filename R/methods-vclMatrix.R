@@ -4,6 +4,7 @@
 #' @param i indices specifying rows
 #' @param j indices specifying columns
 #' @param drop missing
+#' @param value data of similar type to be added to vclMatrix object
 #' @aliases [,vclMatrix
 #' @aliases [<-,vclMatrix
 #' @author Charles Determan Jr.
