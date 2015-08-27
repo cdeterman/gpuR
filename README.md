@@ -12,8 +12,9 @@ Test coverage: [![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/bad
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
 to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this
-package is to provide the user a very simple R API.  This is accomplished by
-interfacing with the ViennaCL library that I have packaged in the R package
+package is to provide the user a very simple R API that can be used with
+any GPU (via an OpenCL backend).  This is accomplished by interfacing with the 
+ViennaCL library that I have packaged in the R package 
 [RViennaCL](http://github.com/cdeterman/RViennaCL).  To make the R API simple,
 I created new classes similar to the structure of the 
 [Matrix](http://cran.r-project.org/web/packages/Matrix/index.html)

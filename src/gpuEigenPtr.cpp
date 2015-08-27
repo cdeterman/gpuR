@@ -5,23 +5,6 @@
 
 using namespace Rcpp;
 
-template <typename T>
-void
-SetMatRow(SEXP data, const int idx, SEXP value)
-{    
-    MapMat<T> A = XPtrToSEXP<T>(data);
-    A.row(idx-1) = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(value);
-}
-
-//template <typename T>
-//SEXP
-//GetMatRow(const SEXP data, const int idx)
-//{    
-//    MapMat<T> A = XPtrToSEXP<T>(data);
-//    Eigen::Matrix<T, Eigen::Dynamic, 1> Am = A.row(idx-1);
-//    return(wrap(Am));
-//}
-
 // [[Rcpp::export]]
 void
 SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag)
@@ -41,257 +24,215 @@ SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag)
     }
 }
 
-
-
 // [[Rcpp::export]]
-SEXP 
-dGetMatRow(const SEXP data, const int idx)
+void
+SetMatCol(SEXP ptrA, const int idx, SEXP value, const int type_flag)
 {    
-    MapMat<double> A = XPtrToSEXP<double>(data);
-    Eigen::VectorXd Am = A.row(idx-1);
-    return(wrap(Am));
+    switch(type_flag) {
+        case 4:
+            SetMatCol<int>(ptrA, idx, value);
+            return;
+        case 6:
+            SetMatCol<float>(ptrA, idx, value);
+            return;
+        case 8:
+            SetMatCol<double>(ptrA, idx, value);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP 
-fGetMatRow(const SEXP data, const int idx)
+void
+SetMatElement(SEXP ptrA, const int nr, const int nc, SEXP value, const int type_flag)
 {    
-    MapMat<float> A = XPtrToSEXP<float>(data);
-    Eigen::VectorXf Am = A.row(idx-1);
-    return(wrap(Am));
+    switch(type_flag) {
+        case 4:
+            SetMatElement<int>(ptrA, nr, nc, value);
+            return;
+        case 6:
+            SetMatElement<float>(ptrA, nr, nc, value);
+            return;
+        case 8:
+            SetMatElement<double>(ptrA, nr, nc, value);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP 
-iGetMatRow(const SEXP data, const int idx)
+SEXP
+GetMatRow(SEXP ptrA, const int idx, const int type_flag)
 {    
-    MapMat<int> A = XPtrToSEXP<int>(data);
-    Eigen::VectorXi Am = A.row(idx-1);
-    return(wrap(Am));
+    switch(type_flag) {
+        case 4:
+            return GetMatRow<int>(ptrA, idx);
+        case 6:
+            return GetMatRow<float>(ptrA, idx);
+        case 8:
+            return GetMatRow<double>(ptrA, idx);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP 
-dGetMatCol(const SEXP data, const int idx)
-{        
-    MapMat<double> A = XPtrToSEXP<double>(data);
-    Eigen::VectorXd Am = A.col(idx-1);
-    return(wrap(Am));
-}
-
-// [[Rcpp::export]]
-SEXP 
-fGetMatCol(const SEXP data, const int idx)
+SEXP
+GetMatCol(SEXP ptrA, const int idx, const int type_flag)
 {    
-    MapMat<float> A = XPtrToSEXP<float>(data);
-    Eigen::VectorXf Am = A.col(idx-1);
-    return(wrap(Am));
+    switch(type_flag) {
+        case 4:
+            return GetMatCol<int>(ptrA, idx);
+        case 6:
+            return GetMatCol<float>(ptrA, idx);
+        case 8:
+            return GetMatCol<double>(ptrA, idx);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP 
-iGetMatCol(const SEXP data, const int idx)
+SEXP
+GetMatElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
 {    
-    MapMat<int> A = XPtrToSEXP<int>(data);
-    Eigen::VectorXi Am = A.col(idx-1);
-    return(wrap(Am));
-}
-
-// [[Rcpp::export]]
-SEXP 
-dGetMatElement(const SEXP data, const int nr, const int nc)
-{        
-    MapMat<double> A = XPtrToSEXP<double>(data);
-    double value = A(nr-1, nc-1);
-    return(wrap(value));
-}
-
-// [[Rcpp::export]]
-SEXP 
-fGetMatElement(const SEXP data, const int nr, const int nc)
-{        
-    MapMat<float> A = XPtrToSEXP<float>(data);
-    float value = A(nr-1, nc-1);
-    return(wrap(value));
-}
-
-// [[Rcpp::export]]
-SEXP 
-iGetMatElement(const SEXP data, const int nr, const int nc)
-{        
-    MapMat<int> A = XPtrToSEXP<int>(data);
-    int value = A(nr-1, nc-1);
-    return(wrap(value));
+    switch(type_flag) {
+        case 4:
+            return GetMatElement<int>(ptrA, nr, nc);
+        case 6:
+            return GetMatElement<float>(ptrA, nr, nc);
+        case 8:
+            return GetMatElement<double>(ptrA, nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 
 /*** vector imports ***/
- 
+
 // [[Rcpp::export]]
-SEXP vectorToIntXptr(SEXP data)
+SEXP vectorToSEXP(SEXP ptrA, const int type_flag)
 {
-    SEXP pMat = sexpVecToXptr<int>(data);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return sexpVecToXptr<int>(ptrA);
+        case 6:
+            return sexpVecToXptr<float>(ptrA);
+        case 8:
+            return sexpVecToXptr<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP vectorToFloatXptr(SEXP data)
+SEXP
+vectorToMat(SEXP ptrA, const int nr, const int nc, const int type_flag)
 {
-    SEXP pMat = sexpVecToXptr<float>(data);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return sexpVecToMatXptr<int>(ptrA, nr, nc);
+        case 6:
+            return sexpVecToMatXptr<float>(ptrA, nr, nc);
+        case 8:
+            return sexpVecToMatXptr<double>(ptrA, nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
-
-// [[Rcpp::export]]
-SEXP vectorToDoubleXptr(SEXP data)
-{
-    SEXP pMat = sexpVecToXptr<double>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP vectorToIntMatXptr(SEXP data, int nr, int nc)
-{
-    SEXP pMat = sexpVecToMatXptr<int>(data, nr, nc);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP vectorToFloatMatXptr(SEXP data, int nr, int nc)
-{
-    SEXP pMat = sexpVecToMatXptr<float>(data, nr, nc);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP vectorToDoubleMatXptr(SEXP data, int nr, int nc)
-{
-    SEXP pMat = sexpVecToMatXptr<double>(data, nr, nc);
-    return(pMat);
-}
-
 
 
 /*** matrix imports ***/
 
 // [[Rcpp::export]]
-SEXP matrixToIntXptr(SEXP data)
+SEXP
+matrixToGPUXptr(SEXP ptrA, const int type_flag)
 {
-    SEXP pMat = sexpToXptr<int>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP matrixToFloatXptr(SEXP data)
-{
-    SEXP pMat = sexpToXptr<float>(data);
-    return(pMat);
-}
-
-
-// [[Rcpp::export]]
-SEXP matrixToDoubleXptr(SEXP data)
-{
-    SEXP pMat = sexpToXptr<double>(data);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return sexpToXptr<int>(ptrA);
+        case 6:
+            return sexpToXptr<float>(ptrA);
+        case 8:
+            return sexpToXptr<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 /*** Vector XPtr to SEXP ***/
 
 // [[Rcpp::export]]
-SEXP dXptrToVecSEXP(SEXP ptrA)
+SEXP
+VecXptrToVecSEXP(SEXP ptrA, const int type_flag)
 {
-    MapVec<double> A = XPtrToVecSEXP<double>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP fXptrToVecSEXP(SEXP ptrA)
-{
-    MapVec<float> A = XPtrToVecSEXP<float>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP iXptrToVecSEXP(SEXP ptrA)
-{
-    MapVec<int> A = XPtrToVecSEXP<int>(ptrA);
-    return wrap(A);
+    switch(type_flag) {
+        case 4:
+            return wrap(XPtrToVecSEXP<int>(ptrA));
+        case 6:
+            return wrap(XPtrToVecSEXP<float>(ptrA));
+        case 8:
+            return wrap(XPtrToVecSEXP<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 /*** Matrix XPtr to SEXP ***/
 
 // [[Rcpp::export]]
-SEXP dXptrToSEXP(SEXP ptrA)
+SEXP
+MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
 {
-    MapMat<double> A = XPtrToSEXP<double>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP fXptrToSEXP(SEXP ptrA)
-{
-    MapMat<float> A = XPtrToSEXP<float>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP iXptrToSEXP(SEXP ptrA)
-{
-    MapMat<int> A = XPtrToSEXP<int>(ptrA);
-    return wrap(A);
+    switch(type_flag) {
+        case 4:
+            return wrap(XPtrToSEXP<int>(ptrA));
+        case 6:
+            return wrap(XPtrToSEXP<float>(ptrA));
+        case 8:
+            return wrap(XPtrToSEXP<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
 /*** Empty vector initializers ***/
 
 // [[Rcpp::export]]
-SEXP emptyVecIntXptr(int size)
+SEXP
+emptyVecXptr(const int size, const int type_flag)
 {
-    SEXP pVec = emptyVecXptr<int>(size);
-    return(pVec);
+    switch(type_flag) {
+        case 4:
+            return emptyVecXptr<int>(size);;
+        case 6:
+            return emptyVecXptr<float>(size);
+        case 8:
+            return emptyVecXptr<double>(size);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
 
-
-// [[Rcpp::export]]
-SEXP emptyVecFloatXptr(int size)
-{
-    SEXP pVec = emptyVecXptr<float>(size);
-    return(pVec);
-}
-
-
-// [[Rcpp::export]]
-SEXP emptyVecDoubleXptr(int size)
-{
-    SEXP pVec = emptyVecXptr<double>(size);
-    return(pVec);
-}
 
 /*** Empty matrix initializers ***/
 
-// [[Rcpp::export]]
-SEXP emptyIntXptr(int nr, int nc)
-{
-    SEXP pMat = emptyXptr<int>(nr,nc);
-    return(pMat);
-}
-
 
 // [[Rcpp::export]]
-SEXP emptyFloatXptr(int nr, int nc)
+SEXP
+emptyMatXptr(const int nr, const int nc, const int type_flag)
 {
-    SEXP pMat = emptyXptr<float>(nr,nc);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return emptyXptr<int>(nr, nc);;
+        case 6:
+            return emptyXptr<float>(nr, nc);
+        case 8:
+            return emptyXptr<double>(nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
 }
-
-
-// [[Rcpp::export]]
-SEXP emptyDoubleXptr(int nr, int nc)
-{
-    SEXP pMat = emptyXptr<double>(nr,nc);
-    return(pMat);
-}
-

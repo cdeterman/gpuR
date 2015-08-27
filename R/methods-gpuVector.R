@@ -171,8 +171,8 @@ setMethod("[",
           signature(x = "gpuVector", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iXptrToVecSEXP(x@address)),
-                     "float" = return(fXptrToVecSEXP(x@address)),
-                     "double" = return(dXptrToVecSEXP(x@address))
+                     "integer" = return(VecXptrToVecSEXP(x@address, 4L)),
+                     "float" = return(VecXptrToVecSEXP(x@address, 6L)),
+                     "double" = return(VecXptrToVecSEXP(x@address, 8L))
               )
           })

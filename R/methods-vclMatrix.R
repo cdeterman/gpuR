@@ -5,6 +5,7 @@
 #' @param j indices specifying columns
 #' @param drop missing
 #' @aliases [,vclMatrix
+#' @aliases [<-,vclMatrix
 #' @author Charles Determan Jr.
 #' @rdname extract-vclMatrix
 #' @export
@@ -12,9 +13,9 @@ setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iVCLtoSEXP(x@address)),
-                     "float" = return(fVCLtoSEXP(x@address)),
-                     "double" = return(dVCLtoSEXP(x@address))
+                     "integer" = return(VCLtoMatSEXP(x@address, 4L)),
+                     "float" = return(VCLtoMatSEXP(x@address, 6L)),
+                     "double" = return(VCLtoMatSEXP(x@address, 8L))
               )
           })
 
@@ -24,9 +25,9 @@ setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(ivclGetMatCol(x@address, j)),
-                     "float" = return(fvclGetMatCol(x@address, j)),
-                     "double" = return(dvclGetMatCol(x@address, j))
+                     "integer" = return(vclGetCol(x@address, j, 4L)),
+                     "float" = return(vclGetCol(x@address, j, 6L)),
+                     "double" = return(vclGetCol(x@address, j, 8L))
               )
           })
 
@@ -37,9 +38,9 @@ setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "missing", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(ivclGetMatRow(x@address, i)),
-                     "float" = return(fvclGetMatRow(x@address, i)),
-                     "double" = return(dvclGetMatRow(x@address, i))
+                     "integer" = return(vclGetRow(x@address, i, 4L)),
+                     "float" = return(vclGetRow(x@address, i, 6L)),
+                     "double" = return(vclGetRow(x@address, i, 8L))
               )
           })
 
@@ -49,22 +50,125 @@ setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(ivclGetMatElement(x@address, i, j)),
-                     "float" = return(fvclGetMatElement(x@address, i, j)),
-                     "double" = return(dvclGetMatElement(x@address, i, j))
+                     "integer" = return(vclGetElement(x@address, i, j, 4L)),
+                     "float" = return(vclGetElement(x@address, i, j, 6L)),
+                     "double" = return(vclGetElement(x@address, i, j, 8L))
               )
           })
 
-# #' @export
-# setMethod("[<-",
-#           signature(x = "vclMatrix", i = "missing", j = "numeric"),
-#           function(x, i, j, value) {
-#               switch(typeof(x),
-#                      "integer" = return(ivclMatColUpdate(x@address, j, value)),
-#                      "float" = return(fvclMatColUpdate(x@address, j, value)),
-#                      "double" = return(dvclMatColUpdate(x@address, j, value))
-#               )
-#           })
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", value = "numeric"),
+          function(x, i, j, value) {
+              
+              if(length(value) != nrow(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              if(j > ncol(x)){
+                  stop("column index exceeds number of columns")
+              }
+              
+              switch(typeof(x),
+                     "float" = vclSetCol(x@address, j, value, 6L),
+                     "double" = vclSetCol(x@address, j, value, 8L)
+              )
+              return(x)
+          })
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "ivclMatrix", i = "missing", j = "numeric", value = "integer"),
+          function(x, i, j, value) {
+              
+              if(length(value) != nrow(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              if(j > ncol(x)){
+                  stop("column index exceeds number of columns")
+              }
+              
+              switch(typeof(x),
+                     "integer" = vclSetCol(x@address, j, value, 4L)
+              )
+              return(x)
+          })
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "numeric", j = "missing", value = "numeric"),
+          function(x, i, j, value) {
+              
+              if(length(value) != ncol(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              if(i > nrow(x)){
+                  stop("row index exceeds number of rows")
+              }
+              
+              switch(typeof(x),
+                     "float" = vclSetRow(x@address, i, value, 6L),
+                     "double" = vclSetRow(x@address, i, value, 8L)
+              )
+              return(x)
+          })
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "ivclMatrix", i = "numeric", j = "missing", value = "integer"),
+          function(x, i, j, value) {
+              
+              if(length(value) != ncol(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              if(i > nrow(x)){
+                  stop("row index exceeds number of rows")
+              }
+              
+              switch(typeof(x),
+                     "integer" = vclSetRow(x@address, i, value, 4L)
+              )
+              return(x)
+          })
+
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "numeric", j = "numeric", value = "numeric"),
+          function(x, i, j, value) {
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
+                            
+              switch(typeof(x),
+                     "float" = vclSetElement(x@address, i, j, value, 6L),
+                     "double" = vclSetElement(x@address, i, j, value, 8L)
+              )
+              return(x)
+          })
+
+#' @rdname extract-vclMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "ivclMatrix", i = "numeric", j = "numeric", value = "integer"),
+          function(x, i, j, value) {
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
+              
+              switch(typeof(x),
+                     "integer" = vclSetElement(x@address, i, j, value, 4L)
+              )
+              return(x)
+          })
  
 #' @title vclMatrix Multiplication
 #' @param x A vclMatrix object

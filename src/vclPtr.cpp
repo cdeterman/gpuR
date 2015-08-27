@@ -67,22 +67,51 @@ SEXP emptyVecVCL(int length)
     return pMat;
 }
 
-//// update viennacl column elements
-//template <typename T>
-//void
-//vclMatColUpdate(SEXP &data, SEXP &newdata, const int &nc)
-//{
-//    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
-//    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
-//    Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
-//    
-//    *pA(,nc) = Am;
-//}
+// update viennacl column elements
+template <typename T>
+void
+vclSetCol(SEXP data, SEXP newdata, const int nc)
+{
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    viennacl::matrix<T> &A = *pA;
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+    Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
+    
+    for(int i = 0; i < A.size1(); i++){
+        A(i, nc-1) = Am(i);
+    } 
+}
+
+// update viennacl row elements
+template <typename T>
+void
+vclSetRow(SEXP data, SEXP newdata, const int nr)
+{
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    viennacl::matrix<T> &A = *pA;
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+    Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
+    
+    for(int i = 0; i < A.size2(); i++){
+        A(nr-1, i) = Am(i);
+    } 
+}
+
+// update viennacl element
+template <typename T>
+void
+vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
+{
+    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
+    viennacl::matrix<T> &A = *pA;
+    
+    A(nr-1, nc-1) = as<T>(newdata);
+}
 
 // Get viennacl column elements
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1>
-vclGetMatCol(SEXP &data, const int &nc)
+vclGetCol(SEXP &data, const int &nc)
 {
     Rcpp::XPtr<viennacl::matrix<T> > pA(data);
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
@@ -98,7 +127,7 @@ vclGetMatCol(SEXP &data, const int &nc)
 // Get viennacl row elements
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1>
-vclGetMatRow(SEXP &data, const int &nr)
+vclGetRow(SEXP &data, const int &nr)
 {
     Rcpp::XPtr<viennacl::matrix<T> > pA(data);
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
@@ -114,12 +143,12 @@ vclGetMatRow(SEXP &data, const int &nr)
 // Get viennacl row elements
 template <typename T>
 T
-vclGetMatElement(SEXP &data, const int &nc, const int &nr)
+vclGetElement(SEXP &data, const int &nr, const int &nc)
 {
     T value;
     Rcpp::XPtr<viennacl::matrix<T> > pA(data);
     viennacl::matrix<T> &A = *pA;
-    value = A(nc-1, nr-1);
+    value = A(nr-1, nc-1);
     return(value);
 }
 
@@ -127,221 +156,219 @@ vclGetMatElement(SEXP &data, const int &nc, const int &nr)
 /*** matrix imports ***/
 
 // [[Rcpp::export]]
-SEXP matrixToIntVCL(SEXP data)
+SEXP
+matrixToVCL(SEXP ptrA, const int type_flag)
 {
-    SEXP pMat = sexpToVCL<int>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP matrixToFloatVCL(SEXP data)
-{
-    SEXP pMat = sexpToVCL<float>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP matrixToDoubleVCL(SEXP data)
-{
-    SEXP pMat = sexpToVCL<double>(data);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return sexpToVCL<int>(ptrA);
+        case 6:
+            return sexpToVCL<float>(ptrA);
+        case 8:
+            return sexpToVCL<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 
 /*** Matrix exports ***/
 
 // [[Rcpp::export]]
-SEXP dVCLtoSEXP(SEXP ptrA)
+SEXP
+VCLtoMatSEXP(SEXP ptrA, const int type_flag)
 {
-    MatrixXd A = VCLtoSEXP<double>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP fVCLtoSEXP(SEXP ptrA)
-{
-    MatrixXf A = VCLtoSEXP<float>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP iVCLtoSEXP(SEXP ptrA)
-{
-    MatrixXi A = VCLtoSEXP<int>(ptrA);
-    return wrap(A);
+    switch(type_flag) {
+        case 4:
+            return wrap(VCLtoSEXP<int>(ptrA));
+        case 6:
+            return wrap(VCLtoSEXP<float>(ptrA));
+        case 8:
+            return wrap(VCLtoSEXP<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 /*** Empty matrix initializers ***/
 
 // [[Rcpp::export]]
-SEXP emptyIntVCL(int nr, int nc)
+SEXP
+emptyVCL(const int nr, const int nc, const int type_flag)
 {
-    SEXP pMat = emptyVCL<int>(nr,nc);
-    return(pMat);
-}
-
-
-// [[Rcpp::export]]
-SEXP emptyFloatVCL(int nr, int nc)
-{
-    SEXP pMat = emptyVCL<float>(nr,nc);
-    return(pMat);
-}
-
-
-// [[Rcpp::export]]
-SEXP emptyDoubleVCL(int nr, int nc)
-{
-    SEXP pMat = emptyVCL<double>(nr,nc);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return emptyVCL<int>(nr, nc);
+        case 6:
+            return emptyVCL<float>(nr, nc);
+        case 8:
+            return emptyVCL<double>(nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 /*** matrix element updates ***/
 
-//// [[Rcpp::export]]
-//SEXP dvclMatColUpdate(SEXP data, SEXP newdata, const int nc)
-//{
-//    vclMatColUpdate(data, newdata, nc);
-//}
+// [[Rcpp::export]]
+void
+vclSetCol(SEXP ptrA, const int nc, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            vclSetCol<int>(ptrA, newdata, nc);
+            return;
+        case 6:
+            vclSetCol<float>(ptrA, newdata, nc);
+            return;
+        case 8:
+            vclSetCol<double>(ptrA, newdata, nc);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclSetRow(SEXP ptrA, const int nr, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            vclSetRow<int>(ptrA, newdata, nr);
+            return;
+        case 6:
+            vclSetRow<float>(ptrA, newdata, nr);
+            return;
+        case 8:
+            vclSetRow<double>(ptrA, newdata, nr);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclSetElement(SEXP ptrA, const int nr, const int nc, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            vclSetElement<int>(ptrA, newdata, nr, nc);
+            return;
+        case 6:
+            vclSetElement<float>(ptrA, newdata, nr, nc);
+            return;
+        case 8:
+            vclSetElement<double>(ptrA, newdata, nr, nc);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 /*** get matrix elements ***/
 
 // [[Rcpp::export]]
-SEXP dvclGetMatCol(SEXP data, const int nc)
+SEXP
+vclGetCol(SEXP ptrA, const int nc, const int type_flag)
 {
-    Eigen::VectorXd col = vclGetMatCol<double>(data, nc);    
-    return(Rcpp::wrap(col));
+    switch(type_flag) {
+        case 4:
+            return wrap(vclGetCol<int>(ptrA, nc));
+        case 6:
+            return wrap(vclGetCol<float>(ptrA, nc));
+        case 8:
+            return wrap(vclGetCol<double>(ptrA, nc));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP fvclGetMatCol(SEXP data, const int nc)
+SEXP
+vclGetRow(SEXP ptrA, const int nr, const int type_flag)
 {
-    Eigen::VectorXf col = vclGetMatCol<float>(data, nc);    
-    return(Rcpp::wrap(col));
+    switch(type_flag) {
+        case 4:
+            return wrap(vclGetRow<int>(ptrA, nr));
+        case 6:
+            return wrap(vclGetRow<float>(ptrA, nr));
+        case 8:
+            return wrap(vclGetRow<double>(ptrA, nr));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 // [[Rcpp::export]]
-SEXP ivclGetMatCol(SEXP data, const int nc)
+SEXP
+vclGetElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
 {
-    Eigen::VectorXi col = vclGetMatCol<int>(data, nc);    
-    return(Rcpp::wrap(col));
-}
-
-// [[Rcpp::export]]
-SEXP dvclGetMatRow(SEXP data, const int nr)
-{
-    Eigen::VectorXd row = vclGetMatRow<double>(data, nr);    
-    return(Rcpp::wrap(row));
-}
-
-// [[Rcpp::export]]
-SEXP fvclGetMatRow(SEXP data, const int nr)
-{
-    Eigen::VectorXf row = vclGetMatRow<float>(data, nr);    
-    return(Rcpp::wrap(row));
-}
-
-// [[Rcpp::export]]
-SEXP ivclGetMatRow(SEXP data, const int nr)
-{
-    Eigen::VectorXi row = vclGetMatRow<int>(data, nr);    
-    return(Rcpp::wrap(row));
-}
-
-// [[Rcpp::export]]
-SEXP dvclGetMatElement(SEXP data, const int nc, const int nr)
-{
-    double value = vclGetMatElement<double>(data, nc, nr);    
-    return(Rcpp::wrap(value));
-}
-
-// [[Rcpp::export]]
-SEXP fvclGetMatElement(SEXP data, const int nc, const int nr)
-{
-    float value = vclGetMatElement<float>(data, nc, nr);    
-    return(Rcpp::wrap(value));
-}
-
-// [[Rcpp::export]]
-SEXP ivclGetMatElement(SEXP data, const int nc, const int nr)
-{
-    int value = vclGetMatElement<int>(data, nc, nr);    
-    return(Rcpp::wrap(value));
+    switch(type_flag) {
+        case 4:
+            return wrap(vclGetElement<int>(ptrA, nr, nc));
+        case 6:
+            return wrap(vclGetElement<float>(ptrA, nr, nc));
+        case 8:
+            return wrap(vclGetElement<double>(ptrA, nr, nc));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 /*** vector imports ***/
 
 // [[Rcpp::export]]
-SEXP vectorToIntVCL(SEXP data)
+SEXP
+vectorToVCL(SEXP ptrA, const int type_flag)
 {
-    SEXP pMat = sexpVecToVCL<int>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP vectorToFloatVCL(SEXP data)
-{
-    SEXP pMat = sexpVecToVCL<float>(data);
-    return(pMat);
-}
-
-// [[Rcpp::export]]
-SEXP vectorToDoubleVCL(SEXP data)
-{
-    SEXP pMat = sexpVecToVCL<double>(data);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return sexpVecToVCL<int>(ptrA);
+        case 6:
+            return sexpVecToVCL<float>(ptrA);
+        case 8:
+            return sexpVecToVCL<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 
 /*** Vector exports ***/
 
 // [[Rcpp::export]]
-SEXP dVCLtoVecSEXP(SEXP ptrA)
+SEXP
+VCLtoVecSEXP(SEXP ptrA, const int type_flag)
 {
-    VectorXd A = VCLtoVecSEXP<double>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP fVCLtoVecSEXP(SEXP ptrA)
-{
-    VectorXf A = VCLtoVecSEXP<float>(ptrA);
-    return wrap(A);
-}
-
-
-// [[Rcpp::export]]
-SEXP iVCLtoVecSEXP(SEXP ptrA)
-{
-    VectorXi A = VCLtoVecSEXP<int>(ptrA);
-    return wrap(A);
+    switch(type_flag) {
+        case 4:
+            return wrap(VCLtoVecSEXP<int>(ptrA));
+        case 6:
+            return wrap(VCLtoVecSEXP<float>(ptrA));
+        case 8:
+            return wrap(VCLtoVecSEXP<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 /*** Empty vector initializers ***/
 
 // [[Rcpp::export]]
-SEXP emptyVecIntVCL(int length)
+SEXP
+emptyVecVCL(int length, const int type_flag)
 {
-    SEXP pMat = emptyVecVCL<int>(length);
-    return(pMat);
-}
-
-
-// [[Rcpp::export]]
-SEXP emptyVecFloatVCL(int length)
-{
-    SEXP pMat = emptyVecVCL<float>(length);
-    return(pMat);
-}
-
-
-// [[Rcpp::export]]
-SEXP emptyVecDoubleVCL(int length)
-{
-    SEXP pMat = emptyVecVCL<double>(length);
-    return(pMat);
+    switch(type_flag) {
+        case 4:
+            return emptyVecVCL<int>(length);
+        case 6:
+            return emptyVecVCL<float>(length);
+        case 8:
+            return emptyVecVCL<double>(length);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 

@@ -31,15 +31,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=matrixToIntXptr(data))
+                                    address=matrixToGPUXptr(data, 4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=matrixToFloatXptr(data))
+                                    address=matrixToGPUXptr(data, 6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = matrixToDoubleXptr(data))
+                                    address = matrixToGPUXptr(data, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -61,15 +61,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=emptyIntXptr(nrow, ncol))
+                                    address=emptyMatXptr(nrow, ncol, 4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=emptyFloatXptr(nrow, ncol))
+                                    address=emptyMatXptr(nrow, ncol, 6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = emptyDoubleXptr(nrow, ncol))
+                                    address = emptyMatXptr(nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -96,15 +96,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=vectorToIntMatXptr(data, nrow, ncol))
+                                    address=vectorToMat(data, nrow, ncol, 4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=vectorToFloatMatXptr(data, nrow, ncol))
+                                    address=vectorToMat(data, nrow, ncol, 6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = vectorToDoubleMatXptr(data, nrow, ncol))
+                                    address = vectorToMat(data, nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

@@ -32,15 +32,15 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=vectorToIntVCL(data))
+                                    address=vectorToVCL(data, 4L))
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=vectorToFloatVCL(data))
+                                    address=vectorToVCL(data, 6L))
                             },
                             double = {
                                 new("dvclVector",
-                                    address = vectorToDoubleVCL(data))
+                                    address = vectorToVCL(data, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -64,15 +64,15 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=emptyVecIntVCL(length))
+                                    address=emptyVecVCL(length, 4L))
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=emptyVecFloatVCL(length))
+                                    address=emptyVecVCL(length, 6L))
                             },
                             double = {
                                 new("dvclVector",
-                                    address = emptyVecDoubleVCL(length))
+                                    address = emptyVecVCL(length, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

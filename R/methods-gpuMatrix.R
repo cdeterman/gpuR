@@ -141,9 +141,9 @@ setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iXptrToSEXP(x@address)),
-                     "float" = return(fXptrToSEXP(x@address)),
-                     "double" = return(dXptrToSEXP(x@address))
+                     "integer" = return(MatXptrToMatSEXP(x@address, 4L)),
+                     "float" = return(MatXptrToMatSEXP(x@address, 6L)),
+                     "double" = return(MatXptrToMatSEXP(x@address, 8L))
               )
           })
 
@@ -153,9 +153,9 @@ setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iGetMatCol(x@address, j)),
-                     "float" = return(fGetMatCol(x@address, j)),
-                     "double" = return(dGetMatCol(x@address, j))
+                     "integer" = return(GetMatCol(x@address, j, 4L)),
+                     "float" = return(GetMatCol(x@address, j, 6L)),
+                     "double" = return(GetMatCol(x@address, j, 8L))
               )
           })
 
@@ -166,9 +166,10 @@ setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iGetMatRow(x@address, i)),
-                     "float" = return(fGetMatRow(x@address, i)),
-                     "double" = return(dGetMatRow(x@address, i))
+                     "integer" = return(GetMatRow(x@address, i, 4L)),
+                     "float" = return(GetMatRow(x@address, i, 6L)),
+                     "double" = return(GetMatRow(x@address, i, 8L)),
+                     stop("type not recognized")
               )
           })
 
@@ -178,9 +179,9 @@ setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iGetMatElement(x@address, i, j)),
-                     "float" = return(fGetMatElement(x@address, i, j)),
-                     "double" = return(dGetMatElement(x@address, i, j))
+                     "integer" = return(GetMatElement(x@address, i, j, 4L)),
+                     "float" = return(GetMatElement(x@address, i, j, 6L)),
+                     "double" = return(GetMatElement(x@address, i, j, 8L))
               )
           })
 
@@ -192,6 +193,9 @@ setMethod("[<-",
               if(length(value) != ncol(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
+              
               switch(typeof(x),
                      "float" = SetMatRow(x@address, i, value, 6L),
                      "double" = SetMatRow(x@address, i, value, 8L),
@@ -203,13 +207,89 @@ setMethod("[<-",
 #' @rdname extract-gpuMatrix
 #' @export
 setMethod("[<-",
-          signature(x = "gpuMatrix", i = "numeric", j = "missing", value="integer"),
+          signature(x = "igpuMatrix", i = "numeric", j = "missing", value="integer"),
           function(x, i, j, value) {
               if(length(value) != ncol(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
+              
               switch(typeof(x),
                      "integer" = SetMatRow(x@address, i, value, 4L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "gpuMatrix", i = "missing", j = "numeric", value="numeric"),
+          function(x, i, j, value) {
+              
+              if(length(value) != nrow(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              assert_all_are_in_closed_range(j, lower = 1, upper = ncol(x))
+              
+              switch(typeof(x),
+                     "float" = SetMatCol(x@address, j, value, 6L),
+                     "double" = SetMatCol(x@address, j, value, 8L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "igpuMatrix", i = "missing", j = "numeric", value="integer"),
+          function(x, i, j, value) {
+              
+              if(length(value) != nrow(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              assert_all_are_in_closed_range(j, lower = 1, upper = ncol(x))
+              
+              switch(typeof(x),
+                     "integer" = SetMatCol(x@address, j, value, 4L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "gpuMatrix", i = "numeric", j = "numeric", value="numeric"),
+          function(x, i, j, value) {
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper = ncol(x))
+              
+              switch(typeof(x),
+                     "float" = SetMatElement(x@address, i, j, value, 6L),
+                     "double" = SetMatElement(x@address, i, j, value, 8L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+#' @rdname extract-gpuMatrix
+#' @export
+setMethod("[<-",
+          signature(x = "igpuMatrix", i = "numeric", j = "numeric", value="integer"),
+          function(x, i, j, value) {
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper = ncol(x))
+              
+              switch(typeof(x),
+                     "integer" = SetMatElement(x@address, i, j, value, 4L),
                      stop("type not recognized")
               )
               return(x)

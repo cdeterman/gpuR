@@ -41,7 +41,8 @@ SEXP sexpToVCL(SEXP A)
 
 // convert XPtr ViennaCL Matrix to Eigen matrix
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> VCLtoSEXP(SEXP A)
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> 
+VCLtoSEXP(SEXP A)
 {
     Rcpp::XPtr<viennacl::matrix<T> > pA(A);
     

@@ -7,8 +7,12 @@
 \alias{[,gpuMatrix,missing,numeric,missing-method}
 \alias{[,gpuMatrix,numeric,missing,missing-method}
 \alias{[,gpuMatrix,numeric,numeric,missing-method}
-\alias{[<-,gpuMatrix,numeric,missing,integer-method}
+\alias{[<-,gpuMatrix,missing,numeric,numeric-method}
 \alias{[<-,gpuMatrix,numeric,missing,numeric-method}
+\alias{[<-,gpuMatrix,numeric,numeric,numeric-method}
+\alias{[<-,igpuMatrix,missing,numeric,integer-method}
+\alias{[<-,igpuMatrix,numeric,missing,integer-method}
+\alias{[<-,igpuMatrix,numeric,numeric,integer-method}
 \title{Extract gpuMatrix elements}
 \usage{
 \S4method{[}{gpuMatrix,missing,missing,missing}(x, i, j, drop)
@@ -21,7 +25,15 @@
 
 \S4method{[}{gpuMatrix,numeric,missing,numeric}(x, i, j) <- value
 
-\S4method{[}{gpuMatrix,numeric,missing,integer}(x, i, j) <- value
+\S4method{[}{igpuMatrix,numeric,missing,integer}(x, i, j) <- value
+
+\S4method{[}{gpuMatrix,missing,numeric,numeric}(x, i, j) <- value
+
+\S4method{[}{igpuMatrix,missing,numeric,integer}(x, i, j) <- value
+
+\S4method{[}{gpuMatrix,numeric,numeric,numeric}(x, i, j) <- value
+
+\S4method{[}{igpuMatrix,numeric,numeric,integer}(x, i, j) <- value
 }
 \arguments{
 \item{x}{A gpuMatrix object}

@@ -31,15 +31,15 @@ setMethod('gpuVector',
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
-                                    address=vectorToIntXptr(data))
+                                    address=vectorToSEXP(data, 4L))
                             },
                             float = {
                                 new("fgpuVector", 
-                                    address=vectorToFloatXptr(data))
+                                    address=vectorToSEXP(data, 6L))
                             },
                             double = {
                                 new("dgpuVector",
-                                    address = vectorToDoubleXptr(data))
+                                    address = vectorToSEXP(data, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -63,15 +63,15 @@ setMethod('gpuVector',
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
-                                    address=emptyVecIntXptr(length))
+                                    address=emptyVecXptr(length, 4L))
                             },
                             float = {
                                 new("fgpuVector", 
-                                    address=emptyVecFloatXptr(length))
+                                    address=emptyVecXptr(length, 6L))
                             },
                             double = {
                                 new("dgpuVector",
-                                    address = emptyVecDoubleXptr(length))
+                                    address = emptyVecXptr(length, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

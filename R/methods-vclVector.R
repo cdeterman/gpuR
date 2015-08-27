@@ -11,9 +11,9 @@ setMethod("[",
           signature(x = "vclVector", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(iVCLtoVecSEXP(x@address)),
-                     "float" = return(fVCLtoVecSEXP(x@address)),
-                     "double" = return(dVCLtoVecSEXP(x@address))
+                     "integer" = return(VCLtoVecSEXP(x@address, 4L)),
+                     "float" = return(VCLtoVecSEXP(x@address, 6L)),
+                     "double" = return(VCLtoVecSEXP(x@address, 8L))
               )
           })
 

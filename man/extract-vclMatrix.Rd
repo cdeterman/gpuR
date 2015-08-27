@@ -7,6 +7,12 @@
 \alias{[,vclMatrix,missing,numeric,missing-method}
 \alias{[,vclMatrix,numeric,missing,missing-method}
 \alias{[,vclMatrix,numeric,numeric,missing-method}
+\alias{[<-,ivclMatrix,missing,numeric,integer-method}
+\alias{[<-,ivclMatrix,numeric,missing,integer-method}
+\alias{[<-,ivclMatrix,numeric,numeric,integer-method}
+\alias{[<-,vclMatrix,missing,numeric,numeric-method}
+\alias{[<-,vclMatrix,numeric,missing,numeric-method}
+\alias{[<-,vclMatrix,numeric,numeric,numeric-method}
 \title{Extract or Replace Parts of vclMatrix}
 \usage{
 \S4method{[}{vclMatrix,missing,missing,missing}(x, i, j, drop)
@@ -16,6 +22,18 @@
 \S4method{[}{vclMatrix,numeric,missing,missing}(x, i, j, drop)
 
 \S4method{[}{vclMatrix,numeric,numeric,missing}(x, i, j, drop)
+
+\S4method{[}{vclMatrix,missing,numeric,numeric}(x, i, j) <- value
+
+\S4method{[}{ivclMatrix,missing,numeric,integer}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,numeric,missing,numeric}(x, i, j) <- value
+
+\S4method{[}{ivclMatrix,numeric,missing,integer}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,numeric,numeric,numeric}(x, i, j) <- value
+
+\S4method{[}{ivclMatrix,numeric,numeric,integer}(x, i, j) <- value
 }
 \arguments{
 \item{x}{A vclMatrix object}

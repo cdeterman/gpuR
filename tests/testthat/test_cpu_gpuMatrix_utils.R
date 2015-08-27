@@ -5,8 +5,8 @@ context("CPU gpuMatrix Utility Functions")
 options(gpuR.default.device = "cpu")
 
 set.seed(123)
-A <- matrix(seq.int(100), 10)
-D <- matrix(rnorm(100), 10)
+A <- matrix(sample(seq.int(100), 100), 10)
+D <- matrix(sample(rnorm(100), 100), 10)
 
 
 test_that("gpuMatrix element access", {
@@ -35,6 +35,117 @@ test_that("gpuMatrix element access", {
                  info = "float element subset not equivalent ")
     expect_equivalent(igpu[1,2], A[1,2],
                       info = "integer element subset not equivalent")
+})
+
+test_that("gpuMatrix set column access", {
+    
+    gpuA <- gpuMatrix(A)
+    gpuD <- gpuMatrix(D)
+    gpuF <- gpuMatrix(D, type = "float")
+    gpuB <- gpuD
+    
+    icolvec <- sample(seq.int(10), 10)
+    colvec <- rnorm(10)
+    
+    gpuA[,1] <- icolvec
+    gpuD[,1] <- colvec
+    gpuF[,1] <- colvec
+    
+    A[,1] <- icolvec
+    D[,1] <- colvec
+    
+    expect_equivalent(gpuD[,1], colvec,
+                      info = "updated dgpuMatrix column not equivalent")
+    expect_equivalent(gpuD[], D,
+                      info = "updated dgpuMatrix not equivalent")
+    expect_equivalent(gpuB[], D, 
+                      info = "updated dgpuMatrix column not reflected in 'copy'")
+    expect_equal(gpuF[,1], colvec, tolerance=1e-07,
+                 info = "updated fgpuMatrix column not equivalent")
+    expect_equal(gpuF[], D, tolerance=1e-07,
+                 info = "updated fgpuMatrix not equivalent")
+    expect_equivalent(gpuA[,1], icolvec,
+                      info = "updated igpuMatrix column not equivalent")
+    expect_equivalent(gpuA[], A,
+                      info = "updated igpuMatrix not equivalent")
+    expect_error(gpuA[,11] <- icolvec,
+                 info = "no error when index greater than dims")
+    expect_error(gpuD[,1] <- rnorm(12),
+                 info = "no error when vector larger than number of rows")
+})
+
+test_that("gpuMatrix set row access", {
+    
+    gpuA <- gpuMatrix(A)
+    gpuD <- gpuMatrix(D)
+    gpuF <- gpuMatrix(D, type = "float")
+    gpuB <- gpuD
+    
+    icolvec <- sample(seq.int(10), 10)
+    colvec <- rnorm(10)
+    
+    gpuA[1,] <- icolvec
+    gpuD[1,] <- colvec
+    gpuF[1,] <- colvec
+    
+    A[1,] <- icolvec
+    D[1,] <- colvec
+    
+    expect_equivalent(gpuD[1,], colvec,
+                      info = "updated dgpuMatrix row not equivalent")
+    expect_equivalent(gpuD[], D,
+                      info = "updated dgpuMatrix not equivalent")
+    expect_equivalent(gpuB[], D, 
+                      info = "updated dgpuMatrix row not reflected in 'copy'")
+    expect_equal(gpuF[1,], colvec, tolerance=1e-07,
+                 info = "updated fgpuMatrix row not equivalent")
+    expect_equal(gpuF[], D, tolerance=1e-07,
+                 info = "updated fgpuMatrix not equivalent")
+    expect_equivalent(gpuA[1,], icolvec,
+                      info = "updated igpuMatrix row not equivalent")
+    expect_equivalent(gpuA[], A,
+                      info = "updated igpuMatrix not equivalent")
+    expect_error(gpuA[11,] <- icolvec,
+                 info = "no error when index greater than dims")
+    expect_error(gpuD[1,] <- rnorm(12),
+                 info = "no error when vector larger than number of rows")
+})
+
+test_that("gpuMatrix set element access", {
+    
+    gpuA <- gpuMatrix(A)
+    gpuD <- gpuMatrix(D)
+    gpuF <- gpuMatrix(D, type = "float")
+    gpuB <- gpuD
+    
+    int <- sample(seq.int(10), 1)
+    float <- rnorm(1)
+    
+    gpuA[1,3] <- int
+    gpuD[1,3] <- float
+    gpuF[1,3] <- float
+    
+    A[1,3] <- int
+    D[1,3] <- float
+    
+    expect_equivalent(gpuD[1,3], float,
+                      info = "updated dgpuMatrix element not equivalent")
+    expect_equivalent(gpuD[], D,
+                      info = "updated dgpuMatrix not equivalent")
+    expect_equivalent(gpuB[], D, 
+                      info = "updated dgpuMatrix elemnent not reflected in 'copy'")
+    expect_equal(gpuF[1,3], float, tolerance=1e-07,
+                 info = "updated fgpuMatrix element not equivalent")
+    expect_equal(gpuF[], D, tolerance=1e-07,
+                 info = "updated fgpuMatrix not equivalent")
+    expect_equivalent(gpuA[1,3], int,
+                      info = "updated igpuMatrix element not equivalent")
+    expect_equivalent(gpuA[], A,
+                      info = "updated igpuMatrix not equivalent")
+    expect_error(gpuA[11,3] <- int,
+                 info = "no error when index greater than dims")
+    expect_error(gpuD[1,3] <- rnorm(12),
+                 info = "no error when assigned vector to element")
 })
 
 options(gpuR.default.device = "gpu")

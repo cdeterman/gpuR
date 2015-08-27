@@ -32,15 +32,15 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=matrixToIntVCL(data))
+                                    address=matrixToVCL(data, 4L))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=matrixToFloatVCL(data))
+                                    address=matrixToVCL(data, 6L))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = matrixToDoubleVCL(data))
+                                    address = matrixToVCL(data, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -62,15 +62,15 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=emptyIntVCL(nrow, ncol))
+                                    address=emptyVCL(nrow, ncol, 4L))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=emptyFloatVCL(nrow, ncol))
+                                    address=emptyVCL(nrow, ncol, 6L))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = emptyDoubleVCL(nrow, ncol))
+                                    address = emptyVCL(nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
