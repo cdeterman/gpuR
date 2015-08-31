@@ -4,9 +4,12 @@
 \name{[,vclVector,missing,missing,missing-method}
 \alias{[,vclVector}
 \alias{[,vclVector,missing,missing,missing-method}
+\alias{[,vclVector,numeric,missing,missing-method}
 \title{Extract all vclVector elements}
 \usage{
 \S4method{[}{vclVector,missing,missing,missing}(x, i, j, drop)
+
+\S4method{[}{vclVector,numeric,missing,missing}(x, i, j, drop)
 }
 \arguments{
 \item{x}{A vclVector object}

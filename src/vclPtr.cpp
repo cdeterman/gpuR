@@ -67,6 +67,20 @@ SEXP emptyVecVCL(int length)
     return pMat;
 }
 
+/*** vclVector get elements ***/
+
+// Get viennacl column elements
+template <typename T>
+T
+vclVecGetElement(SEXP &data, const int &idx)
+{
+    Rcpp::XPtr<viennacl::vector<T> > pA(data);
+    viennacl::vector<T> &A = *pA;
+    return(A(idx-1));
+}
+
+/*** vclMatrix setting elements ***/
+
 // update viennacl column elements
 template <typename T>
 void
@@ -107,6 +121,8 @@ vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
     
     A(nr-1, nc-1) = as<T>(newdata);
 }
+
+/*** vclMatrix get elements ***/
 
 // Get viennacl column elements
 template <typename T>
@@ -312,6 +328,24 @@ vclGetElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
             return wrap(vclGetElement<float>(ptrA, nr, nc));
         case 8:
             return wrap(vclGetElement<double>(ptrA, nr, nc));
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+/*** get vector elements ***/
+
+// [[Rcpp::export]]
+SEXP
+vclVecGetElement(SEXP ptrA, const int idx, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return wrap(vclVecGetElement<int>(ptrA, idx));
+        case 6:
+            return wrap(vclVecGetElement<float>(ptrA, idx));
+        case 8:
+            return wrap(vclVecGetElement<double>(ptrA, idx));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

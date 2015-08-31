@@ -50,6 +50,32 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// GetVecElement
+SEXP GetVecElement(SEXP ptrA, const int idx, const int type_flag);
+RcppExport SEXP gpuR_GetVecElement(SEXP ptrASEXP, SEXP idxSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(GetVecElement(ptrA, idx, type_flag));
+    return __result;
+END_RCPP
+}
+// SetVecElement
+void SetVecElement(SEXP ptrA, const int idx, SEXP value, const int type_flag);
+RcppExport SEXP gpuR_SetVecElement(SEXP ptrASEXP, SEXP idxSEXP, SEXP valueSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    SetVecElement(ptrA, idx, value, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // SetMatRow
 void SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag);
 RcppExport SEXP gpuR_SetMatRow(SEXP ptrASEXP, SEXP idxSEXP, SEXP valueSEXP, SEXP type_flagSEXP) {
@@ -644,6 +670,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     __result = Rcpp::wrap(vclGetElement(ptrA, nr, nc, type_flag));
+    return __result;
+END_RCPP
+}
+// vclVecGetElement
+SEXP vclVecGetElement(SEXP ptrA, const int idx, const int type_flag);
+RcppExport SEXP gpuR_vclVecGetElement(SEXP ptrASEXP, SEXP idxSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(vclVecGetElement(ptrA, idx, type_flag));
     return __result;
 END_RCPP
 }

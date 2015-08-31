@@ -1,5 +1,8 @@
 library(gpuR)
-context("gpuVector Utility Functions")
+context("CPU gpuVector Utility Functions")
+
+# set option to use CPU instead of GPU
+options(gpuR.default.device = "cpu")
 
 set.seed(123)
 ORDER <- 100
@@ -7,8 +10,6 @@ A <- sample(seq.int(10), ORDER, replace = TRUE)
 D <- rnorm(ORDER)
 
 test_that("integer vector length method successful", {
-    
-    has_gpu_skip()
     
     gpuA <- gpuVector(A)
     
@@ -19,8 +20,6 @@ test_that("integer vector length method successful", {
 
 test_that("float vector length method successful", {
     
-    has_gpu_skip()
-    
     gpuA <- gpuVector(A, type="float")
     
     s <- length(gpuA)
@@ -30,9 +29,6 @@ test_that("float vector length method successful", {
 
 test_that("double vector length method successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     gpuA <- gpuVector(A, type="double")
     
     s <- length(gpuA)
@@ -41,8 +37,6 @@ test_that("double vector length method successful", {
 })
 
 test_that("gpuVector accession method successful", {
-    
-    has_gpu_skip()
     
     gpuA <- gpuVector(A)
     gpuF <- gpuVector(D, type="float")
@@ -60,9 +54,6 @@ test_that("gpuVector accession method successful", {
 
 test_that("dgpuVector accession method successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     gpuD <- gpuVector(D)
     
     gs <- gpuD[2]
@@ -72,8 +63,6 @@ test_that("dgpuVector accession method successful", {
 })
 
 test_that("gpuVector set accession method successful", {
-    
-    has_gpu_skip()
     
     Ai <- sample(seq.int(10), 10, replace = TRUE)
     
@@ -100,9 +89,6 @@ test_that("gpuVector set accession method successful", {
 
 test_that("dgpuVector set accession method successful", {
     
-    has_gpu_skip()
-    has_double_skip()
-    
     gpuD <- gpuVector(D)
     
     float = rnorm(1)
@@ -115,3 +101,6 @@ test_that("dgpuVector set accession method successful", {
     expect_error(gpuD[101] <- 42.42, 
                  info = "no error when set outside dgpuVector size")
 })
+
+options(gpuR.default.device = "gpu")
+

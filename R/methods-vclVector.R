@@ -6,6 +6,7 @@
 #' @param drop missing
 #' @aliases [,vclVector
 #' @author Charles Determan Jr.
+#' @rdname extract-vclVector
 #' @export
 setMethod("[",
           signature(x = "vclVector", i = "missing", j = "missing", drop = "missing"),
@@ -14,6 +15,22 @@ setMethod("[",
                      "integer" = return(VCLtoVecSEXP(x@address, 4L)),
                      "float" = return(VCLtoVecSEXP(x@address, 6L)),
                      "double" = return(VCLtoVecSEXP(x@address, 8L))
+              )
+          })
+
+
+#' @rdname extract-vclVector
+#' @export
+setMethod("[",
+          signature(x = "vclVector", i = "numeric", j = "missing", drop = "missing"),
+          function(x, i, j, drop) {
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = length(x))
+              
+              switch(typeof(x),
+                     "integer" = return(vclVecGetElement(x@address, i, 4L)),
+                     "float" = return(vclVecGetElement(x@address, i, 6L)),
+                     "double" = return(vclVecGetElement(x@address, i, 8L))
               )
           })
 

@@ -5,6 +5,61 @@
 
 using namespace Rcpp;
 
+template <typename T>
+T
+GetVecElement(const SEXP data, const int idx)
+{    
+    MapVec<T> A = XPtrToVecSEXP<T>(data);
+    return(A(idx-1));
+}
+
+template <typename T>
+void
+SetVecElement(const SEXP data, const int idx, SEXP value)
+{    
+    MapVec<T> A = XPtrToVecSEXP<T>(data);
+    A(idx-1) = as<T>(value);
+}
+
+/*** Get/Set Vector Elements ***/
+
+// [[Rcpp::export]]
+SEXP
+GetVecElement(SEXP ptrA, const int idx, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return wrap(GetVecElement<int>(ptrA, idx));
+        case 6:
+            return wrap(GetVecElement<float>(ptrA, idx));
+        case 8:
+            return wrap(GetVecElement<double>(ptrA, idx));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+SetVecElement(SEXP ptrA, const int idx, SEXP value, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            SetVecElement<int>(ptrA, idx, value);
+            return;
+        case 6:
+            SetVecElement<float>(ptrA, idx, value);
+            return;
+        case 8:
+            SetVecElement<double>(ptrA, idx, value);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+/*** Get/Set Matrix Elements ***/
+
 // [[Rcpp::export]]
 void
 SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag)

@@ -22,6 +22,14 @@ cpp_device_has_double <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_device_has_double', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
+GetVecElement <- function(ptrA, idx, type_flag) {
+    .Call('gpuR_GetVecElement', PACKAGE = 'gpuR', ptrA, idx, type_flag)
+}
+
+SetVecElement <- function(ptrA, idx, value, type_flag) {
+    invisible(.Call('gpuR_SetVecElement', PACKAGE = 'gpuR', ptrA, idx, value, type_flag))
+}
+
 SetMatRow <- function(ptrA, idx, value, type_flag) {
     invisible(.Call('gpuR_SetMatRow', PACKAGE = 'gpuR', ptrA, idx, value, type_flag))
 }
@@ -216,6 +224,10 @@ vclGetRow <- function(ptrA, nr, type_flag) {
 
 vclGetElement <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_vclGetElement', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
+}
+
+vclVecGetElement <- function(ptrA, idx, type_flag) {
+    .Call('gpuR_vclVecGetElement', PACKAGE = 'gpuR', ptrA, idx, type_flag)
 }
 
 vectorToVCL <- function(ptrA, type_flag) {
