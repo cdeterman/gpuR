@@ -1,8 +1,7 @@
 #include <RcppEigen.h>
 
 #include "gpuR/vcl_helpers.hpp"
-
-#include "viennacl/vector.hpp"
+#include "gpuR/eigen_templates.hpp"
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXf;
@@ -14,16 +13,19 @@ using Eigen::VectorXi;
 using namespace Rcpp;
 
 
-// convert SEXP Vector to ViennaCL matrix
+// convert SEXP Vector to ViennaCL vector
 template <typename T>
-SEXP sexpVecToVCL(SEXP A)
+SEXP 
+sexpVecToVCL(SEXP A, const int device_flag)
 {
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
     
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     int M = Am.size();
     
@@ -35,6 +37,29 @@ SEXP sexpVecToVCL(SEXP A)
     return pMat;
 }
 
+// convert SEXP Vector to ViennaCL matrix
+template <typename T>
+SEXP 
+vectorToMatVCL(SEXP A, const int nr, const int nc, const int device_flag)
+{
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
+    Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
+    Am.resize(nr, nc);
+    MapMat<T> Amm(&Am(0), nr, nc);
+    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    viennacl::matrix<T> *vcl_A = new viennacl::matrix<T>(nr, nc);
+    
+    viennacl::copy(Amm, *vcl_A); 
+    
+    Rcpp::XPtr<viennacl::matrix<T> > pMat(vcl_A);
+    return pMat;
+}
 
 // convert XPtr ViennaCL Vector to Eigen vector
 template <typename T>
@@ -54,11 +79,13 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> VCLtoVecSEXP(SEXP A)
 
 // empty ViennaCL Vector
 template <typename T>
-SEXP emptyVecVCL(int length)
+SEXP emptyVecVCL(int length, const int device_flag)
 {
     //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
     viennacl::vector<T> *vcl_A = new viennacl::vector<T>(length);
     *vcl_A = viennacl::zero_vector<T>(length);
@@ -77,6 +104,18 @@ vclVecGetElement(SEXP &data, const int &idx)
     Rcpp::XPtr<viennacl::vector<T> > pA(data);
     viennacl::vector<T> &A = *pA;
     return(A(idx-1));
+}
+
+/*** vclVector set elements ***/
+
+// Get viennacl column elements
+template <typename T>
+void
+vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
+{
+    Rcpp::XPtr<viennacl::vector<T> > pA(data);
+    viennacl::vector<T> &A = *pA;
+    A(idx-1) = as<T>(newdata);
 }
 
 /*** vclMatrix setting elements ***/
@@ -347,7 +386,26 @@ vclVecGetElement(SEXP ptrA, const int idx, const int type_flag)
         case 8:
             return wrap(vclVecGetElement<double>(ptrA, idx));
         default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclVecSetElement(SEXP ptrA, const int idx, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            vclVecSetElement<int>(ptrA, newdata, idx);
+            return;
+        case 6:
+            vclVecSetElement<float>(ptrA, newdata, idx);
+            return;
+        case 8:
+            vclVecSetElement<double>(ptrA, newdata, idx);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
     }
 }
 
@@ -355,15 +413,36 @@ vclVecGetElement(SEXP ptrA, const int idx, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-vectorToVCL(SEXP ptrA, const int type_flag)
+vectorToVCL(SEXP ptrA, const int type_flag, const int device_flag)
 {
     switch(type_flag) {
         case 4:
-            return sexpVecToVCL<int>(ptrA);
+            return sexpVecToVCL<int>(ptrA, device_flag);
         case 6:
-            return sexpVecToVCL<float>(ptrA);
+            return sexpVecToVCL<float>(ptrA, device_flag);
         case 8:
-            return sexpVecToVCL<double>(ptrA);
+            return sexpVecToVCL<double>(ptrA, device_flag);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+vectorToMatVCL(
+    SEXP ptrA, 
+    const int nr,
+    const int nc,
+    const int type_flag, 
+    const int device_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return vectorToMatVCL<int>(ptrA, nr, nc, device_flag);
+        case 6:
+            return vectorToMatVCL<float>(ptrA, nr, nc, device_flag);
+        case 8:
+            return vectorToMatVCL<double>(ptrA, nr, nc, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -392,15 +471,15 @@ VCLtoVecSEXP(SEXP ptrA, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-emptyVecVCL(int length, const int type_flag)
+emptyVecVCL(int length, const int type_flag, const int device_flag)
 {
     switch(type_flag) {
         case 4:
-            return emptyVecVCL<int>(length);
+            return emptyVecVCL<int>(length, device_flag);
         case 6:
-            return emptyVecVCL<float>(length);
+            return emptyVecVCL<float>(length, device_flag);
         case 8:
-            return emptyVecVCL<double>(length);
+            return emptyVecVCL<double>(length, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

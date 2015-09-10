@@ -29,18 +29,20 @@ setMethod('vclVector',
                           in data")
               }
               
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=vectorToVCL(data, 4L))
+                                    address=vectorToVCL(data, 4L, device_flag))
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=vectorToVCL(data, 6L))
+                                    address=vectorToVCL(data, 6L, device_flag))
                             },
                             double = {
                                 new("dvclVector",
-                                    address = vectorToVCL(data, 8L))
+                                    address = vectorToVCL(data, 8L, device_flag))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -61,18 +63,20 @@ setMethod('vclVector',
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=emptyVecVCL(length, 4L))
+                                    address=emptyVecVCL(length, 4L, device_flag))
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=emptyVecVCL(length, 6L))
+                                    address=emptyVecVCL(length, 6L, device_flag))
                             },
                             double = {
                                 new("dvclVector",
-                                    address = emptyVecVCL(length, 8L))
+                                    address = emptyVecVCL(length, 8L, device_flag))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

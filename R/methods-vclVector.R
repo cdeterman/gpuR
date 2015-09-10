@@ -4,7 +4,9 @@
 #' @param i missing
 #' @param j missing
 #' @param drop missing
+#' @param value data of similar type to be added to gpuMatrix object
 #' @aliases [,vclVector
+#' @aliases [<-,vclVector
 #' @author Charles Determan Jr.
 #' @rdname extract-vclVector
 #' @export
@@ -34,6 +36,42 @@ setMethod("[",
               )
           })
 
+#' @rdname extract-vclVector
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "numeric", j = "missing", value="numeric"),
+          function(x, i, j, value) {
+              if(length(value) != 1){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = length(x))
+              
+              switch(typeof(x),
+                     "float" = vclVecSetElement(x@address, i, value, 6L),
+                     "double" = vclVecSetElement(x@address, i, value, 8L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
+
+#' @rdname extract-vclVector
+#' @export
+setMethod("[<-",
+          signature(x = "ivclVector", i = "numeric", j = "missing", value="integer"),
+          function(x, i, j, value) {
+              if(length(value) != 1){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              assert_all_are_in_closed_range(i, lower = 1, upper = length(x))
+              
+              switch(typeof(x),
+                     "integer" = vclVecSetElement(x@address, i, value, 4L),
+                     stop("type not recognized")
+              )
+              return(x)
+          })
 
 #' @title vclVector Dot Product
 #' @param x A vclVector object

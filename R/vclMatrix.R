@@ -82,35 +82,43 @@ setMethod('vclMatrix',
 
 
 
-# #' @rdname vclMatrix-methods
-# #' @aliases vclMatrix,vector
-# setMethod('vclMatrix', 
-#           signature(data = 'vector'),
-#           function(data, nrow, ncol, type=NULL){
-#               
-#               if (is.null(type)) type <- typeof(data)
-#               
-#               if(typeof(data) == "logical" | typeof(data) == "character"){
-#                   stop(paste0(typeof(data), "type is not supported", sep=" "))
-#               }
-#               
-#               data = switch(type,
-#                             integer = {
-#                                 new("ivclMatrix", 
-#                                     address=vectorToIntMatXptr(data, nrow, ncol))
-#                             },
-#                             float = {
-#                                 new("fvclMatrix", 
-#                                     address=vectorToFloatMatXptr(data, nrow, ncol))
-#                             },
-#                             double = {
-#                                 new("dvclMatrix",
-#                                     address = vectorToDoubleMatXptr(data, nrow, ncol))
-#                             },
-#                             stop("this is an unrecognized 
-#                                  or unimplemented data type")
-#               )
-#               
-#               return(data)
-#           },
-#           valueClass = "vclMatrix")
+#' @rdname vclMatrix-methods
+#' @aliases vclMatrix,vector
+setMethod('vclMatrix', 
+          signature(data = 'vector'),
+          function(data, nrow, ncol, type=NULL){
+              
+              if (is.null(type)) type <- typeof(data)
+              
+              if(typeof(data) == "logical" | typeof(data) == "character"){
+                  stop(paste0(typeof(data), "type is not supported", sep=" "))
+              }
+              
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              
+              data = switch(type,
+                            integer = {
+                                new("ivclMatrix", 
+                                    address=vectorToMatVCL(data, 
+                                                           nrow, ncol,
+                                                           4L, device_flag))
+                            },
+                            float = {
+                                new("fvclMatrix", 
+                                    address=vectorToMatVCL(data, 
+                                                           nrow, ncol, 
+                                                           6L, device_flag))
+                            },
+                            double = {
+                                new("dvclMatrix",
+                                    address = vectorToMatVCL(data, 
+                                                             nrow, ncol, 
+                                                             8L, device_flag))
+                            },
+                            stop("this is an unrecognized 
+                                 or unimplemented data type")
+              )
+              
+              return(data)
+          },
+          valueClass = "vclMatrix")

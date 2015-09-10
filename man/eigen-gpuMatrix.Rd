@@ -3,9 +3,14 @@
 \docType{methods}
 \name{eigen,gpuMatrix-method}
 \alias{eigen,gpuMatrix-method}
+\alias{eigen,vclMatrix}
+\alias{eigen,vclMatrix-method}
 \title{gpuMatrix Eigen Decomposition}
 \usage{
 \S4method{eigen}{gpuMatrix}(x, symmetric, only.values = FALSE,
+  EISPACK = FALSE)
+
+\S4method{eigen}{vclMatrix}(x, symmetric, only.values = FALSE,
   EISPACK = FALSE)
 }
 \arguments{

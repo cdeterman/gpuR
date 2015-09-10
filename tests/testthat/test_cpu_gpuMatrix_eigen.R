@@ -7,7 +7,7 @@ options(gpuR.default.device = "cpu")
 # set seed
 set.seed(123)
 
-ORDER <- 4
+ORDER <- 10
 
 # Base R objects
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
@@ -37,7 +37,7 @@ test_that("CPU gpuMatrix Symmetric Single Precision Matrix Eigen Decomposition",
                  info="float eigenvalues not equivalent")  
     
     # need abs as some signs are opposite (not important with eigenvectors)
-    expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=1e-06, 
+    expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=1e-05, 
                  info="float eigenvectors not equivalent")  
 })
 

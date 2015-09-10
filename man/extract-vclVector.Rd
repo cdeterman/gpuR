@@ -5,11 +5,17 @@
 \alias{[,vclVector}
 \alias{[,vclVector,missing,missing,missing-method}
 \alias{[,vclVector,numeric,missing,missing-method}
+\alias{[<-,ivclVector,numeric,missing,integer-method}
+\alias{[<-,vclVector,numeric,missing,numeric-method}
 \title{Extract all vclVector elements}
 \usage{
 \S4method{[}{vclVector,missing,missing,missing}(x, i, j, drop)
 
 \S4method{[}{vclVector,numeric,missing,missing}(x, i, j, drop)
+
+\S4method{[}{vclVector,numeric,missing,numeric}(x, i, j) <- value
+
+\S4method{[}{ivclVector,numeric,missing,integer}(x, i, j) <- value
 }
 \arguments{
 \item{x}{A vclVector object}
@@ -19,6 +25,8 @@
 \item{j}{missing}
 
 \item{drop}{missing}
+
+\item{value}{data of similar type to be added to gpuMatrix object}
 }
 \description{
 Extract all vclVector elements

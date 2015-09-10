@@ -21,10 +21,10 @@
 using namespace Rcpp;
 
 template <typename T>
-void cpp_vienna_eigen(
-    MapMat<T> &Am, 
-    MapMat<T> &Qm,
-    MapVec<T> &eigenvalues,
+void cpp_gpu_eigen(
+    SEXP &Am, 
+    SEXP &Qm,
+    SEXP &eigenvalues,
     bool symmetric,
     int device_flag)
 {    
@@ -34,15 +34,23 @@ void cpp_vienna_eigen(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
+    Rcpp::XPtr<MapMat<T> > ptrA(Am);
+    Rcpp::XPtr<MapMat<T> > ptrQ(Qm);
+    Rcpp::XPtr<MapVec<T> > ptreigenvalues(eigenvalues);
+    
+    MapMat<T> eigen_A = *ptrA;
+    MapMat<T> &eigen_Q = *ptrQ;
+    MapVec<T> &eigen_eigenvalues = *ptreigenvalues;
+    
+    int M = eigen_A.cols();
+    int K = eigen_A.rows();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::matrix<T> vcl_Q(K,M);
     viennacl::vector<T> vcl_eigenvalues(K);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Qm, vcl_Q); 
+    viennacl::copy(eigen_A, vcl_A); 
+    viennacl::copy(eigen_Q, vcl_Q); 
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
@@ -50,41 +58,89 @@ void cpp_vienna_eigen(
     
     viennacl::linalg::detail::qr_method(vcl_A, vcl_Q, D, E, symmetric);
     
-    viennacl::copy(vcl_Q, Qm);
-    std::copy(D.begin(), D.end(), &eigenvalues(0));
+    viennacl::copy(vcl_Q, eigen_Q);
+    std::copy(D.begin(), D.end(), &eigen_eigenvalues(0));
+}
+
+template <typename T>
+void cpp_vcl_eigen(
+    SEXP &Am, 
+    SEXP &Qm,
+    SEXP &eigenvalues,
+    bool symmetric,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(Am);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrQ(Qm);
+    Rcpp::XPtr<viennacl::vector<T> > ptreigenvalues(eigenvalues);
+    
+    viennacl::matrix<T> vcl_A = *ptrA;
+    viennacl::matrix<T> &vcl_Q = *ptrQ;
+    viennacl::vector<T> &vcl_eigenvalues = *ptreigenvalues;
+
+    //temp D
+    std::vector<T> D(vcl_eigenvalues.size());
+    std::vector<T> E(vcl_A.size1());
+    
+    viennacl::linalg::detail::qr_method(vcl_A, vcl_Q, D, E, symmetric);
+    
+    // copy D into eigenvalues
+    viennacl::copy(D, vcl_eigenvalues);
 }
 
 
-//[[Rcpp::export]]
-void cpp_vienna_fgpuMatrix_eigen(
-    SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, 
-    bool symmetric, int device_flag)
+// [[Rcpp::export]]
+void
+cpp_gpu_eigen(
+    SEXP Am, 
+    SEXP Qm,
+    SEXP eigenvalues,
+    const bool symmetric,
+    const int type_flag, 
+    const int device_flag)
 {
-    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_eigen<float>(Am, Bm, Cm, symmetric, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        case 6:
+            cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        case 8:
+            cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_eigen(
-    SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
-    bool symmetric, int device_flag)
+// [[Rcpp::export]]
+void
+cpp_vcl_eigen(
+    SEXP Am, 
+    SEXP Qm,
+    SEXP eigenvalues,
+    const bool symmetric,
+    const int type_flag, 
+    const int device_flag)
 {
-    
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigenVec<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapVec<double> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_eigen<double>(Am, Bm, Cm, symmetric, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        case 6:
+            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        case 8:
+            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }

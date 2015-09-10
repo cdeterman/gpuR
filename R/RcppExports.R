@@ -230,16 +230,24 @@ vclVecGetElement <- function(ptrA, idx, type_flag) {
     .Call('gpuR_vclVecGetElement', PACKAGE = 'gpuR', ptrA, idx, type_flag)
 }
 
-vectorToVCL <- function(ptrA, type_flag) {
-    .Call('gpuR_vectorToVCL', PACKAGE = 'gpuR', ptrA, type_flag)
+vclVecSetElement <- function(ptrA, idx, newdata, type_flag) {
+    invisible(.Call('gpuR_vclVecSetElement', PACKAGE = 'gpuR', ptrA, idx, newdata, type_flag))
+}
+
+vectorToVCL <- function(ptrA, type_flag, device_flag) {
+    .Call('gpuR_vectorToVCL', PACKAGE = 'gpuR', ptrA, type_flag, device_flag)
+}
+
+vectorToMatVCL <- function(ptrA, nr, nc, type_flag, device_flag) {
+    .Call('gpuR_vectorToMatVCL', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag, device_flag)
 }
 
 VCLtoVecSEXP <- function(ptrA, type_flag) {
     .Call('gpuR_VCLtoVecSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-emptyVecVCL <- function(length, type_flag) {
-    .Call('gpuR_emptyVecVCL', PACKAGE = 'gpuR', length, type_flag)
+emptyVecVCL <- function(length, type_flag, device_flag) {
+    .Call('gpuR_emptyVecVCL', PACKAGE = 'gpuR', length, type_flag, device_flag)
 }
 
 cpp_vienna_gpuMatrix_daxpy <- function(alpha_, ptrA_, ptrB_, device_flag) {
@@ -806,12 +814,12 @@ cpp_vclMatrix_stcrossprod <- function(ptrA_, ptrB_, ptrC_, device_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_stcrossprod', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, device_flag))
 }
 
-cpp_vienna_fgpuMatrix_eigen <- function(ptrA_, ptrB_, ptrC_, symmetric, device_flag) {
-    invisible(.Call('gpuR_cpp_vienna_fgpuMatrix_eigen', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, symmetric, device_flag))
+cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {
+    invisible(.Call('gpuR_cpp_gpu_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
 }
 
-cpp_vienna_dgpuMatrix_eigen <- function(ptrA_, ptrB_, ptrC_, symmetric, device_flag) {
-    invisible(.Call('gpuR_cpp_vienna_dgpuMatrix_eigen', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, symmetric, device_flag))
+cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {
+    invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
 }
 
 cpp_vienna_fgpuMatrix_pmcc <- function(ptrA_, ptrB_, device_flag) {

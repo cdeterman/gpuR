@@ -31,6 +31,8 @@ setOldClass("eigen")
 #' of x.}
 #' @return \item{vectors}{A \code{gpuMatrix} containing the unsorted 
 #' eigenvectors of x}
+#' @rdname eigen-gpuMatrix
+#' @aliases eigen,vclMatrix
 #' @export
 setMethod("eigen", signature(x="gpuMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
@@ -64,20 +66,85 @@ setMethod("eigen", signature(x="gpuMatrix"),
               Q <- gpuMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
               V <- gpuVector(length=as.integer(nrow(x)), type=type)
               
+              
+              switch(type,
+                     "float" = cpp_gpu_eigen(x@address, 
+                                             Q@address, 
+                                             V@address,
+                                             symmetric,
+                                             6L,
+                                             device_flag),
+                     "double" = cpp_gpu_eigen(x@address,
+                                              Q@address, 
+                                              V@address, 
+                                              symmetric,
+                                              8L,
+                                              device_flag),
+                     stop("type not currently supported")
+                     )
+              
+              if(only.values){
+                  out <- list(values = V)
+              }else{
+                  out <- list(values = V, vectors = Q)
+              }
+              return(out)
+          },
+          valueClass = "list"
+)
+
+#' @rdname eigen-gpuMatrix
+#' @aliases eigen,vclMatrix
+#' @export
+setMethod("eigen", signature(x="vclMatrix"),
+          function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
+          {
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              if( missing(symmetric) | is.null(symmetric) | !symmetric){
+                  stop("Non-symmetric matrices not currently supported")
+              }
+              
+              #               if(missing(symmetric)){
+              #                   symmetric = FALSE
+              #               }
+              
+              if(ncol(x) != nrow(x)){
+                  stop("non-square matrix in 'eigen'")
+              }
+              
+              type = typeof(x)
+              
+              if( type == "integer"){
+                  stop("Integer type not currently supported")
+              }
+              
+              Q <- vclMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
+              V <- vclVector(length=as.integer(nrow(x)), type=type)
+              
               # possible a way to have only values calculated on GPU?
               
               switch(type,
-                     "float" = cpp_vienna_fgpuMatrix_eigen(x@address, 
-                                                           Q@address, 
-                                                           V@address,
-                                                           symmetric,
-                                                           device_flag),
-                     "double" = cpp_vienna_dgpuMatrix_eigen(x@address,
-                                                            Q@address, 
-                                                            V@address, 
-                                                            symmetric,
-                                                            device_flag)
-                     )
+                     "float" = cpp_vcl_eigen(x@address, 
+                                             Q@address, 
+                                             V@address,
+                                             symmetric,
+                                             6L,
+                                             device_flag),
+                     "double" = cpp_vcl_eigen(x@address,
+                                              Q@address, 
+                                              V@address, 
+                                              symmetric,
+                                              8L,
+                                              device_flag),
+                     stop("type not currently supported")
+              )
               
               if(only.values){
                   out <- list(values = V)

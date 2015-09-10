@@ -62,4 +62,50 @@ test_that("dvclVector accession method successful", {
     expect_equivalent(gs, s, info = "dvclVector element access not correct")
 })
 
+test_that("vclVector set accession method successful", {
+    
+    has_gpu_skip()
+    
+    Ai <- sample(seq.int(10), 10, replace = TRUE)
+    
+    gpuA <- vclVector(Ai)
+    gpuF <- vclVector(D, type="float")
+    
+    int = 13L
+    float = rnorm(1)
+    
+    gpuA[2] <- int
+    Ai[2] <- int
+    gpuF[2] <- float
+    D[2] <- float
+    
+    expect_equivalent(gpuA[], Ai, 
+                      info = "ivclVector set element access not correct")
+    expect_equal(gpuF[], D, tolerance = 1e-07, 
+                 info = "fvclVector set element access not correct")
+    expect_error(gpuA[101] <- 42, 
+                 info = "no error when set outside ivclVector size")
+    expect_error(gpuF[101] <- 42.42, 
+                 info = "no error when set outside fvclVector size")
+})
+
+test_that("dvclVector set accession method successful", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    gpuD <- vclVector(D)
+    
+    float = rnorm(1)
+    
+    gpuD[2] <- float
+    D[2] <- float
+    
+    expect_equivalent(gpuD[], D, 
+                      info = "dvclVector set element access not correct")
+    expect_error(gpuD[101] <- 42.42, 
+                 info = "no error when set outside dvclVector size")
+})
+
+
 options(gpuR.default.device = "gpu")

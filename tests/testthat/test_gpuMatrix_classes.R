@@ -8,6 +8,9 @@ D <- matrix(rnorm(100), 10)
 
 test_that("gpuMatrix class contains correct information", {
     
+    has_gpu_skip()
+    has_double_skip()
+    
     B <- as.numeric(rnorm(10))
     gpuA <- gpuMatrix(A)
     
@@ -30,6 +33,9 @@ test_that("gpuMatrix class contains correct information", {
 })
 
 test_that("gpuMatrix vector initializers", {
+    
+    has_gpu_skip()
+    has_double_skip()
     
     v <- rnorm(10)
     vi <- seq.int(10)

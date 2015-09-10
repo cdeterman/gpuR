@@ -1,5 +1,5 @@
 library(gpuR)
-context("gpuMatrix eigen decomposition")
+context("vclMatrix eigen decomposition")
 
 # set seed
 set.seed(123)
@@ -8,7 +8,7 @@ ORDER <- 10
 
 # Base R objects
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
-X <- A %*% t(A)
+X <- tcrossprod(A)
 
 E <- eigen(X)
 Q <- E$vectors
@@ -19,12 +19,12 @@ nQ <- nE$vectors
 nV <- nE$values
 
 
-test_that("gpuMatrix Symmetric Single Precision Matrix Eigen Decomposition",
+test_that("vclMatrix Symmetric Single Precision Matrix Eigen Decomposition",
 {
     
     has_gpu_skip()
     
-    fgpuX <- gpuMatrix(X, type="float")
+    fgpuX <- vclMatrix(X, type="float")
     
     E <- eigen(fgpuX, symmetric=TRUE)
     
@@ -40,34 +40,34 @@ test_that("gpuMatrix Symmetric Single Precision Matrix Eigen Decomposition",
                  info="float eigenvectors not equivalent")  
 })
 
-test_that("gpuMatrix Symmetric Double Precision Matrix Eigen Decomposition", 
+test_that("vclMatrix Symmetric Double Precision Matrix Eigen Decomposition", 
 {
     
     has_gpu_skip()
     has_double_skip()
     
-    fgpuX <- gpuMatrix(X, type="double")
+    fgpuX <- vclMatrix(X, type="double")
     
-    E <- eigen(fgpuX, symmetric=TRUE)
+    E <- eigen(fgpuX, symmetric=TRUE)    
     
     # need to reorder so it matches R output
     ord <- order(E$values[], decreasing = TRUE)
     
     expect_is(E, "list")
-    expect_equal(E$values[][ord], V, tolerance=1e-06, 
+    expect_equal(E$values[][ord], V, tolerance=.Machine$double.eps ^ 0.5, 
                  info="float eigenvalues not equivalent")  
     
     # need abs as some signs are opposite (not important with eigenvectors)
-    expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=1e-06, 
+    expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=.Machine$double.eps ^ 0.5, 
                  info="float eigenvectors not equivalent")  
 })
 
-# test_that("gpuMatrix Non-Symmetric Single Precision Matrix Eigen Decomposition",
+# test_that("vclMatrix Non-Symmetric Single Precision Matrix Eigen Decomposition",
 # {
 #     
 #     has_gpu_skip()
 #     
-#     fgpuX <- gpuMatrix(A, type="float")
+#     fgpuX <- vclMatrix(A, type="float")
 #     
 #     E <- eigen(fgpuX)
 #     
@@ -86,13 +86,13 @@ test_that("gpuMatrix Symmetric Double Precision Matrix Eigen Decomposition",
 #                  info="float eigenvectors not equivalent")  
 # })
 # 
-# test_that("gpuMatrix Non-Symmetric Double Precision Matrix Eigen Decomposition", 
+# test_that("vclMatrix Non-Symmetric Double Precision Matrix Eigen Decomposition", 
 # {
 #     
 #     has_gpu_skip()
 #     has_double_skip()
 #     
-#     fgpuX <- gpuMatrix(A, type="double")
+#     fgpuX <- vclMatrix(A, type="double")
 #     
 #     E <- eigen(fgpuX)
 #     
@@ -109,5 +109,4 @@ test_that("gpuMatrix Symmetric Double Precision Matrix Eigen Decomposition",
 #                  tolerance=.Machine$double.eps ^ 0.5, 
 #                  info="float eigenvectors not equivalent")  
 # })
-
 
