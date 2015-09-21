@@ -190,14 +190,6 @@ vcl_igpuVec_size <- function(ptrA) {
     .Call('gpuR_vcl_igpuVec_size', PACKAGE = 'gpuR', ptrA)
 }
 
-cpp_vclMatrix_eucl <- function(ptrA, ptrD, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, device_flag, type_flag))
-}
-
-cpp_gpuMatrix_eucl <- function(ptrA, ptrD, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, device_flag, type_flag))
-}
-
 matrixToVCL <- function(ptrA, type_flag) {
     .Call('gpuR_matrixToVCL', PACKAGE = 'gpuR', ptrA, type_flag)
 }
@@ -552,6 +544,14 @@ cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, device_flag, type_flag) {
 
 cpp_vclMatrix_pmcc <- function(ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_vclMatrix_eucl <- function(ptrA, ptrD, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, device_flag, type_flag))
+}
+
+cpp_gpuMatrix_eucl <- function(ptrA, ptrD, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, device_flag, type_flag))
 }
 
 cpp_gpuMatrix_colmean <- function(ptrA, ptrB, device_flag, type_flag) {
