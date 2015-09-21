@@ -19,21 +19,30 @@
 
 using namespace Rcpp;
 
+/*** gpuMatrix Templates ***/
+
 template <typename T>
-void cpp_vienna_colmean(
-    MapMat<T> &Am, 
-    MapVec<T> &colMeans,
-    int device_flag)
-{    
+void 
+cpp_gpuMatrix_colmean(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int V = colMeans.size();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapVec<T> colMeans(ptrC->ptr(), ptrC->length());
+    
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int V = colMeans.size();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_colMeans(V);
@@ -47,20 +56,26 @@ void cpp_vienna_colmean(
 }
 
 template <typename T>
-void cpp_vienna_colsum(
-    MapMat<T> &Am, 
-    MapVec<T> &colSums,
-    int device_flag)
-{    
-        //use only GPUs:
+void 
+cpp_gpuMatrix_colsum(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{
+    //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int V = colSums.size();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapVec<T> colSums(ptrC->ptr(), ptrC->length());
+    
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int V = colSums.size();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_colSums(V);
@@ -73,20 +88,26 @@ void cpp_vienna_colsum(
 }
 
 template <typename T>
-void cpp_vienna_rowmean(
-    MapMat<T> &Am, 
-    MapVec<T> &rowMeans,
-    int device_flag)
-{    
+void 
+cpp_gpuMatrix_rowmean(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int V = rowMeans.size();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapVec<T> rowMeans(ptrC->ptr(), ptrC->length());
+
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int V = rowMeans.size();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_rowMeans(V);
@@ -100,20 +121,26 @@ void cpp_vienna_rowmean(
 }
 
 template <typename T>
-void cpp_vienna_rowsum(
-    MapMat<T> &Am, 
-    MapVec<T> &rowSums,
-    int device_flag)
-{    
+void
+cpp_gpuMatrix_rowsum(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int V = rowSums.size();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapVec<T> rowSums(ptrC->ptr(), ptrC->length());
+
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int V = rowSums.size();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_rowSums(V);
@@ -125,123 +152,285 @@ void cpp_vienna_rowsum(
     viennacl::copy(vcl_rowSums, rowSums);
 }
 
+/*** vclMatrix Templates ***/
 
-//[[Rcpp::export]]
-void cpp_vienna_fgpuMatrix_colmean(
-    SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+template <typename T>
+void 
+cpp_vclMatrix_colmean(
+    SEXP ptrA_, 
+    SEXP ptrC_,
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
     
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_colmean<float>(Am, Cm, device_flag);
+    viennacl::matrix<T> &vcl_A = *ptrA;
+    viennacl::vector<T> &vcl_colMeans = *ptrC;
+    
+    const int K = vcl_A.size1();
+        
+    vcl_colMeans = viennacl::linalg::column_sum(vcl_A);
+    vcl_colMeans *= (T)(1)/(T)(K);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_colmean(
+template <typename T>
+void 
+cpp_vclMatrix_colsum(
     SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<double> > ptrC(ptrC_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
     
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<double> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_colmean<double>(Am, Cm, device_flag);
+    viennacl::matrix<T> &vcl_A = *ptrA;
+    viennacl::vector<T> &vcl_colSums = *ptrC;
+    
+    vcl_colSums = viennacl::linalg::column_sum(vcl_A);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_fgpuMatrix_colsum(
+template <typename T>
+void 
+cpp_vclMatrix_rowmean(
     SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
     
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
+    viennacl::matrix<T> &vcl_A = *ptrA;
+    viennacl::vector<T> &vcl_rowMeans = *ptrC;
 
-    cpp_vienna_colsum<float>(Am, Cm, device_flag);
+    const int M = vcl_A.size2();
+    
+    vcl_rowMeans = viennacl::linalg::row_sum(vcl_A);
+    vcl_rowMeans *= (T)(1)/(T)(M);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_colsum(
+template <typename T>
+void
+cpp_vclMatrix_rowsum(
     SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<double> > ptrC(ptrC_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
     
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<double> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_colsum<double>(Am, Cm, device_flag);
+    viennacl::matrix<T> &vcl_A = *ptrA;
+    viennacl::vector<T> &vcl_rowSums = *ptrC;
+    
+    vcl_rowSums = viennacl::linalg::row_sum(vcl_A);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_fgpuMatrix_rowmean(
-    SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+/*** gpuMatrix Functions ***/
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_colmean(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
 {
     
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_rowmean<float>(Am, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_colmean<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_colmean<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_colmean<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_rowmean(
-    SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_colsum(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
 {
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<double> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_rowmean<double>(Am, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_colsum<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_colsum<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_colsum<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_fgpuMatrix_rowsum(
-    SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_rowmean(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
 {
     
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
-
-    cpp_vienna_rowsum<float>(Am, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_rowmean<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_rowmean<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_rowmean<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_dgpuMatrix_rowsum(
-    SEXP ptrA_, SEXP ptrC_,
-    int device_flag)
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_rowsum(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
 {
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapVec<double> Cm(ptrC->ptr(), ptrC->length());
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_rowsum<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_rowsum<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_rowsum<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
 
-    cpp_vienna_rowsum<double>(Am, Cm, device_flag);
+/*** vclMatrix Functions ***/
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_colmean(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_colmean<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_colmean<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_colmean<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_colsum(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_colsum<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_colsum<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_colsum<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_rowmean(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_rowmean<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_rowmean<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_rowmean<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_rowsum(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_rowsum<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_rowsum<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_rowsum<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }

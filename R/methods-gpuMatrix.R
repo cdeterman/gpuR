@@ -418,3 +418,40 @@ setMethod("tcrossprod",
               gpu_tcrossprod(x, y)
           })
 
+
+#' @rdname dist-vclMatrix
+#' @aliases dist,gpuMatrix
+#' @export
+setMethod("dist", signature(x="gpuMatrix"),
+          function(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
+          {
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              type = typeof(x)
+              
+              if( type == "integer"){
+                  stop("Integer type not currently supported")
+              }
+              
+              D <- gpuMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
+              
+              switch(method,
+                     "euclidean" = gpuMatrix_euclidean(
+                         x, 
+                         D,
+                         diag,
+                         upper,
+                         p),
+                     stop("method not currently supported")
+              )
+              
+              return(D)
+          }
+)
+

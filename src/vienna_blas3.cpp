@@ -20,23 +20,31 @@
 using namespace Rcpp;
 
 template <typename T>
-void cpp_vienna_gemm(
-    MapMat<T> &Am, 
-    MapMat<T> &Bm, 
-    MapMat<T> &Cm,
-    int device_flag)
-{    
+void 
+cpp_gpuMatrix_gemm(
+    SEXP ptrA_, 
+    SEXP ptrB_, 
+    SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int N = Bm.rows();
-    int P = Bm.cols();
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());    
+    
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int N = Bm.rows();
+    const int P = Bm.cols();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::matrix<T> vcl_B(N,P);
@@ -51,22 +59,31 @@ void cpp_vienna_gemm(
 }
 
 template <typename T>
-void cpp_vienna_crossprod(
-    MapMat<T> &Am, 
-    MapMat<T> &Bm, 
-    MapMat<T> &Cm,
-    int device_flag)
-{    
+void 
+cpp_gpuMatrix_crossprod(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int N = Bm.rows();
-    int P = Bm.cols();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int N = Bm.rows();
+    const int P = Bm.cols();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::matrix<T> vcl_B(N,P);
@@ -81,22 +98,31 @@ void cpp_vienna_crossprod(
 }
 
 template <typename T>
-void cpp_vienna_tcrossprod(
-    MapMat<T> &Am, 
-    MapMat<T> &Bm, 
-    MapMat<T> &Cm,
-    int device_flag)
-{    
+void 
+cpp_gpuMatrix_tcrossprod(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    const int device_flag)
+{
     //use only GPUs:
     if(device_flag == 0){
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    int M = Am.cols();
-    int K = Am.rows();
-    int N = Bm.rows();
-    int P = Bm.cols();
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
+    
+    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int N = Bm.rows();
+    const int P = Bm.cols();
     
     viennacl::matrix<T> vcl_A(K,M);
     viennacl::matrix<T> vcl_B(N,P);
@@ -113,290 +139,213 @@ void cpp_vienna_tcrossprod(
 
 /*** gpuMatrix Functions ***/
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_dgemm(SEXP ptrA_, 
-                                SEXP ptrB_,
-                                SEXP ptrC_,
-                                int device_flag)
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_gemm(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
 {
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-
-    cpp_vienna_gemm<double>(Am, Bm, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_gemm<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_gemm<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_gemm<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_sgemm(SEXP ptrA_, 
-                                SEXP ptrB_, 
-                                SEXP ptrC_,
-                                int device_flag)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_crossprod(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
+{
     
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_gemm<float>(Am, Bm, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_crossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_crossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_crossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_igemm(SEXP ptrA_, 
-                                SEXP ptrB_, 
-                                SEXP ptrC_,
-                                int device_flag)
-{    
-    Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<int> > ptrC(ptrC_);
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_tcrossprod(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
+{
     
-    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<int> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_gemm<int>(Am, Bm, Cm, device_flag);
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_tcrossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_tcrossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_dcrossprod(
+
+/*** vclMatrix Templates ***/
+
+template <typename T>
+void cpp_vclMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    int device_flag)
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
-    
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
 
-    cpp_vienna_crossprod(Am, Bm, Cm, device_flag);
+    *ptrC = viennacl::linalg::prod(*ptrA, *ptrB);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_scrossprod(
-    SEXP ptrA_, 
-    SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
-    
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-    
-    cpp_vienna_crossprod(Am, Bm, Cm, device_flag);
-}
-
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_dtcrossprod(
+template <typename T>
+void 
+cpp_vclMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    int device_flag)
+    const int device_flag)
 {
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    Rcpp::XPtr<dynEigen<double> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<double> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<double> > ptrC(ptrC_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
-    MapMat<double> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<double> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<double> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-
-    cpp_vienna_tcrossprod(Am, Bm, Cm, device_flag);
+    *ptrC = viennacl::linalg::prod(trans(*ptrA), *ptrB);
 }
 
-//[[Rcpp::export]]
-void cpp_vienna_gpuMatrix_stcrossprod(
+template <typename T>
+void
+cpp_vclMatrix_tcrossprod(
     SEXP ptrA_, 
-    SEXP ptrB_, 
+    SEXP ptrB_,
     SEXP ptrC_,
-    int device_flag)
-{    
-    Rcpp::XPtr<dynEigen<float> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<float> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<float> > ptrC(ptrC_);
+    const int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
     
-    MapMat<float> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<float> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<float> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
-    cpp_vienna_tcrossprod(Am, Bm, Cm, device_flag);
+    *ptrC = viennacl::linalg::prod(*ptrA, trans(*ptrB));
 }
-
 
 /*** vclMatrix Functions ***/
 
-//[[Rcpp::export]]
-void cpp_vclMatrix_dgemm(
-    SEXP ptrA_, 
-    SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_gemm(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
 {
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    }
     
-    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
-
-    *ptrC = viennacl::linalg::prod(*ptrA, *ptrB);
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
-//[[Rcpp::export]]
-void cpp_vclMatrix_sgemm(
-    SEXP ptrA_, 
-    SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
-{    
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    }
-    
-    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
-    
-    *ptrC = viennacl::linalg::prod(*ptrA, *ptrB);
-}
 
-////[[Rcpp::export]]
-//void cpp_vienna_vclMatrix_igemm(SEXP ptrA_, 
-//                                SEXP ptrB_, 
-//                                SEXP ptrC_)
-//{    
-//    Rcpp::XPtr<viennacl::matrix<int> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<int> > ptrB(ptrB_);
-//    Rcpp::XPtr<viennacl::matrix<int> > ptrC(ptrC_);
-//    
-////    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-////    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-////    MapMat<int> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
-//    
-//    *ptrC = viennacl::linalg::prod(*ptrA, *ptrB);
-//}
-
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_dcrossprod(
-    SEXP ptrA_, 
-    SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_crossprod(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
 {
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_crossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_crossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_crossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
     }
-    
-    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
-    
-    *ptrC = viennacl::linalg::prod(trans(*ptrA), *ptrB);
 }
 
-//[[Rcpp::export]]
-void cpp_vclMatrix_scrossprod(
-    SEXP ptrA_, 
-    SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
-{    
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    }
-    
-    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
-    
-    *ptrC = viennacl::linalg::prod(trans(*ptrA), *ptrB);
-}
 
-//[[Rcpp::export]]
-void cpp_vclMatrix_dtcrossprod(
-    SEXP ptrA_, 
-    SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_tcrossprod(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int device_flag,
+    const int type_flag)
 {
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_tcrossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_tcrossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
     }
-    
-    Rcpp::XPtr<viennacl::matrix<double> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<double> > ptrC(ptrC_);
-    
-    *ptrC = viennacl::linalg::prod(*ptrA, trans(*ptrB));
-}
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_stcrossprod(
-    SEXP ptrA_, 
-    SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
-{   
-    //use only GPUs:
-    if(device_flag == 0){
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    }
-    
-    Rcpp::XPtr<viennacl::matrix<float> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<float> > ptrC(ptrC_);
-    
-    *ptrC = viennacl::linalg::prod(*ptrA, trans(*ptrB));
 }
 
 
-/*** gpuVector Functions ***/
 
-
-
-////[[Rcpp::export]]
-//void cpp_vienna_gpuMatrix_sgemm(SEXP ptrA_, 
-//                                SEXP ptrB_, 
-//                                SEXP ptrC_,
-//                                int device_flag)
-//{    
-//    Rcpp::XPtr<dynEigenVec<float> > ptrA(ptrA_);
-//    Rcpp::XPtr<dynEigenVec<float> > ptrB(ptrB_);
-//    Rcpp::XPtr<dynEigenVec<float> > ptrC(ptrC_);
-//    
-//    MapVec<float> Am(ptrA->ptr(), ptrA->length());
-//    MapVec<float> Bm(ptrB->ptr(), ptrB->length());
-//    MapVec<float> Cm(ptrC->ptr(), ptrC->length());
-//    
-//    cpp_vienna_gevm<float>(Am, Bm, Cm, device_flag);
-//}

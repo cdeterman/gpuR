@@ -346,81 +346,130 @@ setMethod("tcrossprod",
               vcl_tcrossprod(x, y)
           })
 
-# #' @title Row and Column Sums and Means of vclMatrix
-# #' @description Row and column sums and of vclMatrix objects
-# #' @param x A vclMatrix object
-# #' @param na.rm Not currently used
-# #' @param dims Not currently used
-# #' @return A gpuVector object
-# #' @author Charles Determan Jr.
-# #' @docType methods
-# #' @rdname vclMatrix.colSums
-# #' @aliases colSums,vclMatrix
-# #' @aliases rowSums,vclMatrix
-# #' @export
-# setMethod("colSums",
-#           signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-#           function(x, na.rm, dims){
-#               gpu_colSums(x)
-#           })
-# 
-# 
-# #' @rdname vclMatrix.colSums
-# #' @export
-# setMethod("rowSums",
-#           signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-#           function(x, na.rm, dims){
-#               gpu_rowSums(x)
-#           })
-# 
-# 
-# 
-# #' @rdname vclMatrix.colSums
-# #' @export
-# setMethod("colMeans",
-#           signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-#           function(x, na.rm, dims){
-#               gpu_colMeans(x)
-#           })
-# 
-# 
-# #' @rdname vclMatrix.colSums
-# #' @export
-# setMethod("rowMeans",
-#           signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-#           function(x, na.rm, dims){
-#               gpu_rowMeans(x)
-#           })
-# 
-# 
-# #' @title Covariance (vclMatrix)
-# #' @param x A vclMatrix object
-# #' @param y Not used
-# #' @param use Not used
-# #' @param method Character string indicating with covariance to be computed.
-# #' @return A \code{vclMatrix} containing the symmetric covariance values.
-# #' @author Charles Determan Jr.
-# #' @docType methods
-# #' @rdname vclMatrix.cov
-# #' @aliases cov,vclMatrix
-# #' @export
-# setMethod("cov",
-#           signature(x = "vclMatrix", y = "missing", use = "missing", method = "missing"),
-#           function(x, y = NULL, use = NULL, method = "pearson") {
-#               if(method != "pearson"){
-#                   stop("Only pearson covariance implemented")
-#               }
-#               return(gpu_pmcc(x))
-#           })
-# 
-# #' @rdname vclMatrix.cov
-# #' @export
-# setMethod("cov",
-#           signature(x = "vclMatrix", y = "missing", use = "missing", method = "character"),
-#           function(x, y = NULL, use = NULL, method = "pearson") {
-#               if(method != "pearson"){
-#                   stop("Only pearson covariance implemented")
-#               }
-#               return(gpu_pmcc(x))
-#           })
 
+#' @title Covariance (vclMatrix)
+#' @param x A vclMatrix object
+#' @param y Not used
+#' @param use Not used
+#' @param method Character string indicating which covariance to be computed.
+#' @return A \code{vclMatrix} containing the symmetric covariance values.
+#' @author Charles Determan Jr.
+#' @docType methods
+#' @rdname vclMatrix.cov
+#' @aliases cov,vclMatrix
+#' @export
+setMethod("cov",
+          signature(x = "vclMatrix", y = "missing", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x))
+          })
+
+#' @rdname vclMatrix.cov
+#' @export
+setMethod("cov",
+          signature(x = "vclMatrix", y = "missing", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x))
+          })
+
+#' @title Row and Column Sums and Means of vclMatrix
+#' @description Row and column sums and of vclMatrix objects
+#' @param x A vclMatrix object
+#' @param na.rm Not currently used
+#' @param dims Not currently used
+#' @return A gpuVector object
+#' @author Charles Determan Jr.
+#' @docType methods
+#' @rdname vclMatrix.colSums
+#' @aliases colSums,vclMatrix
+#' @aliases rowSums,vclMatrix
+#' @export
+setMethod("colSums",
+          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              vclMatrix_colSums(x)
+          })
+
+
+#' @rdname vclMatrix.colSums
+#' @export
+setMethod("rowSums",
+          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              vclMatrix_rowSums(x)
+          })
+
+
+
+#' @rdname vclMatrix.colSums
+#' @export
+setMethod("colMeans",
+          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              vclMatrix_colMeans(x)
+          })
+
+
+#' @rdname vclMatrix.colSums
+#' @export
+setMethod("rowMeans",
+          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
+          function(x, na.rm, dims){
+              vclMatrix_rowMeans(x)
+          })
+
+
+#' @title GPU Distance Matrix Computations
+#' @description This function computes and returns the distance matrix 
+#' computed by using the specified distance measure to compute the distances 
+#' between the rows of a data matrix.
+#' @param x A gpuMatrix or vclMatrix object
+#' @param method the distance measure to be used. Only "euclidean" currently
+#' implemented
+#' @param diag logical value indicating whether the diagonal of the distance 
+#' matrix
+#' @param upper logical value indicating whether the upper triangle of the 
+#' distance matrix
+#' @param p The power of the Minkowski distance (not currently used)
+#' @return a gpuMatrix/vclMatrix containing the corresponding distances
+#' @rdname dist-vclMatrix
+#' @aliases dist,vclMatrix
+#' @export
+setMethod("dist", signature(x="vclMatrix"),
+          function(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
+          {
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              type = typeof(x)
+              
+              if( type == "integer"){
+                  stop("Integer type not currently supported")
+              }
+              
+              D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
+              
+              switch(method,
+                     "euclidean" = vclMatrix_euclidean(
+                         x, 
+                         D,
+                         diag,
+                         upper,
+                         p),
+                     stop("method not currently supported")
+              )
+              
+             return(D)
+          }
+)

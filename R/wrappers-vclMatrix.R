@@ -34,18 +34,20 @@ vclMatMult <- function(A, B){
                #                                                        B@address,
                #                                                        C@address)
            },
-           float = {cpp_vclMatrix_sgemm(A@address,
-                                        B@address,
-                                        C@address,
-                                        device_flag)
+           float = {cpp_vclMatrix_gemm(A@address,
+                                       B@address,
+                                       C@address,
+                                       device_flag,
+                                       6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_dgemm(A@address,
-                                         B@address,
-                                         C@address,
-                                         device_flag)
+               }else{cpp_vclMatrix_gemm(A@address,
+                                        B@address,
+                                        C@address,
+                                        device_flag,
+                                        8L)
                }
            },
 {
@@ -96,15 +98,17 @@ vclMat_axpy <- function(alpha, A, B){
                 #                          Z@address, 
                 #                          kernel)
            },
-           float = {cpp_vclMatrix_saxpy(alpha, 
-                                        A@address, 
-                                        Z@address,
-                                        device_flag)
+           float = {cpp_vclMatrix_axpy(alpha, 
+                                       A@address, 
+                                       Z@address,
+                                       device_flag,
+                                       6L)
            },
-           double = {cpp_vclMatrix_daxpy(alpha, 
-                                         A@address,
-                                         Z@address,
-                                         device_flag)
+           double = {cpp_vclMatrix_axpy(alpha, 
+                                        A@address,
+                                        Z@address,
+                                        device_flag,
+                                        8L)
            },
             stop("type not recognized")
     )
@@ -133,14 +137,16 @@ vcl_crossprod <- function(X, Y){
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_vclMatrix_scrossprod(X@address, 
+           "float" = cpp_vclMatrix_crossprod(X@address, 
+                                             Y@address, 
+                                             Z@address,
+                                             device_flag,
+                                             6L),
+           "double" = cpp_vclMatrix_crossprod(X@address, 
                                               Y@address, 
                                               Z@address,
-                                              device_flag),
-           "double" = cpp_vclMatrix_dcrossprod(X@address, 
-                                               Y@address, 
-                                               Z@address,
-                                               device_flag)
+                                              device_flag,
+                                              8L)
     )
     
     return(Z)
@@ -167,14 +173,16 @@ vcl_tcrossprod <- function(X, Y){
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_vclMatrix_stcrossprod(X@address,
+           "float" = cpp_vclMatrix_tcrossprod(X@address,
+                                              Y@address, 
+                                              Z@address,
+                                              device_flag,
+                                              6L),
+           "double" = cpp_vclMatrix_tcrossprod(X@address, 
                                                Y@address, 
                                                Z@address,
-                                               device_flag),
-           "double" = cpp_vclMatrix_dtcrossprod(X@address, 
-                                                Y@address, 
-                                                Z@address,
-                                                device_flag),
+                                               device_flag,
+                                               8L),
            stop("type not recognized")
     )
     
@@ -205,18 +213,20 @@ vclMatElemMult <- function(A, B){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_prod(A@address,
-                                                    B@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_prod(A@address,
+                                            B@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_prod(A@address,
-                                                     B@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_prod(A@address,
+                                             B@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -248,18 +258,20 @@ vclMatElemDiv <- function(A, B){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_div(A@address,
-                                                   B@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_div(A@address,
+                                           B@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_div(A@address,
-                                                    B@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_div(A@address,
+                                            B@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -288,16 +300,18 @@ vclMatElemSin <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_sin(A@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_sin(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_sin(A@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_sin(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -325,16 +339,18 @@ vclMatElemArcSin <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_asin(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_asin(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_asin(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_asin(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -362,16 +378,18 @@ vclMatElemHypSin <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_sinh(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_sinh(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_sinh(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_sinh(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -399,16 +417,18 @@ vclMatElemCos <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_cos(A@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_cos(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_cos(A@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_cos(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -436,16 +456,18 @@ vclMatElemArcCos <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_acos(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_acos(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_acos(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_acos(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -473,16 +495,18 @@ vclMatElemHypCos <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_cosh(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_cosh(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_cosh(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_cosh(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -510,16 +534,18 @@ vclMatElemTan <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_tan(A@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_tan(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_tan(A@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_tan(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -547,16 +573,18 @@ vclMatElemArcTan <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_atan(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_atan(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_atan(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_atan(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -584,16 +612,18 @@ vclMatElemHypTan <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_tanh(A@address,
-                                                    C@address,
-                                                    device_flag)
+           float = {cpp_vclMatrix_elem_tanh(A@address,
+                                            C@address,
+                                            device_flag,
+                                            6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_tanh(A@address,
-                                                     C@address,
-                                                     device_flag)
+               }else{cpp_vclMatrix_elem_tanh(A@address,
+                                             C@address,
+                                             device_flag,
+                                             8L)
                }
            },
 {
@@ -621,16 +651,18 @@ vclMatElemLog <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_log(A@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_log(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_log(A@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_log(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -658,18 +690,20 @@ vclMatElemLogBase <- function(A, base){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_log_base(A@address,
-                                                        C@address,
-                                                        base,
-                                                        device_flag)
+           float = {cpp_vclMatrix_elem_log_base(A@address,
+                                                C@address,
+                                                base,
+                                                device_flag,
+                                                6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_log_base(A@address,
-                                                         C@address,
-                                                         base,
-                                                         device_flag)
+               }else{cpp_vclMatrix_elem_log_base(A@address,
+                                                 C@address,
+                                                 base,
+                                                 device_flag,
+                                                 8L)
                }
            },
 {
@@ -697,16 +731,18 @@ vclMatElemLog10 <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_log10(A@address,
-                                                     C@address,
-                                                     device_flag)
+           float = {cpp_vclMatrix_elem_log10(A@address,
+                                             C@address,
+                                             device_flag,
+                                             6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_log10(A@address,
-                                                      C@address,
-                                                      device_flag)
+               }else{cpp_vclMatrix_elem_log10(A@address,
+                                              C@address,
+                                              device_flag,
+                                              8L)
                }
            },
 {
@@ -734,16 +770,18 @@ vclMatElemExp <- function(A){
            integer = {
                stop("integer not currently implemented")
            },
-           float = {cpp_svclMatrix_elem_exp(A@address,
-                                                   C@address,
-                                                   device_flag)
+           float = {cpp_vclMatrix_elem_exp(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
-               }else{cpp_dvclMatrix_elem_exp(A@address,
-                                                    C@address,
-                                                    device_flag)
+               }else{cpp_vclMatrix_elem_exp(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
                }
            },
 {
@@ -752,8 +790,8 @@ vclMatElemExp <- function(A){
 return(C)
 }
 
-# GPU colSums
-gpu_colSums <- function(A){
+# vclMatrix colSums
+vclMatrix_colSums <- function(A){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -769,19 +807,26 @@ gpu_colSums <- function(A){
         stop("integer type not currently implemented")
     }
     
-    sums <- gpuVector(length = ncol(A), type = type)
+    sums <- vclVector(length = ncol(A), type = type)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_fvclMatrix_colsum(A@address, sums@address, device_flag),
-           "double" = cpp_dvclMatrix_colsum(A@address, sums@address, device_flag)
+           "float" = cpp_vclMatrix_colsum(A@address, 
+                                          sums@address, 
+                                          device_flag,
+                                          6L),
+           "double" = cpp_vclMatrix_colsum(A@address, 
+                                           sums@address, 
+                                           device_flag,
+                                           8L),
+           stop("unsupported matrix type")
     )
     
     return(sums)
 }
 
-# GPU rowSums
-gpu_rowSums <- function(A){
+# vclMatrix rowSums
+vclMatrix_rowSums <- function(A){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -797,19 +842,26 @@ gpu_rowSums <- function(A){
         stop("integer type not currently implemented")
     }
     
-    sums <- gpuVector(length = nrow(A), type = type)
+    sums <- vclVector(length = nrow(A), type = type)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_fvclMatrix_rowsum(A@address, sums@address, device_flag),
-           "double" = cpp_dvclMatrix_rowsum(A@address, sums@address, device_flag)
+           "float" = cpp_vclMatrix_rowsum(A@address, 
+                                          sums@address, 
+                                          device_flag,
+                                          6L),
+           "double" = cpp_vclMatrix_rowsum(A@address, 
+                                           sums@address, 
+                                           device_flag,
+                                           8L),
+           stop("unsupported matrix type")
     )
     
     return(sums)
 }
 
-# GPU colMeans
-gpu_colMeans <- function(A){
+# vclMatrix colMeans
+vclMatrix_colMeans <- function(A){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -825,19 +877,26 @@ gpu_colMeans <- function(A){
         stop("integer type not currently implemented")
     }
     
-    sums <- gpuVector(length = ncol(A), type = type)
+    sums <- vclVector(length = ncol(A), type = type)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_fvclMatrix_colmean(A@address, sums@address, device_flag),
-           "double" = cpp_dvclMatrix_colmean(A@address, sums@address, device_flag)
+           "float" = cpp_vclMatrix_colmean(A@address, 
+                                           sums@address, 
+                                           device_flag,
+                                           6L),
+           "double" = cpp_vclMatrix_colmean(A@address, 
+                                            sums@address, 
+                                            device_flag,
+                                            8L),
+           stop("unsupported matrix type")
     )
     
     return(sums)
 }
 
-# GPU rowMeans
-gpu_rowMeans <- function(A){
+# vclMatrix rowMeans
+vclMatrix_rowMeans <- function(A){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -853,19 +912,25 @@ gpu_rowMeans <- function(A){
         stop("integer type not currently implemented")
     }
     
-    sums <- gpuVector(length = nrow(A), type = type)
+    sums <- vclVector(length = nrow(A), type = type)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_fvclMatrix_rowmean(A@address, sums@address, device_flag),
-           "double" = cpp_dvclMatrix_rowmean(A@address, sums@address, device_flag)
+           "float" = cpp_vclMatrix_rowmean(A@address, 
+                                           sums@address, 
+                                           device_flag,
+                                           6L),
+           "double" = cpp_vclMatrix_rowmean(A@address, 
+                                            sums@address, 
+                                            device_flag,
+                                            8L)
     )
     
     return(sums)
 }
 
 # GPU Pearson Covariance
-gpu_pmcc <- function(A){
+vclMatrix_pmcc <- function(A){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -881,9 +946,44 @@ gpu_pmcc <- function(A){
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_fvclMatrix_pmcc(A@address, B@address, device_flag),
-           "double" = cpp_dvclMatrix_pmcc(A@address, B@address, device_flag)
+           "float" = cpp_vclMatrix_pmcc(A@address, 
+                                        B@address, 
+                                        device_flag,
+                                        6L),
+           "double" = cpp_vclMatrix_pmcc(A@address, 
+                                         B@address,
+                                         device_flag,
+                                         8L)
     )
     
     return(B)
+}
+
+# GPU Pearson Covariance
+vclMatrix_euclidean <- function(A, D, diag, upper, p){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(D)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vclMatrix_eucl(A@address, 
+                                        D@address, 
+                                        device_flag,
+                                        6L),
+           "double" = cpp_vclMatrix_eucl(A@address, 
+                                         D@address,
+                                         device_flag,
+                                         8L),
+           stop("Unsupported matrix type")
+    )
+    
+    invisible(D)
 }
