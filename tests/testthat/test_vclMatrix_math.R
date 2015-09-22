@@ -161,3 +161,38 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Logs", {
     expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="base log double matrix elements not equivalent") 
 })
+
+test_that("vclMatrix Single Precision Matrix Exponential", {
+    
+    has_gpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "fvclMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Matrix Exponential", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "dvclMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp double matrix elements not equivalent")  
+})
+
+
+
+

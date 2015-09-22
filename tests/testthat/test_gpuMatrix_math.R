@@ -160,3 +160,34 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
                  info="base log double matrix elements not equivalent") 
 })
 
+test_that("gpuMatrix Single Precision Matrix Exponential", {
+    
+    has_gpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "fgpuMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix Exponential", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "dgpuMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp double matrix elements not equivalent")  
+})
+

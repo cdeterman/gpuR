@@ -156,5 +156,31 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Logs", {
 })
 
 
+test_that("vclMatrix Single Precision Matrix Exponential", {
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "fvclMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Matrix Exponential", {
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "dvclMatrix")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp double matrix elements not equivalent")  
+})
+
 # set option back to GPU
 options(gpuR.default.device = "gpu")

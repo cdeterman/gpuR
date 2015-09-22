@@ -28,7 +28,8 @@ test_that("gpuVector Single Precision Inner Product successful", {
     
     expect_is(fvclC, "matrix")
     expect_equal(fvclC, C, tolerance=1e-06, 
-                 info="float vcl vector elements not equivalent")  
+                 info="float vcl vector elements not equivalent",
+                 check.attributes=FALSE)  
 })
 
 test_that("gpuVector Double Precision Inner Product successful", {
@@ -42,7 +43,8 @@ test_that("gpuVector Double Precision Inner Product successful", {
     
     expect_is(dvclC, "matrix")
     expect_equal(dvclC, C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double vcl vector elements not equivalent")  
+                 info="double vcl vector elements not equivalent",
+                 check.attributes=FALSE)  
 })
 
 test_that("gpuVector Single Precision Outer Product successful", {
@@ -56,7 +58,8 @@ test_that("gpuVector Single Precision Outer Product successful", {
     
     expect_is(fvclC, "fgpuMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
-                 info="float vcl vector elements not equivalent")  
+                 info="float vcl vector elements not equivalent",
+                 check.attributes=FALSE)  
 })
 
 test_that("gpuVector Double Precision Outer Product successful", {
@@ -70,7 +73,8 @@ test_that("gpuVector Double Precision Outer Product successful", {
     
     expect_is(dvclC, "dgpuMatrix")
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double vcl vector elements not equivalent")  
+                 info="double vcl vector elements not equivalent",
+                 check.attributes=FALSE)  
 })
 
 test_that("gpuVector Single Precision Vector Subtraction successful", {
