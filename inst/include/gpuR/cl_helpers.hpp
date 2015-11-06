@@ -1,20 +1,34 @@
 #ifndef CL_HELPERS
 #define CL_HELPERS
 
-#define __CL_ENABLE_EXCEPTIONS
-#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
-
+// include OpenCL C Headers
 #if defined(__APPLE__) || defined(__MACOSX)
 #include <OpenCL/cl.h>
 #else
 #include <CL/cl.h>
 #endif
 
-#if defined(__APPLE__) || defined(__MACOSX)
-#include <OpenCL/cl.hpp>
+// define options for OpenCL C++ API
+#ifdef HAVE_CL_CL2_HPP
+    #define CL_HPP_ENABLE_EXCEPTIONS
+
+    #if defined(__APPLE__) || defined(__MACOSX)
+        #include <OpenCL/cl2.hpp>
+    #else
+        #include <CL/cl2.hpp>
+    #endif
 #else
-#include <CL/cl.hpp>
+    #define __CL_ENABLE_EXCEPTIONS
+    #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
+    
+    #if defined(__APPLE__) || defined(__MACOSX)
+        #include <OpenCL/cl.hpp>
+    #else
+        #include <CL/cl.hpp>
+    #endif
 #endif
+
+
 
 #include <memory>
 #include <boost/scoped_ptr.hpp> //scoped_ptr

@@ -19,6 +19,11 @@ void cpp_gpuVector_iaxpy(
     cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
     
+    #ifdef HAVE_CL_CL2_HPP
+        std::vector<std::string> sourceCodeVec;
+        sourceCodeVec.push_back(sourceCode);
+    #endif
+    
 //    std::string kernel_string = as<std::string>(kernel_function_);
 //    const char* kernel_function = kernel_string.data();
         
@@ -54,10 +59,15 @@ void cpp_gpuVector_iaxpy(
     // Create a command queue and use the first device
     CommandQueue queue = CommandQueue(context, devices[0], 0, &err);
 
-    // Read source file - passed in by R wrapper function
-    int pl;
-    Program::Sources source(1, 
-        std::make_pair(sourceCode.c_str(), pl));
+    /// Read source file - passed in by R wrapper function
+    #ifndef HAVE_CL_CL2_HPP
+        int pl;
+        std::pair <const char*, int> sourcePair;
+        sourcePair = std::make_pair(sourceCode.c_str(), pl);
+        Program::Sources source(1, sourcePair);
+    #else
+        Program::Sources source(sourceCodeVec);
+    #endif
        
     // Make program of the source code in the context
     Program program = Program(context, source);
