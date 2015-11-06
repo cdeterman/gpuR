@@ -22,7 +22,7 @@ dynEigen<T>::dynEigen(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A_)
 {
     A = A_;
     _nr = A.rows();
-    _nc = A.rows();
+    _nc = A.cols();
 }
 
 template<typename T>

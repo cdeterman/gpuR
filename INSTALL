@@ -7,11 +7,5 @@ In order for it to work you will need to install a
 SDK for your respective gpu(s) and the opencl-headers.
 Follow your vendor specific instructions to install.
 
-To install follow this short script
-
-# Install Boost & OpenCL headers
-sudo apt-get install libboost-all-dev opencl-headers
-
-Afterwards, the package should function correctly.  This 
-package is in its very early stages and therefore subject
-to many changes.
+The installation of this package is OS specific.  For detailed
+instructions please see my github wiki (https://github.com/cdeterman/gpuR/wiki).

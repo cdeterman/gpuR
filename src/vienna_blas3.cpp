@@ -19,6 +19,8 @@
 
 using namespace Rcpp;
 
+/*** gpuMatrix templates ***/
+
 template <typename T>
 void 
 cpp_gpuMatrix_gemm(

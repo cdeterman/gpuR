@@ -58,6 +58,9 @@ setMethod('gpuMatrix',
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               
+              assert_is_numeric(nrow)
+              assert_is_numeric(ncol)
+              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
@@ -92,6 +95,9 @@ setMethod('gpuMatrix',
               if(typeof(data) == "logical" | typeof(data) == "character"){
                   stop(paste0(typeof(data), "type is not supported", sep=" "))
               }
+              
+              assert_is_numeric(nrow)
+              assert_is_numeric(ncol)
               
               data = switch(type,
                             integer = {

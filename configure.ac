@@ -1,17 +1,21 @@
 AC_INIT([gpuR],[1.0.0])
+AC_CONFIG_AUX_DIR([tools])
 
 AC_LANG(C++)
-AC_REQUIRE_CPP
 
 AC_MSG_CHECKING("Checking for C++ Compiler")
+AC_REQUIRE_CPP
 
-AX_CXX_COMPILE_STDCXX_11(,[mandatory])
 CXXCPP="g++ -E -std=gnu++11"
+CXXFLAGS="-g -O2 -std=gnu++11"
 
 AC_MSG_CHECKING("Checking OpenCL C++ API")
 AC_CHECK_HEADERS("CL/cl2.hpp")
+AC_CHECK_HEADERS("CL/cl.hpp")
 
-if test "$ac_cv_header_cl_cl2_hpp" != no
+echo $ac_cv_header_CL_cl2_hpp
+
+if test "$ac_cv_header_CL_cl2_hpp" != no
 then
     D_CL_HPP=-DHAVE_CL_CL2_HPP
 fi
