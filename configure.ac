@@ -13,8 +13,6 @@ AC_MSG_CHECKING("Checking OpenCL C++ API")
 AC_CHECK_HEADERS("CL/cl2.hpp")
 AC_CHECK_HEADERS("CL/cl.hpp")
 
-echo $ac_cv_header_CL_cl2_hpp
-
 if test "$ac_cv_header_CL_cl2_hpp" != no
 then
     D_CL_HPP=-DHAVE_CL_CL2_HPP

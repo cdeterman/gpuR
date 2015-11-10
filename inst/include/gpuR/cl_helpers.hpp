@@ -31,7 +31,6 @@
 
 
 #include <memory>
-#include <boost/scoped_ptr.hpp> //scoped_ptr
 #include <Rcpp.h>
 
 using namespace cl;
@@ -62,7 +61,7 @@ Context createContext(
     cl_context_properties* cps,
     cl_int err)
     {
-        boost::scoped_ptr<Context> p_context;
+        std::unique_ptr<Context> p_context;
         
         try
         {
