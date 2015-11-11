@@ -1,8 +1,9 @@
 
+#include "gpuR/windows_check.hpp"
+
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_templates.hpp"
 #include "gpuR/dynEigen.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
@@ -43,8 +44,8 @@ void cpp_gpuVector_axpy(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(A_);
     Rcpp::XPtr<dynEigenVec<T> > ptrB(B_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
     
     int M = Am.size();
     
@@ -76,8 +77,8 @@ T cpp_gpuVector_inner_prod(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
     
     const int M = Am.size();
     
@@ -109,9 +110,9 @@ void cpp_gpuVector_outer_prod(
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Bm(ptrB->ptr(), ptrB->length());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     const int M = Am.size();
     
@@ -144,9 +145,9 @@ void cpp_gpuVector_elem_prod(
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Bm(ptrB->ptr(), ptrB->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     int M = Am.size();
     
@@ -179,9 +180,9 @@ void cpp_gpuVector_elem_div(
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Bm(ptrB->ptr(), ptrB->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     int M = Am.size();
     
@@ -212,8 +213,8 @@ cpp_gpuVector_elem_sin(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -242,8 +243,8 @@ cpp_gpuVector_elem_asin(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -272,8 +273,8 @@ cpp_gpuVector_elem_sinh(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -302,8 +303,8 @@ cpp_gpuVector_elem_cos(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -332,8 +333,8 @@ cpp_gpuVector_elem_acos(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -362,8 +363,8 @@ cpp_gpuVector_elem_cosh(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -392,8 +393,8 @@ cpp_gpuVector_elem_tan(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -422,8 +423,8 @@ cpp_gpuVector_elem_atan(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -452,8 +453,8 @@ cpp_gpuVector_elem_tanh(
     Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    MapVec<T> Am(ptrA->ptr(), ptrA->length());
-    MapVec<T> Cm(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->ptr(), ptrC->length());
     
     const int M = Am.size();
     
@@ -488,8 +489,8 @@ cpp_gpuMatrix_axpy(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am = MapMat<T>(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm = MapMat<T>(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     const int M = Am.cols();
     const int K = Am.rows();
@@ -524,9 +525,9 @@ void cpp_gpuMatrix_elem_prod(
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -560,9 +561,9 @@ void cpp_gpuMatrix_elem_div(
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -595,8 +596,8 @@ void cpp_gpuMatrix_elem_sin(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -626,8 +627,8 @@ void cpp_gpuMatrix_elem_asin(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -658,8 +659,8 @@ void cpp_gpuMatrix_elem_sinh(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -690,8 +691,8 @@ void cpp_gpuMatrix_elem_cos(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -721,8 +722,8 @@ void cpp_gpuMatrix_elem_acos(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -753,8 +754,8 @@ void cpp_gpuMatrix_elem_cosh(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -785,8 +786,8 @@ void cpp_gpuMatrix_elem_tan(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -816,8 +817,8 @@ void cpp_gpuMatrix_elem_atan(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -848,8 +849,8 @@ void cpp_gpuMatrix_elem_tanh(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -878,8 +879,8 @@ void cpp_gpuMatrix_elem_log(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -909,8 +910,8 @@ void cpp_gpuMatrix_elem_log_base(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -940,8 +941,8 @@ void cpp_gpuMatrix_elem_log10(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();
@@ -970,8 +971,8 @@ void cpp_gpuMatrix_elem_exp(
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     int M = Am.cols();
     int K = Am.rows();

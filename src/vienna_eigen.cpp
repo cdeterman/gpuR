@@ -2,7 +2,6 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_templates.hpp"
 #include "gpuR/dynEigen.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
@@ -34,13 +33,13 @@ void cpp_gpu_eigen(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<MapMat<T> > ptrA(Am);
-    Rcpp::XPtr<MapMat<T> > ptrQ(Qm);
-    Rcpp::XPtr<MapVec<T> > ptreigenvalues(eigenvalues);
+    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrA(Am);
+    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrQ(Qm);
+    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > ptreigenvalues(eigenvalues);
     
-    MapMat<T> eigen_A = *ptrA;
-    MapMat<T> &eigen_Q = *ptrQ;
-    MapVec<T> &eigen_eigenvalues = *ptreigenvalues;
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A = *ptrA;
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > &eigen_Q = *ptrQ;
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &eigen_eigenvalues = *ptreigenvalues;
     
     int M = eigen_A.cols();
     int K = eigen_A.rows();

@@ -1,4 +1,5 @@
 
+#include "gpuR/windows_check.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 #include <Rcpp.h>

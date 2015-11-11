@@ -1,7 +1,6 @@
 #include <RcppEigen.h>
 
 #include "gpuR/vcl_helpers.hpp"
-#include "gpuR/eigen_templates.hpp"
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXf;
@@ -45,7 +44,7 @@ vectorToMatVCL(SEXP A, const int nr, const int nc, const int device_flag)
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
     Am.resize(nr, nc);
-    MapMat<T> Amm(&Am(0), nr, nc);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Amm(&Am(0), nr, nc);
     
     //use only GPUs:
     if(device_flag == 0){
@@ -130,7 +129,7 @@ vclSetCol(SEXP data, SEXP newdata, const int nc)
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
     
-    for(int i = 0; i < A.size1(); i++){
+    for(unsigned int i = 0; i < A.size1(); i++){
         A(i, nc-1) = Am(i);
     } 
 }
@@ -145,7 +144,7 @@ vclSetRow(SEXP data, SEXP newdata, const int nr)
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(newdata);
     
-    for(int i = 0; i < A.size2(); i++){
+    for(unsigned int i = 0; i < A.size2(); i++){
         A(nr-1, i) = Am(i);
     } 
 }

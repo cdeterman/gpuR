@@ -15,7 +15,7 @@ using MapMat = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
 template<class T>
 using MapVec = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >;
 
-template<class T>
-using DynMat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+//template<class T>
+//using DynMat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 #endif

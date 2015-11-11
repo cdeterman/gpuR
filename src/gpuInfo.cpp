@@ -1,4 +1,5 @@
 
+#include "gpuR/windows_check.hpp"
 #include <boost/algorithm/string.hpp>
 
 #include "gpuR/cl_helpers.hpp"

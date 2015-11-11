@@ -1,3 +1,6 @@
+
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
 #include "gpuR/eigen_helpers.hpp"

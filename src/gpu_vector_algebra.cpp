@@ -1,10 +1,12 @@
 
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
 #include "gpuR/eigen_helpers.hpp"
 #include "gpuR/cl_helpers.hpp"
 
-using namespace cl;
+//using namespace cl;
 using namespace Rcpp;
 
 
@@ -33,14 +35,14 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
     Rcpp::XPtr<dynEigenVec<int> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigenVec<int> > ptrC(ptrC_);
     
-    MapVec<int> A(ptrA->ptr(), ptrA->length());
-    MapVec<int> B(ptrB->ptr(), ptrB->length());
-    MapVec<int> C(ptrC->ptr(), ptrC->length());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > A(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > B(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > C(ptrC->ptr(), ptrC->length());
 
     const int LIST_SIZE = A.size();
     
     // Get available platforms
-    std::vector<Platform> platforms;
+    std::vector<cl::Platform> platforms;
     getPlatforms(platforms); // cl_helpers.hpp
     
     if(platforms.size() == 0){
@@ -54,33 +56,33 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
         0
     };
 
-    Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
+    cl::Context context( CL_DEVICE_TYPE_GPU, cps, NULL, NULL, &err);
     if(err != CL_SUCCESS){
         stop("context failed to create"); 
     }
     
     // Get a list of devices on this platform
-    std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+    std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
     
     if(devices.size() == 0){
         stop("No devices found!");
     }
 
     // Create a command queue and use the first device
-    CommandQueue queue = CommandQueue(context, devices[0], 0, &err);
+    cl::CommandQueue queue = cl::CommandQueue(context, devices[0], 0, &err);
     
     /// Read source file - passed in by R wrapper function
     #ifndef HAVE_CL_CL2_HPP
         int pl;
         std::pair <const char*, int> sourcePair;
         sourcePair = std::make_pair(sourceCode.c_str(), pl);
-        Program::Sources source(1, sourcePair);
+        cl::Program::Sources source(1, sourcePair);
     #else
-        Program::Sources source(sourceCodeVec);
+        cl::Program::Sources source(sourceCodeVec);
     #endif
         
     // Make program of the source code in the context
-    Program program = Program(context, source);
+    cl::Program program = cl::Program(context, source);
     
     // Build program for these specific devices
     try
@@ -101,7 +103,7 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
     
     // Make kernel
 //        Kernel kernel(program, "vector_add", &err);
-    Kernel kernel(program, kernel_function, &err);
+    cl::Kernel kernel(program, kernel_function, &err);
     if (err != CL_SUCCESS)
     {
        stop("Error: Failed to create compute kernel!\n");
@@ -110,9 +112,9 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
 //        std::cout << "Kernel made" << std::endl;
 
     // Create memory buffers
-    Buffer bufferA = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
-    Buffer bufferB = Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
-    Buffer bufferC = Buffer(context, CL_MEM_WRITE_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
+    cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
+    cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
+    cl::Buffer bufferC = cl::Buffer(context, CL_MEM_WRITE_ONLY, LIST_SIZE * sizeof(int), NULL, &err);
 
 //        std::cout << "memory mapped" << std::endl;
 
@@ -126,9 +128,9 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
     err = kernel.setArg(2, bufferC);
     
     // Run the kernel on specific ND range
-    NDRange global(LIST_SIZE);
-    NDRange local(1);
-    err = queue.enqueueNDRangeKernel(kernel, NullRange, global, local);
+    cl::NDRange global_range(LIST_SIZE);
+    cl::NDRange local_range(1);
+    err = queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
     
     // Read buffer C into a local list        
     err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, LIST_SIZE * sizeof(int), &C(0));

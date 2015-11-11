@@ -1,0 +1,60 @@
+
+environment:
+  global:
+    OPENCL_ROOT: "%APPVEYOR_BUILD_FOLDER%\\bin\\opencl"
+    OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
+    OPENCL_LIB: "%APPVEYOR_BUILD_FOLDER%\\bin\\opencl\\bin"
+    OPENCL_INC: "%APPVEYOR_BUILD_FOLDER%\\inc"
+
+# $ErrActionPreference = "Stop" when we tighten this up.
+# DO NOT CHANGE the "init" and "install" sections below
+# Download script file from GitHub
+init:
+  ps: |
+        $ErrorActionPreference = "Continue"
+        Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
+        Import-Module '..\appveyor-tool.ps1'
+install:
+  - ps: Bootstrap
+  - echo Installing OpenCL
+  - ps: $opencl_registry = $env:OPENCL_REGISTRY
+  # This downloads the source to the example/demo icd library
+  - ps: wget $opencl_registry/specs/opencl-icd-1.2.11.0.tgz -OutFile opencl-icd-1.2.11.0.tgz
+  - ps: 7z x opencl-icd-1.2.11.0.tgz
+  - ps: 7z x opencl-icd-1.2.11.0.tar
+  - ps: mv .\icd\* .
+  # This downloads all the opencl header files
+  # The cmake build files expect a directory called inc
+  - ps: mkdir inc/CL
+  - ps: wget $opencl_registry/api/1.2/ | select -ExpandProperty links | where {$_.href -like "*.h*"} | select -ExpandProperty outerText | foreach{ wget $opencl_registry/api/1.2/$_ -OutFile inc/CL/$_ }
+  - ps: build_using_cmake.bat  
+
+# Adapt as necessary starting from here
+
+build_script:
+  - travis-tool.sh install_deps
+
+test_script:
+  - travis-tool.sh run_tests
+
+on_failure:
+  - travis-tool.sh dump_logs
+
+artifacts:
+  - path: '*.Rcheck\**\*.log'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.out'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.fail'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.Rout'
+    name: Logs
+
+  - path: '\*_*.tar.gz'
+    name: Bits
+
+  - path: '\*_*.zip'
+    name: Bits

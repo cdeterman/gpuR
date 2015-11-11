@@ -1,7 +1,8 @@
 
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_templates.hpp"
 #include "gpuR/dynEigenVec.hpp"
 #include "gpuR/cl_helpers.hpp"
 
@@ -30,8 +31,8 @@ void cpp_gpuVector_iaxpy(
     Rcpp::XPtr<dynEigenVec<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<int> > ptrB(ptrB_);
     
-    MapVec<int> Am(ptrA->ptr(), ptrA->length());
-    MapVec<int> Bm(ptrB->ptr(), ptrB->length());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Am(ptrA->ptr(), ptrA->length());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Bm(ptrB->ptr(), ptrB->length());
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

@@ -2951,11 +2951,14 @@ fi
 done
 
 
-echo $ac_cv_header_CL_cl2_hpp
-
 if test "$ac_cv_header_CL_cl2_hpp" != no
 then
     D_CL_HPP=-DHAVE_CL_CL2_HPP
+else
+    if test "$ac_cv_header_CL_cl_hpp" == no
+    then
+        as_fn_error $? "\"No OpenCL C++ API; try installing opencl-headers\"" "$LINENO" 5
+    fi
 fi
 
 # Make sure we can run config.sub.

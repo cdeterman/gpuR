@@ -13,11 +13,14 @@ AC_MSG_CHECKING("Checking OpenCL C++ API")
 AC_CHECK_HEADERS("CL/cl2.hpp")
 AC_CHECK_HEADERS("CL/cl.hpp")
 
-echo $ac_cv_header_CL_cl2_hpp
-
 if test "$ac_cv_header_CL_cl2_hpp" != no
 then
     D_CL_HPP=-DHAVE_CL_CL2_HPP
+else
+    if test "$ac_cv_header_CL_cl_hpp" == no
+    then
+        AC_MSG_ERROR("No OpenCL C++ API; try installing opencl-headers")
+    fi
 fi
 
 AC_CANONICAL_HOST

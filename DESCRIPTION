@@ -18,6 +18,7 @@ LinkingTo: Rcpp,
     RcppEigen, 
     RViennaCL,
     BH
+NeedsCompilation: yes
 Suggests: testthat, knitr
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new

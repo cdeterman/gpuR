@@ -5,6 +5,8 @@
  * to return the full matrix is possible by converting back
  * to an R matrix object with the '[' method.
  */
+ 
+#include "gpuR/windows_check.hpp"
 
 #include <RcppEigen.h>
 
@@ -16,7 +18,7 @@ template<typename T>
 SEXP trunc_mat(SEXP ptrA_, int nr, int nc)
 {
     Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
     return wrap(Am.topLeftCorner(nr, nc));
 }
 

@@ -1,4 +1,6 @@
 
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
 #include "gpuR/eigen_helpers.hpp"
@@ -27,8 +29,8 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     
-    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

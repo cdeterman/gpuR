@@ -1,0 +1,32 @@
+#!/bin/sh
+
+GPPVERSION=$(g++ -dumpversion)
+echo "g++ version = ${GPPVERSION}"
+
+if test -z "${OPENCL_INC}" ; then
+    echo "OPENCL_INC not found!"
+    echo "Please set OPENCL_INC to OpenCL headers."
+    exit 1
+else
+    echo "OPENCL_INC set to ${OPENCL_INC}"
+fi
+
+if test -z "${OPENCL_LIB}" ; then
+    echo "OPENCL_LIB not found!"
+    echo "Please set OPENCL_LIB to OpenCL headers."
+    exit 1
+else
+    echo "OPENCL_LIB set to ${OPENCL_LIB}"
+fi
+
+OPENCL_INC_PATH=`cygpath -m ${OPENCL_INC}`
+OPENCL_LIB_PATH=`cygpath -m ${OPENCL_LIB}`
+
+echo ${OPENCL_INC_PATH}
+echo ${OPENCL_LIB_PATH}
+
+FLAGS="PKG_CXXFLAGS=-I../inst/include -I${OPENCL_INC_PATH}"
+LIBS="PKG_LIBS=-L${OPENCL_LIB_PATH} -lOpenCL"
+
+echo "${FLAGS}" > src/Makevars.win
+echo "${LIBS}" >> src/Makevars.win

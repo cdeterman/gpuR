@@ -1,4 +1,6 @@
 
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
 #include "gpuR/eigen_helpers.hpp"
@@ -29,9 +31,9 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<int> > ptrC(ptrC_);
     
-    MapMat<int> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<int> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<int> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();

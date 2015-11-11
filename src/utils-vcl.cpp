@@ -1,3 +1,5 @@
+#include "gpuR/windows_check.hpp"
+
 #include <RcppEigen.h>
 
 #include "gpuR/vcl_helpers.hpp"

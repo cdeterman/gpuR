@@ -1,8 +1,10 @@
 
+
+#include "gpuR/windows_check.hpp"
+
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_templates.hpp"
 #include "gpuR/dynEigen.hpp"
 
 // Use OpenCL with ViennaCL
@@ -39,9 +41,9 @@ cpp_gpuMatrix_gemm(
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());    
     
     const int M = Am.cols();
     const int K = Am.rows();
@@ -78,9 +80,9 @@ cpp_gpuMatrix_crossprod(
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
 
     const int M = Am.cols();
     const int K = Am.rows();
@@ -117,9 +119,9 @@ cpp_gpuMatrix_tcrossprod(
     Rcpp::XPtr<dynEigen<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynEigen<T> > ptrC(ptrC_);
     
-    MapMat<T> Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    MapMat<T> Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    MapMat<T> Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
 
     const int M = Am.cols();
     const int K = Am.rows();

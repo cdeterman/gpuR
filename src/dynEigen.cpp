@@ -1,3 +1,5 @@
+
+#include "gpuR/windows_check.hpp"
 #include "gpuR/dynEigen.hpp"
 
 template<typename T>

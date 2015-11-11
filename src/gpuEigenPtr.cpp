@@ -1,4 +1,5 @@
 
+#include "gpuR/windows_check.hpp"
 #include <RcppEigen.h>
 
 #include "gpuR/eigen_helpers.hpp"
@@ -9,7 +10,7 @@ template <typename T>
 T
 GetVecElement(const SEXP data, const int idx)
 {    
-    MapVec<T> A = XPtrToVecSEXP<T>(data);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = XPtrToVecSEXP<T>(data);
     return(A(idx-1));
 }
 
@@ -17,7 +18,7 @@ template <typename T>
 void
 SetVecElement(const SEXP data, const int idx, SEXP value)
 {    
-    MapVec<T> A = XPtrToVecSEXP<T>(data);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = XPtrToVecSEXP<T>(data);
     A(idx-1) = as<T>(value);
 }
 
