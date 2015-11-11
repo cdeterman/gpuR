@@ -1,23 +1,26 @@
 
 environment:
   global:
-    OPENCL_ROOT: "%APPVEYOR_BUILD_FOLDER%\\bin\\opencl"
     OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
     OPENCL_LIB: "%APPVEYOR_BUILD_FOLDER%\\..\\bin"
-    OPENCL_INC: "%APPVEYOR_BUILD_FOLDER%\\inc"
+    OPENCL_INC: "%APPVEYOR_BUILD_FOLDER%\\..\\inc"
 
 # $ErrActionPreference = "Stop" when we tighten this up.
 # DO NOT CHANGE the "init" and "install" sections below
 # Download script file from GitHub
 init:
-  ps: |
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: |
         $ErrorActionPreference = "Continue"
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
 install:
   - ps: Bootstrap
   - echo Installing OpenCL
+  - echo $env:OPENCL_LIB
+  - echo $env:OPENCL_INC
   - ps: $opencl_registry = $env:OPENCL_REGISTRY
+  - ps: cd ..
   # This downloads the source to the example/demo icd library
   - ps: wget $opencl_registry/specs/opencl-icd-1.2.11.0.tgz -OutFile opencl-icd-1.2.11.0.tgz
   - ps: 7z x opencl-icd-1.2.11.0.tgz
@@ -29,8 +32,8 @@ install:
   - ps: wget $opencl_registry/api/1.2/ | select -ExpandProperty links | where {$_.href -like "*.h*"} | select -ExpandProperty outerText | foreach{ wget $opencl_registry/api/1.2/$_ -OutFile inc/CL/$_ }
   - cmd: build_using_cmake.bat  
   - ps: ls
-  - ps: mkdir ../bin
-  - ps: mv bin/* ../bin/ 
+  - ps: cd %APPVEYOR_BUILD_FOLDER%
+  - ps: ls
 
 # Adapt as necessary starting from here
 
@@ -61,3 +64,6 @@ artifacts:
 
   - path: '\*_*.zip'
     name: Bits
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
