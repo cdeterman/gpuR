@@ -27,7 +27,7 @@ install:
   # The cmake build files expect a directory called inc
   - ps: mkdir inc/CL
   - ps: wget $opencl_registry/api/1.2/ | select -ExpandProperty links | where {$_.href -like "*.h*"} | select -ExpandProperty outerText | foreach{ wget $opencl_registry/api/1.2/$_ -OutFile inc/CL/$_ }
-  - ps: build_using_cmake.bat  
+  - cmd: build_using_cmake.bat  
 
 # Adapt as necessary starting from here
 
