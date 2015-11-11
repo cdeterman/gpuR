@@ -61,7 +61,7 @@ cl::Context createContext(
     cl_int err)
     {
         std::unique_ptr<cl::Context> p_context;
-        
+
         try
         {
             p_context.reset(new cl::Context( deviceType, cps, NULL, NULL, &err));
