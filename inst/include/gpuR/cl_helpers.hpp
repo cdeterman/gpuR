@@ -29,23 +29,21 @@
 #endif
 
 
-
 #include <memory>
-#include <boost/scoped_ptr.hpp> //scoped_ptr
 #include <Rcpp.h>
 
-using namespace cl;
+//using namespace cl;
 using namespace Rcpp;
 
 /* C++ get platforms function to return
  * a user friendly error message if fails.
  */
 inline
-void getPlatforms(std::vector<Platform> &platforms)
+void getPlatforms(std::vector<cl::Platform> &platforms)
 {
     try
     {
-        Platform::get(&platforms);
+        cl::Platform::get(&platforms);
     }
     catch (cl::Error error)
     {
@@ -57,16 +55,16 @@ void getPlatforms(std::vector<Platform> &platforms)
  * a user friendly error message if it fails.
  */
 inline
-Context createContext(
+cl::Context createContext(
     cl_device_type deviceType, 
     cl_context_properties* cps,
     cl_int err)
     {
-        boost::scoped_ptr<Context> p_context;
+        std::unique_ptr<cl::Context> p_context;
         
         try
         {
-            p_context.reset(new Context( deviceType, cps, NULL, NULL, &err));
+            p_context.reset(new cl::Context( deviceType, cps, NULL, NULL, &err));
         }
         catch (cl::Error error)
         {
@@ -91,7 +89,7 @@ Context createContext(
             stop("program failed to build");
         }
     
-    Context& context = *p_context;
+    cl::Context& context = *p_context;
     
     return context;
 }
