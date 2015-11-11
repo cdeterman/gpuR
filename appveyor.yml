@@ -3,7 +3,7 @@ environment:
   global:
     OPENCL_ROOT: "%APPVEYOR_BUILD_FOLDER%\\bin\\opencl"
     OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
-    OPENCL_LIB: "%APPVEYOR_BUILD_FOLDER%\\bin\\opencl\\bin"
+    OPENCL_LIB: "%APPVEYOR_BUILD_FOLDER%\\..\\bin"
     OPENCL_INC: "%APPVEYOR_BUILD_FOLDER%\\inc"
 
 # $ErrActionPreference = "Stop" when we tighten this up.
@@ -28,6 +28,9 @@ install:
   - ps: mkdir inc/CL
   - ps: wget $opencl_registry/api/1.2/ | select -ExpandProperty links | where {$_.href -like "*.h*"} | select -ExpandProperty outerText | foreach{ wget $opencl_registry/api/1.2/$_ -OutFile inc/CL/$_ }
   - cmd: build_using_cmake.bat  
+  - ps: ls
+  - ps: mkdir ../bin
+  - ps: mv bin/* ../bin/ 
 
 # Adapt as necessary starting from here
 
