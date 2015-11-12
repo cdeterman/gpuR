@@ -8,7 +8,7 @@ environment:
   global:
     OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
     OPENCL_LIB: "C:\\projects\\bin"
-    OPENCL_INC: "C:\\projects\\inc"
+    OPENCL_INC: "C:\\Windows\\System32"
     R_CHECK_ARGS: "--no-multiarch"
 
 # $ErrActionPreference = "Stop" when we tighten this up.
