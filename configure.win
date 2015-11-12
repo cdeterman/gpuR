@@ -24,19 +24,8 @@ else
         echo "OPENCL_LIB32 not found!"
         exit 1
     else
-        echo "OPENCL_INC set to ${OPENCL_INC}"
+        echo "OPENCL_LIB32 set to ${OPENCL_LIB32}"
         OPENCL_LIB=${OPENCL_LIB32}
     fi
 fi
-
-
-OPENCL_INC_PATH=`cygpath -m ${OPENCL_INC}`
-OPENCL_LIB_PATH=`cygpath -m ${OPENCL_LIB}`
-
-
-FLAGS="PKG_CXXFLAGS=-I../inst/include -I${OPENCL_INC_PATH}"
-LIBS="PKG_LIBS=-L${OPENCL_LIB_PATH} -lOpenCL"
-
-echo "${FLAGS}" > src/Makevars.win
-echo "${LIBS}" >> src/Makevars.win
 
