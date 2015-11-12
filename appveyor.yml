@@ -1,4 +1,9 @@
 
+platform:
+  - x64
+
+shallow_clone: true
+
 environment:
   global:
     OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
