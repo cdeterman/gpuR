@@ -1,6 +1,6 @@
 
 platform:
-  - x64
+  - x86
 
 shallow_clone: true
 
