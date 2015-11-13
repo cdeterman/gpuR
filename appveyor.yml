@@ -26,6 +26,8 @@ before_build:
   - ps: cd AMD
   - cmd: curl -L -o AMD.zip https://www.dropbox.com/sh/08uojexqtp364l0/AAC2rMl2MbbV9H9yCUZp3ZDqa?dl=1
   - ps: 7z x AMD.zip
+  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/System32
+  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/SysWOW64
   - ps: cd ..
   - ps: cd gpur
 
