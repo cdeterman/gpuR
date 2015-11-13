@@ -17,6 +17,7 @@ E <- matrix(rnorm(15), nrow=5)
 
 
 test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -71,6 +72,7 @@ test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
 })
 
 test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -125,6 +127,7 @@ test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
 })
 
 test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)
@@ -151,6 +154,7 @@ test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Logs", {
 })
 
 test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)
@@ -177,6 +181,7 @@ test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Logs", {
 })
 
 test_that("gpuMatrix Single Precision Matrix Exponential", {
+    has_cpu_skip()
     
     R_exp <- exp(A)
     
@@ -191,6 +196,7 @@ test_that("gpuMatrix Single Precision Matrix Exponential", {
 })
 
 test_that("gpuMatrix Double Precision Matrix Exponential", {
+    has_cpu_skip()
     
     R_exp <- exp(A)
     

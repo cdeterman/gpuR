@@ -13,7 +13,7 @@ vi <- seq.int(100)
 
 test_that("vclMatrix integer class initializer" ,{
     
-    has_gpu_skip()
+    has_cpu_skip()
     
     vclA <- vclMatrix(A)
     
@@ -28,7 +28,7 @@ test_that("vclMatrix integer class initializer" ,{
 
 test_that("vclMatrix float class initializer" ,{
     
-    has_gpu_skip()
+    has_cpu_skip()
     
     vclD <- vclMatrix(D, type="float")
     
@@ -43,8 +43,7 @@ test_that("vclMatrix float class initializer" ,{
 
 test_that("vclMatrix double class initializer" ,{
     
-    has_gpu_skip()
-    has_double_skip()
+    has_cpu_skip()
     
     vclD <- vclMatrix(D)
     
@@ -59,8 +58,7 @@ test_that("vclMatrix double class initializer" ,{
 
 test_that("vclMatrix vector initializers", {
     
-    has_gpu_skip()
-    has_double_skip()
+    has_cpu_skip()
     
     v <- rnorm(10)
     vi <- seq.int(10)

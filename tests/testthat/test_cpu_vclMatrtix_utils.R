@@ -10,6 +10,7 @@ D <- matrix(rnorm(100), 10)
 
 
 test_that("vclMatrix get element access", {
+    has_cpu_skip()
     
     dgpu <- vclMatrix(D)
     fgpu <- vclMatrix(D, type="float")
@@ -38,6 +39,7 @@ test_that("vclMatrix get element access", {
 })
 
 test_that("vclMatrix set column access", {
+    has_cpu_skip()
     
     gpuA <- vclMatrix(A)
     gpuD <- vclMatrix(D)
@@ -75,6 +77,7 @@ test_that("vclMatrix set column access", {
 })
 
 test_that("vclMatrix set row access", {
+    has_cpu_skip()
     
     gpuA <- vclMatrix(A)
     gpuD <- vclMatrix(D)
@@ -112,6 +115,7 @@ test_that("vclMatrix set row access", {
 })
 
 test_that("vclMatrix set element access", {
+    has_cpu_skip()
     
     gpuA <- vclMatrix(A)
     gpuD <- vclMatrix(D)

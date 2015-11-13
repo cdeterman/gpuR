@@ -18,6 +18,7 @@ C <- cov(A)
 
 test_that("CPU vclMatrix Single Precision Pearson Covariance",
 {
+    has_cpu_skip()
     
     fgpuX <- vclMatrix(A, type="float")
     
@@ -30,6 +31,7 @@ test_that("CPU vclMatrix Single Precision Pearson Covariance",
 
 test_that("CPU vclMatrix Double Precision Pearson Covariance", 
 {
+    has_cpu_skip()
     
     dgpuX <- vclMatrix(A, type="double")
     

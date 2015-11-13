@@ -10,6 +10,7 @@ D <- matrix(sample(rnorm(100), 100), 10)
 
 
 test_that("gpuMatrix element access", {
+    has_cpu_skip()
     
     dgpu <- gpuMatrix(D)
     fgpu <- gpuMatrix(D, type="float")
@@ -38,6 +39,7 @@ test_that("gpuMatrix element access", {
 })
 
 test_that("gpuMatrix set column access", {
+    has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
     gpuD <- gpuMatrix(D)
@@ -75,6 +77,7 @@ test_that("gpuMatrix set column access", {
 })
 
 test_that("gpuMatrix set row access", {
+    has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
     gpuD <- gpuMatrix(D)
@@ -112,6 +115,7 @@ test_that("gpuMatrix set row access", {
 })
 
 test_that("gpuMatrix set element access", {
+    has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
     gpuD <- gpuMatrix(D)

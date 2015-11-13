@@ -19,6 +19,7 @@ B <- rnorm(ORDER)
 
 
 test_that("vclVector Single Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -64,6 +65,7 @@ test_that("vclVector Single Precision Matrix Element-Wise Trignometry", {
 })
 
 test_that("vclVector Double Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
 
     Sin <- sin(A)
     Asin <- asin(A)
@@ -110,6 +112,7 @@ test_that("vclVector Double Precision Matrix Element-Wise Trignometry", {
 
 
 test_that("vclVector Single Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)
@@ -133,6 +136,7 @@ test_that("vclVector Single Precision Matrix Element-Wise Logs", {
 })
 
 test_that("vclVector Double Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)

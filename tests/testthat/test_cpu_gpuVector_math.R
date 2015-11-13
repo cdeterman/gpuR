@@ -18,6 +18,7 @@ B <- rnorm(ORDER)
 
 
 test_that("gpuVector Single Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -63,6 +64,7 @@ test_that("gpuVector Single Precision Matrix Element-Wise Trignometry", {
 })
 
 test_that("gpuVector Double Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)

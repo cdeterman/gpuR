@@ -19,6 +19,7 @@ E <- matrix(rnorm(15), nrow=5)
 
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -64,6 +65,7 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Trignometry", {
 })
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Trignometry", {
+    has_cpu_skip()
     
     Sin <- sin(A)
     Asin <- asin(A)
@@ -110,6 +112,7 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Trignometry", {
 
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)
@@ -133,6 +136,7 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Logs", {
 })
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Logs", {
+    has_cpu_skip()
     
     R_log <- log(A)
     R_log10 <- log10(A)
@@ -157,6 +161,7 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Logs", {
 
 
 test_that("vclMatrix Single Precision Matrix Exponential", {
+    has_cpu_skip()
     
     R_exp <- exp(A)
     
@@ -170,6 +175,7 @@ test_that("vclMatrix Single Precision Matrix Exponential", {
 })
 
 test_that("vclMatrix Double Precision Matrix Exponential", {
+    has_cpu_skip()
     
     R_exp <- exp(A)
     

@@ -18,6 +18,7 @@ E <- matrix(rnorm(15), nrow=5)
 
 
 test_that("vclMatrix Single Precision Matrix multiplication successful", {
+    has_cpu_skip()
     
     C <- A %*% B
     
@@ -32,6 +33,7 @@ test_that("vclMatrix Single Precision Matrix multiplication successful", {
 })
 
 test_that("vclMatrix Double Precision Matrix multiplication successful", {
+    has_cpu_skip()
     
     C <- A %*% B
     
@@ -46,6 +48,7 @@ test_that("vclMatrix Double Precision Matrix multiplication successful", {
 })
 
 test_that("vclMatrix Single Precision Matrix Subtraction successful", {
+    has_cpu_skip()
     
     C <- A - B
     
@@ -60,6 +63,7 @@ test_that("vclMatrix Single Precision Matrix Subtraction successful", {
 })
 
 test_that("vclMatrix Single Precision Matrix Addition successful", {
+    has_cpu_skip()
     
     C <- A + B
     
@@ -74,6 +78,7 @@ test_that("vclMatrix Single Precision Matrix Addition successful", {
 })
 
 test_that("vclMatrix Double Precision Matrix Subtraction successful", {
+    has_cpu_skip()
     
     C <- A - B
     
@@ -88,6 +93,7 @@ test_that("vclMatrix Double Precision Matrix Subtraction successful", {
 })
 
 test_that("vclMatrix Double Precision Matrix Addition successful", {
+    has_cpu_skip()
     
     C <- A + B
     
@@ -102,6 +108,7 @@ test_that("vclMatrix Double Precision Matrix Addition successful", {
 })
 
 test_that("vclMatrix Single Precision crossprod successful", {
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -126,6 +133,7 @@ test_that("vclMatrix Single Precision crossprod successful", {
 })
 
 test_that("vclMatrix Double Precision crossprod successful", {
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -150,6 +158,7 @@ test_that("vclMatrix Double Precision crossprod successful", {
 })
 
 test_that("vclMatrix Single Precision tcrossprod successful", {
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=5)
     Y <- matrix(rnorm(10), nrow=5)
@@ -174,6 +183,7 @@ test_that("vclMatrix Single Precision tcrossprod successful", {
 })
 
 test_that("vclMatrix Double Precision tcrossprod successful", {
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -198,6 +208,7 @@ test_that("vclMatrix Double Precision tcrossprod successful", {
 })
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Multiplication", {
+    has_cpu_skip()
     
     C <- A * B
     
@@ -214,6 +225,7 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Multiplication", {
 })
 
 test_that("vclMatrix Single Precision Matrix Element-Wise Division", {
+    has_cpu_skip()
     
     C <- A / B
     
@@ -230,6 +242,7 @@ test_that("vclMatrix Single Precision Matrix Element-Wise Division", {
 })
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Multiplication", {
+    has_cpu_skip()
     
     C <- A * B
     
@@ -246,6 +259,7 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Multiplication", {
 })
 
 test_that("vclMatrix Double Precision Matrix Element-Wise Division", {
+    has_cpu_skip()
     
     C <- A / B
     

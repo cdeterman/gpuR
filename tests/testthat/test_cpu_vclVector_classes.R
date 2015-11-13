@@ -9,6 +9,7 @@ A <- seq.int(10)
 D <- rnorm(10)
 
 test_that("vclVector integer class initializer" ,{
+    has_cpu_skip()
     
     vclA <- vclVector(A)
     
@@ -20,6 +21,7 @@ test_that("vclVector integer class initializer" ,{
 })
 
 test_that("vclVector float class initializer" ,{
+    has_cpu_skip()
     
     vclD <- vclVector(D, type="float")
     
@@ -31,6 +33,7 @@ test_that("vclVector float class initializer" ,{
 })
 
 test_that("vclVector double class initializer" ,{
+    has_cpu_skip()
     
     vclD <- vclVector(D)
     
