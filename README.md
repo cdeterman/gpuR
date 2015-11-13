@@ -3,9 +3,9 @@
 ### Build Status
 |                 | Build           |
 |-----------------|-----------------|
-| Linux x86       | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR)      |
+| Linux x86_64    | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR)      |
 | OSX             | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=macosx)](https://travis-ci.org/cdeterman/gpuR)          |
-| Windows         | Unsupported     |
+| Windows x86     | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/cdeterman/gpuR?branch=master)]     |
 
 Test coverage: [![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/badge.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
 
