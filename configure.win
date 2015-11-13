@@ -14,7 +14,13 @@ fi
 if [ ${R_ARCH}="/x64" ] ; then
     if test -z "${OPENCL_LIB64}" ; then
         echo "OPENCL_LIB64 not found!"
-        exit 1
+        if test -z "${OPENCL_LIB32}" ; then
+            echo "OPENCL_LIB32 not found!"
+            exit 1
+        else
+            echo "Only OPENCL_LIB32 found, attempting only 32 bit build"
+            echo "OPENCL_LIB32 set to ${OPENCL_LIB32}"
+        fi
     else
         echo "OPENCL_LIB64 set to ${OPENCL_LIB64}"
         OPENCL_LIB=${OPENCL_LIB64}
