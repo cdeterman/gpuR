@@ -22,9 +22,11 @@ init:
 
 before_build:
   - ps: cd ..
-  - ps: curl -L -o AMD.zip https://www.dropbox.com/sh/08uojexqtp364l0/AAC2rMl2MbbV9H9yCUZp3ZDqa?dl=1
   - ps: mkdir AMD
-  - ps: unzip AMD.zip -d AMD
+  - ps: cd AMD
+  - cmd: curl -L -o AMD.zip https://www.dropbox.com/sh/08uojexqtp364l0/AAC2rMl2MbbV9H9yCUZp3ZDqa?dl=1
+  - ps: 7z x AMD.zip
+  - ps: cd ..
   - ps: cd gpur
 
 install:
