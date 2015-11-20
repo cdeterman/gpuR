@@ -18,9 +18,16 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
     
-    #ifdef HAVE_CL_CL2_HPP
-        std::vector<std::string> sourceCodeVec;
-        sourceCodeVec.push_back(sourceCode);
+    #if defined(__APPLE__) || defined(__MACOSX)
+        #ifdef HAVE_OPENCL_CL2_HPP
+            std::vector<std::string> sourceCodeVec;
+            sourceCodeVec.push_back(sourceCode);
+        #endif
+    #else
+        #ifdef HAVE_CL_CL2_HPP
+            std::vector<std::string> sourceCodeVec;
+            sourceCodeVec.push_back(sourceCode);
+        #endif
     #endif
     
 //    std::string kernel_string = as<std::string>(kernel_function_);
@@ -73,13 +80,24 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     CommandQueue queue = CommandQueue(context, devices[0], 0, &err);
 
     // Read source file - passed in by R wrapper function
-    #ifndef HAVE_CL_CL2_HPP
-        int pl;
-        std::pair <const char*, int> sourcePair;
-        sourcePair = std::make_pair(sourceCode.c_str(), pl);
-        Program::Sources source(1, sourcePair);
+    #if defined(__APPLE__) || defined(__MACOSX)
+        #ifndef HAVE_OPENCL_CL2_HPP
+            int pl;
+            std::pair <const char*, int> sourcePair;
+            sourcePair = std::make_pair(sourceCode.c_str(), pl);
+            Program::Sources source(1, sourcePair);
+        #else
+            Program::Sources source(sourceCodeVec);
+        #endif
     #else
-        Program::Sources source(sourceCodeVec);
+        #ifndef HAVE_CL_CL2_HPP
+            int pl;
+            std::pair <const char*, int> sourcePair;
+            sourcePair = std::make_pair(sourceCode.c_str(), pl);
+            Program::Sources source(1, sourcePair);
+        #else
+            Program::Sources source(sourceCodeVec);
+        #endif
     #endif
 
     // Make program of the source code in the context

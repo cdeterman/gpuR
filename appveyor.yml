@@ -6,39 +6,35 @@ shallow_clone: true
 
 environment:
   global:
-    OPENCL_REGISTRY: "https://www.khronos.org/registry/cl"
-    OPENCL_LIB32: "C:\\projects\\bin"
-    OPENCL_INC: "C:\\projects\\inc"
-    R_CHECK_ARGS: "--no-multiarch"
+    OPENCL_LIB32: "C:/projects/AMD/2.9-1/bin/x86"
+    OPENCL_INC: "C:/projects/AMD/2.9-1/include"
+    R_CHECK_ARGS: "--no-multiarch --no-build-vignettes --no-manual --no-tests"
 
 # $ErrActionPreference = "Stop" when we tighten this up.
 # DO NOT CHANGE the "init" and "install" sections below
 # Download script file from GitHub
 init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
         $ErrorActionPreference = "Continue"
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
+
+before_build:
+  - ps: cd ..
+  - ps: mkdir AMD
+  - ps: cd AMD
+  - cmd: curl -L -o AMD.zip https://www.dropbox.com/sh/08uojexqtp364l0/AAC2rMl2MbbV9H9yCUZp3ZDqa?dl=1
+  - ps: 7z x AMD.zip
+  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/System32
+  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/SysWOW64
+  - ps: cd ..
+  - ps: cd gpur
+
 install:
   - ps: Bootstrap
   - echo Installing OpenCL
-  - echo %OPENCL_LIB%
+  - echo %OPENCL_LIB32%
   - echo %OPENCL_INC%
-  - ps: $opencl_registry = $env:OPENCL_REGISTRY
-  - ps: cd ..
-  # This downloads the source to the example/demo icd library
-  - ps: wget $opencl_registry/specs/opencl-icd-1.2.11.0.tgz -OutFile opencl-icd-1.2.11.0.tgz
-  - ps: 7z x opencl-icd-1.2.11.0.tgz
-  - ps: 7z x opencl-icd-1.2.11.0.tar
-  - ps: mv .\icd\* .
-  # This downloads all the opencl header files
-  # The cmake build files expect a directory called inc
-  - ps: mkdir inc/CL
-  - ps: wget $opencl_registry/api/1.2/ | select -ExpandProperty links | where {$_.href -like "*.h*"} | select -ExpandProperty outerText | foreach{ wget $opencl_registry/api/1.2/$_ -OutFile inc/CL/$_ }
-  - cmd: build_using_cmake.bat  
-  - ps: ls
-  - ps: cd gpur
   - ps: ls
 
 # Adapt as necessary starting from here
@@ -70,6 +66,3 @@ artifacts:
 
   - path: '\*_*.zip'
     name: Bits
-
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

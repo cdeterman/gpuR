@@ -6,16 +6,6 @@ AC_LANG(C++)
 AC_MSG_CHECKING("Checking for C++ Compiler")
 AC_REQUIRE_CPP
 
-if test "$ac_cv_header_CL_cl2_hpp" != no
-then
-    D_CL_HPP=-DHAVE_CL_CL2_HPP
-else
-    if test "$ac_cv_header_CL_cl_hpp" == no
-    then
-        AC_MSG_ERROR("No OpenCL C++ API; try installing opencl-headers")
-    fi
-fi
-
 AC_CANONICAL_HOST
 
 case $host_os in
@@ -29,6 +19,16 @@ case $host_os in
         AC_MSG_CHECKING("Checking OpenCL C++ API")
         AC_CHECK_HEADERS("OpenCL/cl2.hpp")
         AC_CHECK_HEADERS("OpenCL/cl.hpp")
+
+        if test "$ac_cv_header_OpenCL_cl2_hpp" != no
+        then
+            D_CL_HPP=-DHAVE_OPENCL_CL2_HPP
+        else
+            if test "$ac_cv_header_OpenCL_cl_hpp" == no
+            then
+                AC_MSG_ERROR("No OpenCL C++ API; try installing opencl-headers")
+            fi
+        fi
         ;;
     linux* )
         PKG_LIBS=-lOpenCL
@@ -40,6 +40,16 @@ case $host_os in
         AC_MSG_CHECKING("Checking OpenCL C++ API")
         AC_CHECK_HEADERS("CL/cl2.hpp")
         AC_CHECK_HEADERS("CL/cl.hpp")
+        
+        if test "$ac_cv_header_CL_cl2_hpp" != no
+        then
+            D_CL_HPP=-DHAVE_CL_CL2_HPP
+        else
+            if test "$ac_cv_header_CL_cl_hpp" == no
+            then
+                AC_MSG_ERROR("No OpenCL C++ API; try installing opencl-headers")
+            fi
+        fi
         ;;
     *)
         #Default Case

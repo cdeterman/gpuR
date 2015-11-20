@@ -9,21 +9,23 @@
 #endif
 
 // define options for OpenCL C++ API
-#ifdef HAVE_CL_CL2_HPP
-    #define CL_HPP_ENABLE_EXCEPTIONS
-
-    #if defined(__APPLE__) || defined(__MACOSX)
+#if defined(__APPLE__) || defined(__MACOSX)
+    #ifdef HAVE_OPENCL_CL2_HPP
+        #define CL_HPP_ENABLE_EXCEPTIONS
         #include <OpenCL/cl2.hpp>
     #else
-        #include <CL/cl2.hpp>
-    #endif
-#else
-    #define __CL_ENABLE_EXCEPTIONS
-    #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
-    
-    #if defined(__APPLE__) || defined(__MACOSX)
+        #define __CL_ENABLE_EXCEPTIONS
+        #define CL_USE_DEPRECATED_OPENCL_1_1_APIS    
         #include <OpenCL/cl.hpp>
+    #endif
+
+#else
+    #ifdef HAVE_CL_CL2_HPP
+        #define CL_HPP_ENABLE_EXCEPTIONS
+        #include <CL/cl2.hpp>
     #else
+        #define __CL_ENABLE_EXCEPTIONS
+        #define CL_USE_DEPRECATED_OPENCL_1_1_APIS        
         #include <CL/cl.hpp>
     #endif
 #endif

@@ -2660,16 +2660,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
-if test "$ac_cv_header_CL_cl2_hpp" != no
-then
-    D_CL_HPP=-DHAVE_CL_CL2_HPP
-else
-    if test "$ac_cv_header_CL_cl_hpp" == no
-    then
-        as_fn_error $? "\"No OpenCL C++ API; try installing opencl-headers\"" "$LINENO" 5
-    fi
-fi
-
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -3037,6 +3027,16 @@ fi
 
 done
 
+
+        if test "$ac_cv_header_OpenCL_cl2_hpp" != no
+        then
+            D_CL_HPP=-DHAVE_OPENCL_CL2_HPP
+        else
+            if test "$ac_cv_header_OpenCL_cl_hpp" == no
+            then
+                as_fn_error $? "\"No OpenCL C++ API; try installing opencl-headers\"" "$LINENO" 5
+            fi
+        fi
         ;;
     linux* )
         PKG_LIBS=-lOpenCL
@@ -3073,6 +3073,16 @@ fi
 
 done
 
+
+        if test "$ac_cv_header_CL_cl2_hpp" != no
+        then
+            D_CL_HPP=-DHAVE_CL_CL2_HPP
+        else
+            if test "$ac_cv_header_CL_cl_hpp" == no
+            then
+                as_fn_error $? "\"No OpenCL C++ API; try installing opencl-headers\"" "$LINENO" 5
+            fi
+        fi
         ;;
     *)
         #Default Case
