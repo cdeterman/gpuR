@@ -17,7 +17,7 @@ D <- as.matrix(dist(A))
 test_that("vclMatrix Single Precision Euclidean Distance",
 {
     
-    has_gpu_skip()
+    has_cpu_skip()
     
     fgpuX <- vclMatrix(A, type="float")
     
@@ -31,8 +31,7 @@ test_that("vclMatrix Single Precision Euclidean Distance",
 test_that("vclMatrix Double Precision Euclidean Distance", 
 {
     
-    has_gpu_skip()
-    has_double_skip()
+    has_cpu_skip()
     
     fgpuX <- vclMatrix(A, type="double")
     

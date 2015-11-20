@@ -18,6 +18,8 @@ E <- matrix(rnorm(15), nrow=5)
 
 test_that("CPU gpuMatrix Single Precision CPU Matrix multiplication", {
     
+    has_cpu_skip()
+    
     C <- A %*% B
     
     fgpuA <- gpuMatrix(A, type="float")
@@ -31,6 +33,8 @@ test_that("CPU gpuMatrix Single Precision CPU Matrix multiplication", {
 })
 
 test_that("CPU gpuMatrix Single Precision Matrix Subtraction", {
+    
+    has_cpu_skip()
     
     C <- A - B
     
@@ -48,6 +52,8 @@ test_that("CPU gpuMatrix Single Precision Matrix Subtraction", {
 
 test_that("CPU gpuMatrix Single Precision Matrix Addition", {
     
+    has_cpu_skip()
+    
     C <- A + B
     
     fgpuA <- gpuMatrix(A, type="float")
@@ -63,6 +69,8 @@ test_that("CPU gpuMatrix Single Precision Matrix Addition", {
 })
 
 test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
+    
+    has_cpu_skip()
     
     C <- A * B
     
@@ -80,6 +88,8 @@ test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Multiplication", {
 
 test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Division", {
     
+    has_cpu_skip()
+    
     C <- A / B
     
     fgpuA <- gpuMatrix(A, type="float")
@@ -96,6 +106,8 @@ test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Division", {
 
 test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     
+    has_cpu_skip()
+    
     C <- A %*% B
     
     dgpuA <- gpuMatrix(A, type="double")
@@ -109,6 +121,8 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
 })
 
 test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
+    
+    has_cpu_skip()
     
     C <- A - B
     
@@ -126,6 +140,8 @@ test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
 
 test_that("CPU gpuMatrix Double Precision Matrix Addition", {
     
+    has_cpu_skip()
+    
     C <- A + B
     
     dgpuA <- gpuMatrix(A, type="double")
@@ -141,6 +157,8 @@ test_that("CPU gpuMatrix Double Precision Matrix Addition", {
 })
 
 test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
+    
+    has_cpu_skip()
     
     C <- A * B
     
@@ -158,6 +176,8 @@ test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Multiplication", {
 
 test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Division", {
     
+    has_cpu_skip()
+    
     C <- A / B
     
     dgpuA <- gpuMatrix(A, type="double")
@@ -173,6 +193,8 @@ test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Division", {
 })
 
 test_that("CPU gpuMatrix Single Precision crossprod", {
+    
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -198,6 +220,8 @@ test_that("CPU gpuMatrix Single Precision crossprod", {
 
 test_that("CPU gpuMatrix Double Precision crossprod", {
     
+    has_cpu_skip()
+    
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
     Z <- matrix(rnorm(10), nrow=5)
@@ -222,6 +246,8 @@ test_that("CPU gpuMatrix Double Precision crossprod", {
 
 test_that("CPU gpuMatrix Single Precision tcrossprod", {
     
+    has_cpu_skip()
+    
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
     Z <- matrix(rnorm(10), nrow=5)
@@ -245,6 +271,8 @@ test_that("CPU gpuMatrix Single Precision tcrossprod", {
 })
 
 test_that("CPU gpuMatrix Double Precision tcrossprod", {
+    
+    has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)

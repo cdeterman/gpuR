@@ -21,6 +21,7 @@ CM <- colMeans(A)
 
 test_that("CPU gpuMatrix Single Precision Column Sums",
 {
+    has_cpu_skip()
     
     fgpuX <- gpuMatrix(A, type="float")
     
@@ -33,6 +34,7 @@ test_that("CPU gpuMatrix Single Precision Column Sums",
 
 test_that("CPU gpuMatrix Double Precision Column Sums", 
 {
+    has_cpu_skip()
     
     dgpuX <- gpuMatrix(A, type="double")
     
@@ -45,6 +47,7 @@ test_that("CPU gpuMatrix Double Precision Column Sums",
 
 test_that("CPU gpuMatrix Single Precision Row Sums",
 {
+    has_cpu_skip()
     
     fgpuX <- gpuMatrix(A, type="float")
     
@@ -57,6 +60,7 @@ test_that("CPU gpuMatrix Single Precision Row Sums",
 
 test_that("CPU gpuMatrix Double Precision Row Sums", 
 {
+    has_cpu_skip()
     
     dgpuX <- gpuMatrix(A, type="double")
     
@@ -69,6 +73,7 @@ test_that("CPU gpuMatrix Double Precision Row Sums",
 
 test_that("CPU gpuMatrix Single Precision Column Means",
 {
+    has_cpu_skip()
     
     fgpuX <- gpuMatrix(A, type="float")
     
@@ -81,6 +86,7 @@ test_that("CPU gpuMatrix Single Precision Column Means",
 
 test_that("CPU gpuMatrix Double Precision Column Means", 
 {
+    has_cpu_skip()
     
     dgpuX <- gpuMatrix(A, type="double")
     
@@ -94,6 +100,7 @@ test_that("CPU gpuMatrix Double Precision Column Means",
 
 test_that("CPU gpuMatrix Single Precision Row Means",
 {
+    has_cpu_skip()
     fgpuX <- gpuMatrix(A, type="float")
     
     gpuC <- rowMeans(fgpuX)
@@ -105,6 +112,7 @@ test_that("CPU gpuMatrix Single Precision Row Means",
 
 test_that("CPU gpuMatrix Double Precision Row Means", 
 {
+    has_cpu_skip()
     dgpuX <- gpuMatrix(A, type="double")
     
     gpuC <- rowMeans(dgpuX)

@@ -10,6 +10,7 @@ A <- sample(seq.int(10), ORDER, replace = TRUE)
 D <- rnorm(ORDER)
 
 test_that("integer vector length method successful", {
+    has_cpu_skip()
     
     gpuA <- gpuVector(A)
     
@@ -19,6 +20,7 @@ test_that("integer vector length method successful", {
 })
 
 test_that("float vector length method successful", {
+    has_cpu_skip()
     
     gpuA <- gpuVector(A, type="float")
     
@@ -28,6 +30,7 @@ test_that("float vector length method successful", {
 })
 
 test_that("double vector length method successful", {
+    has_cpu_skip()
     
     gpuA <- gpuVector(A, type="double")
     
@@ -37,6 +40,7 @@ test_that("double vector length method successful", {
 })
 
 test_that("gpuVector accession method successful", {
+    has_cpu_skip()
     
     gpuA <- gpuVector(A)
     gpuF <- gpuVector(D, type="float")
@@ -53,6 +57,7 @@ test_that("gpuVector accession method successful", {
 })
 
 test_that("dgpuVector accession method successful", {
+    has_cpu_skip()
     
     gpuD <- gpuVector(D)
     
@@ -63,6 +68,7 @@ test_that("dgpuVector accession method successful", {
 })
 
 test_that("gpuVector set accession method successful", {
+    has_cpu_skip()
     
     Ai <- sample(seq.int(10), 10, replace = TRUE)
     
@@ -88,6 +94,7 @@ test_that("gpuVector set accession method successful", {
 })
 
 test_that("dgpuVector set accession method successful", {
+    has_cpu_skip()
     
     gpuD <- gpuVector(D)
     

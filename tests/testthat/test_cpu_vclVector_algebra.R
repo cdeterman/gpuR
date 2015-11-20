@@ -18,6 +18,7 @@ E <- rnorm(ORDER-1)
 
 
 test_that("vclVector Single Precision Inner Product successful", {
+    has_cpu_skip()
     
     C <- A %*% B
     
@@ -32,6 +33,7 @@ test_that("vclVector Single Precision Inner Product successful", {
 })
 
 test_that("vclVector Double Precision Inner Product successful", {
+    has_cpu_skip()
     
     C <- A %*% B
     
@@ -46,6 +48,7 @@ test_that("vclVector Double Precision Inner Product successful", {
 })
 
 test_that("vclVector Single Precision Outer Product successful", {
+    has_cpu_skip()
     
     C <- A %o% B
     
@@ -60,6 +63,7 @@ test_that("vclVector Single Precision Outer Product successful", {
 })
 
 test_that("vclVector Double Precision Outer Product successful", {
+    has_cpu_skip()
     
     C <- A %o% B
     
@@ -74,6 +78,7 @@ test_that("vclVector Double Precision Outer Product successful", {
 })
 
 test_that("vclVector Single Precision Vector Subtraction successful", {
+    has_cpu_skip()
     
     C <- A - B
     
@@ -88,6 +93,7 @@ test_that("vclVector Single Precision Vector Subtraction successful", {
 })
 
 test_that("vclVector Single Precision Vector Addition successful", {
+    has_cpu_skip()
     
     C <- A + B
     
@@ -102,6 +108,7 @@ test_that("vclVector Single Precision Vector Addition successful", {
 })
 
 test_that("vclVector Double Precision Vector Subtraction successful", {
+    has_cpu_skip()
     
     C <- A - B
     
@@ -116,6 +123,7 @@ test_that("vclVector Double Precision Vector Subtraction successful", {
 })
 
 test_that("vclVector Double Precision Vector Addition successful", {
+    has_cpu_skip()
     
     C <- A + B
     
@@ -131,6 +139,7 @@ test_that("vclVector Double Precision Vector Addition successful", {
 
 
 test_that("vclVector Single Precision Vector Element-Wise Multiplication", {
+    has_cpu_skip()
     
     C <- A * B
     
@@ -147,6 +156,7 @@ test_that("vclVector Single Precision Vector Element-Wise Multiplication", {
 })
 
 test_that("vclVector Single Precision Vector Element-Wise Division", {
+    has_cpu_skip()
     
     C <- A / B
     
@@ -163,6 +173,7 @@ test_that("vclVector Single Precision Vector Element-Wise Division", {
 })
 
 test_that("vclVector Double Precision Vector Element-Wise Multiplication", {
+    has_cpu_skip()
     
     C <- A * B
     
@@ -179,6 +190,7 @@ test_that("vclVector Double Precision Vector Element-Wise Multiplication", {
 })
 
 test_that("vclVector Double Precision Vector Element-Wise Division", {
+    has_cpu_skip()
     
     C <- A / B
     

@@ -25,6 +25,22 @@ has_gpu_skip <- function() {
     }
 }
 
+# check if any CPUs can be found
+#' @title Skip test for CPUs
+#' @description Function to skip testthat tests
+#' if no valid CPU's are detected
+#' @export
+has_cpu_skip <- function() {
+    cpuCheck <- try(detectCPUs(), silent=TRUE)
+    if(class(cpuCheck)[1] == "try-error"){
+        testthat::skip("No CPUs available")
+    }else{
+        if (cpuCheck == 0) {
+            testthat::skip("No CPUs available")
+        }
+    }
+}
+
 # check if GPU supports double precision
 #' @title Skip test for GPU double precision
 #' @description Function to skip testthat tests

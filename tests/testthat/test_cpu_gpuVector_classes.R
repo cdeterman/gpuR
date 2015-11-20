@@ -7,6 +7,7 @@ options(gpuR.default.device = "cpu")
 set.seed(123)
 
 test_that("integer vector class present", {
+    has_cpu_skip()
     
     A <- seq.int(10)    
     gpuA <- gpuVector(A)
@@ -19,6 +20,7 @@ test_that("integer vector class present", {
 })
 
 test_that("float vector class present", {
+    has_cpu_skip()
     
     A <- as.numeric(seq(10))
     gpuA <- gpuVector(A, type = "float")
@@ -31,6 +33,7 @@ test_that("float vector class present", {
 })
 
 test_that("double vector class present", {
+    has_cpu_skip()
     
     A <- as.numeric(seq(10))
     gpuA <- gpuVector(A)
