@@ -1,4 +1,5 @@
 #' @import methods
+#' @importFrom utils file_test
 
 #' @title gpuMatrix Multiplication
 #' @param x A gpuMatrix object
