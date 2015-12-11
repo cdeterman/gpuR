@@ -31,8 +31,19 @@ setGeneric("as.gpuMatrix", function(object, type){
 })
 
 
+#' @export
+setGeneric("slice", function(object, start, end){
+    standardGeneric("slice")
+})
+
+#' @export
+setGeneric("deepcopy", function(object){
+    standardGeneric("deepcopy")
+})
+
 # #' @export
 # setGeneric("colSums", function(x, na.rm, dims){
 #     standardGeneric("colSums")
 # }, useAsDefault=base::colSums)
+
 

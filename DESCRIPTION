@@ -1,27 +1,31 @@
 Package: gpuR
 Type: Package
 Title: GPU Functions for R Objects
-Description: Provides GPU enabled functions for R objects in a simple and 
-    approachable manner.  New gpu* and vcl* classes have been provided to 
-    wrap typical R objects (e.g. vector, matrix), in both host and device 
+Description: Provides GPU enabled functions for R objects in a simple and
+    approachable manner.  New gpu* and vcl* classes have been provided to
+    wrap typical R objects (e.g. vector, matrix), in both host and device
     spaces, to mirror typical R syntax without the need to know OpenCL.
-Version: 1.0.0
+Version: 1.0.2
 Date: 2015-11-12
 Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 VignetteBuilder: knitr
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.5),
+Imports:
+    Rcpp (>= 0.11.5),
     assertive,
     methods
-LinkingTo: Rcpp, 
-    RcppEigen, 
+LinkingTo: Rcpp,
+    RcppEigen,
     RViennaCL,
     BH
 NeedsCompilation: yes
-Suggests: testthat, knitr
+Suggests:
+    testthat,
+    knitr
 URL: http://github.com/cdeterman/gpuR
 BugReports: http://github.com/cdeterman/gpuR/issues/new
-SystemRequirements: C++11 (supporting at least std=c++0x), OpenCL shared 
+SystemRequirements: C++11 (supporting at least std=c++0x), OpenCL shared
     library (provided by an SDK such as AMD/NVIDIA) and OpenCL headers including
     the C++ header file (provided by Khronos if not by SDK)
+RoxygenNote: 5.0.1

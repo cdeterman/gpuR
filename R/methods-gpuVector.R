@@ -59,10 +59,119 @@ setMethod("Arith", c(e1="gpuVector", e2="gpuVector"),
                      `-` = gpuVec_axpy(-1, e2, e1),
                      `*` = gpuVecElemMult(e1, e2),
                      `/` = gpuVecElemDiv(e1, e2),
+                     `^` = gpuVecElemPow(e1, e2),
                      stop("undefined operation")
                      )
           },
-valueClass = "gpuVector"
+          valueClass = "gpuVector"
+)
+
+#' @title gpuVector Arith methods
+#' @param e1 A numeric object
+#' @param e2 A gpuVector object
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="numeric", e2="gpuVector"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e1, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         gpuVec_axpy(1, e1, e2)
+                         },
+                     `-` = {
+                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         gpuVec_axpy(-1, e2, e1)
+                         },
+                     `*` = gpuVecScalarMult(e2, e1),
+                     `/` = {
+                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         gpuVecElemDiv(e1, e2)
+                         },
+                     `^` = {
+                         gpuVecScalarPow(e2, e1, 1)
+                         #e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         #gpuVecElemPow(e1, e2)
+                         },
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuVector"
+)
+
+#' @title gpuVector Arith methods
+#' @param e1 A gpuVector object
+#' @param e2 A numeric object
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="gpuVector", e2="numeric"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e2, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
+                         gpuVec_axpy(1, e1, e2)
+                         },
+                     `-` = {
+                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
+                         gpuVec_axpy(-1, e2, e1)
+                         },
+                     `*` = gpuVecScalarMult(e1, e2),
+                     `/` = gpuVecScalarDiv(e1, e2),
+                     `^` = {
+                         gpuVecScalarPow(e1, e2, 0)
+                         #e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
+                         #gpuVecElemPow(e1, e2)
+                         },
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuVector"
+)
+
+#' @title gpuVector Arith methods
+#' @param e1 A gpuVector object
+#' @param e2 missing
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="gpuVector", e2="missing"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `-` = gpuVector_unary_axpy(e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuVector"
+)
+
+#' @title gpuVector Arith methods
+#' @param e1 A gpuVectorSlice object
+#' @param e2 A gpuVectorSlice object
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="gpuVectorSlice", e2="gpuVectorSlice"),
+          function(e1, e2)
+          {
+              if(length(e1) != length(e2)){
+                  stop("non-conformable arguments")
+              }
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = gpuSliceVec_axpy(1, e1, e2),
+                     `-` = gpuSliceVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuVector"
 )
 
 #' @title gpuVector Math methods
@@ -161,6 +270,7 @@ setMethod('length', signature(x = "gpuVector"),
           }
 )
 
+
 #' @title Extract/Set gpuVector elements
 #' @param x A gpuVector object
 #' @param i missing
@@ -228,3 +338,42 @@ setMethod("[<-",
           })
 
 
+#' @export
+setMethod("slice",
+          signature(object = "gpuVector", start = "integer", end = "integer"),
+          function(object, start, end){
+              
+          assert_all_are_positive(c(start, end))
+          assert_all_are_in_range(c(start, end), lower = 1, upper = length(object)+1)
+          
+          ptr <- switch(typeof(object),
+                        "float" = {
+                            address <- sliceGPUvec(object@address, start, end, 6L)
+                            new("fgpuVectorSlice", address = address)
+                        },
+                        "double" = {
+                            address <- sliceGPUvec(object@address, start, end, 8L)
+                            new("dgpuVectorSlice", address = address)
+                        },
+                        stop("type not recognized")
+          )
+          
+          return(ptr)
+          
+        })
+
+setMethod("deepcopy", signature(object ="gpuVector"),
+          function(object){
+              
+              out <- switch(typeof(object),
+                            "integer" = new("igpuVector",
+                                            address = cpp_deepcopy_gpuVector(object@address, 4L)),
+                            "float" = new("fgpuVector", 
+                                          address = cpp_deepcopy_gpuVector(object@address, 6L)),
+                            "double" = new("dgpuVector", 
+                                           address = cpp_deepcopy_gpuVector(object@address, 8L)),
+                            stop("unrecognized type")
+              )
+              return(out)
+              
+          })

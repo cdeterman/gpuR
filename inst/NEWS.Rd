@@ -1,6 +1,18 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
 
+\section{Unreleased Version 1.1.0}{
+    \itemize{
+        \item New Features:
+        \itemize{
+            \item Scalar Arith methods (e.g. 2*gpuMatrix)
+            \item Unary '-' operator (i.e. -gpuMatrix)
+            \item Slice methods to point to subsets of objects
+            \item deepcopy method to explicitly copy object contents
+        }
+    }
+}
+
 \section{Initial Release version 1.0.0}{
     \itemize{
         \item Implemented Features:

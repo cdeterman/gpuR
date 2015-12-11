@@ -28,6 +28,31 @@ int cpp_gpuVec_size(SEXP ptrA_)
     return ptrA->length();
 }
 
+template <typename T>
+int cpp_gpuVecSlice_length(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    const int len = ptrA->end()+1 - ptrA->start();
+    return len;
+}
+
+/*** Slice Vector ***/
+// [[Rcpp::export]]
+int
+cpp_gpuVecSlice_length(SEXP ptrA_, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return cpp_gpuVecSlice_length<int>(ptrA_);
+        case 6:
+            return cpp_gpuVecSlice_length<float>(ptrA_);
+        case 8:
+            return cpp_gpuVecSlice_length<double>(ptrA_);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
+
 // [[Rcpp::export]]
 int cpp_dncol(SEXP ptrA)
 {

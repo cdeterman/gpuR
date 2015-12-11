@@ -473,3 +473,20 @@ setMethod("dist", signature(x="vclMatrix"),
              return(D)
           }
 )
+
+
+setMethod("deepcopy", signature(object ="vclMatrix"),
+          function(object){
+              
+              out <- switch(typeof(object),
+                            "integer" = new("ivclMatrix",
+                                            address = cpp_deepcopy_vclMatrix(object@address, 4L)),
+                            "float" = new("fvclMatrix", 
+                                          address = cpp_deepcopy_vclMatrix(object@address, 6L)),
+                            "double" = new("dvclMatrix", 
+                                           address = cpp_deepcopy_vclMatrix(object@address, 8L)),
+                            stop("unrecognized type")
+              )
+              return(out)
+              
+          })

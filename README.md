@@ -9,6 +9,8 @@
 
 Test coverage: [![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/badge.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)
 
+Community Use: [![Downloads](http://cranlogs.r-pkg.org/badges/gpuR?color=brightgreen)](http://www.r-pkg.org/pkg/gpuR)
+
 Welcome to my R package for simple GPU computing.  Although there are a few
 existing packages to leverage the power of GPU's they are either specific
 to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this

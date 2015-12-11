@@ -12,6 +12,20 @@ using Eigen::VectorXi;
 using namespace Rcpp;
 
 
+//copy an existing Xptr
+template <typename T>
+SEXP
+cpp_deepcopy_vclMatrix(SEXP ptrA_)
+{    
+    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    viennacl::matrix<T> vcl_A = *ptrA;
+    
+    viennacl::matrix<T> *vcl_B = new viennacl::matrix<T>(ptrA->size1(), ptrA->size2());
+    *vcl_B = *ptrA;
+    Rcpp::XPtr<viennacl::matrix<T> > pMat(vcl_B);
+    return pMat;
+}
+
 // convert SEXP Vector to ViennaCL vector
 template <typename T>
 SEXP 
@@ -206,6 +220,23 @@ vclGetElement(SEXP &data, const int &nr, const int &nc)
     return(value);
 }
 
+
+/*** vclMatrix deepcopy ***/
+// [[Rcpp::export]]
+SEXP
+cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_deepcopy_vclMatrix<int>(ptrA);
+        case 6:
+            return cpp_deepcopy_vclMatrix<float>(ptrA);
+        case 8:
+            return cpp_deepcopy_vclMatrix<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
 
 /*** matrix imports ***/
 

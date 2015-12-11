@@ -6,6 +6,78 @@
 
 using namespace Rcpp;
 
+
+//copy an existing gpuMatrix
+template <typename T>
+SEXP
+cpp_deepcopy_gpuMatrix(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A(ptrA->data());
+    dynEigen<T> *C = new dynEigen<T>(A);
+    Rcpp::XPtr<dynEigen<T> > pMat(C);
+    return pMat;
+}
+
+//copy an existing gpuVector
+template <typename T>
+SEXP
+cpp_deepcopy_gpuVector(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> A(ptrA->data());
+    dynEigenVec<T> *C = new dynEigenVec<T>(A);
+    Rcpp::XPtr<dynEigenVec<T> > pMat(C);
+    return pMat;
+}
+
+//// convert SEXP Vector to Eigen matrix
+//template <typename T>
+//SEXP sexpVecToMatXptr(SEXP A, int nr, int nc)
+//{
+//    dynEigen<T> *C = new dynEigen<T>(A, nr, nc);
+//    Rcpp::XPtr<dynEigen<T> > pMat(C);
+//    return pMat;
+//}
+//
+//// convert an XPtr back to a MapMat object to ultimately 
+//// be returned as a SEXP object
+//template <typename T>
+//Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > XPtrToSEXP(SEXP ptrA_)
+//{
+//    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > A(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
+//    return A;
+//}
+
+template <typename T>
+SEXP
+sliceGPUvec(const SEXP ptrA, int start, int end)
+{
+//    Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA);
+//    dynEigenVec<T> &vec = *pVec;
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = XPtrToVecSEXP<T>(ptrA);
+    dynEigenVec<T> *C = new dynEigenVec<T>(A, start, end);
+//    Eigen::VectorBlock<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >, Eigen::Dynamic> temp = A.segment(start, end);
+//    Eigen::VectorBlock<T> slicedVec = A.segment(start, end);
+//    Rcpp::XPtr<dynEigenVec<T>> slicedVecXPtr = sexpVecToXptr(temp);
+//    return(slicedVecXPtr);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(C);
+    return pVec;
+}
+
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1>
+get_gpu_slice_vec(const SEXP ptrA)
+{
+     Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA);
+     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A(pVec->ptr(), pVec->length());
+     
+     Eigen::Matrix<T, Eigen::Dynamic, 1> vec = A.segment(pVec->start(), pVec->end());
+     return vec;
+}
+
 template <typename T>
 T
 GetVecElement(const SEXP data, const int idx)
@@ -21,6 +93,75 @@ SetVecElement(const SEXP data, const int idx, SEXP value)
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = XPtrToVecSEXP<T>(data);
     A(idx-1) = as<T>(value);
 }
+
+
+/*** gpuMatrix deepcopy ***/
+// [[Rcpp::export]]
+SEXP
+cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_deepcopy_gpuMatrix<int>(ptrA);
+        case 6:
+            return cpp_deepcopy_gpuMatrix<float>(ptrA);
+        case 8:
+            return cpp_deepcopy_gpuMatrix<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
+
+/*** gpuVector deepcopy ***/
+// [[Rcpp::export]]
+SEXP
+cpp_deepcopy_gpuVector(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_deepcopy_gpuVector<int>(ptrA);
+        case 6:
+            return cpp_deepcopy_gpuVector<float>(ptrA);
+        case 8:
+            return cpp_deepcopy_gpuVector<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
+
+/*** Slice Vector ***/
+// [[Rcpp::export]]
+SEXP
+sliceGPUvec(SEXP ptrA, const int start, const int end, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return sliceGPUvec<int>(ptrA, start, end);
+        case 6:
+            return sliceGPUvec<float>(ptrA, start, end);
+        case 8:
+            return sliceGPUvec<double>(ptrA, start, end);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+get_gpu_slice_vec(SEXP ptrA, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return wrap(get_gpu_slice_vec<int>(ptrA));
+        case 6:
+            return wrap(get_gpu_slice_vec<float>(ptrA));
+        case 8:
+            return wrap(get_gpu_slice_vec<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
+
 
 /*** Get/Set Vector Elements ***/
 

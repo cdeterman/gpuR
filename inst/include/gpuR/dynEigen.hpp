@@ -20,6 +20,7 @@ class dynEigen {
         T* ptr() { return &A(0); }
         int nrow() { return _nr; }
         int ncol() { return _nc; }
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> data() { return A; }
 };
 
 #endif

@@ -29,15 +29,98 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
                      `+` = gpu_Mat_axpy(1, e1, e2),
                      `-` = gpu_Mat_axpy(-1, e2, e1),
                      `*` = gpuMatElemMult(e1, e2),
-                     `/` = gpuMatElemDiv(e1,e2),
-                     {
-                         stop("undefined operation")
-                     }
+                     `/` = gpuMatElemDiv(e1, e2),
+                     `^` = gpuMatElemPow(e1, e2),
+                     stop("undefined operation")
               )
           },
 valueClass = "gpuMatrix"
 )
 
+#' @title gpuMatrix Arith methods
+#' @param e1 A gpuMatrix object
+#' @param e2 A numeric object
+#' @return A gpuMatrix object
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e2, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         gpu_Mat_axpy(1, e1, e2)
+                         },
+                     `-` = {
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         gpu_Mat_axpy(-1, e2, e1)
+                         },
+                     `*` = gpuMatScalarMult(e1, e2),
+                     `/` = gpuMatScalarDiv(e1, e2),
+                     `^` = {
+                         gpuMatScalarPow(e1, e2)
+                         #e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         #gpuMatElemPow(e1, e2)
+                         },
+                     stop("undefined operation")
+              )
+          },
+valueClass = "gpuMatrix"
+)
+
+#' @title gpuMatrix Arith methods
+#' @param e1 A numeric object
+#' @param e2 A gpuMatrix object
+#' @return A gpuMatrix object
+#' @export
+setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e1, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         gpu_Mat_axpy(1, e1, e2)
+                         },
+                     `-` = {
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         gpu_Mat_axpy(-1, e2, e1)
+                         },
+                     `*` = gpuMatScalarMult(e2, e1),
+                     `/` = {
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         gpuMatElemDiv(e1, e2)
+                         },
+                     `^` = {
+                         e1 <- gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         gpuMatElemPow(e1, e2)
+                     },
+                     stop("undefined operation")
+              )
+          },
+valueClass = "gpuMatrix"
+)
+
+#' @title gpuMatrix Arith methods
+#' @param e1 A gpuMatrix object
+#' @param e2 missing
+#' @return A gpuMatrix object
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `-` = gpuMatrix_unary_axpy(e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
 
 #' @title gpuMatrix Math methods
 #' @param x A gpuMatrix object
@@ -455,4 +538,21 @@ setMethod("dist", signature(x="gpuMatrix"),
               return(D)
           }
 )
+
+
+setMethod("deepcopy", signature(object ="gpuMatrix"),
+          function(object){
+              
+              out <- switch(typeof(object),
+                            "integer" = new("igpuMatrix",
+                                            address = cpp_deepcopy_gpuMatrix(object@address, 4L)),
+                            "float" = new("fgpuMatrix", 
+                                          address = cpp_deepcopy_gpuMatrix(object@address, 6L)),
+                            "double" = new("dgpuMatrix", 
+                                           address = cpp_deepcopy_gpuMatrix(object@address, 8L)),
+                            stop("unrecognized type")
+                            )
+              return(out)
+              
+          })
 
