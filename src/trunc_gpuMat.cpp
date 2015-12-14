@@ -10,18 +10,12 @@
 
 #include <RcppEigen.h>
 
-//#include "gpuR/eigen_helpers.hpp"
-
 using namespace Rcpp;
 
 template<typename T>
 SEXP 
 trunc_mat(SEXP ptrA_, int nr, int nc)
-{
-//    Rcpp::XPtr<dynEigen<T> > ptrA(ptrA_);
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-//    return wrap(Am.topLeftCorner(nr, nc));
-    
+{    
     XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(ptrA_);
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(pMat->data(), pMat->rows(), pMat->cols());
     return wrap(Am.topLeftCorner(nr, nc));
