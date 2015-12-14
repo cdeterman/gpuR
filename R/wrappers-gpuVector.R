@@ -269,7 +269,7 @@ return(C)
 }
 
 # GPU Scalar Element-Wise Division
-gpuVecScalarDiv <- function(A, B){
+gpuVecScalarDiv <- function(A, B, order){
     
     device_flag <- 
         switch(options("gpuR.default.device")$gpuR.default.device,
@@ -288,17 +288,19 @@ gpuVecScalarDiv <- function(A, B){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_scalar_div(C@address,
-                                              B,
-                                              device_flag,
-                                              6L)
+                                             B,
+                                             order,
+                                             device_flag,
+                                             6L)
            },
            double = {
                if(!deviceHasDouble()){
                    stop("Selected GPU does not support double precision")
                }else{cpp_gpuVector_scalar_div(C@address,
-                                               B,
-                                               device_flag,
-                                               8L)
+                                              B,
+                                              order,
+                                              device_flag,
+                                              8L)
                }
            },
            stop("type not recognized")
@@ -349,7 +351,6 @@ gpuVecElemPow <- function(A, B){
     )
     return(C)
 }
-
 
 # GPU Element-Wise Power
 gpuVecScalarPow <- function(A, B, order){

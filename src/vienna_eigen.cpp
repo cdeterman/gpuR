@@ -2,9 +2,6 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "gpuR/dynEigen.hpp"
-#include "gpuR/dynEigenVec.hpp"
-
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
 

@@ -1,4 +1,125 @@
 
+# vclMatrix numeric vector initializer
+vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
+    
+    data = switch(type,
+                  integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
+                  float = {
+                      new("fvclMatrix", 
+                          address=vectorToMatVCL(data, 
+                                                 nrow, ncol, 
+                                                 6L, device_flag))
+                  },
+                  double = {
+                      new("dvclMatrix",
+                          address = vectorToMatVCL(data, 
+                                                   nrow, ncol, 
+                                                   8L, device_flag))
+                  },
+                  stop("this is an unrecognized 
+                                 or unimplemented data type")
+    )
+    
+    return(data)
+}
+
+# vclMatrix numeric initializer
+vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
+    
+    data = switch(type,
+                  integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
+                  float = {
+                      new("fvclMatrix", 
+                          address=
+                              cpp_scalar_vclMatrix(
+                                  data, 
+                                  nrow, ncol, 
+                                  6L, device_flag)
+                      )
+                  },
+                  double = {
+                      new("dvclMatrix",
+                          address = 
+                              cpp_scalar_vclMatrix(
+                                  data, 
+                                  nrow, ncol, 
+                                  8L, device_flag)
+                      )
+                  },
+                  stop("this is an unrecognized 
+                                 or unimplemented data type")
+    )
+    
+    return(data)
+}
+
+# vclMatrix integer vector initializer
+vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
+    
+    data = switch(type,
+                  integer = {
+                      new("ivclMatrix", 
+                          address=vectorToMatVCL(data, 
+                                                 nrow, ncol,
+                                                 4L, device_flag))
+                  },
+                  float = {
+                      new("fvclMatrix", 
+                          address=vectorToMatVCL(data, 
+                                                 nrow, ncol, 
+                                                 6L, device_flag))
+                  },
+                  double = {
+                      new("dvclMatrix",
+                          address = vectorToMatVCL(data, 
+                                                   nrow, ncol, 
+                                                   8L, device_flag))
+                  },
+                  stop("this is an unrecognized 
+                                     or unimplemented data type")
+    )
+    
+    return(data)
+}
+
+# vclMatrix integer scalar initializer
+vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
+    
+    data = switch(type,
+                  integer = {
+                      new("ivclMatrix", 
+                          address=
+                              cpp_scalar_vclMatrix(
+                                  data, 
+                                  nrow, ncol, 
+                                  4L, device_flag)
+                      )
+                  },
+                  float = {
+                      new("fvclMatrix", 
+                          address=
+                              cpp_scalar_vclMatrix(
+                                  data, 
+                                  nrow, ncol, 
+                                  6L, device_flag)
+                      )
+                  },
+                  double = {
+                      new("dvclMatrix",
+                          address = 
+                              cpp_scalar_vclMatrix(
+                                  data, 
+                                  nrow, ncol, 
+                                  8L, device_flag)
+                      )
+                  },
+                  stop("this is an unrecognized 
+                                 or unimplemented data type")
+    )
+    
+    return(data)
+}
+
 # vclMatrix GEMM
 vclMatMult <- function(A, B){
     

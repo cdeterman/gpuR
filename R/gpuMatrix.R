@@ -31,15 +31,24 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=matrixToGPUXptr(data, 4L))
+                                    address=sexpToEigenXptr(data, 
+                                                            nrow(data),
+                                                            ncol(data), 
+                                                            4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=matrixToGPUXptr(data, 6L))
+                                    address=sexpToEigenXptr(data, 
+                                                            nrow(data),
+                                                            ncol(data), 
+                                                            6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = matrixToGPUXptr(data, 8L))
+                                    address = sexpToEigenXptr(data, 
+                                                              nrow(data),
+                                                              ncol(data), 
+                                                              8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -64,15 +73,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=emptyMatXptr(nrow, ncol, 4L))
+                                    address=emptyEigenXptr(nrow, ncol, 4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=emptyMatXptr(nrow, ncol, 6L))
+                                    address=emptyEigenXptr(nrow, ncol, 6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = emptyMatXptr(nrow, ncol, 8L))
+                                    address = emptyEigenXptr(nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -102,15 +111,15 @@ setMethod('gpuMatrix',
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=vectorToMat(data, nrow, ncol, 4L))
+                                    address=sexpVecToEigenXptr(data, nrow, ncol, 4L))
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=vectorToMat(data, nrow, ncol, 6L))
+                                    address=sexpVecToEigenXptr(data, nrow, ncol, 6L))
                             },
                             double = {
                                 new("dgpuMatrix",
-                                    address = vectorToMat(data, nrow, ncol, 8L))
+                                    address = sexpVecToEigenXptr(data, nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

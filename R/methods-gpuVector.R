@@ -87,15 +87,8 @@ setMethod("Arith", c(e1="numeric", e2="gpuVector"),
                          gpuVec_axpy(-1, e2, e1)
                          },
                      `*` = gpuVecScalarMult(e2, e1),
-                     `/` = {
-                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
-                         gpuVecElemDiv(e1, e2)
-                         },
-                     `^` = {
-                         gpuVecScalarPow(e2, e1, 1)
-                         #e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
-                         #gpuVecElemPow(e1, e2)
-                         },
+                     `/` = gpuVecScalarDiv(e2, e1, 1),
+                     `^` = gpuVecScalarPow(e2, e1, 1),
                      stop("undefined operation")
               )
           },
@@ -123,12 +116,8 @@ setMethod("Arith", c(e1="gpuVector", e2="numeric"),
                          gpuVec_axpy(-1, e2, e1)
                          },
                      `*` = gpuVecScalarMult(e1, e2),
-                     `/` = gpuVecScalarDiv(e1, e2),
-                     `^` = {
-                         gpuVecScalarPow(e1, e2, 0)
-                         #e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
-                         #gpuVecElemPow(e1, e2)
-                         },
+                     `/` = gpuVecScalarDiv(e1, e2, 0),
+                     `^` = gpuVecScalarPow(e1, e2, 0),
                      stop("undefined operation")
               )
           },
@@ -285,9 +274,9 @@ setMethod("[",
           signature(x = "gpuVector", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(VecXptrToVecSEXP(x@address, 4L)),
-                     "float" = return(VecXptrToVecSEXP(x@address, 6L)),
-                     "double" = return(VecXptrToVecSEXP(x@address, 8L))
+                     "integer" = return(EigenVecXPtrToMapEigenVec(x@address, 4L)),
+                     "float" = return(EigenVecXPtrToMapEigenVec(x@address, 6L)),
+                     "double" = return(EigenVecXPtrToMapEigenVec(x@address, 8L))
               )
           })
 

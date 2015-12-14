@@ -3,12 +3,14 @@
 \docType{methods}
 \name{vclMatrix}
 \alias{vclMatrix}
+\alias{vclMatrix,integer}
+\alias{vclMatrix,integer-method}
 \alias{vclMatrix,matrix}
 \alias{vclMatrix,matrix-method}
 \alias{vclMatrix,missing}
 \alias{vclMatrix,missing-method}
+\alias{vclMatrix,numeric-method}
 \alias{vclMatrix,vector}
-\alias{vclMatrix,vector-method}
 \title{Construct a vclMatrix}
 \usage{
 vclMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
@@ -17,7 +19,9 @@ vclMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
 \S4method{vclMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL)
 
-\S4method{vclMatrix}{vector}(data, nrow, ncol, type = NULL)
+\S4method{vclMatrix}{numeric}(data, nrow, ncol, type = NULL)
+
+\S4method{vclMatrix}{integer}(data, nrow, ncol, type = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 

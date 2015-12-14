@@ -169,7 +169,7 @@ test_that("gpuVector Single Precision Element-Wise Multiplication", {
     
     expect_is(fvclC, "fgpuVector")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
-                 info="float vcl vector elements not equivalent")  
+                 info="float gpuVector elements not equivalent")  
     expect_error(fvclA * fvclE)
 })
 

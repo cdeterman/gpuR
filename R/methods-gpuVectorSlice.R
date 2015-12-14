@@ -14,22 +14,22 @@ setMethod('typeof', signature(x="gpuVectorSlice"),
               return(type)
           })
 
-#' @title Length of gpuVectorSlice
-#' @param x A gpuVectorSlice object
-#' @return A numeric value
-#' @rdname length-methods
-#' @aliases length,gpuVectorSlice
-#' @export
-setMethod('length', signature(x = "gpuVectorSlice"),
-          function(x) {
-              switch(typeof(x),
-                     "integer" = return(cpp_gpuVecSlice_length(x@address, 4L)),
-                     "float" = return(cpp_gpuVecSlice_length(x@address, 6L)),
-                     "double" = return(cpp_gpuVecSlice_length(x@address, 8L))
-              )
-              
-          }
-)
+# #' @title Length of gpuVectorSlice
+# #' @param x A gpuVectorSlice object
+# #' @return A numeric value
+# #' @rdname length-methods
+# #' @aliases length,gpuVectorSlice
+# #' @export
+# setMethod('length', signature(x = "gpuVectorSlice"),
+#           function(x) {
+#               switch(typeof(x),
+#                      "integer" = return(cpp_gpuVecSlice_length(x@address, 4L)),
+#                      "float" = return(cpp_gpuVecSlice_length(x@address, 6L)),
+#                      "double" = return(cpp_gpuVecSlice_length(x@address, 8L))
+#               )
+#               
+#           }
+# )
 
 #' @rdname extract-gpuVector
 #' @aliases [,gpuVectorSlice

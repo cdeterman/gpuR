@@ -3,7 +3,6 @@
 
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_helpers.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
@@ -33,14 +32,14 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
 //    std::string kernel_string = as<std::string>(kernel_function_);
 //    const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
-
-    Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigen<int> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->ptr(), ptrC->nrow(), ptrC->ncol());
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();

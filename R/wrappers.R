@@ -322,10 +322,9 @@ gpuMatScalarDiv <- function(A, B){
                                               8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    return(C)
 }
 
 # GPU Element-Wise Power

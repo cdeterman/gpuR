@@ -26,6 +26,30 @@ cpp_deepcopy_vclMatrix(SEXP ptrA_)
     return pMat;
 }
 
+// scalar initialized ViennaCL matrix
+template <typename T>
+SEXP 
+cpp_scalar_vclMatrix(
+    SEXP scalar_, 
+    const int nr, 
+    const int nc,
+    const int device_flag)
+{
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    const T scalar = as<T>(scalar_);
+    
+    viennacl::matrix<T> *vcl_A = new viennacl::matrix<T>(nr,nc);
+    *vcl_A = viennacl::scalar_matrix<T>(nr,nc, scalar);
+    
+    Rcpp::XPtr<viennacl::matrix<T> > pMat(vcl_A);
+    return pMat;
+}
+
 // convert SEXP Vector to ViennaCL vector
 template <typename T>
 SEXP 
@@ -275,19 +299,40 @@ VCLtoMatSEXP(SEXP ptrA, const int type_flag)
     }
 }
 
-/*** Empty matrix initializers ***/
+/*** Matrix initializers ***/
 
 // [[Rcpp::export]]
 SEXP
-emptyVCL(const int nr, const int nc, const int type_flag)
+cpp_zero_vclMatrix(const int nr, const int nc, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return emptyVCL<int>(nr, nc);
+            return cpp_zero_vclMatrix<int>(nr, nc);
         case 6:
-            return emptyVCL<float>(nr, nc);
+            return cpp_zero_vclMatrix<float>(nr, nc);
         case 8:
-            return emptyVCL<double>(nr, nc);
+            return cpp_zero_vclMatrix<double>(nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+SEXP
+cpp_scalar_vclMatrix(
+    SEXP scalar, 
+    const int nr, const int nc, 
+    const int type_flag,
+    const int device_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_scalar_vclMatrix<int>(scalar, nr, nc, device_flag);
+        case 6:
+            return cpp_scalar_vclMatrix<float>(scalar, nr, nc, device_flag);
+        case 8:
+            return cpp_scalar_vclMatrix<double>(scalar, nr, nc, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

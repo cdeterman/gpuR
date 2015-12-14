@@ -11,7 +11,7 @@
 \usage{
 gpuVector(data, length, type = NULL, ...)
 
-\S4method{gpuVector}{vector,missing}(data, length, type = NULL)
+\S4method{gpuVector}{vector,missing}(data, type = NULL)
 
 \S4method{gpuVector}{missingOrNULL,ANY}(data, length, type = NULL)
 }

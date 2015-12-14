@@ -59,11 +59,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
                          },
                      `*` = gpuMatScalarMult(e1, e2),
                      `/` = gpuMatScalarDiv(e1, e2),
-                     `^` = {
-                         gpuMatScalarPow(e1, e2)
-                         #e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
-                         #gpuMatElemPow(e1, e2)
-                         },
+                     `^` = gpuMatScalarPow(e1, e2),
                      stop("undefined operation")
               )
           },
@@ -102,7 +98,7 @@ setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
                      stop("undefined operation")
               )
           },
-valueClass = "gpuMatrix"
+          valueClass = "gpuMatrix"
 )
 
 #' @title gpuMatrix Arith methods

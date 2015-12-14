@@ -3,7 +3,6 @@
 
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_helpers.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 //using namespace cl;
@@ -29,15 +28,15 @@ void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_,
     // Convert input vectors to cl equivalent
 //    const std::vector<int> A = as<std::vector<int> >(A_);
 //    const std::vector<int> B = as<std::vector<int> >(B_);
-//    std::vector<int> C = as<std::vector<int> >(C_);
-
-    Rcpp::XPtr<dynEigenVec<int> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigenVec<int> > ptrB(ptrB_);
-    Rcpp::XPtr<dynEigenVec<int> > ptrC(ptrC_);
+//    std::vector<int> C = as<std::vector<int> >(C_);    
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > A(ptrA->ptr(), ptrA->length());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > B(ptrB->ptr(), ptrB->length());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > C(ptrC->ptr(), ptrC->length());
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrB(ptrB_);
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > A(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > B(ptrB->data(), ptrB->rows(), 1);
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > C(ptrC->data(), ptrC->rows(), 1);
 
     const int LIST_SIZE = A.size();
     

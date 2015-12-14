@@ -3,7 +3,6 @@
 
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_helpers.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
@@ -32,12 +31,12 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     
 //    std::string kernel_string = as<std::string>(kernel_function_);
 //    const char* kernel_function = kernel_string.data();
-        
-    Rcpp::XPtr<dynEigen<int> > ptrA(ptrA_);
-    Rcpp::XPtr<dynEigen<int> > ptrB(ptrB_);
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->ptr(), ptrA->nrow(), ptrA->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->ptr(), ptrB->nrow(), ptrB->ncol());
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

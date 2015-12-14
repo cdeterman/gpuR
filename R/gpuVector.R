@@ -20,26 +20,28 @@ setGeneric("gpuVector", function(data, length, type=NULL, ...){
 #' @aliases gpuVector,vector
 setMethod('gpuVector', 
           signature(data = 'vector', length = 'missing'),
-          function(data, length, type=NULL){
+          function(data, type=NULL){
               
               if (is.null(type)) type <- typeof(data)
-              if (!missing(length)) {
-                  warning("length argument not currently used when passing
-                          in data")
-              }
               
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
-                                    address=vectorToSEXP(data, 4L))
+                                    address=sexpVecToEigenVecXptr(data, 
+                                                                  length(data),
+                                                                  4L))
                             },
                             float = {
                                 new("fgpuVector", 
-                                    address=vectorToSEXP(data, 6L))
+                                    address=sexpVecToEigenVecXptr(data, 
+                                                                  length(data),
+                                                                  6L))
                             },
                             double = {
                                 new("dgpuVector",
-                                    address = vectorToSEXP(data, 8L))
+                                    address = sexpVecToEigenVecXptr(data,
+                                                                    length(data),
+                                                                    8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -63,15 +65,15 @@ setMethod('gpuVector',
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
-                                    address=emptyVecXptr(length, 4L))
+                                    address=emptyEigenVecXptr(length, 4L))
                             },
                             float = {
                                 new("fgpuVector", 
-                                    address=emptyVecXptr(length, 6L))
+                                    address=emptyEigenVecXptr(length, 6L))
                             },
                             double = {
                                 new("dgpuVector",
-                                    address = emptyVecXptr(length, 8L))
+                                    address = emptyEigenVecXptr(length, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -79,4 +81,4 @@ setMethod('gpuVector',
               
               return(data)
           },
-          valueClass = "gpuMatrix")
+          valueClass = "gpuVector")

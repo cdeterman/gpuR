@@ -59,7 +59,7 @@ VCLtoSEXP(SEXP A)
 
 // empty ViennaCL matrix
 template <typename T>
-SEXP emptyVCL(int nr, int nc)
+SEXP cpp_zero_vclMatrix(int nr, int nc)
 {
     //use only GPUs:
     long id = 0;

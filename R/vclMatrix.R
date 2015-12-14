@@ -62,15 +62,15 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=emptyVCL(nrow, ncol, 4L))
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 4L))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=emptyVCL(nrow, ncol, 6L))
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 6L))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = emptyVCL(nrow, ncol, 8L))
+                                    address = cpp_zero_vclMatrix(nrow, ncol, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -84,41 +84,41 @@ setMethod('vclMatrix',
 
 #' @rdname vclMatrix-methods
 #' @aliases vclMatrix,vector
+#' @aliases vclMatrix,numeric
 setMethod('vclMatrix', 
-          signature(data = 'vector'),
+          signature(data = 'numeric'),
           function(data, nrow, ncol, type=NULL){
               
-              if (is.null(type)) type <- typeof(data)
-              
-              if(typeof(data) == "logical" | typeof(data) == "character"){
-                  stop(paste0(typeof(data), "type is not supported", sep=" "))
-              }
-              
+              if (is.null(type)) type <- getOption("gpuR.default.type")
               device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
               
-              data = switch(type,
-                            integer = {
-                                new("ivclMatrix", 
-                                    address=vectorToMatVCL(data, 
-                                                           nrow, ncol,
-                                                           4L, device_flag))
-                            },
-                            float = {
-                                new("fvclMatrix", 
-                                    address=vectorToMatVCL(data, 
-                                                           nrow, ncol, 
-                                                           6L, device_flag))
-                            },
-                            double = {
-                                new("dvclMatrix",
-                                    address = vectorToMatVCL(data, 
-                                                             nrow, ncol, 
-                                                             8L, device_flag))
-                            },
-                            stop("this is an unrecognized 
-                                 or unimplemented data type")
-              )
+              if(length(data) == 1){
+                  data <- vclMatInitNumScalar(data, nrow, ncol, type, device_flag)
+              }else{
+                  data <- vclMatInitNumVec(data, nrow, ncol, type, device_flag)
+              }
               
               return(data)
           },
           valueClass = "vclMatrix")
+
+#' @rdname vclMatrix-methods
+#' @aliases vclMatrix,integer
+setMethod('vclMatrix',
+          signature(data = 'integer'),
+          function(data, nrow, ncol, type=NULL){
+              
+              if (is.null(type)) type <- "integer"
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              
+              if(length(data) == 1){
+                  data <- vclMatInitIntScalar(data, nrow, ncol, type, device_flag)
+              }else{
+                  data <- vclMatInitIntVec(data, nrow, ncol, type, device_flag)
+              }
+              
+              return(data)
+          },
+          valueClass = "vclMatrix"
+)
+

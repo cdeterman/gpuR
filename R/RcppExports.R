@@ -70,32 +70,32 @@ GetMatElement <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_GetMatElement', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
-vectorToSEXP <- function(ptrA, type_flag) {
-    .Call('gpuR_vectorToSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
+sexpVecToEigenVecXptr <- function(ptrA, size, type_flag) {
+    .Call('gpuR_sexpVecToEigenVecXptr', PACKAGE = 'gpuR', ptrA, size, type_flag)
 }
 
-vectorToMat <- function(ptrA, nr, nc, type_flag) {
-    .Call('gpuR_vectorToMat', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
+sexpVecToEigenXptr <- function(ptrA, nr, nc, type_flag) {
+    .Call('gpuR_sexpVecToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
-matrixToGPUXptr <- function(ptrA, type_flag) {
-    .Call('gpuR_matrixToGPUXptr', PACKAGE = 'gpuR', ptrA, type_flag)
+sexpToEigenXptr <- function(ptrA, nr, nc, type_flag) {
+    .Call('gpuR_sexpToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
-VecXptrToVecSEXP <- function(ptrA, type_flag) {
-    .Call('gpuR_VecXptrToVecSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
+EigenVecXPtrToMapEigenVec <- function(ptrA, type_flag) {
+    .Call('gpuR_EigenVecXPtrToMapEigenVec', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 MatXptrToMatSEXP <- function(ptrA, type_flag) {
     .Call('gpuR_MatXptrToMatSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-emptyVecXptr <- function(size, type_flag) {
-    .Call('gpuR_emptyVecXptr', PACKAGE = 'gpuR', size, type_flag)
+emptyEigenVecXptr <- function(size, type_flag) {
+    .Call('gpuR_emptyEigenVecXptr', PACKAGE = 'gpuR', size, type_flag)
 }
 
-emptyMatXptr <- function(nr, nc, type_flag) {
-    .Call('gpuR_emptyMatXptr', PACKAGE = 'gpuR', nr, nc, type_flag)
+emptyEigenXptr <- function(nr, nc, type_flag) {
+    .Call('gpuR_emptyEigenXptr', PACKAGE = 'gpuR', nr, nc, type_flag)
 }
 
 cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
@@ -132,10 +132,6 @@ truncFloatgpuMat <- function(ptrA_, nr, nc) {
 
 truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
-}
-
-cpp_gpuVecSlice_length <- function(ptrA_, type_flag) {
-    .Call('gpuR_cpp_gpuVecSlice_length', PACKAGE = 'gpuR', ptrA_, type_flag)
 }
 
 cpp_dncol <- function(ptrA) {
@@ -222,8 +218,12 @@ VCLtoMatSEXP <- function(ptrA, type_flag) {
     .Call('gpuR_VCLtoMatSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-emptyVCL <- function(nr, nc, type_flag) {
-    .Call('gpuR_emptyVCL', PACKAGE = 'gpuR', nr, nc, type_flag)
+cpp_zero_vclMatrix <- function(nr, nc, type_flag) {
+    .Call('gpuR_cpp_zero_vclMatrix', PACKAGE = 'gpuR', nr, nc, type_flag)
+}
+
+cpp_scalar_vclMatrix <- function(scalar, nr, nc, type_flag, device_flag) {
+    .Call('gpuR_cpp_scalar_vclMatrix', PACKAGE = 'gpuR', scalar, nr, nc, type_flag, device_flag)
 }
 
 vclSetCol <- function(ptrA, nc, newdata, type_flag) {
@@ -454,8 +454,8 @@ cpp_gpuVector_elem_div <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuVector_elem_div', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
 }
 
-cpp_gpuVector_scalar_div <- function(ptrC, scalar, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_scalar_div', PACKAGE = 'gpuR', ptrC, scalar, device_flag, type_flag))
+cpp_gpuVector_scalar_div <- function(ptrC, scalar, order, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_scalar_div', PACKAGE = 'gpuR', ptrC, scalar, order, device_flag, type_flag))
 }
 
 cpp_gpuVector_elem_pow <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
