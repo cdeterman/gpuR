@@ -5,10 +5,18 @@
     \itemize{
         \item New Features:
         \itemize{
+            \item Internal class structure simplified
             \item Scalar Arith methods (e.g. 2*gpuMatrix)
             \item Unary '-' operator (i.e. -gpuMatrix)
             \item Slice methods to point to subsets of objects
             \item deepcopy method to explicitly copy object contents
+            \item 'log','log10', & 'exp' methods for vector objects
+            \item 'abs' method added for all objects
+            \item 'max' & 'min' method for gpuVector/vclVector objects
+        }
+        \item Features in Progress:
+        \itemize{
+            \item Additional matrix functions (QR-decompsition, SVD)
         }
     }
 }

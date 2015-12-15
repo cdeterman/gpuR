@@ -795,10 +795,10 @@ gpuMatElemLog <- function(A){
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           
+           stop("type not recognized")
+    )
+    return(C)
 }
 
 
@@ -1209,3 +1209,41 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p){
     invisible(D)
 }
 
+
+# GPU Element-Wise Absolute Value
+gpuMatElemAbs <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuMatrix_elem_abs(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuMatrix_elem_abs(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
+               }
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}

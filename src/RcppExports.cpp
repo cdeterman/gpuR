@@ -1084,6 +1084,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuMatrix_elem_abs
+void cpp_gpuMatrix_elem_abs(SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuMatrix_elem_abs(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMatrix_elem_abs(ptrA, ptrB, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuMatrix_axpy
 void cpp_gpuMatrix_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
 RcppExport SEXP gpuR_cpp_gpuMatrix_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
@@ -1589,6 +1602,98 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     cpp_gpuVector_elem_tanh(ptrA, ptrB, device_flag, type_flag);
     return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_elem_log10
+void cpp_gpuVector_elem_log10(SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_elem_log10(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuVector_elem_log10(ptrA, ptrB, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_elem_log
+void cpp_gpuVector_elem_log(SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_elem_log(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuVector_elem_log(ptrA, ptrB, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_elem_log_base
+void cpp_gpuVector_elem_log_base(SEXP ptrA, SEXP ptrB, SEXP base, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_elem_log_base(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP baseSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuVector_elem_log_base(ptrA, ptrB, base, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_elem_exp
+void cpp_gpuVector_elem_exp(SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_elem_exp(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuVector_elem_exp(ptrA, ptrB, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_elem_abs
+void cpp_gpuVector_elem_abs(SEXP ptrA, SEXP ptrB, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_elem_abs(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuVector_elem_abs(ptrA, ptrB, device_flag, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuVector_max
+SEXP cpp_gpuVector_max(SEXP ptrA, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_max(SEXP ptrASEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(cpp_gpuVector_max(ptrA, device_flag, type_flag));
+    return __result;
+END_RCPP
+}
+// cpp_gpuVector_min
+SEXP cpp_gpuVector_min(SEXP ptrA, const int device_flag, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuVector_min(SEXP ptrASEXP, SEXP device_flagSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type device_flag(device_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(cpp_gpuVector_min(ptrA, device_flag, type_flag));
+    return __result;
 END_RCPP
 }
 // cpp_vclVector_axpy

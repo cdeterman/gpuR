@@ -14,7 +14,7 @@ A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 
 
-test_that("gpuVector Single Precision Matrix Element-Wise Trignometry", {
+test_that("gpuVector Single Precision Element-Wise Trignometry", {
     
     has_gpu_skip()
     
@@ -61,7 +61,7 @@ test_that("gpuVector Single Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan float matrix elements not equivalent")  
 })
 
-test_that("gpuVector Double Precision Matrix Element-Wise Trignometry", {
+test_that("gpuVector Double Precision Element-Wise Trignometry", {
     
     has_gpu_skip()
     
@@ -108,53 +108,154 @@ test_that("gpuVector Double Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan double matrix elements not equivalent") 
 })
 
-# 
-# test_that("gpuVector Single Precision Matrix Element-Wise Logs", {
-#     
-#     has_gpu_skip()
-#     
-#     R_log <- log(A)
-#     R_log10 <- log10(A)
-#     R_log2 <- log(A, base=2)
-#     
-#     fgpuA <- gpuVector(A, type="float")
-#     
-#     fgpu_log <- log(fgpuA)
-#     fgpu_log10 <- log10(fgpuA)
-#     fgpu_log2 <- log(fgpuA, base=2)
-#     
-#     expect_is(fgpu_log, "fgpuVector")
-#     expect_is(fgpu_log10, "fgpuVector")
-#     expect_is(fgpu_log2, "fgpuVector")
-#     expect_equal(fgpu_log[,], R_log, tolerance=1e-07, 
-#                  info="log float matrix elements not equivalent")  
-#     expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
-#                  info="log10 float matrix elements not equivalent")  
-#     expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
-#                  info="base log float matrix elements not equivalent") 
-# })
-# 
-# test_that("gpuVector Double Precision Matrix Element-Wise Logs", {
-#     
-#     has_gpu_skip()
-#     
-#     R_log <- log(A)
-#     R_log10 <- log10(A)
-#     R_log2 <- log(A, base=2)
-#     
-#     fgpuA <- gpuVector(A, type="double")
-#     
-#     fgpu_log <- log(fgpuA)
-#     fgpu_log10 <- log10(fgpuA)
-#     fgpu_log2 <- log(fgpuA, base=2)
-#     
-#     expect_is(fgpu_log, "dgpuVector")
-#     expect_is(fgpu_log10, "dgpuVector")
-#     expect_is(fgpu_log2, "dgpuVector")
-#     expect_equal(fgpu_log[,], R_log, tolerance=.Machine$double.eps ^ 0.5, 
-#                  info="log double matrix elements not equivalent")  
-#     expect_equal(fgpu_log10[,], R_log10, tolerance=.Machine$double.eps ^ 0.5, 
-#                  info="log10 double matrix elements not equivalent")  
-#     expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
-#                  info="base log double matrix elements not equivalent") 
-# })
+test_that("gpuVector Single Precision Element-Wise Logs", {
+    
+    has_gpu_skip()
+    
+    R_log <- log(A)
+    R_log10 <- log10(A)
+    R_log2 <- log(A, base=2)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_log <- log(fgpuA)
+    fgpu_log10 <- log10(fgpuA)
+    fgpu_log2 <- log(fgpuA, base=2)
+    
+    expect_is(fgpu_log, "fgpuVector")
+    expect_is(fgpu_log10, "fgpuVector")
+    expect_is(fgpu_log2, "fgpuVector")
+    expect_equal(fgpu_log[,], R_log, tolerance=1e-07, 
+                 info="log float matrix elements not equivalent")  
+    expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
+                 info="log10 float matrix elements not equivalent")  
+    expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
+                 info="base log float matrix elements not equivalent") 
+})
+
+test_that("gpuVector Double Precision Element-Wise Logs", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_log <- log(A)
+    R_log10 <- log10(A)
+    R_log2 <- log(A, base=2)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_log <- log(fgpuA)
+    fgpu_log10 <- log10(fgpuA)
+    fgpu_log2 <- log(fgpuA, base=2)
+    
+    expect_is(fgpu_log, "dgpuVector")
+    expect_is(fgpu_log10, "dgpuVector")
+    expect_is(fgpu_log2, "dgpuVector")
+    expect_equal(fgpu_log[,], R_log, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="log double matrix elements not equivalent")  
+    expect_equal(fgpu_log10[,], R_log10, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="log10 double matrix elements not equivalent")  
+    expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="base log double matrix elements not equivalent") 
+})
+
+test_that("gpuVector Single Precision Exponential", {
+    
+    has_gpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "fgpuVector")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float vector elements not equivalent")  
+})
+
+test_that("gpuVector Double Precision Exponential", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_exp <- exp(fgpuA)
+    
+    expect_is(fgpu_exp, "dgpuVector")
+    expect_equal(fgpu_exp[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double vector elements not equivalent")  
+})
+
+test_that("gpuVector Single Precision Absolute Value", {
+    
+    has_gpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_abs <- abs(fgpuA)
+    
+    expect_is(fgpu_abs, "fgpuVector")
+    expect_equal(fgpu_abs[,], R_abs, tolerance=1e-07, 
+                 info="abs float vector elements not equivalent")  
+})
+
+test_that("gpuVector Double Precision Absolute Value", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_abs <- abs(fgpuA)
+    
+    expect_is(fgpu_abs, "dgpuVector")
+    expect_equal(fgpu_abs[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double vector elements not equivalent")  
+})
+
+test_that("gpuVector Single Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_max <- max(fgpuA)
+    fgpu_min <- min(fgpuA)
+    
+    expect_is(fgpu_max, "numeric")
+    expect_equal(fgpu_max, R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fgpu_min, R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent")  
+})
+
+test_that("gpuVector Double Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_max <- max(fgpuA)
+    fgpu_min <- min(fgpuA)
+    
+    expect_is(fgpu_max, "numeric")
+    expect_equal(fgpu_max, R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+})

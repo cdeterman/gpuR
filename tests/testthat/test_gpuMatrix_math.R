@@ -109,7 +109,6 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan double matrix elements not equivalent") 
 })
 
-
 test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
@@ -187,7 +186,39 @@ test_that("gpuMatrix Double Precision Matrix Exponential", {
     fgpu_exp <- exp(fgpuA)
     
     expect_is(fgpu_exp, "dgpuMatrix")
-    expect_equal(fgpu_exp[,], R_exp, tolerance=1e-07, 
+    expect_equal(fgpu_exp[,], R_exp, tolerance=.Machine$double.eps^0.5, 
                  info="exp double matrix elements not equivalent")  
 })
+
+test_that("gpuMatrix Single Precision Matrix Absolute Value", {
+    
+    has_gpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_abs <- abs(fgpuA)
+    
+    expect_is(fgpu_abs, "fgpuMatrix")
+    expect_equal(fgpu_abs[,], R_abs, tolerance=1e-07, 
+                 info="abs float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix Absolute Value", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_abs <- abs(fgpuA)
+    
+    expect_is(fgpu_abs, "dgpuMatrix")
+    expect_equal(fgpu_abs[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double matrix elements not equivalent")  
+})
+
 

@@ -350,6 +350,10 @@ cpp_gpuMatrix_elem_exp <- function(ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuMatrix_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
 }
 
+cpp_gpuMatrix_elem_abs <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
 cpp_gpuMatrix_axpy <- function(alpha, ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuMatrix_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, device_flag, type_flag))
 }
@@ -500,6 +504,34 @@ cpp_gpuVector_elem_atan <- function(ptrA, ptrB, device_flag, type_flag) {
 
 cpp_gpuVector_elem_tanh <- function(ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuVector_elem_tanh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_gpuVector_elem_log10 <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log10', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_gpuVector_elem_log <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_gpuVector_elem_log_base <- function(ptrA, ptrB, base, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log_base', PACKAGE = 'gpuR', ptrA, ptrB, base, device_flag, type_flag))
+}
+
+cpp_gpuVector_elem_exp <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_gpuVector_elem_abs <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
+cpp_gpuVector_max <- function(ptrA, device_flag, type_flag) {
+    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, device_flag, type_flag)
+}
+
+cpp_gpuVector_min <- function(ptrA, device_flag, type_flag) {
+    .Call('gpuR_cpp_gpuVector_min', PACKAGE = 'gpuR', ptrA, device_flag, type_flag)
 }
 
 cpp_vclVector_axpy <- function(alpha, ptrA, ptrB, device_flag, type_flag) {

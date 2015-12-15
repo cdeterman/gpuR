@@ -138,6 +138,7 @@ setMethod("Math", c(x="gpuMatrix"),
                      `tanh` = gpuMatElemHypTan(x),
                      `log10` = gpuMatElemLog10(x),
                      `exp` = gpuMatElemExp(x),
+                     `abs` = gpuMatElemAbs(x),
                      stop("undefined operation")
               )
           },

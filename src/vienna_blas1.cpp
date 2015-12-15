@@ -17,6 +17,7 @@
 #include "viennacl/vector.hpp"
 #include "viennacl/linalg/prod.hpp"
 #include "viennacl/linalg/inner_prod.hpp"
+#include "viennacl/linalg/maxmin.hpp"
 
 using namespace Rcpp;
 
@@ -676,6 +677,216 @@ cpp_gpuVector_elem_tanh(
     vcl_C = viennacl::linalg::element_tanh(vcl_A);
     
     viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void 
+cpp_gpuVector_elem_exp(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    viennacl::vector<T> vcl_C(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_exp(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void 
+cpp_gpuVector_elem_log10(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    viennacl::vector<T> vcl_C(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_log10(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void 
+cpp_gpuVector_elem_log(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    viennacl::vector<T> vcl_C(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_log(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+void 
+cpp_gpuVector_elem_log_base(
+    SEXP ptrA_, SEXP ptrB_,
+    T base,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    
+    int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    viennacl::vector<T> vcl_B(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_B = viennacl::linalg::element_log10(vcl_A);
+    vcl_B /= log10(base);
+    
+    viennacl::copy(vcl_B, Bm);
+}
+
+template <typename T>
+void 
+cpp_gpuVector_elem_abs(
+    SEXP ptrA_, SEXP ptrC_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    viennacl::vector<T> vcl_C(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_C = viennacl::linalg::element_fabs(vcl_A);
+    
+    viennacl::copy(vcl_C, Cm);
+}
+
+template <typename T>
+T
+cpp_gpuVector_max(
+    SEXP ptrA_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    T max;
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    max = viennacl::linalg::max(vcl_A);
+    
+    return max;
+}
+
+template <typename T>
+T
+cpp_gpuVector_min(
+    SEXP ptrA_,
+    const int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    T max;
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    
+    const int M = Am.size();
+    
+    viennacl::vector<T> vcl_A(M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    max = viennacl::linalg::min(vcl_A);
+    
+    return max;
 }
 
 /*** gpuMatrix Templates ***/
@@ -1362,6 +1573,36 @@ void cpp_gpuMatrix_elem_exp(
     viennacl::copy(vcl_B, Bm);
 }
 
+template <typename T>
+void cpp_gpuMatrix_elem_abs(
+    SEXP ptrA_, SEXP ptrB_,
+    int device_flag)
+{    
+    //use only GPUs:
+    if(device_flag == 0){
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    }
+    
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
+    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
+    
+    int M = Am.cols();
+    int K = Am.rows();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_B(K,M);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_B = viennacl::linalg::element_fabs(vcl_A);
+    
+    viennacl::copy(vcl_B, Bm);
+}
+
 /*** gpuMatrix Functions ***/
 
 // [[Rcpp::export]]
@@ -1729,7 +1970,7 @@ cpp_gpuMatrix_elem_log(
             cpp_gpuMatrix_elem_log<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -1753,7 +1994,7 @@ cpp_gpuMatrix_elem_log_base(
             cpp_gpuMatrix_elem_log_base<double>(ptrA, ptrB, as<double>(base), device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -1776,7 +2017,7 @@ cpp_gpuMatrix_elem_log10(
             cpp_gpuMatrix_elem_log10<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -1799,7 +2040,30 @@ cpp_gpuMatrix_elem_exp(
             cpp_gpuMatrix_elem_exp<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_elem_abs(
+    SEXP ptrA, SEXP ptrB,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_elem_abs<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_elem_abs<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_elem_abs<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -1823,7 +2087,7 @@ cpp_gpuMatrix_axpy(
             cpp_gpuMatrix_axpy<double>(alpha, ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
     
@@ -1846,7 +2110,7 @@ cpp_gpuMatrix_unary_axpy(
             cpp_gpuMatrix_unary_axpy<double>(ptrA, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -2566,7 +2830,7 @@ cpp_vclMatrix_axpy(
             cpp_vclMatrix_axpy<double>(alpha, ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2590,7 +2854,7 @@ void cpp_vclMatrix_elem_prod(
             cpp_vclMatrix_elem_prod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2613,7 +2877,7 @@ void cpp_vclMatrix_elem_div(
             cpp_vclMatrix_elem_div<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2636,7 +2900,7 @@ void cpp_vclMatrix_elem_pow(
             cpp_vclMatrix_elem_pow<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2658,7 +2922,7 @@ void cpp_vclMatrix_elem_sin(
             cpp_vclMatrix_elem_sin<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2680,7 +2944,7 @@ void cpp_vclMatrix_elem_asin(
             cpp_vclMatrix_elem_asin<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2702,7 +2966,7 @@ void cpp_vclMatrix_elem_sinh(
             cpp_vclMatrix_elem_sinh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2725,7 +2989,7 @@ void cpp_vclMatrix_elem_cos(
             cpp_vclMatrix_elem_cos<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2747,7 +3011,7 @@ void cpp_vclMatrix_elem_acos(
             cpp_vclMatrix_elem_acos<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2770,7 +3034,7 @@ void cpp_vclMatrix_elem_cosh(
             cpp_vclMatrix_elem_cosh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2793,7 +3057,7 @@ void cpp_vclMatrix_elem_tan(
             cpp_vclMatrix_elem_tan<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2815,7 +3079,7 @@ void cpp_vclMatrix_elem_atan(
             cpp_vclMatrix_elem_atan<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2837,7 +3101,7 @@ void cpp_vclMatrix_elem_tanh(
             cpp_vclMatrix_elem_tanh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2859,7 +3123,7 @@ void cpp_vclMatrix_elem_log(
             cpp_vclMatrix_elem_log<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2882,7 +3146,7 @@ void cpp_vclMatrix_elem_log10(
             cpp_vclMatrix_elem_log10<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2906,7 +3170,7 @@ void cpp_vclMatrix_elem_log_base(
             cpp_vclMatrix_elem_log_base<double>(ptrA, ptrB, as<double>(base), device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2928,7 +3192,7 @@ void cpp_vclMatrix_elem_exp(
             cpp_vclMatrix_elem_exp<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -2955,7 +3219,7 @@ cpp_gpuVector_axpy(
             cpp_gpuVector_axpy<double>(alpha, ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -2978,7 +3242,7 @@ cpp_gpuVector_unary_axpy(
             cpp_gpuVector_unary_axpy<double>(ptrA, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -2999,7 +3263,7 @@ cpp_gpuVector_inner_prod(
         case 8:
             return wrap(cpp_gpuVector_inner_prod<double>(ptrA, ptrB, device_flag));
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3022,7 +3286,7 @@ cpp_gpuVector_outer_prod(
             cpp_gpuVector_outer_prod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3046,7 +3310,7 @@ cpp_gpuVector_elem_prod(
             cpp_gpuVector_elem_prod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
     
@@ -3070,7 +3334,7 @@ cpp_gpuVector_scalar_prod(
             cpp_gpuVector_scalar_prod<double>(ptrC, scalar, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3093,7 +3357,7 @@ cpp_gpuVector_elem_div(
             cpp_gpuVector_elem_div<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3118,7 +3382,7 @@ cpp_gpuVector_scalar_div(
             cpp_gpuVector_scalar_div<double>(ptrC, scalar, order, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3141,7 +3405,7 @@ cpp_gpuVector_elem_pow(
             cpp_gpuVector_elem_pow<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3165,7 +3429,7 @@ cpp_gpuVector_scalar_pow(
             cpp_gpuVector_scalar_pow<double>(ptrA, scalar, ptrC, order, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3188,7 +3452,7 @@ cpp_gpuVector_elem_sin(
             cpp_gpuVector_elem_sin<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3211,7 +3475,7 @@ cpp_gpuVector_elem_asin(
             cpp_gpuVector_elem_asin<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3234,7 +3498,7 @@ cpp_gpuVector_elem_sinh(
             cpp_gpuVector_elem_sinh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3257,7 +3521,7 @@ cpp_gpuVector_elem_cos(
             cpp_gpuVector_elem_cos<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3280,7 +3544,7 @@ cpp_gpuVector_elem_acos(
             cpp_gpuVector_elem_acos<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3303,7 +3567,7 @@ cpp_gpuVector_elem_cosh(
             cpp_gpuVector_elem_cosh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3327,7 +3591,7 @@ cpp_gpuVector_elem_tan(
             cpp_gpuVector_elem_tan<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3350,7 +3614,7 @@ cpp_gpuVector_elem_atan(
             cpp_gpuVector_elem_atan<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
@@ -3373,11 +3637,165 @@ cpp_gpuVector_elem_tanh(
             cpp_gpuVector_elem_tanh<double>(ptrA, ptrB, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 
+// [[Rcpp::export]]
+void
+cpp_gpuVector_elem_log10(
+    SEXP ptrA, SEXP ptrB, 
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuVector_elem_log10<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuVector_elem_log10<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuVector_elem_log10<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
 
+// [[Rcpp::export]]
+void
+cpp_gpuVector_elem_log(
+    SEXP ptrA, SEXP ptrB, 
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuVector_elem_log<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuVector_elem_log<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuVector_elem_log<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuVector_elem_log_base(
+    SEXP ptrA, SEXP ptrB,
+    SEXP base,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuVector_elem_log_base<int>(ptrA, ptrB, as<int>(base), device_flag);
+            return;
+        case 6:
+            cpp_gpuVector_elem_log_base<float>(ptrA, ptrB, as<float>(base), device_flag);
+            return;
+        case 8:
+            cpp_gpuVector_elem_log_base<double>(ptrA, ptrB, as<double>(base), device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuVector_elem_exp(
+    SEXP ptrA, SEXP ptrB, 
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuVector_elem_exp<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuVector_elem_exp<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuVector_elem_exp<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuVector_elem_abs(
+    SEXP ptrA, SEXP ptrB, 
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuVector_elem_abs<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuVector_elem_abs<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuVector_elem_abs<double>(ptrA, ptrB, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuVector_max(
+    SEXP ptrA,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            return wrap(cpp_gpuVector_max<int>(ptrA, device_flag));
+        case 6:
+            return wrap(cpp_gpuVector_max<float>(ptrA, device_flag));
+        case 8:
+            return wrap(cpp_gpuVector_max<double>(ptrA, device_flag));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuVector_min(
+    SEXP ptrA,
+    const int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            return wrap(cpp_gpuVector_min<int>(ptrA, device_flag));
+        case 6:
+            return wrap(cpp_gpuVector_min<float>(ptrA, device_flag));
+        case 8:
+            return wrap(cpp_gpuVector_min<double>(ptrA, device_flag));
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
 
 /*** vclVector Functions ***/
 

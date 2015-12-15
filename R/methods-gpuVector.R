@@ -181,10 +181,51 @@ setMethod("Math", c(x="gpuVector"),
                      `tan` = gpuVecElemTan(x),
                      `atan` = gpuVecElemArcTan(x),
                      `tanh` = gpuVecElemHypTan(x),
+                     `log10` = gpuVecElemLog10(x),
+                     `exp` = gpuVecElemExp(x),
+                     `abs` = gpuVecElemAbs(x),
                      stop("undefined operation")
               )
           },
           valueClass = "gpuVector"
+)
+
+#' @title gpuVector Logarithms
+#' @param x A gpuVector object
+#' @param base A positive number (complex not currently supported by OpenCL):
+#' the base with respect to which logarithms are computed.  Defaults to the
+#' natural log.
+#' @return A gpuVector object
+#' @export
+setMethod("log", c(x="gpuVector"),
+          function(x, base=NULL)
+          {
+              if(is.null(base)){
+                  gpuVecElemLog(x) 
+              }else{
+                  assert_is_numeric(base)
+                  gpuVecElemLogBase(x, base)
+              }
+              
+          },
+          valueClass = "gpuVector"
+)
+
+#' @title gpuVector Summary methods
+#' @param x A gpuVector object
+#' @return For \code{min} or \code{max}, a length-one vector
+#' @export
+setMethod("Summary", c(x="gpuVector"),
+          function(x, ..., na.rm)
+          {              
+              op = .Generic
+              result <- switch(op,
+                               `max` = gpuVecMax(x),
+                               `min` = gpuVecMin(x),
+                               stop("undefined operation")
+              )
+              return(result)
+          }
 )
 
 # These compare functions need improvement to have
@@ -200,12 +241,10 @@ setMethod("Compare", c(e1="vector", e2="gpuVector"),
               op = .Generic[[1]]
               switch(op,
                      `==` = {e1 == e2[]},
-{
-    stop("undefined operation")
-}
+                     stop("undefined operation")
               )
           },
-valueClass = "vector"
+          valueClass = "vector"
 )
 
 #' @title Compare gpuVector and vector elements

@@ -738,3 +738,264 @@ gpuVecElemHypTan <- function(A){
     )
     return(C)
 }
+
+# GPU Element-Wise Log10
+gpuVecElemLog10 <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1L, 
+               "gpu" = 0L,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length=length(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_elem_log10(A@address,
+                                             C@address,
+                                             device_flag,
+                                             6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuVector_elem_log10(A@address,
+                                              C@address,
+                                              device_flag,
+                                              8L)
+               }
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Element-Wise Natural Log
+gpuVecElemLog <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length = length(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_elem_log(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuVector_elem_log(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
+               }
+           },
+           
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Element-Wise Log Base
+gpuVecElemLogBase <- function(A, base){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length = length(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_elem_log_base(A@address,
+                                                C@address,
+                                                base,
+                                                device_flag,
+                                                6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuVector_elem_log_base(A@address,
+                                                 C@address,
+                                                 base,
+                                                 device_flag,
+                                                 8L)
+               }
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Element-Wise Exponential
+gpuVecElemExp <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1L, 
+               "gpu" = 0L,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length=length(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_elem_exp(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuVector_elem_exp(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
+               }
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Element-Wise Absolute Value
+gpuVecElemAbs <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1L, 
+               "gpu" = 0L,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length=length(A), type=type)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_elem_abs(A@address,
+                                           C@address,
+                                           device_flag,
+                                           6L)
+           },
+           double = {
+               if(!deviceHasDouble()){
+                   stop("Selected GPU does not support double precision")
+               }else{cpp_gpuVector_elem_abs(A@address,
+                                            C@address,
+                                            device_flag,
+                                            8L)
+               }
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Vector maximum
+gpuVecMax <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1L, 
+               "gpu" = 0L,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- switch(type,
+                integer = {
+                    stop("integer not currently implemented")
+                },
+                float = {cpp_gpuVector_max(A@address,
+                                           device_flag,
+                                           6L)
+                },
+                double = {
+                    if(!deviceHasDouble()){
+                        stop("Selected GPU does not support double precision")
+                    }else{cpp_gpuVector_max(A@address,
+                                            device_flag,
+                                            8L)
+                    }
+                },
+                stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Vector minimum
+gpuVecMin <- function(A){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device")$gpuR.default.device,
+               "cpu" = 1L, 
+               "gpu" = 0L,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(A)
+    
+    C <- switch(type,
+                integer = {
+                    stop("integer not currently implemented")
+                },
+                float = {cpp_gpuVector_min(A@address,
+                                           device_flag,
+                                           6L)
+                },
+                double = {
+                    if(!deviceHasDouble()){
+                        stop("Selected GPU does not support double precision")
+                    }else{cpp_gpuVector_min(A@address,
+                                            device_flag,
+                                            8L)
+                    }
+                },
+                stop("type not recognized")
+    )
+    return(C)
+}
