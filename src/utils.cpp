@@ -3,12 +3,14 @@
 
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenVec.hpp"
+
 using namespace Rcpp;
 
 template <typename T>
 int 
 cpp_ncol(SEXP ptrA_)
-{    
+{       
     XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(ptrA_);
     return pMat->cols();
 }
@@ -25,8 +27,8 @@ template <typename T>
 int 
 cpp_gpuVec_size(SEXP ptrA_)
 {
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pMat(ptrA_);
-    return pMat->size();
+    XPtr<dynEigenVec<T> > pMat(ptrA_);
+    return pMat->length();
 }
 
 //template <typename T>

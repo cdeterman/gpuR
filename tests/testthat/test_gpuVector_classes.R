@@ -41,8 +41,9 @@ test_that("double vector class present", {
 
 test_that("fgpuVectorSlice class present", {
     has_gpu_skip()
-    
+#     print("slicing")
     A <- as.numeric(seq(10))
+    S <- A[2:8]
     gpuA <- gpuVector(A, type = "float")
     gpuS <- slice(gpuA, 2L, 8L)
     
@@ -51,18 +52,26 @@ test_that("fgpuVectorSlice class present", {
     expect_is(gpuS, "fgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
     expect_that(typeof(gpuS), matches("float"))
-    expect_equal(gpuS[,], A[2:8], tolerance = 1e-07)
-    expect_equal(length(gpuS), length(A[2:8]))
+    expect_equal(gpuS[,], S, tolerance = 1e-07)
+    expect_equal(length(gpuS), length(S))
     
     
     # check that slice refers back to original vector
+    gpuS[3] <- 42.42
+    S[3] <- 42.42
     
+    expect_equal(gpuS[], S, tolerance = 1e-07)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = 1e-07)),
+                 info = "source fgpuVector not modified by slice")
+    expect_equal(length(gpuA), length(A), 
+                 info = "source fgpuVector length has been changed")
 })
 
 test_that("dgpuVectorSlice class present", {
     has_gpu_skip()
     
     A <- as.numeric(seq(10))
+    S <- A[2:8]
     gpuA <- gpuVector(A, type = "double")
     gpuS <- slice(gpuA, 2L, 8L)
     
@@ -71,11 +80,18 @@ test_that("dgpuVectorSlice class present", {
     expect_is(gpuS, "dgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
     expect_that(typeof(gpuS), matches("double"))
-    expect_equal(gpuS[,], A[2:8], tolerance = .Machine$double.eps^0.5)
-    expect_equal(length(gpuS), length(A[2:8]))
+    expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
+    expect_equal(length(gpuS), length(S))
     
     
     # check that slice refers back to original vector
+    gpuS[3] <- 42.42
+    S[3] <- 42.42
     
+    expect_equal(gpuS[], S, tolerance = .Machine$double.eps^0.5)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = .Machine$double.eps^0.5)),
+                 info = "source dgpuVector not modified by slice")
+    expect_equal(length(gpuA), length(A), 
+                 info = "source dgpuVector length has been changed")
 })
 

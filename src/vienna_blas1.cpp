@@ -4,6 +4,8 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenVec.hpp"
+
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
 
@@ -39,12 +41,12 @@ void cpp_gpuVector_axpy(
     }
     
     const T alpha = as<T>(alpha_);
+
+    XPtr<dynEigenVec<T> > ptrA(A_);
+    XPtr<dynEigenVec<T> > ptrB(B_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(A_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(B_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
     
     int M = Am.size();
     
@@ -70,10 +72,10 @@ cpp_gpuVector_unary_axpy(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
     
     const int M = Am.size();
     
@@ -147,11 +149,11 @@ T cpp_gpuVector_inner_prod(
     
     T C;    
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrB(ptrB_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
     
     const int M = Am.size();
     
@@ -179,12 +181,13 @@ void cpp_gpuVector_outer_prod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
     XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
     
     const int M = Am.size();
@@ -213,14 +216,14 @@ void cpp_gpuVector_elem_prod(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Am.size();
     
@@ -251,8 +254,9 @@ cpp_gpuVector_scalar_prod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Cm.size();
     
@@ -277,14 +281,14 @@ void cpp_gpuVector_elem_div(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }    
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Am.size();
     
@@ -316,8 +320,9 @@ cpp_gpuVector_scalar_div(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Cm.size();
     
@@ -348,13 +353,13 @@ void cpp_gpuVector_elem_pow(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }    
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Am.size();
     
@@ -386,11 +391,11 @@ void cpp_gpuVector_scalar_pow(
     
     const T scalar = as<T>(scalar_);    
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Am.size();
     
@@ -421,11 +426,11 @@ cpp_gpuVector_elem_sin(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -451,11 +456,11 @@ cpp_gpuVector_elem_asin(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -481,11 +486,11 @@ cpp_gpuVector_elem_sinh(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -510,12 +515,12 @@ cpp_gpuVector_elem_cos(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -540,12 +545,12 @@ cpp_gpuVector_elem_acos(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -571,13 +576,11 @@ cpp_gpuVector_elem_cosh(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
-    
-    const int M = Am.size();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();const int M = Am.size();
     
     viennacl::vector<T> vcl_A(M);
     viennacl::vector<T> vcl_C(M);
@@ -601,11 +604,11 @@ cpp_gpuVector_elem_tan(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -631,11 +634,11 @@ cpp_gpuVector_elem_atan(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -661,11 +664,11 @@ cpp_gpuVector_elem_tanh(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -690,12 +693,12 @@ cpp_gpuVector_elem_exp(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -721,11 +724,11 @@ cpp_gpuVector_elem_log10(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -751,11 +754,11 @@ cpp_gpuVector_elem_log(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -772,7 +775,7 @@ cpp_gpuVector_elem_log(
 template <typename T>
 void 
 cpp_gpuVector_elem_log_base(
-    SEXP ptrA_, SEXP ptrB_,
+    SEXP ptrA_, SEXP ptrC_,
     T base,
     int device_flag)
 {    
@@ -782,23 +785,23 @@ cpp_gpuVector_elem_log_base(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrB(ptrB_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     int M = Am.size();
     
     viennacl::vector<T> vcl_A(M);
-    viennacl::vector<T> vcl_B(M);
+    viennacl::vector<T> vcl_C(M);
     
     viennacl::copy(Am, vcl_A); 
     
-    vcl_B = viennacl::linalg::element_log10(vcl_A);
-    vcl_B /= log10(base);
+    vcl_C = viennacl::linalg::element_log10(vcl_A);
+    vcl_C /= log10(base);
     
-    viennacl::copy(vcl_B, Bm);
+    viennacl::copy(vcl_C, Cm);
 }
 
 template <typename T>
@@ -812,12 +815,12 @@ cpp_gpuVector_elem_abs(
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrC(ptrC_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm(ptrC->data(), ptrC->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
     
     const int M = Am.size();
     
@@ -845,9 +848,9 @@ cpp_gpuVector_max(
     
     T max;
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
     
     const int M = Am.size();
     
@@ -873,10 +876,10 @@ cpp_gpuVector_min(
     }
     
     T max;
+
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
     
     const int M = Am.size();
     

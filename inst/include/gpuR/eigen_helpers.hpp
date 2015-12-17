@@ -4,7 +4,7 @@
 
 #include <RcppEigen.h>
 
-//#include "eigen_templates.hpp"
+#include "dynEigenVec.hpp"
 
 using namespace Rcpp;
 
@@ -23,10 +23,9 @@ template <typename T>
 SEXP 
 sexpVecToEigenVecXptr(SEXP A, const int size)
 {
-    Eigen::Matrix<T, Eigen::Dynamic, 1> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, 1>(size, 1);
-    *eigen_mat = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pMat(eigen_mat);
-    return pMat;
+    dynEigenVec<T> *vec = new dynEigenVec<T>(A);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
 }
 
 // convert an XPtr back to a MapMat object to ultimately 
@@ -46,9 +45,9 @@ template <typename T>
 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
 EigenVecXPtrToMapEigenVec(SEXP ptrA_)
 {
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pMat(ptrA_);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapMat(pMat->data(), pMat->rows(), 1);
-    return MapMat;
+    Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA_);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = pVec->data();
+    return MapVec;
 }
 
 // create an empty eigen matrix
@@ -65,11 +64,10 @@ SEXP emptyEigenXptr(int nr, int nc)
 template <typename T>
 SEXP 
 emptyEigenVecXptr(const int size)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, 1> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, 1>(size, 1);
-    *eigen_mat = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(size, 1);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pMat(eigen_mat);
-    return pMat;
+{    
+    dynEigenVec<T> *vec = new dynEigenVec<T>(size);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
 }
 
 

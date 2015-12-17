@@ -27,36 +27,44 @@ template <typename T>
 SEXP
 cpp_deepcopy_gpuVector(SEXP ptrA_)
 {
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A(ptrA->data(), ptrA->rows(), 1);
-    
-    Eigen::Matrix<T, Eigen::Dynamic, 1> *C = new Eigen::Matrix<T, Eigen::Dynamic, 1>(ptrA->rows(), 1);
-    *C = A;
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pMat(C);
-    return pMat;
+    XPtr<dynEigenVec<T> > pA(ptrA_);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> A = pA->data();
+    dynEigenVec<T> *vec = new dynEigenVec<T>(A);
+    XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
 }
-
 
 template <typename T>
 SEXP
 sliceGPUvec(const SEXP ptrA, int start, int end)
 {
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = EigenVecXPtrToMapEigenVec<T>(ptrA);
-    Eigen::Matrix<T, Eigen::Dynamic, 1> *C = new Eigen::Matrix<T, Eigen::Dynamic, 1>(end - start + 1, 1);
-
-    *C = A.segment(start-1, end-1);    
+    XPtr<dynEigenVec<T> > pA(ptrA);
+    dynEigenVec<T> *vec = new dynEigenVec<T>();
+    vec->setPtr(pA->getPtr());
+    vec->setRange(start, end);
+    vec->updateSize();
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pVec(C);
+    XPtr<dynEigenVec<T> > pVec(vec);
     return pVec;
 }
+
 
 template <typename T>
 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
 get_gpu_slice_vec(const SEXP ptrA)
 {
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, 1> > pVec(ptrA);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A(pVec->data(), pVec->size(), 1);
+    XPtr<dynEigenVec<T> > pVec(ptrA);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = pVec->data();
     return A;
+}
+
+template <typename T>
+SEXP
+get_gpu_slice_length(const SEXP ptrA)
+{
+    XPtr<dynEigenVec<T> > pVec(ptrA);
+    int A = pVec->length();
+    return wrap(A);
 }
 
 template <typename T>
@@ -143,6 +151,22 @@ get_gpu_slice_vec(SEXP ptrA, const int type_flag)
     }
 }
 
+
+// [[Rcpp::export]]
+SEXP
+get_gpu_slice_length(SEXP ptrA, const int type_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return get_gpu_slice_length<int>(ptrA);
+        case 6:
+            return get_gpu_slice_length<float>(ptrA);
+        case 8:
+            return get_gpu_slice_length<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+    }
+}
 
 /*** Get/Set Vector Elements ***/
 
