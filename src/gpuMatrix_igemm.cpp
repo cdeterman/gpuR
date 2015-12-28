@@ -3,6 +3,7 @@
 
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenMat.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
@@ -33,13 +34,26 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
 //    const char* kernel_function = kernel_string.data();
 //    const char* kernel_function = (const char*)kernel_string.c_str();
     
-    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
+//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
+//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
+//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
+//    
+    
+    XPtr<dynEigenMat<int> > ptrA(ptrA_);
+    XPtr<dynEigenMat<int> > ptrB(ptrB_);
+    XPtr<dynEigenMat<int> > ptrC(ptrC_);
+    
+    Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
+    
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();

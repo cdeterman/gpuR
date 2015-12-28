@@ -24,6 +24,8 @@ test_that("gpuMatrix Single Precision Matrix multiplication", {
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
     
+#     print(fgpuA[])
+    
     fgpuC <- fgpuA %*% fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")

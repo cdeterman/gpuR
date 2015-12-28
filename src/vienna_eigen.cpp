@@ -2,6 +2,7 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
 // Use OpenCL with ViennaCL
@@ -32,15 +33,25 @@ void cpp_gpu_eigen(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrA(Am);
-    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrQ(Qm);
+//    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrA(Am);
+//    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrQ(Qm);
 //    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > ptreigenvalues(eigenvalues);
     Rcpp::XPtr<dynEigenVec<T> > ptreigenvalues(eigenvalues);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A = *ptrA;
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > &eigen_Q = *ptrQ;
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A = *ptrA;
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > &eigen_Q = *ptrQ;
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &eigen_eigenvalues = *ptreigenvalues;
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > eigen_eigenvalues = ptreigenvalues->data();
+    
+    
+    XPtr<dynEigenMat<T> > ptrA(Am);
+    XPtr<dynEigenMat<T> > ptrQ(Qm);
+    
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refQ = ptrQ->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A(refA.data(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_Q(refQ.data(), ptrQ->nrow(), ptrQ->ncol());
     
     int M = eigen_A.cols();
     int K = eigen_A.rows();

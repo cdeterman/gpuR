@@ -70,6 +70,10 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
+#               print("empty gpuMatrix dims")
+#               print(nrow)
+#               print(ncol)
+              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 

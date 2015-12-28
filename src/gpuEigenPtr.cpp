@@ -12,13 +12,19 @@ template <typename T>
 SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA_)
 {
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > A(ptrA->data(), ptrA->rows(), ptrA->cols());
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *C = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(ptrA->rows(), ptrA->cols());
+//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > A(ptrA->data(), ptrA->rows(), ptrA->cols());
+//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *C = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(ptrA->rows(), ptrA->cols());
+//    
+//    // assign pointer
+//    *C = A;
+//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(C);
+//    return pMat;
     
-    // assign pointer
-    *C = A;
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(C);
+    XPtr<dynEigenMat<T> > pA(ptrA_);
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A = pA->data();
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A);
+    XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
 
@@ -335,11 +341,18 @@ SEXP sexpVecToEigenVecXptr(SEXP ptrA, const int size, const int type_flag)
 template <typename T>
 SEXP sexpVecToEigenXptr(SEXP A, int nr, int nc)
 {
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(nr, nc);
+//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(nr, nc);
+//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
+//    temp.resize(nr, nc);
+//    *eigen_mat = temp;
+//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(eigen_mat);
+//    return pMat;
+    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
     temp.resize(nr, nc);
-    *eigen_mat = temp;
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(eigen_mat);
+    mat->setMatrix(temp);
+    XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
 
@@ -407,11 +420,28 @@ MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return wrap(EigenXPtrToMapEigen<int>(ptrA));
+        {
+            Rcpp::XPtr<dynEigenMat<int> > pMat(ptrA);
+            Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<int>(ptrA);
+            Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), pMat->nrow(), pMat->ncol());
+            return wrap(mapA);
+        }
         case 6:
-            return wrap(EigenXPtrToMapEigen<float>(ptrA));
+        {
+            Rcpp::XPtr<dynEigenMat<float> > pMat(ptrA);
+            Eigen::Ref<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<float>(ptrA);
+//            std::cout << "float refA" << std::endl;
+//            std::cout << refA << std::endl;
+            Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), pMat->nrow(), pMat->ncol());
+            return wrap(mapA);  
+        }
         case 8:
-            return wrap(EigenXPtrToMapEigen<double>(ptrA));
+        {
+            Rcpp::XPtr<dynEigenMat<double> > pMat(ptrA);
+            Eigen::Ref<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<double>(ptrA);
+            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), pMat->nrow(), pMat->ncol());
+            return wrap(mapA); 
+        }
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

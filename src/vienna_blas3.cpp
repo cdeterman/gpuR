@@ -5,6 +5,8 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenMat.hpp"
+
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
 
@@ -35,13 +37,29 @@ cpp_gpuMatrix_gemm(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+    
+//    std::cout << "blas3 output" << std::endl;
+//    std::cout << "A" << std::endl;
+//    std::cout << Am << std::endl;
+//    std::cout << "B" << std::endl;
+//    std::cout << Bm << std::endl;
+//    std::cout << "C" << std::endl;
+//    std::cout << Cm << std::endl;
+
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->nrow(), ptrA->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->nrow(), ptrB->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->nrow(), ptrC->ncol());
     
     const int M = Am.cols();
     const int K = Am.rows();
@@ -58,6 +76,9 @@ cpp_gpuMatrix_gemm(
     vcl_C = viennacl::linalg::prod(vcl_A, vcl_B);
     
     viennacl::copy(vcl_C, Cm);
+    
+//    std::cout << "C out" << std::endl;
+//    std::cout << Cm << std::endl;
 }
 
 template <typename T>
@@ -74,13 +95,17 @@ cpp_gpuMatrix_crossprod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
 
     const int M = Am.cols();
     const int K = Am.rows();
@@ -113,13 +138,17 @@ cpp_gpuMatrix_tcrossprod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
-    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
 
     const int M = Am.cols();
     const int K = Am.rows();

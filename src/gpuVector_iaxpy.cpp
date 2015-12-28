@@ -3,6 +3,7 @@
 
 #include <RcppEigen.h>
 
+#include "gpuR/dynEigenVec.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 using namespace cl;
@@ -34,11 +35,17 @@ void cpp_gpuVector_iaxpy(
 //    std::string kernel_string = as<std::string>(kernel_function_);
 //    const char* kernel_function = kernel_string.data();    
     
-    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrA(ptrA_);
-    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrB(ptrB_);
+//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrA(ptrA_);
+//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrB(ptrB_);
+//    
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
+    XPtr<dynEigenVec<int> > ptrA(ptrA_);
+    XPtr<dynEigenVec<int> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Bm = ptrB->data();
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);

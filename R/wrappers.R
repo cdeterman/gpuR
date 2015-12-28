@@ -127,6 +127,8 @@ gpu_Mat_mult <- function(A, B){
     
     C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
     
+#     print(C[])
+    
     switch(type,
            integer = {
                cpp_gpuMatrix_igemm(A@address,
