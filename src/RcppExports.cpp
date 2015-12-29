@@ -88,6 +88,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// gpuMatBlock
+SEXP gpuMatBlock(SEXP ptrA, int rowStart, int rowEnd, int colStart, int colEnd, const int type_flag);
+RcppExport SEXP gpuR_gpuMatBlock(SEXP ptrASEXP, SEXP rowStartSEXP, SEXP rowEndSEXP, SEXP colStartSEXP, SEXP colEndSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< int >::type rowStart(rowStartSEXP);
+    Rcpp::traits::input_parameter< int >::type rowEnd(rowEndSEXP);
+    Rcpp::traits::input_parameter< int >::type colStart(colStartSEXP);
+    Rcpp::traits::input_parameter< int >::type colEnd(colEndSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(gpuMatBlock(ptrA, rowStart, rowEnd, colStart, colEnd, type_flag));
+    return __result;
+END_RCPP
+}
 // get_gpu_slice_vec
 SEXP get_gpu_slice_vec(SEXP ptrA, const int type_flag);
 RcppExport SEXP gpuR_get_gpu_slice_vec(SEXP ptrASEXP, SEXP type_flagSEXP) {

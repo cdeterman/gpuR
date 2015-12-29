@@ -51,9 +51,22 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
     Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+
+    Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Bm(
+        refB.data(), refB.rows(), refB.cols(),
+        Eigen::OuterStride<>(refB.outerStride())
+    );
+    Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Cm(
+        refC.data(), refC.rows(), refC.cols(),
+        Eigen::OuterStride<>(refC.outerStride())
+    );
     
     int Mdim = Am.cols();
     int Ndim = Bm.rows();
@@ -157,8 +170,8 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     Buffer bufferC = Buffer(context, CL_MEM_WRITE_ONLY, szC * sizeof(int), NULL, &err);
 
     // Copy lists A and B to the memory buffers
-    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, szA * sizeof(int), &Am(0));
-    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, szB * sizeof(int), &Bm(0));
+    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, szA * sizeof(int), Am.data());
+    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, szB * sizeof(int), Bm.data());
 
         // Set arguments to kernel
 //        NDRange localWorkSize = NDRange(16, 16);
@@ -192,5 +205,5 @@ void cpp_gpuMatrix_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
         
     // Read buffer C into a local list        
     err = queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, 
-                                szC * sizeof(int), &Cm(0));
+                                szC * sizeof(int), Cm.data());
 }

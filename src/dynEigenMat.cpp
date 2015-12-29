@@ -6,6 +6,8 @@ template<typename T>
 dynEigenMat<T>::dynEigenMat(SEXP A_)
 {
     A = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A_);
+    orig_nr = A.rows();
+    orig_nc = A.cols();
     nr = A.rows();
     nc = A.cols();
     r_start = 1;
@@ -19,6 +21,8 @@ template<typename T>
 dynEigenMat<T>::dynEigenMat(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &A_)
 {
     A = A_;
+    orig_nr = A.rows();
+    orig_nc = A.cols();
     nr = A.rows();
     nc = A.cols();
     r_start = 1;
@@ -44,6 +48,8 @@ template<typename T>
 dynEigenMat<T>::dynEigenMat(int nr_in, int nc_in)
 {
     A = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Zero(nr_in, nc_in);
+    orig_nr = nr_in;
+    orig_nc = nc_in;
     nr = nr_in;
     nc = nc_in;
     r_start = 1;
@@ -60,6 +66,8 @@ dynEigenMat<T>::dynEigenMat(
     const int col_start, const int col_end)
 {
     A = A_;
+    orig_nr = A.rows();
+    orig_nc = A.cols();
     nr = A.rows();
     nc = A.cols();
     r_start = row_start-1;
@@ -72,7 +80,17 @@ dynEigenMat<T>::dynEigenMat(
 template<typename T>
 Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
 dynEigenMat<T>::data() { 
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr, nr, nc);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr, orig_nr, orig_nc);
+//    std::cout << "row start: " << r_start << std::endl;
+//    std::cout << "col start: " << c_start << std::endl;
+//    std::cout << "row end: " << r_end << std::endl;
+//    std::cout << "col end: " << c_end << std::endl;
+//    std::cout << "row size: " << r_end-r_start + 1 << std::endl;
+//    std::cout << "col size: " << c_end-c_start + 1 << std::endl;
+    
+//    std::cout << "internal full matrix" << std::endl;
+//    std::cout << temp << std::endl;
+    
     Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
 //    std::cout << "internal block" << std::endl;
 //    std::cout << block << std::endl;

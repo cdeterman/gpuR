@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 
 case $host_os in
     darwin* )
-        PKG_LIBS=-framework OpenCL
+        PKG_LIBS="-framework OpenCL"
         echo "Darwin OS"
         CXX="clang++"
         CXXCPP="clang++ -E -std=gnu++11"

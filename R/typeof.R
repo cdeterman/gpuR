@@ -7,7 +7,11 @@ setMethod('typeof', signature(x="gpuMatrix"),
               switch(class(x),
                      "igpuMatrix" = "integer",
                      "fgpuMatrix" = "float",
-                     "dgpuMatrix" = "double")
+                     "dgpuMatrix" = "double",
+                     "igpuMatrixBlock" = "integer",
+                     "fgpuMatrixBlock" = "float",
+                     "dgpuMatrixBlock" = "double",
+                     stop("unrecognized class"))
           })
 
 #' @title Get vclMatrix type
@@ -19,5 +23,6 @@ setMethod('typeof', signature(x="vclMatrix"),
               switch(class(x),
                      "ivclMatrix" = "integer",
                      "fvclMatrix" = "float",
-                     "dvclMatrix" = "double")
+                     "dvclMatrix" = "double",
+                     stop("unrecognized class"))
           })

@@ -141,27 +141,27 @@ setMethod("Arith", c(e1="gpuVector", e2="missing"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Arith methods
-#' @param e1 A gpuVectorSlice object
-#' @param e2 A gpuVectorSlice object
-#' @return A gpuVector object
-#' @export
-setMethod("Arith", c(e1="gpuVectorSlice", e2="gpuVectorSlice"),
-          function(e1, e2)
-          {
-              if(length(e1) != length(e2)){
-                  stop("non-conformable arguments")
-              }
-              
-              op = .Generic[[1]]
-              switch(op,
-                     `+` = gpuSliceVec_axpy(1, e1, e2),
-                     `-` = gpuSliceVec_axpy(-1, e2, e1),
-                     stop("undefined operation")
-              )
-          },
-          valueClass = "gpuVector"
-)
+# #' @title gpuVector Arith methods
+# #' @param e1 A gpuVectorSlice object
+# #' @param e2 A gpuVectorSlice object
+# #' @return A gpuVector object
+# #' @export
+# setMethod("Arith", c(e1="gpuVectorSlice", e2="gpuVectorSlice"),
+#           function(e1, e2)
+#           {
+#               if(length(e1) != length(e2)){
+#                   stop("non-conformable arguments")
+#               }
+#               
+#               op = .Generic[[1]]
+#               switch(op,
+#                      `+` = gpuSliceVec_axpy(1, e1, e2),
+#                      `-` = gpuSliceVec_axpy(-1, e2, e1),
+#                      stop("undefined operation")
+#               )
+#           },
+#           valueClass = "gpuVector"
+# )
 
 #' @title gpuVector Math methods
 #' @param x A gpuVector object
@@ -275,7 +275,11 @@ setMethod('typeof', signature(x="gpuVector"),
               switch(class(x),
                      "igpuVector" = "integer",
                      "fgpuVector" = "float",
-                     "dgpuVector" = "double")
+                     "dgpuVector" = "double",
+                     "igpuVectorSlice" = "integer",
+                     "fgpuVectorSlice" = "float",
+                     "dgpuVectorSlice" = "double",
+                     stop("unrecognized gpuVector class"))
           })
 
 
@@ -366,7 +370,6 @@ setMethod("[<-",
           })
 
 
-#' @export
 setMethod("slice",
           signature(object = "gpuVector", start = "integer", end = "integer"),
           function(object, start, end){

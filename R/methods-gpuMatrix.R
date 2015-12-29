@@ -553,3 +553,30 @@ setMethod("deepcopy", signature(object ="gpuMatrix"),
               
           })
 
+
+setMethod("block",
+          signature(object = "gpuMatrix", 
+                    rowStart = "integer", rowEnd = "integer",
+                    colStart = "integer", colEnd = "integer"),
+          function(object, rowStart, rowEnd, colStart, colEnd){
+              
+              assert_all_are_positive(c(rowStart, rowEnd, colStart, colEnd))
+              assert_all_are_in_range(c(rowStart, rowEnd), lower = 1, upper = nrow(object)+1)
+              assert_all_are_in_range(c(colStart, colEnd), lower = 1, upper = ncol(object)+1)
+              
+              ptr <- switch(typeof(object),
+                            "float" = {
+                                address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 6L)
+                                new("fgpuMatrixBlock", address = address)
+                            },
+                            "double" = {
+                                address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 8L)
+                                new("dgpuMatrixBlock", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+              
+          })
+

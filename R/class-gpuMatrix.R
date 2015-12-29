@@ -107,6 +107,23 @@ setClass("dgpuMatrix",
              TRUE
          })
 
+
+# #' @export
+# setClass("gpuMatrixBlock", 
+#          contains = "gpuMatrix")
+
+#' @export
+setClass("igpuMatrixBlock", 
+         contains = "igpuMatrix")
+
+#' @export
+setClass("fgpuMatrixBlock", 
+         contains = "fgpuMatrix")
+
+#' @export
+setClass("dgpuMatrixBlock", 
+         contains = "dgpuMatrix")
+
 # #' @export
 # setClass('gpuMatrix',
 #          representation(Dim = "integer", Dimnames = "list", "VIRTUAL"),

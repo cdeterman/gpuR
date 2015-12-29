@@ -39,16 +39,15 @@ test_that("double vector class present", {
     expect_equal(length(gpuA), length(A))
 })
 
-test_that("fgpuVectorSlice class present", {
+test_that("CPU fgpuVectorSlice class present", {
     has_gpu_skip()
-#     print("slicing")
+    
     A <- as.numeric(seq(10))
     S <- A[2:8]
     gpuA <- gpuVector(A, type = "float")
     gpuS <- slice(gpuA, 2L, 8L)
     
     expect_is(gpuS, "gpuVector")
-    expect_is(gpuS, "gpuVectorSlice")
     expect_is(gpuS, "fgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
     expect_that(typeof(gpuS), matches("float"))
@@ -67,8 +66,9 @@ test_that("fgpuVectorSlice class present", {
                  info = "source fgpuVector length has been changed")
 })
 
-test_that("dgpuVectorSlice class present", {
+test_that("CPU dgpuVectorSlice class present", {
     has_gpu_skip()
+    has_double_skip()
     
     A <- as.numeric(seq(10))
     S <- A[2:8]
@@ -76,7 +76,6 @@ test_that("dgpuVectorSlice class present", {
     gpuS <- slice(gpuA, 2L, 8L)
     
     expect_is(gpuS, "gpuVector")
-    expect_is(gpuS, "gpuVectorSlice")
     expect_is(gpuS, "dgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
     expect_that(typeof(gpuS), matches("double"))

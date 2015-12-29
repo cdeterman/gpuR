@@ -104,21 +104,21 @@ setClass("dgpuVector",
              TRUE
          })
 
-#' @export
-setClass("gpuVectorSlice", 
-         contains = "gpuVector")
+# #' @export
+# setClass("gpuVectorSlice", 
+#          contains = "gpuVector")
 
 #' @export
 setClass("igpuVectorSlice", 
-         contains = "gpuVectorSlice")
+         contains = "igpuVector")
 
 #' @export
 setClass("fgpuVectorSlice", 
-         contains = "gpuVectorSlice")
+         contains = "fgpuVector")
 
 #' @export
 setClass("dgpuVectorSlice", 
-         contains = "gpuVectorSlice")
+         contains = "dgpuVector")
 
 
 

@@ -7,7 +7,7 @@
 template <class T> 
 class dynEigenMat {
     private:
-        int nr, nc , r_start, r_end, c_start, c_end;
+        int nr, orig_nr, nc, orig_nc, r_start, r_end, c_start, c_end;
         T* ptr;
         
     public:
@@ -44,6 +44,10 @@ class dynEigenMat {
         void updateDim(){
             nr = r_end - r_start + 1;
             nc = c_end - c_start + 1;
+        }
+        void setSourceDim(const int rows, const int cols){
+            orig_nr = rows;
+            orig_nc = cols;
         }
         void setMatrix(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > &Mat){
             A = Mat;

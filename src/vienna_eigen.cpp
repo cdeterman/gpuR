@@ -50,8 +50,17 @@ void cpp_gpu_eigen(
     Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
     Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refQ = ptrQ->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A(refA.data(), ptrA->nrow(), ptrA->ncol());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_Q(refQ.data(), ptrQ->nrow(), ptrQ->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A(refA.data(), ptrA->nrow(), ptrA->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_Q(refQ.data(), ptrQ->nrow(), ptrQ->ncol());
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > eigen_A(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> >eigen_Q(
+        refQ.data(), refQ.rows(), refQ.cols(),
+        Eigen::OuterStride<>(refQ.outerStride())
+    );
     
     int M = eigen_A.cols();
     int K = eigen_A.rows();

@@ -57,3 +57,56 @@ test_that("gpuMatrix vector initializers", {
     expect_error(gpuMatrix(err2, nrow=1, ncol=3, type="double"))
 })
 
+test_that("fgpuMatrixBlock class present", {
+    
+    has_gpu_skip()
+    
+    S <- A[2:8, 2:10]
+    gpuA <- gpuMatrix(A, type = "float")
+    gpuS <- block(gpuA, 2L, 8L, 2L, 10L)
+    
+    expect_is(gpuS, "gpuMatrix")
+    expect_is(gpuS, "fgpuMatrixBlock")
+    expect_is(gpuS@address, "externalptr")
+    expect_that(typeof(gpuS), matches("float"))
+    expect_equal(gpuS[,], S, tolerance = 1e-07)
+    expect_equal(dim(gpuS), dim(S))
+    
+    
+    # check that block refers back to original vector
+    gpuS[3,3] <- 42.42
+    S[3,3] <- 42.42
+    
+    expect_equal(gpuS[], S, tolerance = 1e-07)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = 1e-07)),
+                 info = "source fgpuMatrix not modified by block")
+    expect_equal(dim(gpuA), dim(A), 
+                 info = "source fgpuMatrix dimensions have been changed")
+})
+
+test_that("dgpuMatrixBlock class present", {
+    has_gpu_skip()
+    has_double_skip()
+    
+    S <- A[2:8, 2:10]
+    gpuA <- gpuMatrix(A, type = "double")
+    gpuS <- block(gpuA, 2L, 8L, 2L, 10L)
+    
+    expect_is(gpuS, "gpuMatrix")
+    expect_is(gpuS, "dgpuMatrixBlock")
+    expect_is(gpuS@address, "externalptr")
+    expect_that(typeof(gpuS), matches("double"))
+    expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
+    expect_equal(dim(gpuS), dim(S))
+    
+    
+    # check that block refers back to original vector
+    gpuS[3,3] <- 42.42
+    S[3,3] <- 42.42
+    
+    expect_equal(gpuS[], S, tolerance = .Machine$double.eps^0.5)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = .Machine$double.eps^0.5)),
+                 info = "source dgpuMatrix not modified by block")
+    expect_equal(dim(gpuA), dim(A), 
+                 info = "source dgpuMatrix dimensions been changed")
+})

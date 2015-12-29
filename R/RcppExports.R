@@ -34,6 +34,10 @@ sliceGPUvec <- function(ptrA, start, end, type_flag) {
     .Call('gpuR_sliceGPUvec', PACKAGE = 'gpuR', ptrA, start, end, type_flag)
 }
 
+gpuMatBlock <- function(ptrA, rowStart, rowEnd, colStart, colEnd, type_flag) {
+    .Call('gpuR_gpuMatBlock', PACKAGE = 'gpuR', ptrA, rowStart, rowEnd, colStart, colEnd, type_flag)
+}
+
 get_gpu_slice_vec <- function(ptrA, type_flag) {
     .Call('gpuR_get_gpu_slice_vec', PACKAGE = 'gpuR', ptrA, type_flag)
 }

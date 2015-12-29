@@ -37,6 +37,11 @@ setGeneric("slice", function(object, start, end){
 })
 
 #' @export
+setGeneric("block", function(object, rowStart, rowEnd, colStart, colEnd){
+    standardGeneric("block")
+})
+
+#' @export
 setGeneric("deepcopy", function(object){
     standardGeneric("deepcopy")
 })

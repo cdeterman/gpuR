@@ -42,11 +42,21 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     XPtr<dynEigenMat<int> > ptrA(ptrA_);
     XPtr<dynEigenMat<int> > ptrB(ptrB_);
     
-    Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::MatrixXi> refA = ptrA->data();
+    Eigen::Ref<Eigen::MatrixXi> refB = ptrB->data();
     
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
-    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+
+
+    Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Bm(
+        refB.data(), refB.rows(), refB.cols(),
+        Eigen::OuterStride<>(refB.outerStride())
+    );
     
     const int N = Am.size();
     const int alpha = as<int>(alpha_);
@@ -137,8 +147,8 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
     Buffer bufferB = Buffer(context, CL_MEM_READ_WRITE, N * sizeof(int), NULL, &err);
 
     // Copy lists A and B to the memory buffers
-    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, N * sizeof(int), &Am(0));
-    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm(0));
+    queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, N * sizeof(int), Am.data());
+    queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), Bm.data());
 
     // Set arguments to kernel
     err = kernel.setArg(0, alpha);
@@ -153,5 +163,5 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
 //        err = queue.enqueueNDRangeKernel(kernel, NullRange, global, NullRange);
         
     // Read buffer C into a local list        
-    err = queue.enqueueReadBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), &Bm(0));
+    err = queue.enqueueReadBuffer(bufferB, CL_TRUE, 0, N * sizeof(int), Bm.data());
 }
