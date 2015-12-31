@@ -580,3 +580,57 @@ setMethod("block",
               
           })
 
+
+setMethod("cbind2",
+          signature(x = "gpuMatrix", y = "gpuMatrix"),
+          function(x, y, ...){
+              if(nrow(x) != nrow(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("rbind2",
+          signature(x = "gpuMatrix", y = "gpuMatrix"),
+          function(x, y, ...){
+              if(ncol(x) != ncol(y)){
+                  stop("number of columns of matrices must match")
+              }
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+

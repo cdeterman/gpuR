@@ -8,11 +8,13 @@
             \item Internal class structure simplified
             \item Scalar Arith methods (e.g. 2*gpuMatrix)
             \item Unary '-' operator (i.e. -gpuMatrix)
-            \item Slice methods to point to subsets of objects
+            \item Slice methods to point to vector subsets
+            \item Block methods to point to matrix subsets
             \item deepcopy method to explicitly copy object contents
             \item 'log','log10', & 'exp' methods for vector objects
             \item 'abs' method added for all objects
             \item 'max' & 'min' method for gpuVector/vclVector objects
+            \item 'cbind' & 'rbind' methods for gpuMatrix objects
         }
         \item Features in Progress:
         \itemize{

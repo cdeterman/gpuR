@@ -26,6 +26,14 @@ cpp_deepcopy_gpuMatrix <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_deepcopy_gpuMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
+cpp_cbind_gpuMatrix <- function(ptrA, ptrB, type_flag) {
+    .Call('gpuR_cpp_cbind_gpuMatrix', PACKAGE = 'gpuR', ptrA, ptrB, type_flag)
+}
+
+cpp_rbind_gpuMatrix <- function(ptrA, ptrB, type_flag) {
+    .Call('gpuR_cpp_rbind_gpuMatrix', PACKAGE = 'gpuR', ptrA, ptrB, type_flag)
+}
+
 cpp_deepcopy_gpuVector <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_deepcopy_gpuVector', PACKAGE = 'gpuR', ptrA, type_flag)
 }

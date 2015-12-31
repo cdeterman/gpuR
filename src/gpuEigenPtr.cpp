@@ -72,6 +72,44 @@ gpuMatBlock(
     return pMat;
 }
 
+//cbind gpuMatrix objects
+template <typename T>
+SEXP
+cpp_cbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
+{    
+    XPtr<dynEigenMat<T> > pA(ptrA_);
+    XPtr<dynEigenMat<T> > pB(ptrB_);
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A = pA->data();
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B = pB->data();
+    
+    // initialize new matrix
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> C(A.rows(), A.cols() + B.cols());
+    C << A,B;
+    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(C);
+    XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
+//rbind gpuMatrix objects
+template <typename T>
+SEXP
+cpp_rbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
+{    
+    XPtr<dynEigenMat<T> > pA(ptrA_);
+    XPtr<dynEigenMat<T> > pB(ptrB_);
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A = pA->data();
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B = pB->data();
+    
+    // initialize new matrix
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> C(A.rows()+B.rows(), A.cols());
+    C << A,B;
+    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(C);
+    XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
 
 template <typename T>
 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
@@ -121,7 +159,41 @@ cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)
         case 8:
             return cpp_deepcopy_gpuMatrix<double>(ptrA);
         default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+/*** gpuMatrix cbind ***/
+// [[Rcpp::export]]
+SEXP
+cpp_cbind_gpuMatrix(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_cbind_gpuMatrix<int>(ptrA, ptrB);
+        case 6:
+            return cpp_cbind_gpuMatrix<float>(ptrA, ptrB);
+        case 8:
+            return cpp_cbind_gpuMatrix<double>(ptrA, ptrB);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+/*** gpuMatrix rbind ***/
+// [[Rcpp::export]]
+SEXP
+cpp_rbind_gpuMatrix(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return cpp_rbind_gpuMatrix<int>(ptrA, ptrB);
+        case 6:
+            return cpp_rbind_gpuMatrix<float>(ptrA, ptrB);
+        case 8:
+            return cpp_rbind_gpuMatrix<double>(ptrA, ptrB);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -138,7 +210,7 @@ cpp_deepcopy_gpuVector(SEXP ptrA, const int type_flag)
         case 8:
             return cpp_deepcopy_gpuVector<double>(ptrA);
         default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
 

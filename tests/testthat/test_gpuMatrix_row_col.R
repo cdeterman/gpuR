@@ -9,6 +9,7 @@ ORDER_Y <- 5
 
 # Base R objects
 A <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
+B <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
 
 R <- rowSums(A)
 C <- colSums(A)
@@ -27,7 +28,7 @@ test_that("gpuMatrix Single Precision Column Sums",
     
     expect_is(gpuC, "fgpuVector")
     expect_equal(gpuC[], C, tolerance=1e-06, 
-                 info="float covariance values not equivalent")  
+                 info="float colSums not equivalent")  
 })
 
 test_that("gpuMatrix Double Precision Column Sums", 
@@ -57,7 +58,7 @@ test_that("gpuMatrix Single Precision Row Sums",
     
     expect_is(gpuC, "fgpuVector")
     expect_equal(gpuC[], R, tolerance=1e-06, 
-                 info="float covariance values not equivalent")  
+                 info="float rowSums not equivalent")  
 })
 
 test_that("gpuMatrix Double Precision Row Sums", 
@@ -86,7 +87,7 @@ test_that("gpuMatrix Single Precision Column Means",
     
     expect_is(gpuC, "fgpuVector")
     expect_equal(gpuC[], CM, tolerance=1e-06, 
-                 info="float covariance values not equivalent")  
+                 info="float colMeans not equivalent")  
 })
 
 test_that("gpuMatrix Double Precision Column Means", 
@@ -101,7 +102,7 @@ test_that("gpuMatrix Double Precision Column Means",
     
     expect_is(gpuC, "dgpuVector")
     expect_equal(gpuC[], CM, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double colSums not equivalent")  
+                 info="double colMeans not equivalent")  
 })
 
 
@@ -116,7 +117,7 @@ test_that("gpuMatrix Single Precision Row Means",
     
     expect_is(gpuC, "fgpuVector")
     expect_equal(gpuC[], RM, tolerance=1e-06, 
-                 info="float covariance values not equivalent")  
+                 info="float rowMeans not equivalent")  
 })
 
 test_that("gpuMatrix Double Precision Row Means", 
@@ -131,6 +132,74 @@ test_that("gpuMatrix Double Precision Row Means",
     
     expect_is(gpuC, "dgpuVector")
     expect_equal(gpuC[], RM, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double colSums not equivalent")  
+                 info="double rowMeans not equivalent")  
+})
+
+
+#cbind/rbind tests
+test_that("gpuMatrix Single Precision cbind",
+{
+    has_gpu_skip()
+    
+    C_bind <- cbind(A, B)
+    
+    gpuA <- gpuMatrix(A, type="float")
+    gpuB <- gpuMatrix(B, type="float")
+    
+    gpuC <- cbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "fgpuMatrix")
+    expect_equal(gpuC[], C_bind, tolerance=1e-06, 
+                 info="float cbind not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision cbind",
+{
+    has_gpu_skip()
+    has_double_skip()
+    
+    C_bind <- cbind(A, B)
+    
+    gpuA <- gpuMatrix(A, type="double")
+    gpuB <- gpuMatrix(B, type="double")
+    
+    gpuC <- cbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "dgpuMatrix")
+    expect_equal(gpuC[], C_bind, tolerance=.Machine$double.eps^0.5, 
+                 info="double cbind not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision rbind",
+{
+    has_gpu_skip()
+    
+    C_bind <- rbind(A, B)
+    
+    gpuA <- gpuMatrix(A, type="float")
+    gpuB <- gpuMatrix(B, type="float")
+    
+    gpuC <- rbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "fgpuMatrix")
+    expect_equal(gpuC[], C_bind, tolerance=1e-06, 
+                 info="float rbind not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision rbind",
+{
+    has_gpu_skip()
+    has_double_skip()
+    
+    C_bind <- rbind(A, B)
+    
+    gpuA <- gpuMatrix(A, type="double")
+    gpuB <- gpuMatrix(B, type="double")
+    
+    gpuC <- rbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "dgpuMatrix")
+    expect_equal(gpuC[], C_bind, tolerance=.Machine$double.eps^0.5, 
+                 info="double rbind not equivalent")  
 })
 
