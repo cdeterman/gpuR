@@ -97,6 +97,21 @@ dynEigenMat<T>::data() {
     return block;
 }
 
+template<typename T>
+dynEigenMat<T>::dynEigenMat(T scalar, int nr_in, int nc_in)
+{
+    A = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Constant(nr_in, nc_in, scalar);
+    orig_nr = nr_in;
+    orig_nc = nc_in;
+    nr = nr_in;
+    nc = nc_in;
+    r_start = 1;
+    r_end = nr_in;
+    c_start = 1;
+    c_end = nc_in;
+    ptr = A.data();
+}
+
 template class dynEigenMat<int>;
 template class dynEigenMat<float>;
 template class dynEigenMat<double>;

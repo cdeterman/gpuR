@@ -18,6 +18,7 @@ class dynEigenMat {
         dynEigenMat(SEXP A_);
         dynEigenMat(Eigen::Matrix<T, Eigen::Dynamic,Eigen::Dynamic> &A_);
         dynEigenMat(int nr_in, int nc_in);
+        dynEigenMat(T scalar, int nr_in, int nc_in);
         dynEigenMat(
             Eigen::Matrix<T, Eigen::Dynamic,Eigen::Dynamic> &A_, 
             const int row_start, const int row_end,

@@ -469,6 +469,15 @@ SEXP sexpVecToEigenXptr(SEXP A, int nr, int nc)
     return pMat;
 }
 
+// convert SEXP Vector to Eigen matrix
+template <typename T>
+SEXP initScalarEigenXptr(T A, int nr, int nc)
+{    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A, nr, nc);
+    XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
 // [[Rcpp::export]]
 SEXP
 sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
@@ -485,6 +494,22 @@ sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
     }
 }
 
+
+// [[Rcpp::export]]
+SEXP
+initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            return initScalarEigenXptr<int>(as<int>(scalar), nr, nc);
+        case 6:
+            return initScalarEigenXptr<float>(as<float>(scalar), nr, nc);
+        case 8:
+            return initScalarEigenXptr<double>(as<double>(scalar), nr, nc);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
 
 /*** matrix imports ***/
 

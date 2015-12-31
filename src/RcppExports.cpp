@@ -287,6 +287,20 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// initScalarEigenXptr
+SEXP initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag);
+RcppExport SEXP gpuR_initScalarEigenXptr(SEXP scalarSEXP, SEXP nrSEXP, SEXP ncSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< const int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< const int >::type nc(ncSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(initScalarEigenXptr(scalar, nr, nc, type_flag));
+    return __result;
+END_RCPP
+}
 // sexpToEigenXptr
 SEXP sexpToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag);
 RcppExport SEXP gpuR_sexpToEigenXptr(SEXP ptrASEXP, SEXP nrSEXP, SEXP ncSEXP, SEXP type_flagSEXP) {

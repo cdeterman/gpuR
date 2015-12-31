@@ -142,6 +142,8 @@ test_that("gpuMatrix Single Precision cbind",
     has_gpu_skip()
     
     C_bind <- cbind(A, B)
+    C_scalar <- cbind(1, A)
+    C_scalar2 <- cbind(A,1)
     
     gpuA <- gpuMatrix(A, type="float")
     gpuB <- gpuMatrix(B, type="float")
@@ -151,6 +153,14 @@ test_that("gpuMatrix Single Precision cbind",
     expect_is(gpuC, "fgpuMatrix")
     expect_equal(gpuC[], C_bind, tolerance=1e-06, 
                  info="float cbind not equivalent")  
+    
+    gpu_scalar <- cbind(1, gpuA)
+    gpu_scalar2 <- cbind(gpuA, 1)
+    
+    expect_equal(gpu_scalar[], C_scalar, tolerance=1e-06, 
+                 info="float scalar cbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, tolerance=1e-06, 
+                 info="float scalar cbind not equivalent") 
 })
 
 test_that("gpuMatrix Double Precision cbind",
@@ -159,6 +169,8 @@ test_that("gpuMatrix Double Precision cbind",
     has_double_skip()
     
     C_bind <- cbind(A, B)
+    C_scalar <- cbind(1, A)
+    C_scalar2 <- cbind(A,1)
     
     gpuA <- gpuMatrix(A, type="double")
     gpuB <- gpuMatrix(B, type="double")
@@ -168,6 +180,14 @@ test_that("gpuMatrix Double Precision cbind",
     expect_is(gpuC, "dgpuMatrix")
     expect_equal(gpuC[], C_bind, tolerance=.Machine$double.eps^0.5, 
                  info="double cbind not equivalent")  
+    
+    gpu_scalar <- cbind(1, gpuA)
+    gpu_scalar2 <- cbind(gpuA, 1)
+    
+    expect_equal(gpu_scalar[], C_scalar, tolerance=.Machine$double.eps^0.5, 
+                 info="double scalar cbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, tolerance=.Machine$double.eps^0.5, 
+                 info="double scalar cbind not equivalent") 
 })
 
 test_that("gpuMatrix Single Precision rbind",
@@ -175,6 +195,8 @@ test_that("gpuMatrix Single Precision rbind",
     has_gpu_skip()
     
     C_bind <- rbind(A, B)
+    C_scalar <- rbind(1, A)
+    C_scalar2 <- rbind(A,1)
     
     gpuA <- gpuMatrix(A, type="float")
     gpuB <- gpuMatrix(B, type="float")
@@ -184,6 +206,14 @@ test_that("gpuMatrix Single Precision rbind",
     expect_is(gpuC, "fgpuMatrix")
     expect_equal(gpuC[], C_bind, tolerance=1e-06, 
                  info="float rbind not equivalent")  
+    
+    gpu_scalar <- rbind(1, gpuA)
+    gpu_scalar2 <- rbind(gpuA, 1)
+    
+    expect_equal(gpu_scalar[], C_scalar, tolerance=1e-06, 
+                 info="float scalar rbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, tolerance=1e-06, 
+                 info="float scalar rbind not equivalent") 
 })
 
 test_that("gpuMatrix Double Precision rbind",
@@ -192,6 +222,8 @@ test_that("gpuMatrix Double Precision rbind",
     has_double_skip()
     
     C_bind <- rbind(A, B)
+    C_scalar <- rbind(1, A)
+    C_scalar2 <- rbind(A,1)
     
     gpuA <- gpuMatrix(A, type="double")
     gpuB <- gpuMatrix(B, type="double")
@@ -201,5 +233,13 @@ test_that("gpuMatrix Double Precision rbind",
     expect_is(gpuC, "dgpuMatrix")
     expect_equal(gpuC[], C_bind, tolerance=.Machine$double.eps^0.5, 
                  info="double rbind not equivalent")  
+    
+    gpu_scalar <- rbind(1, gpuA)
+    gpu_scalar2 <- rbind(gpuA, 1)
+    
+    expect_equal(gpu_scalar[], C_scalar, tolerance=.Machine$double.eps^0.5, 
+                 info="double scalar rbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, tolerance=.Machine$double.eps^0.5, 
+                 info="double scalar rbind not equivalent") 
 })
 

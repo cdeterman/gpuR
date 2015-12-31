@@ -607,6 +607,56 @@ setMethod("cbind2",
               return(ptr)
           })
 
+setMethod("cbind2",
+          signature(x = "numeric", y = "gpuMatrix"),
+          function(x, y, ...){
+              
+              x <- gpuMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("cbind2",
+          signature(x = "gpuMatrix", y = "numeric"),
+          function(x, y, ...){
+              
+              y <- gpuMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
 setMethod("rbind2",
           signature(x = "gpuMatrix", y = "gpuMatrix"),
           function(x, y, ...){
@@ -633,4 +683,52 @@ setMethod("rbind2",
               return(ptr)
           })
 
+setMethod("rbind2",
+          signature(x = "numeric", y = "gpuMatrix"),
+          function(x, y, ...){
+              
+              x <- gpuMatrix(x, nrow=1, ncol=ncol(y), type=typeof(y))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
 
+setMethod("rbind2",
+          signature(x = "gpuMatrix", y = "numeric"),
+          function(x, y, ...){
+              
+              y <- gpuMatrix(y, nrow=1, ncol=ncol(x), type=typeof(x))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
+                                new("igpuMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
+                                new("fgpuMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
+                                new("dgpuMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })

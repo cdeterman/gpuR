@@ -94,6 +94,10 @@ sexpVecToEigenXptr <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_sexpVecToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
+initScalarEigenXptr <- function(scalar, nr, nc, type_flag) {
+    .Call('gpuR_initScalarEigenXptr', PACKAGE = 'gpuR', scalar, nr, nc, type_flag)
+}
+
 sexpToEigenXptr <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_sexpToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }

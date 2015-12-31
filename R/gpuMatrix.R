@@ -98,38 +98,104 @@ setMethod('gpuMatrix',
 
 
 #' @rdname gpuMatrix-methods
-#' @aliases gpuMatrix,vector
+#' @aliases gpuMatrix,numeric
 setMethod('gpuMatrix', 
-          signature(data = 'vector'),
+          signature(data = 'numeric'),
           function(data, nrow, ncol, type=NULL){
               
-              if (is.null(type)) type <- typeof(data)
-              
-              if(typeof(data) == "logical" | typeof(data) == "character"){
-                  stop(paste0(typeof(data), "type is not supported", sep=" "))
-              }
-              
+              if (is.null(type)) type <- "double"
+                            
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
-              data = switch(type,
-                            integer = {
-                                new("igpuMatrix", 
-                                    address=sexpVecToEigenXptr(data, nrow, ncol, 4L))
-                            },
-                            float = {
-                                new("fgpuMatrix", 
-                                    address=sexpVecToEigenXptr(data, nrow, ncol, 6L))
-                            },
-                            double = {
-                                new("dgpuMatrix",
-                                    address = sexpVecToEigenXptr(data, nrow, ncol, 8L))
-                            },
-                            stop("this is an unrecognized 
+              if(length(data) > 1){
+                  data = switch(type,
+                                integer = {
+                                    new("igpuMatrix", 
+                                        address=sexpVecToEigenXptr(data, nrow, ncol, 4L))
+                                },
+                                float = {
+                                    new("fgpuMatrix", 
+                                        address=sexpVecToEigenXptr(data, nrow, ncol, 6L))
+                                },
+                                double = {
+                                    new("dgpuMatrix",
+                                        address = sexpVecToEigenXptr(data, nrow, ncol, 8L))
+                                },
+                                stop("this is an unrecognized 
                                  or unimplemented data type")
-              )
+                  )
+              }else{
+                  data = switch(type,
+                                integer = {
+                                    new("igpuMatrix", 
+                                        address=initScalarEigenXptr(as.integer(data), nrow, ncol, 4L))
+                                },
+                                float = {
+                                    new("fgpuMatrix", 
+                                        address=initScalarEigenXptr(data, nrow, ncol, 6L))
+                                },
+                                double = {
+                                    new("dgpuMatrix",
+                                        address = initScalarEigenXptr(data, nrow, ncol, 8L))
+                                },
+                                stop("this is an unrecognized 
+                                 or unimplemented data type")
+                  )
+              }
               
               return(data)
           },
           valueClass = "gpuMatrix")
 
+
+#' @rdname gpuMatrix-methods
+#' @aliases gpuMatrix,integer
+setMethod('gpuMatrix', 
+          signature(data = 'integer'),
+          function(data, nrow, ncol, type=NULL){
+              
+              if (is.null(type)) type <- "integer"
+              
+              assert_is_numeric(nrow)
+              assert_is_numeric(ncol)
+              
+              if(length(data) > 1){
+                  data = switch(type,
+                                integer = {
+                                    new("igpuMatrix", 
+                                        address=sexpVecToEigenXptr(data, nrow, ncol, 4L))
+                                },
+                                float = {
+                                    new("fgpuMatrix", 
+                                        address=sexpVecToEigenXptr(data, nrow, ncol, 6L))
+                                },
+                                double = {
+                                    new("dgpuMatrix",
+                                        address = sexpVecToEigenXptr(data, nrow, ncol, 8L))
+                                },
+                                stop("this is an unrecognized 
+                                 or unimplemented data type")
+                  )
+              }else{
+                  data = switch(type,
+                                integer = {
+                                    new("igpuMatrix", 
+                                        address=initScalarEigenXptr(data, nrow, ncol, 4L))
+                                },
+                                float = {
+                                    new("fgpuMatrix", 
+                                        address=initScalarEigenXptr(data, nrow, ncol, 6L))
+                                },
+                                double = {
+                                    new("dgpuMatrix",
+                                        address = initScalarEigenXptr(data, nrow, ncol, 8L))
+                                },
+                                stop("this is an unrecognized 
+                                 or unimplemented data type")
+                  )
+              }
+              
+              return(data)
+          },
+          valueClass = "gpuMatrix")

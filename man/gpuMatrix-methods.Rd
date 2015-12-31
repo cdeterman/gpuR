@@ -3,12 +3,14 @@
 \docType{methods}
 \name{gpuMatrix}
 \alias{gpuMatrix}
+\alias{gpuMatrix,integer}
+\alias{gpuMatrix,integer-method}
 \alias{gpuMatrix,matrix}
 \alias{gpuMatrix,matrix-method}
 \alias{gpuMatrix,missing}
 \alias{gpuMatrix,missing-method}
-\alias{gpuMatrix,vector}
-\alias{gpuMatrix,vector-method}
+\alias{gpuMatrix,numeric}
+\alias{gpuMatrix,numeric-method}
 \title{Construct a gpuMatrix}
 \usage{
 gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
@@ -17,7 +19,9 @@ gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
 \S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL)
 
-\S4method{gpuMatrix}{vector}(data, nrow, ncol, type = NULL)
+\S4method{gpuMatrix}{numeric}(data, nrow, ncol, type = NULL)
+
+\S4method{gpuMatrix}{integer}(data, nrow, ncol, type = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 
