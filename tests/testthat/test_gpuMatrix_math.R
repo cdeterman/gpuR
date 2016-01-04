@@ -222,3 +222,41 @@ test_that("gpuMatrix Double Precision Matrix Absolute Value", {
 })
 
 
+test_that("gpuMatrix Single Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_max <- max(fgpuA)
+    fgpu_min <- min(fgpuA)
+    
+    expect_is(fgpu_max, "numeric")
+    expect_equal(fgpu_max, R_max, tolerance=1e-07, 
+                 info="max float matrix element not equivalent")  
+    expect_equal(fgpu_min, R_min, tolerance=1e-07, 
+                 info="min float matrix element not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_max <- max(fgpuA)
+    fgpu_min <- min(fgpuA)
+    
+    expect_is(fgpu_max, "numeric")
+    expect_equal(fgpu_max, R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double matrix element not equivalent") 
+    expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double matrix element not equivalent")  
+})

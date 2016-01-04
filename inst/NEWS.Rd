@@ -13,7 +13,7 @@
             \item deepcopy method to explicitly copy object contents
             \item 'log','log10', & 'exp' methods for vector objects
             \item 'abs' method added for all objects
-            \item 'max' & 'min' method for gpuVector/vclVector objects
+            \item 'max' & 'min' method for gpuVector/vclVector & gpuMatrix objects
             \item 'cbind' & 'rbind' methods for gpuMatrix objects
         }
         \item Features in Progress:

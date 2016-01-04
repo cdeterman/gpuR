@@ -32,6 +32,36 @@ cpp_gpuVec_size(SEXP ptrA_)
     return pMat->length();
 }
 
+template <typename T>
+SEXP 
+cpp_gpuMatrix_max(SEXP ptrA_)
+{       
+    XPtr<dynEigenMat<T> > pMat(ptrA_);
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = pMat->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    
+    return wrap(Am.maxCoeff());
+}
+
+template <typename T>
+SEXP 
+cpp_gpuMatrix_min(SEXP ptrA_)
+{       
+    XPtr<dynEigenMat<T> > pMat(ptrA_);
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = pMat->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    
+    return wrap(Am.minCoeff());
+}
+
 //template <typename T>
 //int cpp_gpuVecSlice_length(SEXP ptrA_)
 //{
@@ -121,3 +151,42 @@ cpp_igpuVec_size(SEXP ptrA)
 {
     return cpp_gpuVec_size<int>(ptrA);
 }
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuMatrix_max(
+    SEXP ptrA, 
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            return cpp_gpuMatrix_max<int>(ptrA);
+        case 6:
+            return cpp_gpuMatrix_max<float>(ptrA);
+        case 8:
+            return cpp_gpuMatrix_max<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuMatrix_min(
+    SEXP ptrA, 
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            return cpp_gpuMatrix_min<int>(ptrA);
+        case 6:
+            return cpp_gpuMatrix_min<float>(ptrA);
+        case 8:
+            return cpp_gpuMatrix_min<double>(ptrA);
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+

@@ -578,6 +578,30 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_gpuMatrix_max
+SEXP cpp_gpuMatrix_max(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuMatrix_max(SEXP ptrASEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(cpp_gpuMatrix_max(ptrA, type_flag));
+    return __result;
+END_RCPP
+}
+// cpp_gpuMatrix_min
+SEXP cpp_gpuMatrix_min(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuMatrix_min(SEXP ptrASEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    __result = Rcpp::wrap(cpp_gpuMatrix_min(ptrA, type_flag));
+    return __result;
+END_RCPP
+}
 // vcl_dncol
 int vcl_dncol(SEXP ptrA);
 RcppExport SEXP gpuR_vcl_dncol(SEXP ptrASEXP) {

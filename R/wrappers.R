@@ -1249,3 +1249,41 @@ gpuMatElemAbs <- function(A){
     )
     return(C)
 }
+
+# GPU Matrix maximum
+gpuMatrix_max <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- switch(type,
+                integer = {cpp_gpuMatrix_max(A@address, 4L)},
+                float = {cpp_gpuMatrix_max(A@address, 6L)},
+                double = {
+                    if(!deviceHasDouble()){
+                        stop("Selected GPU does not support double precision")
+                    }else{cpp_gpuMatrix_max(A@address, 8L)
+                    }
+                },
+                stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Matrix minimum
+gpuMatrix_min <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- switch(type,
+                integer = {cpp_gpuMatrix_min(A@address, 4L)},
+                float = {cpp_gpuMatrix_min(A@address, 6L)},
+                double = {
+                    if(!deviceHasDouble()){
+                        stop("Selected GPU does not support double precision")
+                    }else{cpp_gpuMatrix_min(A@address, 8L)
+                    }
+                },
+                stop("type not recognized")
+    )
+    return(C)
+}

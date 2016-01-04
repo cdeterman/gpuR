@@ -732,3 +732,22 @@ setMethod("rbind2",
               
               return(ptr)
           })
+
+#' @title gpuMatrix Summary methods
+#' @param x A gpuMatrix object
+#' @return For \code{min} or \code{max}, a length-one vector
+#' @export
+setMethod("Summary", c(x="gpuMatrix"),
+          function(x, ..., na.rm)
+          {              
+              op = .Generic
+              result <- switch(op,
+                               `max` = gpuMatrix_max(x),
+                               `min` = gpuMatrix_min(x),
+                               stop("undefined operation")
+              )
+              return(result)
+          }
+)
+
+

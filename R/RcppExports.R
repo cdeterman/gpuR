@@ -190,6 +190,14 @@ cpp_igpuVec_size <- function(ptrA) {
     .Call('gpuR_cpp_igpuVec_size', PACKAGE = 'gpuR', ptrA)
 }
 
+cpp_gpuMatrix_max <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_min <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
 vcl_dncol <- function(ptrA) {
     .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
 }
