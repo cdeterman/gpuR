@@ -156,3 +156,12 @@ test_that("gpuMatrix set element access", {
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
 })
+
+test_that("gpuMatrix confirm print doesn't error", {
+    
+    has_gpu_skip()
+   
+    dgpu <- gpuMatrix(D, type="float")
+
+    expect_that(print(dgpu), prints_text("Source: gpuR Matrix"))
+})
