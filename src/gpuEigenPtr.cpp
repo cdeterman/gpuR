@@ -227,7 +227,7 @@ sliceGPUvec(SEXP ptrA, const int start, const int end, const int type_flag)
         case 8:
             return sliceGPUvec<double>(ptrA, start, end);
         default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+            throw Rcpp::exception("unknown type detected for gpuVector object!");
     }
 }
     
@@ -249,7 +249,7 @@ gpuMatBlock(
         case 8:
             return gpuMatBlock<double>(ptrA, rowStart, rowEnd, colStart, colEnd);
         default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 

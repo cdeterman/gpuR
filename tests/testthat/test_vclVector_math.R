@@ -160,3 +160,106 @@ test_that("vclVector Double Precision Matrix Element-Wise Logs", {
     expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="log base 2 double matrix elements not equivalent") 
 })
+
+
+test_that("vclVector Single Precision Exponential", {
+    
+    has_gpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_exp <- exp(fvclA)
+    
+    expect_is(fvcl_exp, "fvclVector")
+    expect_equal(fvcl_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float vector elements not equivalent")  
+})
+
+test_that("vclVector Double Precision Exponential", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_exp <- exp(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_exp <- exp(fvclA)
+    
+    expect_is(fvcl_exp, "dvclVector")
+    expect_equal(fvcl_exp[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double vector elements not equivalent")  
+})
+
+test_that("vclVector Single Precision Absolute Value", {
+    
+    has_gpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "fvclVector")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=1e-07, 
+                 info="abs float vector elements not equivalent")  
+})
+
+test_that("vclVector Double Precision Absolute Value", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "dvclVector")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double vector elements not equivalent")  
+})
+
+test_that("vclVector Single Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fvcl_min, R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent")  
+})
+
+test_that("vclVector Double Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+})
+

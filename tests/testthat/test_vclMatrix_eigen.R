@@ -38,6 +38,10 @@ test_that("vclMatrix Symmetric Single Precision Matrix Eigen Decomposition",
     # need abs as some signs are opposite (not important with eigenvectors)
     expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=1e-05, 
                  info="float eigenvectors not equivalent")  
+    
+    # make sure X not overwritten
+    expect_equal(fgpuX[], X, tolerance=1e-06, 
+                 info="float source matrices not equivalent") 
 })
 
 test_that("vclMatrix Symmetric Double Precision Matrix Eigen Decomposition", 
@@ -60,6 +64,10 @@ test_that("vclMatrix Symmetric Double Precision Matrix Eigen Decomposition",
     # need abs as some signs are opposite (not important with eigenvectors)
     expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=.Machine$double.eps ^ 0.5, 
                  info="float eigenvectors not equivalent")  
+    
+    # make sure X not overwritten
+    expect_equal(fgpuX[], X, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double source matrices not equivalent") 
 })
 
 # test_that("vclMatrix Non-Symmetric Single Precision Matrix Eigen Decomposition",

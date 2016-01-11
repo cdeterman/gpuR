@@ -109,3 +109,17 @@ setClass("dvclMatrix",
              }
              TRUE
          })
+
+
+#' @export
+setClass("ivclMatrixBlock", 
+         contains = "ivclMatrix")
+
+#' @export
+setClass("fvclMatrixBlock", 
+         contains = "fvclMatrix")
+
+#' @export
+setClass("dvclMatrixBlock", 
+         contains = "dvclMatrix")
+

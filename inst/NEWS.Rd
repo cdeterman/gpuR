@@ -6,14 +6,14 @@
         \item New Features:
         \itemize{
             \item Internal class structure simplified
-            \item Scalar Arith methods (e.g. 2*gpuMatrix)
-            \item Unary '-' operator (i.e. -gpuMatrix)
-            \item Slice methods to point to gpuVector subsets
-            \item Block methods to point to gpuMatrix subsets
+            \item Scalar Arith methods (e.g. 2*X) for gpuMatrix/vclMatrix objects
+            \item Unary '-' operator (i.e. -X) for gpuMatrix/vclMatrix objects 
+            \item Slice methods to point to gpuVector/vclVector subsets
+            \item Block methods to point to gpuMatrix/vclMatrix subsets
             \item deepcopy method to explicitly copy object contents
             \item 'log','log10', & 'exp' methods for vector objects
             \item 'abs' method added for all objects
-            \item 'max' & 'min' method for gpuVector/vclVector & gpuMatrix objects
+            \item 'max' & 'min' method for all objects
             \item 'cbind' & 'rbind' methods for gpuMatrix objects
         }
         \item Features in Progress:

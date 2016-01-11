@@ -201,12 +201,92 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
                      `-` = vclMat_axpy(-1, e2, e1),
                      `*` = vclMatElemMult(e1, e2),
                      `/` = vclMatElemDiv(e1,e2),
-{
-    stop("undefined operation")
-}
+                     `^` = vclMatElemPow(e1, e2),
+                     stop("undefined operation")
               )
           },
-valueClass = "vclMatrix"
+          valueClass = "vclMatrix"
+)
+
+#' @title vclMatrix Arith methods
+#' @param e1 A vclMatrix object
+#' @param e2 A numeric object
+#' @return A vclMatrix object
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e2, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
+                         vclMat_axpy(1, e1, e2)
+                     },
+                     `-` = {
+                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
+                         vclMat_axpy(-1, e2, e1)
+                     },
+                     `*` = vclMatScalarMult(e1, e2),
+                     `/` = vclMatScalarDiv(e1, e2),
+                     `^` = vclMatScalarPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @title vclMatrix Arith methods
+#' @param e1 A numeric object
+#' @param e2 A vclMatrix object
+#' @return A vclMatrix object
+#' @export
+setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e1, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         vclMat_axpy(1, e1, e2)
+                     },
+                     `-` = {
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         vclMat_axpy(-1, e2, e1)
+                     },
+                     `*` = vclMatScalarMult(e2, e1),
+                     `/` = {
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         vclMatElemDiv(e1, e2)
+                     },
+                     `^` = {
+                         e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         vclMatElemPow(e1, e2)
+                     },
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @title vclMatrix Arith methods
+#' @param e1 A vclMatrix object
+#' @param e2 missing
+#' @return A vclMatrix object
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="missing"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `-` = vclMatrix_unary_axpy(e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
 )
 
 
@@ -230,6 +310,7 @@ setMethod("Math", c(x="vclMatrix"),
                      `tanh` = vclMatElemHypTan(x),
                      `log10` = vclMatElemLog10(x),
                      `exp` = vclMatElemExp(x),
+                     `abs` = vclMatElemAbs(x),
                      stop("undefined operation")
               )
           },
@@ -425,6 +506,23 @@ setMethod("rowMeans",
           })
 
 
+#' @title vclMatrix Summary methods
+#' @param x A vclMatrix object
+#' @return For \code{min} or \code{max}, a length-one vector
+#' @export
+setMethod("Summary", c(x="vclMatrix"),
+          function(x, ..., na.rm)
+          {              
+              op = .Generic
+              result <- switch(op,
+                               `max` = vclMatMax(x),
+                               `min` = vclMatMin(x),
+                               stop("undefined operation")
+              )
+              return(result)
+          }
+)
+
 #' @title GPU Distance Matrix Computations
 #' @description This function computes and returns the distance matrix 
 #' computed by using the specified distance measure to compute the distances 
@@ -488,5 +586,31 @@ setMethod("deepcopy", signature(object ="vclMatrix"),
                             stop("unrecognized type")
               )
               return(out)
+          })
+
+setMethod("block",
+          signature(object = "vclMatrix", 
+                    rowStart = "integer", rowEnd = "integer",
+                    colStart = "integer", colEnd = "integer"),
+          function(object, rowStart, rowEnd, colStart, colEnd){
+              
+              assert_all_are_positive(c(rowStart, rowEnd, colStart, colEnd))
+              assert_all_are_in_range(c(rowStart, rowEnd), lower = 1, upper = nrow(object)+1)
+              assert_all_are_in_range(c(colStart, colEnd), lower = 1, upper = ncol(object)+1)
+              
+              ptr <- switch(typeof(object),
+                            "float" = {
+                                address <- cpp_vclMatrix_block(object@address, rowStart-1, rowEnd, colStart-1, colEnd, 6L)
+                                new("fvclMatrixBlock", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_vclMatrix_block(object@address, rowStart-1, rowEnd, colStart-1, colEnd, 8L)
+                                new("dvclMatrixBlock", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
               
           })
+

@@ -193,6 +193,76 @@ test_that("vclMatrix Double Precision Matrix Exponential", {
                  info="exp double matrix elements not equivalent")  
 })
 
+test_that("vclMatrix Single Precision Matrix Absolute Value", {
+    
+    has_gpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclMatrix(A, type="float")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "fvclMatrix")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=1e-07, 
+                 info="abs float matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Matrix Absolute Value", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclMatrix(A, type="double")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "dvclMatrix")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double matrix elements not equivalent")  
+})
+
+
+test_that("vclMatrix Single Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclMatrix(A, type="float")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=1e-07, 
+                 info="max float matrix element not equivalent")  
+    expect_equal(fvcl_min, R_min, tolerance=1e-07, 
+                 info="min float matrix element not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Maximum/Minimum", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclMatrix(A, type="double")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double matrix element not equivalent") 
+    expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double matrix element not equivalent")  
+})
 
 
 

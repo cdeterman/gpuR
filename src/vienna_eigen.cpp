@@ -4,6 +4,8 @@
 
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
+#include "gpuR/dynVCLMat.hpp"
+#include "gpuR/dynVCLVec.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -96,19 +98,44 @@ void cpp_vcl_eigen(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(Am);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrQ(Qm);
-    Rcpp::XPtr<viennacl::vector<T> > ptreigenvalues(eigenvalues);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(Am);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrQ(Qm);
     
-    viennacl::matrix<T> vcl_A = *ptrA;
-    viennacl::matrix<T> &vcl_Q = *ptrQ;
-    viennacl::vector<T> &vcl_eigenvalues = *ptreigenvalues;
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
+    Rcpp::XPtr<dynVCLMat<T> > ptrQ(Qm);
+    
+//    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+//    viennacl::matrix<T> vcl_A = static_cast<viennacl::matrix<T> >(A);
+    
+//    viennacl::matrix_range<viennacl::matrix<T> > vcl_Q = ptrQ->data();
+
+    // want copy of A to prevent overwriting original matrix
+    viennacl::matrix<T> vcl_A = ptrA->matrix();
+    // Q were are overwriting so get pointer
+    viennacl::matrix<T> *vcl_Q = ptrQ->getPtr();
+
+//    viennacl::matrix<T> vcl_A = ptrA->matrix();
+//    viennacl::matrix<T> vcl_Q = ptrQ->matrix();
+    
+    // need to find some way to cast without a copy
+    
+//    viennacl::matrix<T> &vcl_Q = static_cast<viennacl::matrix<T>& >(*Q);
+    
+//    Rcpp::XPtr<viennacl::vector<T> > ptreigenvalues(eigenvalues);
+    
+    Rcpp::XPtr<dynVCLVec<T> > ptreigenvalues(eigenvalues);
+    viennacl::vector_range<viennacl::vector<T> > vcl_eigenvalues  = ptreigenvalues->data();
+    
+//    viennacl::matrix<T> vcl_A = *ptrA;
+//    viennacl::matrix<T> &vcl_Q = *ptrQ;
+//    viennacl::vector<T> &vcl_eigenvalues = *ptreigenvalues;
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
     std::vector<T> E(vcl_A.size1());
     
-    viennacl::linalg::detail::qr_method(vcl_A, vcl_Q, D, E, symmetric);
+    viennacl::linalg::detail::qr_method(vcl_A, *vcl_Q, D, E, symmetric);
     
     // copy D into eigenvalues
     viennacl::copy(D, vcl_eigenvalues);

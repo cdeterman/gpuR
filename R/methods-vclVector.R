@@ -123,14 +123,93 @@ setMethod("Arith", c(e1="vclVector", e2="vclVector"),
                      `-` = vclVec_axpy(-1, e2, e1),
                      `*` = vclVecElemMult(e1, e2),
                      `/` = vclVecElemDiv(e1,e2),
-{
-    stop("undefined operation")
-}
+                     `^` = vclVecElemPow(e1, e2),
+                     stop("undefined operation")
               )
           },
-valueClass = "vclVector"
+          valueClass = "vclVector"
 )
 
+#' @title vclVector Arith methods
+#' @param e1 A numeric object
+#' @param e2 A vclVector object
+#' @return A vclVector object
+#' @export
+setMethod("Arith", c(e1="numeric", e2="vclVector"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e1, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         vclVec_axpy(1, e1, e2)
+                     },
+                     `-` = {
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         vclVec_axpy(-1, e2, e1)
+                     },
+                     `*` = vclVecScalarMult(e2, e1),
+                     `/` = {
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         vclVecElemDiv(e1, e2)
+                     },
+                     `^` = {
+                         e1 <- vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         vclVecElemPow(e1, e2)
+                     },
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclVector"
+)
+
+#' @title gpuVector Arith methods
+#' @param e1 A gpuVector object
+#' @param e2 A numeric object
+#' @return A gpuVector object
+#' @export
+setMethod("Arith", c(e1="vclVector", e2="numeric"),
+          function(e1, e2)
+          {
+              assert_is_of_length(e2, 1)
+              
+              op = .Generic[[1]]
+              switch(op,
+                     `+` = {
+                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1))
+                         vclVec_axpy(1, e1, e2)
+                     },
+                     `-` = {
+                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1))
+                         vclVec_axpy(-1, e2, e1)
+                     },
+                     `*` = vclVecScalarMult(e1, e2),
+                     `/` = vclVecScalarDiv(e1, e2),
+                     `^` = vclVecScalarPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclVector"
+)
+
+#' @title vclVector Arith methods
+#' @param e1 A vclVector object
+#' @param e2 missing
+#' @return A vclVector object
+#' @export
+setMethod("Arith", c(e1="vclVector", e2="missing"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              switch(op,
+                     `-` = vclVector_unary_axpy(e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclVector"
+)
 
 #' @title vclVector Math methods
 #' @param x A vclVector object
@@ -152,6 +231,7 @@ setMethod("Math", c(x="vclVector"),
                      `tanh` = vclVecElemHypTan(x),
                      `log10` = vclVecElemLog10(x),
                      `exp` = vclVecElemExp(x),
+                     `abs` = vclVecElemAbs(x),
                      stop("undefined operation")
               )
           },
@@ -179,6 +259,22 @@ setMethod("log", c(x="vclVector"),
           valueClass = "vclVector"
 )
 
+#' @title vclVector Summary methods
+#' @param x A vclVector object
+#' @return For \code{min} or \code{max}, a length-one vector
+#' @export
+setMethod("Summary", c(x="vclVector"),
+          function(x, ..., na.rm)
+          {              
+              op = .Generic
+              result <- switch(op,
+                               `max` = vclVecMax(x),
+                               `min` = vclVecMin(x),
+                               stop("undefined operation")
+              )
+              return(result)
+          }
+)
 
 #' @title Get vclVector type
 #' @param x A vclVector object
@@ -190,7 +286,11 @@ setMethod('typeof', signature(x="vclVector"),
               switch(class(x),
                      "ivclVector" = "integer",
                      "fvclVector" = "float",
-                     "dvclVector" = "double")
+                     "dvclVector" = "double",
+                     "ivclVectorSlice" = "integer",
+                     "fvclVectorSlice" = "float",
+                     "dvclVectorSlice" = "double",
+                     stop("unrecognized vclVector class"))
           })
 
 
@@ -207,3 +307,40 @@ setMethod('length', signature(x = "vclVector"),
               
           }
 )
+
+setMethod("deepcopy", signature(object ="vclVector"),
+          function(object){
+              
+              out <- switch(typeof(object),
+                            "integer" = new("ivclVector",
+                                            address = cpp_deepcopy_vclVector(object@address, 4L)),
+                            "float" = new("fvclVector", 
+                                          address = cpp_deepcopy_vclVector(object@address, 6L)),
+                            "double" = new("dvclVector", 
+                                           address = cpp_deepcopy_vclVector(object@address, 8L)),
+                            stop("unrecognized type")
+              )
+              return(out)
+          })
+
+setMethod("slice",
+          signature(object = "vclVector", start = "integer", end = "integer"),
+          function(object, start, end){
+              
+              assert_all_are_positive(c(start, end))
+              assert_all_are_in_range(c(start, end), lower = 1, upper = length(object)+1)
+              
+              ptr <- switch(typeof(object),
+                            "float" = {
+                                address <- cpp_vclVector_slice(object@address, start, end, 6L)
+                                new("fvclVectorSlice", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_vclVector_slice(object@address, start, end, 8L)
+                                new("dvclVectorSlice", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              return(ptr)
+          })
+

@@ -50,7 +50,7 @@ test_that("Check Single Precision gpuVector deepcopy", {
                  info = "fgpuVector deepcopy not distinct from source")
 })
 
-test_that("Check Double Precision gpuMatrix deepcopy", {
+test_that("Check Double Precision gpuVector deepcopy", {
     
     has_gpu_skip()
     has_double_skip()
@@ -123,6 +123,62 @@ test_that("Check Double Precision gpuMatrix deepcopy", {
     gpuB[1,1] <- 42
     expect_false(isTRUE(all.equal(gpuA[], gpuB[], tolerance = .Machine$double.eps ^ 0.5)),
                  info = "double deepcopy not distinct from source")
+})
+
+test_that("Check Integer vclVector deepcopy", {
+    
+    has_gpu_skip()
+    
+    vclA <- vclVector(AintVec)
+    
+    # deepcopy
+    vclB <- deepcopy(vclA)
+    
+    expect_is(vclB, "ivclVector")
+    expect_is(vclB, class(vclA))
+    expect_equal(vclA[], vclB[],
+                 info="ivclVector deepcopy elements not equivalent")  
+    
+    vclB[1] <- 42L    
+    expect_false(isTRUE(all.equal(vclA[], vclB[])),
+                 info = "ivclVector deepcopy not distinct from source")
+})
+
+test_that("Check Single Precision vclVector deepcopy", {
+    
+    has_gpu_skip()
+    
+    vclA <- vclVector(A, type="float")
+    
+    # deepcopy
+    vclB <- deepcopy(vclA)
+    
+    expect_is(vclB, class(vclA))
+    expect_equal(vclA[], vclB[], tolerance=1e-07, 
+                 info="float deepcopy vclVector elements not equivalent")  
+    
+    vclB[1] <- 42
+    expect_false(isTRUE(all.equal(vclA[], vclB[], tolerance = 1e-07)),
+                 info = "fvclVector deepcopy not distinct from source")
+})
+
+test_that("Check Double Precision vclVector deepcopy", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    vclA <- vclVector(A, type="double")
+    
+    # deepcopy
+    vclB <- deepcopy(vclA)
+    
+    expect_is(vclB, class(vclA))
+    expect_equal(vclA[], vclB[], tolerance=.Machine$double.eps ^ 0.5, 
+                 info="fvclVector deepcopy elements not equivalent")  
+    
+    vclB[1] <- 42
+    expect_false(isTRUE(all.equal(vclA[], vclB[], tolerance = .Machine$double.eps ^ 0.5)),
+                 info = "dvclVector deepcopy not distinct from source")
 })
 
 test_that("Check Integer vclMatrix deepcopy", {

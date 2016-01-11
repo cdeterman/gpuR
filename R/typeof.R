@@ -24,5 +24,8 @@ setMethod('typeof', signature(x="vclMatrix"),
                      "ivclMatrix" = "integer",
                      "fvclMatrix" = "float",
                      "dvclMatrix" = "double",
+                     "ivclMatrixBlock" = "integer",
+                     "fvclMatrixBlock" = "float",
+                     "dvclMatrixBlock" = "double",
                      stop("unrecognized class"))
           })

@@ -59,6 +59,8 @@ test_that("gpuVector integer subtraction", {
     expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
 
+# Single Precision Tests
+
 test_that("gpuVector Single precision Additon", {
     
     has_gpu_skip()
@@ -301,7 +303,7 @@ test_that("gpuVector Single precision outer product", {
 
 # Double Precision Tests
 
-test_that("gpuVector Double precision vector additonal", {
+test_that("gpuVector Double Precision Vector Additon", {
     
     has_gpu_skip()
     has_double_skip()

@@ -32,15 +32,15 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=matrixToVCL(data, 4L))
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 4L))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=matrixToVCL(data, 6L))
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 6L))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = matrixToVCL(data, 8L))
+                                    address = cpp_sexp_mat_to_vclMatrix(data, 8L))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

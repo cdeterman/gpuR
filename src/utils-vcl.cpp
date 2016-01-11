@@ -2,29 +2,43 @@
 
 #include <RcppEigen.h>
 
-#include "gpuR/vcl_helpers.hpp"
+//#include "gpuR/vcl_helpers.hpp"
+#include "gpuR/dynVCLMat.hpp"
+#include "gpuR/dynVCLVec.hpp"
 
 using namespace Rcpp;
 
 template <typename T>
 int vcl_ncol(SEXP ptrA_)
 {
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-    return ptrA->size2();
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
+    return pA.size2();
+    
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    return ptrA->size2();
 }
 
 template <typename T>
 int vcl_nrow(SEXP ptrA_)
 {
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-    return ptrA->size1();
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
+    return pA.size1();
+    
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    return ptrA->size1();
 }
 
 template <typename T>
 int vcl_gpuVec_size(SEXP ptrA_)
 {
-    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
-    return ptrA->size();
+    Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+    viennacl::vector_range<viennacl::vector<T> > pA  = ptrA->data();
+    return pA.size();
+    
+//    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
+//    return ptrA->size();
 }
 
 // [[Rcpp::export]]

@@ -99,6 +99,10 @@ setMethod("eigen", signature(x="gpuMatrix"),
 setMethod("eigen", signature(x="vclMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
           {
+              if(is(x, "vclMatrixBlock")){
+                  stop("vclMatrixBlock not currently supported")
+              }
+              
               device_flag <- 
                   switch(options("gpuR.default.device")$gpuR.default.device,
                          "cpu" = 1, 

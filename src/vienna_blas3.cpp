@@ -6,6 +6,7 @@
 #include <RcppEigen.h>
 
 #include "gpuR/dynEigenMat.hpp"
+#include "gpuR/dynVCLMat.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -217,9 +218,10 @@ cpp_gpuMatrix_gemm(
             cpp_gpuMatrix_gemm<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
+
 
 // [[Rcpp::export]]
 void
@@ -240,7 +242,7 @@ cpp_gpuMatrix_crossprod(
             cpp_gpuMatrix_crossprod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -264,7 +266,7 @@ cpp_gpuMatrix_tcrossprod(
             cpp_gpuMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -284,11 +286,19 @@ void cpp_vclMatrix_gemm(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
 
-    *ptrC = viennacl::linalg::prod(*ptrA, *ptrB);
+    C = viennacl::linalg::prod(A, B);
 }
 
 template <typename T>
@@ -305,11 +315,19 @@ cpp_vclMatrix_crossprod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
-    *ptrC = viennacl::linalg::prod(trans(*ptrA), *ptrB);
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
+    
+    C = viennacl::linalg::prod(trans(A), B);
 }
 
 template <typename T>
@@ -326,11 +344,19 @@ cpp_vclMatrix_tcrossprod(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     }
     
-    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
+//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
-    *ptrC = viennacl::linalg::prod(*ptrA, trans(*ptrB));
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
+    
+    C = viennacl::linalg::prod(A, trans(B));
 }
 
 /*** vclMatrix Functions ***/
@@ -354,7 +380,7 @@ cpp_vclMatrix_gemm(
             cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -378,7 +404,7 @@ cpp_vclMatrix_crossprod(
             cpp_vclMatrix_crossprod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -402,7 +428,7 @@ cpp_vclMatrix_tcrossprod(
             cpp_vclMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 

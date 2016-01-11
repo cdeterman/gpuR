@@ -39,7 +39,7 @@ test_that("double vector class present", {
     expect_equal(length(gpuA), length(A))
 })
 
-test_that("CPU fgpuVectorSlice class present", {
+test_that("fgpuVectorSlice class present", {
     has_gpu_skip()
     
     A <- as.numeric(seq(10))
@@ -66,7 +66,7 @@ test_that("CPU fgpuVectorSlice class present", {
                  info = "source fgpuVector length has been changed")
 })
 
-test_that("CPU dgpuVectorSlice class present", {
+test_that("dgpuVectorSlice class present", {
     has_gpu_skip()
     has_double_skip()
     
