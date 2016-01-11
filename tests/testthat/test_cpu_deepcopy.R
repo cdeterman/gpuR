@@ -12,7 +12,8 @@ ORDER <- 4
 # Base R objects
 Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
-
+Avec <- rnorm(ORDER)
+AintVec <- seq.int(ORDER)
 
 test_that("CPU Check Integer gpuVector deepcopy", {
     
