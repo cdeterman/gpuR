@@ -11,7 +11,7 @@ v <- rnorm(100)
 vi <- seq.int(100)
 
 
-test_that("vclMatrix integer class initializer" ,{
+test_that("CPU vclMatrix integer class initializer" ,{
     
     has_cpu_skip()
     
@@ -26,7 +26,7 @@ test_that("vclMatrix integer class initializer" ,{
     expect_equal(typeof(vclA), "integer")
 })
 
-test_that("vclMatrix float class initializer" ,{
+test_that("CPU vclMatrix float class initializer" ,{
     
     has_cpu_skip()
     
@@ -41,7 +41,7 @@ test_that("vclMatrix float class initializer" ,{
     expect_equal(typeof(vclD), "float")
 })
 
-test_that("vclMatrix double class initializer" ,{
+test_that("CPU vclMatrix double class initializer" ,{
     
     has_cpu_skip()
     
@@ -56,7 +56,7 @@ test_that("vclMatrix double class initializer" ,{
     expect_equal(typeof(vclD), "double")
 })
 
-test_that("vclMatrix vector initializers", {
+test_that("CPU vclMatrix vector initializers", {
     
     has_cpu_skip()
     
@@ -78,6 +78,31 @@ test_that("vclMatrix vector initializers", {
     expect_error(vclMatrix(err, nrow=1, ncol=2, type="double"))
     expect_error(vclMatrix(err, nrow=1, ncol=2))
     expect_error(vclMatrix(err2, nrow=1, ncol=3, type="double"))
+})
+
+test_that("CPU vclMatrix scalar initializers", {
+    
+    has_cpu_skip()
+    
+    v <- 3
+    vi <- 4L
+    A <- matrix(v, nrow=5, ncol=5)
+    Ai <- matrix(vi, nrow=2, ncol=7)
+    
+    vclA <- vclMatrix(v, nrow=5, ncol=5, type="double")
+    ivclA <- vclMatrix(vi, nrow=2, ncol=7, type="integer")
+    
+    expect_error(vclMatrix(v, nrow=5, ncol=5, type="integer"))
+    
+    expect_equivalent(vclA[], A,
+                      "scalar double elements not equivalent")
+    expect_equal(dim(A), dim(vclA),
+                 "scalar double dimensions not equivalent")
+    expect_is(ivclA, "ivclMatrix")
+    expect_equivalent(ivclA[], Ai,
+                      "scalar integer elements not equivalent")
+    expect_equal(dim(Ai), dim(ivclA),
+                 "scalar integer dimensions not equivalent")
 })
 
 options(gpuR.default.device = "gpu")

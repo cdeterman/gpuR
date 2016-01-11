@@ -16,6 +16,7 @@ A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 E <- rnorm(ORDER-1)
 
+# Single Precision Tests
 
 test_that("CPU gpuVector comparison operator", {
     
@@ -68,7 +69,7 @@ test_that("CPU gpuVector integer subtraction", {
     expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
 
-test_that("gpuVector Single precision Additon", {
+test_that("CPU gpuVector Single precision Additon", {
     
     has_cpu_skip()
     
@@ -86,7 +87,7 @@ test_that("gpuVector Single precision Additon", {
               info="is not a fgpuVector object")
 })
 
-test_that("gpuVector Single Precision Scalar Addition", {
+test_that("CPU gpuVector Single Precision Scalar Addition", {
     
     has_cpu_skip()
     
@@ -106,7 +107,7 @@ test_that("gpuVector Single Precision Scalar Addition", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single precision subtraction", {
+test_that("CPU gpuVector Single precision subtraction", {
     
     has_cpu_skip()
     
@@ -129,7 +130,7 @@ test_that("gpuVector Single precision subtraction", {
               info = "not a fgpuVector object")
 })
 
-test_that("gpuVector Single Precision Scalar Matrix Subtraction", {
+test_that("CPU gpuVector Single Precision Scalar Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -149,7 +150,7 @@ test_that("gpuVector Single Precision Scalar Matrix Subtraction", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single Precision Unary Vector Subtraction", {
+test_that("CPU gpuVector Single Precision Unary Vector Subtraction", {
     
     has_cpu_skip()
     
@@ -164,7 +165,7 @@ test_that("gpuVector Single Precision Unary Vector Subtraction", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single Precision Element-Wise Multiplication", {
+test_that("CPU gpuVector Single Precision Element-Wise Multiplication", {
     
     has_cpu_skip()
     
@@ -182,7 +183,7 @@ test_that("gpuVector Single Precision Element-Wise Multiplication", {
     expect_error(fvclA * fvclE)
 })
 
-test_that("gpuVector Single Precision Scalar Vector Multiplication", {
+test_that("CPU gpuVector Single Precision Scalar Vector Multiplication", {
     
     has_cpu_skip()
     
@@ -202,7 +203,7 @@ test_that("gpuVector Single Precision Scalar Vector Multiplication", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single Precision Vector Element-Wise Division", {
+test_that("CPU gpuVector Single Precision Vector Element-Wise Division", {
     
     has_cpu_skip()
     
@@ -220,7 +221,7 @@ test_that("gpuVector Single Precision Vector Element-Wise Division", {
     expect_error(fvclA * fvclE)
 })
 
-test_that("gpuVector Single Precision Scalar Division", {
+test_that("CPU gpuVector Single Precision Scalar Division", {
     
     has_cpu_skip()
     
@@ -240,7 +241,7 @@ test_that("gpuVector Single Precision Scalar Division", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single Precision Vector Element-Wise Power", {
+test_that("CPU gpuVector Single Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
     
@@ -258,7 +259,7 @@ test_that("gpuVector Single Precision Vector Element-Wise Power", {
     expect_error(fvclA * fvclE)
 })
 
-test_that("gpuVector Single Precision Scalar Power", {
+test_that("CPU gpuVector Single Precision Scalar Power", {
     
     has_cpu_skip()
     
@@ -278,7 +279,7 @@ test_that("gpuVector Single Precision Scalar Power", {
                  info="float vector elements not equivalent") 
 })
 
-test_that("gpuVector Single precision inner product", {
+test_that("CPU gpuVector Single precision inner product", {
     
     has_cpu_skip()
     
@@ -293,7 +294,7 @@ test_that("gpuVector Single precision inner product", {
                  info="float vector inner product elements not equivalent")
 })
 
-test_that("gpuVector Single precision outer product", {
+test_that("CPU gpuVector Single precision outer product", {
     
     has_cpu_skip()
     
@@ -310,7 +311,7 @@ test_that("gpuVector Single precision outer product", {
 
 # Double Precision Tests
 
-test_that("gpuVector Double precision vector additonal", {
+test_that("CPU gpuVector Double precision vector additonal", {
     
     has_cpu_skip()
     
@@ -329,7 +330,7 @@ test_that("gpuVector Double precision vector additonal", {
               info="is not a dgpuVector object")
 })
 
-test_that("gpuVector Double Precision Scalar Addition", {
+test_that("CPU gpuVector Double Precision Scalar Addition", {
     
     has_cpu_skip()
     
@@ -349,7 +350,7 @@ test_that("gpuVector Double Precision Scalar Addition", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double precision subtraction", {
+test_that("CPU gpuVector Double precision subtraction", {
     
     has_cpu_skip()
     
@@ -367,7 +368,7 @@ test_that("gpuVector Double precision subtraction", {
               info="is not a dgpuVector object")
 })
 
-test_that("gpuVector Double Precision Scalar Matrix Subtraction", {
+test_that("CPU gpuVector Double Precision Scalar Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -387,7 +388,7 @@ test_that("gpuVector Double Precision Scalar Matrix Subtraction", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double Precision Unary Vector Subtraction", {
+test_that("CPU gpuVector Double Precision Unary Vector Subtraction", {
     
     has_cpu_skip()
     
@@ -402,7 +403,7 @@ test_that("gpuVector Double Precision Unary Vector Subtraction", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double Precision Vector Element-Wise Multiplication", {
+test_that("CPU gpuVector Double Precision Vector Element-Wise Multiplication", {
     
     has_cpu_skip()
     
@@ -421,7 +422,7 @@ test_that("gpuVector Double Precision Vector Element-Wise Multiplication", {
     expect_error(dvclA * dvclE)
 })
 
-test_that("gpuVector Double Precision Scalar Multiplication", {
+test_that("CPU gpuVector Double Precision Scalar Multiplication", {
     
     has_cpu_skip()
     
@@ -441,7 +442,7 @@ test_that("gpuVector Double Precision Scalar Multiplication", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double Precision Vector Element-Wise Division", {
+test_that("CPU gpuVector Double Precision Vector Element-Wise Division", {
     
     has_cpu_skip()
     
@@ -460,7 +461,7 @@ test_that("gpuVector Double Precision Vector Element-Wise Division", {
     expect_error(dvclA * dvclE)
 })
 
-test_that("gpuVector Double Precision Scalar Division", {
+test_that("CPU gpuVector Double Precision Scalar Division", {
     
     has_cpu_skip()
     
@@ -480,7 +481,7 @@ test_that("gpuVector Double Precision Scalar Division", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double Precision Vector Element-Wise Power", {
+test_that("CPU gpuVector Double Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
     
@@ -498,7 +499,7 @@ test_that("gpuVector Double Precision Vector Element-Wise Power", {
     expect_error(fvclA * fvclE)
 })
 
-test_that("gpuVector Double Precision Scalar Power", {
+test_that("CPU gpuVector Double Precision Scalar Power", {
     
     has_cpu_skip()
     
@@ -518,7 +519,7 @@ test_that("gpuVector Double Precision Scalar Power", {
                  info="double vector elements not equivalent") 
 })
 
-test_that("gpuVector Double precision inner product", {
+test_that("CPU gpuVector Double precision inner product", {
     
     has_cpu_skip()
     
@@ -534,7 +535,7 @@ test_that("gpuVector Double precision inner product", {
                  info="double vector inner product elements not equivalent")
 })
 
-test_that("gpuVector double precision outer product", {
+test_that("CPU gpuVector double precision outer product", {
     
     has_cpu_skip()
     

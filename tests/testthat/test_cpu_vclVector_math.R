@@ -18,7 +18,7 @@ A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 
 
-test_that("vclVector Single Precision Matrix Element-Wise Trignometry", {
+test_that("CPU vclVector Single Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
     
     Sin <- sin(A)
@@ -64,7 +64,7 @@ test_that("vclVector Single Precision Matrix Element-Wise Trignometry", {
                  info="hyperbolic tan float matrix elements not equivalent")  
 })
 
-test_that("vclVector Double Precision Matrix Element-Wise Trignometry", {
+test_that("CPU vclVector Double Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
 
     Sin <- sin(A)
@@ -111,7 +111,7 @@ test_that("vclVector Double Precision Matrix Element-Wise Trignometry", {
 })
 
 
-test_that("vclVector Single Precision Matrix Element-Wise Logs", {
+test_that("CPU vclVector Single Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
     R_log <- log(A)
@@ -135,7 +135,7 @@ test_that("vclVector Single Precision Matrix Element-Wise Logs", {
                  info="base log float matrix elements not equivalent") 
 })
 
-test_that("vclVector Double Precision Matrix Element-Wise Logs", {
+test_that("CPU vclVector Double Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
     R_log <- log(A)
@@ -157,6 +157,105 @@ test_that("vclVector Double Precision Matrix Element-Wise Logs", {
                  info="log10 double matrix elements not equivalent")  
     expect_equal(fgpu_log2[,], R_log2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="log base 2 double matrix elements not equivalent") 
+})
+
+
+test_that("CPU vclVector Single Precision Exponential", {
+    
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_exp <- exp(fvclA)
+    
+    expect_is(fvcl_exp, "fvclVector")
+    expect_equal(fvcl_exp[,], R_exp, tolerance=1e-07, 
+                 info="exp float vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Double Precision Exponential", {
+    
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_exp <- exp(fvclA)
+    
+    expect_is(fvcl_exp, "dvclVector")
+    expect_equal(fvcl_exp[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Single Precision Absolute Value", {
+    
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "fvclVector")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=1e-07, 
+                 info="abs float vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Double Precision Absolute Value", {
+    
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_abs <- abs(fvclA)
+    
+    expect_is(fvcl_abs, "dvclVector")
+    expect_equal(fvcl_abs[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Single Precision Maximum/Minimum", {
+    
+    has_cpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclVector(A, type="float")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fvcl_min, R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent")  
+})
+
+test_that("CPU vclVector Double Precision Maximum/Minimum", {
+    
+    has_cpu_skip()
+    
+    R_max <- max(A)
+    R_min <- min(A)
+    
+    fvclA <- vclVector(A, type="double")
+    
+    fvcl_max <- max(fvclA)
+    fvcl_min <- min(fvclA)
+    
+    expect_is(fvcl_max, "numeric")
+    expect_equal(fvcl_max, R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
 })
 
 options(gpuR.default.device = "gpu")

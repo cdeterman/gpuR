@@ -8,7 +8,7 @@ set.seed(123)
 A <- seq.int(10)
 D <- rnorm(10)
 
-test_that("vclVector integer class initializer" ,{
+test_that("CPU vclVector integer class initializer" ,{
     has_cpu_skip()
     
     vclA <- vclVector(A)
@@ -20,7 +20,7 @@ test_that("vclVector integer class initializer" ,{
     expect_equal(typeof(vclA), "integer")
 })
 
-test_that("vclVector float class initializer" ,{
+test_that("CPU vclVector float class initializer" ,{
     has_cpu_skip()
     
     vclD <- vclVector(D, type="float")
@@ -32,7 +32,7 @@ test_that("vclVector float class initializer" ,{
     expect_equal(typeof(vclD), "float")
 })
 
-test_that("vclVector double class initializer" ,{
+test_that("CPU vclVector double class initializer" ,{
     has_cpu_skip()
     
     vclD <- vclVector(D)
@@ -42,6 +42,61 @@ test_that("vclVector double class initializer" ,{
                  info="vcl double vector elements not equivalent")
     expect_equal(length(vclD), length(D))
     expect_equal(typeof(vclD), "double")
+})
+
+test_that("CPU fvclVectorSlice class present", {
+    has_cpu_skip()
+    
+    A <- as.numeric(seq(10))
+    S <- A[2:8]
+    gpuA <- vclVector(A, type = "float")
+    gpuS <- slice(gpuA, 2L, 8L)
+    
+    expect_is(gpuS, "vclVector")
+    expect_is(gpuS, "fvclVectorSlice")
+    expect_is(gpuS@address, "externalptr")
+    expect_that(typeof(gpuS), matches("float"))
+    
+    expect_equal(gpuS[,], S, tolerance = 1e-07)
+    expect_equal(length(gpuS), length(S))
+    
+    
+    # check that slice refers back to original vector
+    gpuS[3] <- 42.42
+    S[3] <- 42.42
+    
+    expect_equal(gpuS[], S, tolerance = 1e-07)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = 1e-07)),
+                 info = "source fvclVector not modified by slice")
+    expect_equal(length(gpuA), length(A), 
+                 info = "source fvclVector length has been changed")
+})
+
+test_that("CPU dvclVectorSlice class present", {
+    has_cpu_skip()
+    
+    A <- as.numeric(seq(10))
+    S <- A[2:8]
+    gpuA <- vclVector(A, type = "double")
+    gpuS <- slice(gpuA, 2L, 8L)
+    
+    expect_is(gpuS, "vclVector")
+    expect_is(gpuS, "dvclVectorSlice")
+    expect_is(gpuS@address, "externalptr")
+    expect_that(typeof(gpuS), matches("double"))
+    expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
+    expect_equal(length(gpuS), length(S))
+    
+    
+    # check that slice refers back to original vector
+    gpuS[3] <- 42.42
+    S[3] <- 42.42
+    
+    expect_equal(gpuS[], S, tolerance = .Machine$double.eps^0.5)
+    expect_false(isTRUE(all.equal(gpuA[], A, tolerance = .Machine$double.eps^0.5)),
+                 info = "source dvclVector not modified by slice")
+    expect_equal(length(gpuA), length(A), 
+                 info = "source dvclVector length has been changed")
 })
 
 options(gpuR.default.device = "gpu")
