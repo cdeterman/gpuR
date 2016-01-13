@@ -28,14 +28,28 @@ r_github_packages:
   - cdeterman/RViennaCL
   
 before_install:
-  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq -y
-  - sudo apt-get install -qq mesa-utils fglrx-installer opencl-headers
+  - sudo apt-get install -qq mesa-common-dev alien libnuma1 git opencl-headers
   - sudo apt-get install -qq g++-4.8
   - export CXX="g++-4.8"
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+
+install:
+  - wget http://registrationcenter.intel.com/irc_nas/4181/opencl_runtime_14.2_x64_4.5.0.8.tgz
+  - tar -xvf opencl_runtime_14.2_x64_4.5.0.8.tgz
+  - cd pset_opencl_runtime_14.1_x64_4.5.0.8/rpm
+  - git clone https://gist.github.com/6a5d453137e5fc992b2a.git
+  - mv 6a5d453137e5fc992b2a/rpm_to_deb.sh .
+  - sh rpm_to_deb.sh
+  - sudo mkdir /etc/OpenCL
+  - sudo mkdir /etc/OpenCL/vendors
+  - sudo ln -s /opt/intel/opencl-1.2-4.5.0.8/etc/intel64.icd /etc/OpenCL/vendors/intel64.icd
+  - sudo ln -s /opt/intel/opencl-1.2-4.5.0.8/lib64/libOpenCL.so /usr/lib/libOpenCL.so
+  - sudo ln -s /opt/intel/opencl-1.2-4.5.0.8/lib64/libOpenCL.so.1 /usr/lib/libOpenCL.so.1
+  - sudo ldconfig
+  - cd ../..
 
 after_success:
   - Rscript -e 'library(covr);coveralls()'
