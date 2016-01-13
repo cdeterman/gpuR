@@ -35,8 +35,6 @@ before_install:
   - export CXX="g++-4.8"
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
-
-install:
   - wget http://registrationcenter.intel.com/irc_nas/4181/opencl_runtime_14.2_x64_4.5.0.8.tgz
   - tar -xvf opencl_runtime_14.2_x64_4.5.0.8.tgz
   - cd pset_opencl_runtime_14.1_x64_4.5.0.8/rpm
