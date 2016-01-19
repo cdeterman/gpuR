@@ -28,13 +28,14 @@ class dynVCLMat {
         viennacl::matrix<T> A;
         
         dynVCLMat() { } // private default constructor
-        dynVCLMat(SEXP A_);
+        dynVCLMat(SEXP A_, int device_flag);
         dynVCLMat(
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am,
-            int nr_in, int nc_in
+            int nr_in, int nc_in,
+            int device_flag
             );
-        dynVCLMat(int nr_in, int nc_in);
-        dynVCLMat(int nr_in, int nc_in, T scalar);
+        dynVCLMat(int nr_in, int nc_in, int device_flag);
+        dynVCLMat(int nr_in, int nc_in, T scalar, int device_flag);
         dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat);
         
         viennacl::matrix<T>* getPtr() { return ptr; }

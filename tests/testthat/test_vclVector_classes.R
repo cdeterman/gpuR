@@ -7,6 +7,8 @@ D <- rnorm(10)
 
 test_that("vclVector integer class initializer" ,{
     
+    has_gpu_skip()
+    
     vclA <- vclVector(A)
     
     expect_is(vclA, "ivclVector")
@@ -18,6 +20,8 @@ test_that("vclVector integer class initializer" ,{
 
 test_that("vclVector float class initializer" ,{
     
+    has_gpu_skip()
+    
     vclD <- vclVector(D, type="float")
     
     expect_is(vclD, "fvclVector")
@@ -28,6 +32,9 @@ test_that("vclVector float class initializer" ,{
 })
 
 test_that("vclVector double class initializer" ,{
+    
+    has_gpu_skip()
+    has_double_skip()
     
     vclD <- vclVector(D)
     

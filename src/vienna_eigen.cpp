@@ -29,15 +29,19 @@ void cpp_gpu_eigen(
     bool symmetric,
     int device_flag)
 {    
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
     
-//    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrA(Am);
-//    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > ptrQ(Qm);
-//    Rcpp::XPtr<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > ptreigenvalues(eigenvalues);
     Rcpp::XPtr<dynEigenVec<T> > ptreigenvalues(eigenvalues);
     
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A = *ptrA;
@@ -92,14 +96,18 @@ void cpp_vcl_eigen(
     bool symmetric,
     int device_flag)
 {    
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(Am);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrQ(Qm);
     
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
@@ -150,7 +158,7 @@ cpp_gpu_eigen(
     SEXP eigenvalues,
     const bool symmetric,
     const int type_flag, 
-    const int device_flag)
+    int device_flag)
 {
     switch(type_flag) {
         case 4:
@@ -175,7 +183,7 @@ cpp_vcl_eigen(
     SEXP eigenvalues,
     const bool symmetric,
     const int type_flag, 
-    const int device_flag)
+    int device_flag)
 {
     switch(type_flag) {
         case 4:

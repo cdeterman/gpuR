@@ -96,12 +96,12 @@ test_that("CPU vclMatrix scalar initializers", {
     
     expect_equivalent(vclA[], A,
                       "scalar double elements not equivalent")
-    expect_equal(dim(A), dim(vclA),
+    expect_equivalent(dim(A), dim(vclA),
                  "scalar double dimensions not equivalent")
     expect_is(ivclA, "ivclMatrix")
     expect_equivalent(ivclA[], Ai,
                       "scalar integer elements not equivalent")
-    expect_equal(dim(Ai), dim(ivclA),
+    expect_equivalent(dim(Ai), dim(ivclA),
                  "scalar integer dimensions not equivalent")
 })
 

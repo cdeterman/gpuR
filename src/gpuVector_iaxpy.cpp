@@ -14,11 +14,13 @@ using namespace Rcpp;
 void cpp_gpuVector_iaxpy(
     SEXP alpha_, 
     SEXP ptrA_, SEXP ptrB_,
-    SEXP sourceCode_)
+    SEXP sourceCode_,
+    int device_type)
 {
     // declarations
     cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
+    cl_device_type ocl_device;
     
     #if defined(__APPLE__) || defined(__MACOSX)
         #ifdef HAVE_OPENCL_CL2_HPP
@@ -32,15 +34,6 @@ void cpp_gpuVector_iaxpy(
         #endif
     #endif
 
-//    std::string kernel_string = as<std::string>(kernel_function_);
-//    const char* kernel_function = kernel_string.data();    
-    
-//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, 1> > ptrB(ptrB_);
-//    
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Am(ptrA->data(), ptrA->rows(), 1);
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, 1> > Bm(ptrB->data(), ptrB->rows(), 1);
-    
     XPtr<dynEigenVec<int> > ptrA(ptrA_);
     XPtr<dynEigenVec<int> > ptrB(ptrB_);
     
@@ -61,7 +54,14 @@ void cpp_gpuVector_iaxpy(
         0
     };
 
-    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
+    // need to conditionally do CL_DEVICE_TYPE_CPU
+    if(device_type == 0){
+        ocl_device = CL_DEVICE_TYPE_GPU;
+    }else{
+        ocl_device = CL_DEVICE_TYPE_CPU;
+    }
+    
+    Context context = createContext(ocl_device, cps, err);
         
     // Get a list of devices on this platform
     std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();

@@ -30,12 +30,19 @@ cpp_gpuMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_, 
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
     
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -90,12 +97,19 @@ cpp_gpuMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
     
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -146,12 +160,19 @@ cpp_gpuMatrix_tcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
     
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -203,7 +224,7 @@ cpp_gpuMatrix_tcrossprod(
 void
 cpp_gpuMatrix_gemm(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -227,7 +248,7 @@ cpp_gpuMatrix_gemm(
 void
 cpp_gpuMatrix_crossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -251,7 +272,7 @@ cpp_gpuMatrix_crossprod(
 void
 cpp_gpuMatrix_tcrossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -278,17 +299,20 @@ void cpp_vclMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -307,17 +331,20 @@ cpp_vclMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -336,17 +363,20 @@ cpp_vclMatrix_tcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrC(ptrC_);
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -365,7 +395,7 @@ cpp_vclMatrix_tcrossprod(
 void
 cpp_vclMatrix_gemm(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -389,7 +419,7 @@ cpp_vclMatrix_gemm(
 void
 cpp_vclMatrix_crossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -413,7 +443,7 @@ cpp_vclMatrix_crossprod(
 void
 cpp_vclMatrix_tcrossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     

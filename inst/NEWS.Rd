@@ -19,6 +19,7 @@
         \item Features in Progress:
         \itemize{
             \item Additional matrix functions (QR-decompsition, SVD)
+            \item 'device type' checks (i.e. deal with CPU & GPU objects), perhaps detect type from object?
         }
     }
 }

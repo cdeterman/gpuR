@@ -31,16 +31,20 @@ void
 cpp_gpuMatrix_colmean(
     SEXP ptrA_, 
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colMeans(ptrC->data(), ptrC->rows(),1);
@@ -78,16 +82,20 @@ template <typename T>
 void 
 cpp_gpuMatrix_colsum(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colSums(ptrC->data(), ptrC->rows(),1);
@@ -123,16 +131,20 @@ template <typename T>
 void 
 cpp_gpuMatrix_rowmean(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowMeans(ptrC->data(), ptrC->rows(),1);
@@ -169,16 +181,20 @@ template <typename T>
 void
 cpp_gpuMatrix_rowsum(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrC(ptrC_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowSums(ptrC->data(), ptrC->rows(),1);
@@ -217,16 +233,20 @@ void
 cpp_vclMatrix_colmean(
     SEXP ptrA_, 
     SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
 
 
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -248,16 +268,20 @@ template <typename T>
 void 
 cpp_vclMatrix_colsum(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -275,16 +299,20 @@ template <typename T>
 void 
 cpp_vclMatrix_rowmean(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
 
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -304,16 +332,20 @@ template <typename T>
 void
 cpp_vclMatrix_rowsum(
     SEXP ptrA_, SEXP ptrC_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
 
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -331,16 +363,20 @@ void
 cpp_gpuMatrix_pmcc(
     SEXP ptrA_, 
     SEXP ptrB_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
@@ -395,16 +431,20 @@ void
 cpp_vclMatrix_pmcc(
     SEXP ptrA_, 
     SEXP ptrB_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
 //    
 //    viennacl::matrix<T> &vcl_A = *ptrA;
 //    viennacl::matrix<T> &vcl_B = *ptrB;
@@ -442,16 +482,20 @@ void
 cpp_gpuMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrD(ptrD_);
 //    
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Dm(ptrD->data(), ptrD->rows(), ptrD->cols());
@@ -512,16 +556,20 @@ void
 cpp_vclMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
-    const int device_flag)
+    int device_flag)
 {
-    //use only GPUs:
+    // define device type to use
     if(device_flag == 0){
+        //use only GPUs
         long id = 0;
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
     }
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrD(ptrD_);
 //    
 //    viennacl::matrix<T> &vcl_A = *ptrA;
 //    viennacl::matrix<T> &vcl_D = *ptrD;
@@ -568,7 +616,7 @@ cpp_vclMatrix_eucl(
 void
 cpp_gpuMatrix_pmcc(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -591,7 +639,7 @@ cpp_gpuMatrix_pmcc(
 void
 cpp_vclMatrix_pmcc(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -617,7 +665,7 @@ cpp_vclMatrix_pmcc(
 void
 cpp_vclMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -640,7 +688,7 @@ cpp_vclMatrix_eucl(
 void
 cpp_gpuMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -665,7 +713,7 @@ cpp_gpuMatrix_eucl(
 void
 cpp_gpuMatrix_colmean(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -688,7 +736,7 @@ cpp_gpuMatrix_colmean(
 void
 cpp_gpuMatrix_colsum(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -711,7 +759,7 @@ cpp_gpuMatrix_colsum(
 void
 cpp_gpuMatrix_rowmean(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -735,7 +783,7 @@ cpp_gpuMatrix_rowmean(
 void
 cpp_gpuMatrix_rowsum(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -760,7 +808,7 @@ cpp_gpuMatrix_rowsum(
 void
 cpp_vclMatrix_colmean(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -783,7 +831,7 @@ cpp_vclMatrix_colmean(
 void
 cpp_vclMatrix_colsum(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -806,7 +854,7 @@ cpp_vclMatrix_colsum(
 void
 cpp_vclMatrix_rowmean(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     
@@ -830,7 +878,7 @@ cpp_vclMatrix_rowmean(
 void
 cpp_vclMatrix_rowsum(
     SEXP ptrA, SEXP ptrB,
-    const int device_flag,
+    int device_flag,
     const int type_flag)
 {
     

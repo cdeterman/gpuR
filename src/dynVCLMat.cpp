@@ -4,15 +4,24 @@
 #include "gpuR/dynVCLMat.hpp"
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(SEXP A_)
+dynVCLMat<T>::dynVCLMat(SEXP A_, int device_flag)
 {
     
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A_);
     
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
     
     int K = Am.rows();
     int M = Am.cols();
@@ -36,12 +45,23 @@ dynVCLMat<T>::dynVCLMat(SEXP A_)
 template<typename T>
 dynVCLMat<T>::dynVCLMat(
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am, 
-    int nr_in, int nc_in
+    int nr_in, int nc_in,
+    int device_flag
     )
-{
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    
+{    
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
+        
     A = viennacl::matrix<T>(nr_in, nc_in);
     viennacl::copy(Am, A); 
     
@@ -55,11 +75,20 @@ dynVCLMat<T>::dynVCLMat(
 }
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int device_flag)
 {
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
     
     A = viennacl::zero_matrix<T>(nr_in, nc_in);
     nr = nr_in;
@@ -72,11 +101,20 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
 }
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar)
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int device_flag)
 {
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
     
     A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar);
     nr = nr_in;

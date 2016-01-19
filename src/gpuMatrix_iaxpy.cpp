@@ -12,11 +12,12 @@ using namespace Rcpp;
 
 //[[Rcpp::export]]
 void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
-    SEXP sourceCode_)
+    SEXP sourceCode_, int device_type)
 {
     // declarations
     cl_int err = 0;
     std::string sourceCode = as<std::string>(sourceCode_);
+    cl_device_type ocl_device;
     
     #if defined(__APPLE__) || defined(__MACOSX)
         #ifdef HAVE_OPENCL_CL2_HPP
@@ -30,25 +31,12 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
         #endif
     #endif
     
-//    std::string kernel_string = as<std::string>(kernel_function_);
-//    const char* kernel_function = kernel_string.data();
-    
-//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    XPtr<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > ptrB(ptrB_);
-    
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    
     XPtr<dynEigenMat<int> > ptrA(ptrA_);
     XPtr<dynEigenMat<int> > ptrB(ptrB_);
     
     Eigen::Ref<Eigen::MatrixXi> refA = ptrA->data();
     Eigen::Ref<Eigen::MatrixXi> refB = ptrB->data();
     
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
-//    Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
-
-
     Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > Am(
         refA.data(), refA.rows(), refA.cols(),
         Eigen::OuterStride<>(refA.outerStride())
@@ -72,7 +60,14 @@ void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_,
         0
     };
 
-    Context context = createContext(CL_DEVICE_TYPE_GPU, cps, err);
+    // need to conditionally do CL_DEVICE_TYPE_CPU
+    if(device_type == 0){
+        ocl_device = CL_DEVICE_TYPE_GPU;
+    }else{
+        ocl_device = CL_DEVICE_TYPE_CPU;
+    }
+    
+    Context context = createContext(ocl_device, cps, err);
         
     // Get a list of devices on this platform
     std::vector<Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();

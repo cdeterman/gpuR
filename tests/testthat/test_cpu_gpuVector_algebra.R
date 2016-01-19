@@ -10,8 +10,8 @@ set.seed(123)
 ORDER <- 4
 
 # Base R objects
-Aint <- seq.int(10)
-Bint <- sample(seq.int(10), ORDER)
+Aint <- sample(seq.int(10), ORDER, replace = TRUE)
+Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 E <- rnorm(ORDER-1)

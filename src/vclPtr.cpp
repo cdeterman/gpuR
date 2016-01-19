@@ -85,50 +85,17 @@ cpp_vclMatrix_block(
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> 
 VCLtoVecSEXP(SEXP A_)
-{
-//    std::cout << "called function" << std::endl;
-//    Rcpp::XPtr<dynVCLVec<T> > pVec(A);
-//    
-//    viennacl::vector_range<viennacl::vector<T> > pA  = pVec->data();
-//    
-//    int M = pA.size();
-//    
-//    Eigen::Matrix<T, Eigen::Dynamic, 1> Am(M);
-//    
-//    viennacl::vector<T> vec = static_cast<viennacl::vector<T> >(pA);
-//    std::cout << "called static_cast" << std::endl;
-//    
-//    viennacl::copy(vec, Am); 
-//    
-//    std::cout << "passed copy" << std::endl;
-//    
-//    return Am;
-    
-    
+{   
     Rcpp::XPtr<dynVCLVec<T> > ptrA(A_);
     
-    
-//    std::cout << "source vector?" << std::endl;
-//    viennacl::vector<T> temp = ptrA->vector();
-//    std::cout << temp << std::endl;
-    
-    
     viennacl::vector_range<viennacl::vector<T> > tempA  = ptrA->data();
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > pA(A);
-//    
-//    int nr = pA->size1();
-//    int nc = pA->size2();
-    
+
     viennacl::vector<T> pA = static_cast<viennacl::vector<T> >(tempA);
     int M = pA.size();
-//    std::cout << "called static_cast" << std::endl;
     
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am(M);
-//    std::cout << "created eigen vector" << std::endl;
     
     viennacl::copy(pA, Am); 
-//    std::cout << "passed copy" << std::endl;
     
     return Am;
 }
@@ -140,20 +107,20 @@ cpp_scalar_vclMatrix(
     SEXP scalar_, 
     const int nr, 
     const int nc,
-    const int device_flag)
+    int device_flag)
 {
     const T scalar = as<T>(scalar_);
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(nr, nc, scalar);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(nr, nc, scalar, device_flag);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
     return pMat;
 }
 
 // empty ViennaCL matrix
 template <typename T>
-SEXP cpp_zero_vclMatrix(int nr, int nc)
+SEXP cpp_zero_vclMatrix(int nr, int nc, int device_flag)
 {
-    dynVCLMat<T> *mat = new dynVCLMat<T>(nr, nc);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(nr, nc, device_flag);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
     return pMat;
 }
@@ -161,18 +128,18 @@ SEXP cpp_zero_vclMatrix(int nr, int nc)
 // convert SEXP Vector to ViennaCL vector
 template <typename T>
 SEXP 
-sexpVecToVCL(SEXP A, const int device_flag)
+sexpVecToVCL(SEXP A, int device_flag)
 {        
-    dynVCLVec<T> *vec = new dynVCLVec<T>(A);
+    dynVCLVec<T> *vec = new dynVCLVec<T>(A, device_flag);
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
     return pVec;
 }
 
 // convert SEXP Matrix to ViennaCL matrix
 template <typename T>
-SEXP cpp_sexp_mat_to_vclMatrix(SEXP A)
+SEXP cpp_sexp_mat_to_vclMatrix(SEXP A, int device_flag)
 {
-    dynVCLMat<T> *mat = new dynVCLMat<T>(A);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(A, device_flag);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
     return pMat;
 }
@@ -205,7 +172,7 @@ VCLtoSEXP(SEXP A)
 // convert SEXP Vector to ViennaCL matrix
 template <typename T>
 SEXP 
-vectorToMatVCL(SEXP A, const int nr, const int nc, const int device_flag)
+vectorToMatVCL(SEXP A, const int nr, const int nc, int device_flag)
 {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
@@ -214,7 +181,7 @@ vectorToMatVCL(SEXP A, const int nr, const int nc, const int device_flag)
     
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Amm(&Am(0), nr, nc);
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(Am, nr, nc);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(Am, nr, nc, device_flag);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
     return pMat;    
     
@@ -237,9 +204,9 @@ vectorToMatVCL(SEXP A, const int nr, const int nc, const int device_flag)
 
 // empty ViennaCL Vector
 template <typename T>
-SEXP emptyVecVCL(int length, const int device_flag)
+SEXP emptyVecVCL(int length, int device_flag)
 {
-    dynVCLVec<T> *vec = new dynVCLVec<T>(length);
+    dynVCLVec<T> *vec = new dynVCLVec<T>(length, device_flag);
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
     return pVec;
 }
@@ -476,15 +443,15 @@ cpp_vclMatrix_block(
 
 // [[Rcpp::export]]
 SEXP
-cpp_sexp_mat_to_vclMatrix(SEXP ptrA, const int type_flag)
+cpp_sexp_mat_to_vclMatrix(SEXP ptrA, const int type_flag, int device_flag)
 {
     switch(type_flag) {
         case 4:
-            return cpp_sexp_mat_to_vclMatrix<int>(ptrA);
+            return cpp_sexp_mat_to_vclMatrix<int>(ptrA, device_flag);
         case 6:
-            return cpp_sexp_mat_to_vclMatrix<float>(ptrA);
+            return cpp_sexp_mat_to_vclMatrix<float>(ptrA, device_flag);
         case 8:
-            return cpp_sexp_mat_to_vclMatrix<double>(ptrA);
+            return cpp_sexp_mat_to_vclMatrix<double>(ptrA, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -513,15 +480,15 @@ VCLtoMatSEXP(SEXP ptrA, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-cpp_zero_vclMatrix(const int nr, const int nc, const int type_flag)
+cpp_zero_vclMatrix(const int nr, const int nc, const int type_flag, int device_flag)
 {
     switch(type_flag) {
         case 4:
-            return cpp_zero_vclMatrix<int>(nr, nc);
+            return cpp_zero_vclMatrix<int>(nr, nc, device_flag);
         case 6:
-            return cpp_zero_vclMatrix<float>(nr, nc);
+            return cpp_zero_vclMatrix<float>(nr, nc, device_flag);
         case 8:
-            return cpp_zero_vclMatrix<double>(nr, nc);
+            return cpp_zero_vclMatrix<double>(nr, nc, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -534,7 +501,7 @@ cpp_scalar_vclMatrix(
     SEXP scalar, 
     const int nr, const int nc, 
     const int type_flag,
-    const int device_flag)
+    int device_flag)
 {
     switch(type_flag) {
         case 4:
@@ -698,7 +665,7 @@ vclVecSetElement(SEXP ptrA, const int idx, SEXP newdata, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-vectorToVCL(SEXP ptrA, const int type_flag, const int device_flag)
+vectorToVCL(SEXP ptrA, const int type_flag, int device_flag)
 {
     switch(type_flag) {
         case 4:
@@ -719,7 +686,7 @@ vectorToMatVCL(
     const int nr,
     const int nc,
     const int type_flag, 
-    const int device_flag)
+    int device_flag)
 {
     switch(type_flag) {
         case 4:
@@ -756,7 +723,7 @@ VCLtoVecSEXP(SEXP ptrA, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-emptyVecVCL(int length, const int type_flag, const int device_flag)
+emptyVecVCL(int length, const int type_flag, int device_flag)
 {
     switch(type_flag) {
         case 4:

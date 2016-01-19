@@ -27,7 +27,8 @@ gpuVec_axpy <- function(alpha, A, B){
            integer = {cpp_gpuVector_iaxpy(alpha, 
                                           A@address,
                                           Z@address, 
-                                          kernel)
+                                          kernel,
+                                          device_flag)
            },
            float = {cpp_gpuVector_axpy(alpha, 
                                        A@address, 

@@ -28,19 +28,20 @@ setMethod('vclMatrix',
           function(data, type=NULL){
               
               if (is.null(type)) type <- typeof(data)
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
               
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=cpp_sexp_mat_to_vclMatrix(data, 4L))
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 4L, device_flag))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=cpp_sexp_mat_to_vclMatrix(data, 6L))
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 6L, device_flag))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = cpp_sexp_mat_to_vclMatrix(data, 8L))
+                                    address = cpp_sexp_mat_to_vclMatrix(data, 8L, device_flag))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -58,19 +59,20 @@ setMethod('vclMatrix',
           function(data, nrow=NA, ncol=NA, type=NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
+              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
               
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=cpp_zero_vclMatrix(nrow, ncol, 4L))
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 4L, device_flag))
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=cpp_zero_vclMatrix(nrow, ncol, 6L))
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 6L, device_flag))
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = cpp_zero_vclMatrix(nrow, ncol, 8L))
+                                    address = cpp_zero_vclMatrix(nrow, ncol, 8L, device_flag))
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

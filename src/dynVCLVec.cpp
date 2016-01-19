@@ -4,14 +4,23 @@
 #include "gpuR/dynVCLVec.hpp"
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(SEXP A_)
+dynVCLVec<T>::dynVCLVec(SEXP A_, int device_flag)
 {
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
     
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
     
     int K = Am.size();
     
@@ -27,11 +36,20 @@ dynVCLVec<T>::dynVCLVec(SEXP A_)
 }
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(int size_in)
+dynVCLVec<T>::dynVCLVec(int size_in, int device_flag)
 {
-    //use only GPUs:
-    long id = 0;
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
     
     A = viennacl::zero_vector<T>(size_in);
     begin = 1;

@@ -47,7 +47,8 @@ gpu_Mat_axpy <- function(alpha, A, B){
            integer = {cpp_gpuMatrix_iaxpy(alpha, 
                                           A@address,
                                           Z@address, 
-                                          kernel)
+                                          kernel,
+                                          device_flag)
            },
            float = {cpp_gpuMatrix_axpy(alpha, 
                                        A@address, 
@@ -134,7 +135,8 @@ gpu_Mat_mult <- function(A, B){
                cpp_gpuMatrix_igemm(A@address,
                                    B@address, 
                                    C@address,
-                                   kernel)
+                                   kernel,
+                                   device_flag)
                #                      cpp_vienna_gpuMatrix_igemm(A@address,
                #                                                        B@address,
                #                                                        C@address)
