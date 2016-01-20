@@ -116,7 +116,7 @@ test_that("vclMatrix integer scalar initializers", {
     expect_is(ivclA, "ivclMatrix")
     expect_equivalent(ivclA[], Ai,
                       "scalar integer elements not equivalent")
-    expect_equal(dim(Ai), dim(ivclA),
+    expect_equivalent(dim(Ai), dim(ivclA),
                  "scalar integer dimensions not equivalent")
 })
 
@@ -131,7 +131,7 @@ test_that("vclMatrix float scalar initializers", {
     
     expect_equal(vclA[], A, tolerance=1e-07,
                  "scalar double elements not equivalent")
-    expect_equal(dim(A), dim(vclA),
+    expect_equivalent(dim(A), dim(vclA),
                  "scalar double dimensions not equivalent")
     expect_is(vclA, "fvclMatrix")
 })
@@ -148,7 +148,7 @@ test_that("vclMatrix double scalar initializers", {
     
     expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5,
                  "scalar double elements not equivalent")
-    expect_equal(dim(A), dim(vclA),
+    expect_equivalent(dim(A), dim(vclA),
                  "scalar double dimensions not equivalent")
     expect_is(vclA, "dvclMatrix")
 })
