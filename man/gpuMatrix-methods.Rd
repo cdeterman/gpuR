@@ -2,6 +2,7 @@
 % Please edit documentation in R/gpuMatrix.R
 \docType{methods}
 \name{gpuMatrix}
+\alias{\%*\%-gpuR-method}
 \alias{gpuMatrix}
 \alias{gpuMatrix,integer}
 \alias{gpuMatrix,integer-method}

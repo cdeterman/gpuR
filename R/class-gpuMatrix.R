@@ -108,19 +108,15 @@ setClass("dgpuMatrix",
          })
 
 
-# #' @export
-# setClass("gpuMatrixBlock", 
-#          contains = "gpuMatrix")
-
-#' @export
+# @export
 setClass("igpuMatrixBlock", 
          contains = "igpuMatrix")
 
-#' @export
+# @export
 setClass("fgpuMatrixBlock", 
          contains = "fgpuMatrix")
 
-#' @export
+# @export
 setClass("dgpuMatrixBlock", 
          contains = "dgpuMatrix")
 

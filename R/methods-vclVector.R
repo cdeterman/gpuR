@@ -1,14 +1,5 @@
 
-#' @title Extract all vclVector elements
-#' @param x A vclVector object
-#' @param i missing
-#' @param j missing
-#' @param drop missing
-#' @param value data of similar type to be added to gpuMatrix object
-#' @aliases [,vclVector
-#' @aliases [<-,vclVector
-#' @author Charles Determan Jr.
-#' @rdname extract-vclVector
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclVector", i = "missing", j = "missing", drop = "missing"),
@@ -21,7 +12,7 @@ setMethod("[",
           })
 
 
-#' @rdname extract-vclVector
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclVector", i = "numeric", j = "missing", drop = "missing"),
@@ -36,7 +27,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-vclVector
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "vclVector", i = "numeric", j = "missing", value="numeric"),
@@ -55,7 +46,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-vclVector
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "ivclVector", i = "numeric", j = "missing", value="integer"),
@@ -73,10 +64,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @title vclVector Dot Product
-#' @param x A vclVector object
-#' @param y A vclVector object
-#' @return A vclVector
+#' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclVector", y = "vclVector"),
           function(x,y)
@@ -89,10 +77,7 @@ setMethod("%*%", signature(x="vclVector", y = "vclVector"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Outer Product
-#' @param X A vclVector object
-#' @param Y A vclVector object
-#' @return A vclMatrix object
+#' @rdname grapes-o-grapes-methods
 #' @export
 setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           function(X,Y)
@@ -105,10 +90,7 @@ setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           valueClass = "vclMatrix"
 )
 
-#' @title vclVector Arith methods
-#' @param e1 A vclVector object
-#' @param e2 A vclVector object
-#' @return A vclVector object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclVector", e2="vclVector"),
           function(e1, e2)
@@ -130,10 +112,7 @@ setMethod("Arith", c(e1="vclVector", e2="vclVector"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Arith methods
-#' @param e1 A numeric object
-#' @param e2 A vclVector object
-#' @return A vclVector object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="numeric", e2="vclVector"),
           function(e1, e2)
@@ -165,10 +144,7 @@ setMethod("Arith", c(e1="numeric", e2="vclVector"),
           valueClass = "vclVector"
 )
 
-#' @title gpuVector Arith methods
-#' @param e1 A gpuVector object
-#' @param e2 A numeric object
-#' @return A gpuVector object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclVector", e2="numeric"),
           function(e1, e2)
@@ -194,10 +170,7 @@ setMethod("Arith", c(e1="vclVector", e2="numeric"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Arith methods
-#' @param e1 A vclVector object
-#' @param e2 missing
-#' @return A vclVector object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclVector", e2="missing"),
           function(e1, e2)
@@ -211,9 +184,7 @@ setMethod("Arith", c(e1="vclVector", e2="missing"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Math methods
-#' @param x A vclVector object
-#' @return A vclVector object
+#' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="vclVector"),
           function(x)
@@ -238,12 +209,7 @@ setMethod("Math", c(x="vclVector"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Logarithms
-#' @param x A vclVector object
-#' @return A vclVector object
-#' @param base A positive number (complex not currently supported by OpenCL):
-#' the base with respect to which logarithms are computed.  Defaults to the
-#' natural log.
+#' @rdname log-methods
 #' @export
 setMethod("log", c(x="vclVector"),
           function(x, base=NULL)
@@ -259,9 +225,7 @@ setMethod("log", c(x="vclVector"),
           valueClass = "vclVector"
 )
 
-#' @title vclVector Summary methods
-#' @param x A vclVector object
-#' @return For \code{min} or \code{max}, a length-one vector
+#' @rdname Summary-methods
 #' @export
 setMethod("Summary", c(x="vclVector"),
           function(x, ..., na.rm)
@@ -276,26 +240,8 @@ setMethod("Summary", c(x="vclVector"),
           }
 )
 
-#' @title Get vclVector type
-#' @param x A vclVector object
-# @rdname typeof-methods
-#' @aliases typeof,vclVector
-#' @export
-setMethod('typeof', signature(x="vclVector"),
-          function(x) {
-              switch(class(x),
-                     "ivclVector" = "integer",
-                     "fvclVector" = "float",
-                     "dvclVector" = "double",
-                     "ivclVectorSlice" = "integer",
-                     "fvclVectorSlice" = "float",
-                     "dvclVectorSlice" = "double",
-                     stop("unrecognized vclVector class"))
-          })
-
 
 #' @rdname length-methods
-#' @aliases length,vclVector
 #' @export
 setMethod('length', signature(x = "vclVector"),
           function(x) {
@@ -308,6 +254,7 @@ setMethod('length', signature(x = "vclVector"),
           }
 )
 
+#' @rdname gpuR-deepcopy
 setMethod("deepcopy", signature(object ="vclVector"),
           function(object){
               
@@ -323,6 +270,7 @@ setMethod("deepcopy", signature(object ="vclVector"),
               return(out)
           })
 
+#' @rdname gpuR-slice
 setMethod("slice",
           signature(object = "vclVector", start = "integer", end = "integer"),
           function(object, start, end){

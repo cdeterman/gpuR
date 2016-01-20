@@ -1,3 +1,0 @@
-CXX_STD=CXX11
-PKG_CXXFLAGS=-I../inst/include 
-PKG_LIBS=-lOpenCL

@@ -12,11 +12,7 @@ setMethod('as.gpuVector',
           },
           valueClass = "gpuVector")
 
-#' @title gpuVector Inner Product
-#' @param x A gpuVector object
-#' @param y A gpuVector object
-#' @return A numeric value
-#' @rdname gpuVector-prods
+#' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", c(x="gpuVector", y="gpuVector"),
           function(x, y){
@@ -27,10 +23,13 @@ setMethod("%*%", c(x="gpuVector", y="gpuVector"),
               gpuVecInnerProd(x,y)
           })
 
-#' @title gpuVector Outer Product
-#' @param X A gpuVector object
-#' @param Y A gpuVector object
-#' @return A gpuMatrix object
+#' @title Outer Product
+#' @description The outer product of two gpuR vector objects
+#' @param X A gpuR object
+#' @param Y A gpuR object
+#' @docType methods
+#' @rdname grapes-o-grapes-methods
+#' @author Charles Determan Jr.
 #' @export
 setMethod("%o%", c(X="gpuVector", Y="gpuVector"),
           function(X, Y){
@@ -41,10 +40,8 @@ setMethod("%o%", c(X="gpuVector", Y="gpuVector"),
               gpuVecOuterProd(X,Y)
           })
 
-#' @title gpuVector Arith methods
-#' @param e1 A gpuVector object
-#' @param e2 A gpuVector object
-#' @return A gpuVector object
+#' @rdname Arith-methods
+#' @aliases Arith-gpuVector-gpuVector-method
 #' @export
 setMethod("Arith", c(e1="gpuVector", e2="gpuVector"),
           function(e1, e2)
@@ -66,10 +63,8 @@ setMethod("Arith", c(e1="gpuVector", e2="gpuVector"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Arith methods
-#' @param e1 A numeric object
-#' @param e2 A gpuVector object
-#' @return A gpuVector object
+#' @rdname Arith-methods
+#' @aliases Arith-numeric-gpuVector-method
 #' @export
 setMethod("Arith", c(e1="numeric", e2="gpuVector"),
           function(e1, e2)
@@ -95,10 +90,8 @@ setMethod("Arith", c(e1="numeric", e2="gpuVector"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Arith methods
-#' @param e1 A gpuVector object
-#' @param e2 A numeric object
-#' @return A gpuVector object
+#' @rdname Arith-methods
+#' @aliases Arith-gpuVector-numeric-method
 #' @export
 setMethod("Arith", c(e1="gpuVector", e2="numeric"),
           function(e1, e2)
@@ -124,10 +117,8 @@ setMethod("Arith", c(e1="gpuVector", e2="numeric"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Arith methods
-#' @param e1 A gpuVector object
-#' @param e2 missing
-#' @return A gpuVector object
+#' @rdname Arith-methods
+#' @aliases Arith-gpuVector-missing-method
 #' @export
 setMethod("Arith", c(e1="gpuVector", e2="missing"),
           function(e1, e2)
@@ -141,31 +132,7 @@ setMethod("Arith", c(e1="gpuVector", e2="missing"),
           valueClass = "gpuVector"
 )
 
-# #' @title gpuVector Arith methods
-# #' @param e1 A gpuVectorSlice object
-# #' @param e2 A gpuVectorSlice object
-# #' @return A gpuVector object
-# #' @export
-# setMethod("Arith", c(e1="gpuVectorSlice", e2="gpuVectorSlice"),
-#           function(e1, e2)
-#           {
-#               if(length(e1) != length(e2)){
-#                   stop("non-conformable arguments")
-#               }
-#               
-#               op = .Generic[[1]]
-#               switch(op,
-#                      `+` = gpuSliceVec_axpy(1, e1, e2),
-#                      `-` = gpuSliceVec_axpy(-1, e2, e1),
-#                      stop("undefined operation")
-#               )
-#           },
-#           valueClass = "gpuVector"
-# )
-
-#' @title gpuVector Math methods
-#' @param x A gpuVector object
-#' @return A gpuVector object
+#' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="gpuVector"),
           function(x)
@@ -190,12 +157,7 @@ setMethod("Math", c(x="gpuVector"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Logarithms
-#' @param x A gpuVector object
-#' @param base A positive number (complex not currently supported by OpenCL):
-#' the base with respect to which logarithms are computed.  Defaults to the
-#' natural log.
-#' @return A gpuVector object
+#' @rdname log-methods
 #' @export
 setMethod("log", c(x="gpuVector"),
           function(x, base=NULL)
@@ -211,9 +173,7 @@ setMethod("log", c(x="gpuVector"),
           valueClass = "gpuVector"
 )
 
-#' @title gpuVector Summary methods
-#' @param x A gpuVector object
-#' @return For \code{min} or \code{max}, a length-one vector
+#' @rdname Summary-methods
 #' @export
 setMethod("Summary", c(x="gpuVector"),
           function(x, ..., na.rm)
@@ -232,8 +192,14 @@ setMethod("Summary", c(x="gpuVector"),
 # a C++ backend function to make faster and more efficient
 
 #' @title Compare vector and gpuVector elements
-#' @param e1 A vector object
-#' @param e2 A gpuVector object
+#' @description Methods for comparison operators
+#' @param e1 A vector/gpuVector object
+#' @param e2 A vector/gpuVector object
+#' @return A logical vector
+#' @docType methods
+#' @rdname Compare-methods
+#' @aliases Compare-vector-gpuVector
+#' @author Charles Determan Jr.
 #' @export
 setMethod("Compare", c(e1="vector", e2="gpuVector"),
           function(e1, e2)
@@ -247,9 +213,8 @@ setMethod("Compare", c(e1="vector", e2="gpuVector"),
           valueClass = "vector"
 )
 
-#' @title Compare gpuVector and vector elements
-#' @param e1 A gpuvector object
-#' @param e2 A Vector object
+#' @rdname Compare-methods
+#' @aliases Compare-gpuVector-vector
 #' @export
 setMethod("Compare", c(e1="gpuVector", e2="vector"),
           function(e1, e2)
@@ -265,31 +230,14 @@ setMethod("Compare", c(e1="gpuVector", e2="vector"),
 valueClass = "vector"
 )
 
-#' @title Get gpuVector type
-#' @param x A gpuVector object
-# @rdname typeof-methods
-#' @aliases typeof,gpuVector
-#' @export
-setMethod('typeof', signature(x="gpuVector"),
-          function(x) {
-              switch(class(x),
-                     "igpuVector" = "integer",
-                     "fgpuVector" = "float",
-                     "dgpuVector" = "double",
-                     "igpuVectorSlice" = "integer",
-                     "fgpuVectorSlice" = "float",
-                     "dgpuVectorSlice" = "double",
-                     stop("unrecognized gpuVector class"))
-          })
-
 
 # setOldClass("length")
 
 #' @title Length of gpuVector
-#' @param x A gpuVector or vclVector object
+#' @description Get the length of a gpuR vector object
+#' @param x A gpuVector/vclVector object
 #' @return A numeric value
 #' @rdname length-methods
-#' @aliases length,gpuVector
 #' @export
 setMethod('length', signature(x = "gpuVector"),
           function(x) {
@@ -303,15 +251,7 @@ setMethod('length', signature(x = "gpuVector"),
 )
 
 
-#' @title Extract/Set gpuVector elements
-#' @param x A gpuVector object
-#' @param i missing
-#' @param j missing
-#' @param drop missing
-#' @param value data of similar type to be added to gpuMatrix object
-#' @author Charles Determan
-#' @rdname extract-gpuVector
-#' @aliases [,gpuVector
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "gpuVector", i = "missing", j = "missing", drop = "missing"),
@@ -323,7 +263,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-gpuVector
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "gpuVector", i = "numeric", j = "missing", drop = "missing"),
@@ -338,7 +278,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-gpuVector
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "gpuVector", i = "numeric", j = "missing", value = "numeric"),
@@ -354,7 +294,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-gpuVector
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "gpuVector", i = "numeric", j = "missing", value = "integer"),
@@ -369,7 +309,7 @@ setMethod("[<-",
               return(x)
           })
 
-
+#' @rdname gpuR-slice
 setMethod("slice",
           signature(object = "gpuVector", start = "integer", end = "integer"),
           function(object, start, end){
@@ -393,6 +333,7 @@ setMethod("slice",
           
         })
 
+#' @rdname gpuR-deepcopy
 setMethod("deepcopy", signature(object ="gpuVector"),
           function(object){
               

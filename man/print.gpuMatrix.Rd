@@ -15,4 +15,7 @@
 
 \item{width}{Number of columns to display}
 }
+\description{
+prints a gpuMatrix object that is truncated to fit the screen
+}
 

@@ -1,9 +1,14 @@
 #' @import methods
 #' @importFrom utils file_test
 
-#' @title gpuMatrix Multiplication
-#' @param x A gpuMatrix object
-#' @param y A gpuMatrix object
+#' @title Matrix Multiplication
+#' @description Multiply two gpuR objects, if they are conformable.  If both
+#' are vectors of the same length, it will return the inner product (as a matrix).
+#' @param x A gpuR object
+#' @param y A gpuR object
+#' @docType methods
+#' @rdname grapes-times-grapes-methods
+#' @author Charles Determan Jr.
 #' @export
 setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           function(x,y)
@@ -16,10 +21,15 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Arith methods
-#' @param e1 A gpuMatrix object
-#' @param e2 A gpuMatrix object
-#' @return A gpuMatrix object
+#' @title Arith methods
+#' @description Methods for the base Arith methods \link[methods]{S4groupGeneric}
+#' @param e1 A gpuR object
+#' @param e2 A gpuR object
+#' @return A gpuR object
+#' @docType methods
+#' @rdname Arith-methods
+#' @aliases Arith-gpuR-method
+#' @author Charles Determan Jr.
 #' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
           function(e1, e2)
@@ -37,10 +47,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
 valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Arith methods
-#' @param e1 A gpuMatrix object
-#' @param e2 A numeric object
-#' @return A gpuMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
           function(e1, e2)
@@ -66,10 +73,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
 valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Arith methods
-#' @param e1 A numeric object
-#' @param e2 A gpuMatrix object
-#' @return A gpuMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
           function(e1, e2)
@@ -101,10 +105,7 @@ setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
           valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Arith methods
-#' @param e1 A gpuMatrix object
-#' @param e2 missing
-#' @return A gpuMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
           function(e1, e2)
@@ -118,9 +119,19 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
           valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Math methods
-#' @param x A gpuMatrix object
-#' @return A gpuMatrix object
+#' @title gpuR Math methods
+#' @description Methods for the base Math methods \link[methods]{S4groupGeneric}
+#' @param x A gpuR object
+#' @return A gpuR object
+#' @details Currently implemented methods include:
+#' \itemize{
+#'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
+#'  "log10", "exp", "abs"}
+#'  }
+#' @docType methods
+#' @rdname Math-methods
+#' @aliases Math-gpuR-method
+#' @author Charles Determan Jr.
 #' @export
 setMethod("Math", c(x="gpuMatrix"),
           function(x)
@@ -145,12 +156,20 @@ setMethod("Math", c(x="gpuMatrix"),
 valueClass = "gpuMatrix"
 )
 
-#' @title gpuMatrix Logarithms
-#' @param x A gpuMatrix object
+#' @title gpuR Logarithms and Exponentials
+#' @description \code{log} computes logarithms, by default natural logarithms 
+#' and \code{log10} computes common (i.e. base 10) logarithms.  The general form
+#' \code{log(x, base)} computes logarithms with base \code{base}.
+#' 
+#' \code{exp} computes the exponential function.
+#' @param x A gpuR object
 #' @param base A positive number (complex not currently supported by OpenCL):
 #' the base with respect to which logarithms are computed.  Defaults to the
 #' natural log.
-#' @return A gpuMatrix object
+#' @return A gpuR object of the same class as \code{x}
+#' @docType methods
+#' @rdname log-methods
+#' @aliases log-gpuR-method
 #' @export
 setMethod("log", c(x="gpuMatrix"),
           function(x, base=NULL)
@@ -167,12 +186,13 @@ setMethod("log", c(x="gpuMatrix"),
 )
 
 
-#' @title The Number of Rows/Columns of a gpuMatrix
-#' @param x A gpuMatrix object
+#' @title The Number of Rows/Columns of a gpuR matrix
+#' @description \code{nrow} and \code{ncol} return the number of rows or columns
+#' present in \code{x} respectively.
+#' @param x A gpuMatrix/vclMatrix object
 #' @return An integer of length 1
-#' @rdname nrow.gpuMatrix
-#' @aliases nrow,gpuMatrix
-#' @aliases ncol,gpuMatrix
+#' @docType methods
+#' @rdname nrow-gpuR
 #' @author Charles Determan Jr.
 #' @export
 setMethod('nrow', signature(x="gpuMatrix"), 
@@ -185,7 +205,7 @@ setMethod('nrow', signature(x="gpuMatrix"),
           }
 )
 
-#' @rdname nrow.gpuMatrix
+#' @rdname nrow-gpuR
 #' @export
 setMethod('ncol', signature(x="gpuMatrix"),
           function(x) {
@@ -198,25 +218,28 @@ setMethod('ncol', signature(x="gpuMatrix"),
 )
 
 
-#' @title gpuMatrix dim method
-#' @param x A gpuMatrix object
+#' @title gpuMatrix/vclMatrix dim method
+#' @description Retrieve dimension of object
+#' @param x A gpuMatrix/vclMatrix object
 #' @return A length 2 vector of the number of rows and columns respectively.
+#' @docType methods
+#' @rdname dim-methods
 #' @author Charles Determan Jr.
-#' @aliases dim,gpuMatrix
+#' @aliases dim-gpuMatrix
 #' @export
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
 
-#' @title Extract gpuMatrix elements
-#' @param x A gpuMatrix object
+#' @title Extract gpuR object elements
+#' @description Operators to extract or replace elements
+#' @param x A gpuR object
 #' @param i indices specifying rows
 #' @param j indices specifying columns
 #' @param drop missing
 #' @param value data of similar type to be added to gpuMatrix object
-#' @aliases [,gpuMatrix
-#' @aliases [<-,gpuMatrix
+#' @docType methods
+#' @rdname extract-methods
 #' @author Charles Determan Jr.
-#' @rdname extract-gpuMatrix
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "missing", drop = "missing"),
@@ -228,7 +251,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "numeric", drop="missing"),
@@ -241,7 +264,7 @@ setMethod("[",
           })
 
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", drop="missing"),
@@ -254,7 +277,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "numeric", drop="missing"),
@@ -266,7 +289,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", value="numeric"),
@@ -285,7 +308,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "igpuMatrix", i = "numeric", j = "missing", value="integer"),
@@ -303,7 +326,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "gpuMatrix", i = "missing", j = "numeric", value="numeric"),
@@ -323,7 +346,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "igpuMatrix", i = "missing", j = "numeric", value="integer"),
@@ -343,7 +366,7 @@ setMethod("[<-",
           })
 
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "gpuMatrix", i = "numeric", j = "numeric", value="numeric"),
@@ -360,7 +383,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-gpuMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "igpuMatrix", i = "numeric", j = "numeric", value="integer"),
@@ -423,16 +446,16 @@ setMethod("rowMeans",
           })
 
 
-#' @title Covariance (gpuMatrix)
-#' @param x A gpuMatrix object
+#' @title Covariance (gpuR)
+#' @description Compute covariance values
+#' @param x A gpuR object
 #' @param y Not used
 #' @param use Not used
 #' @param method Character string indicating with covariance to be computed.
-#' @return A \code{gpuMatrix} containing the symmetric covariance values.
+#' @return A gpuMatrix/vclMatrix containing the symmetric covariance values.
 #' @author Charles Determan Jr.
 #' @docType methods
-#' @rdname gpuMatrix.cov
-#' @aliases cov,gpuMatrix
+#' @rdname cov-methods
 #' @export
 setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "missing"),
@@ -443,7 +466,7 @@ setMethod("cov",
               return(gpu_pmcc(x))
           })
 
-#' @rdname gpuMatrix.cov
+#' @rdname cov-methods
 #' @export
 setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "character"),
@@ -536,7 +559,7 @@ setMethod("dist", signature(x="gpuMatrix"),
           }
 )
 
-
+#' @rdname gpuR-deepcopy
 setMethod("deepcopy", signature(object ="gpuMatrix"),
           function(object){
               
@@ -553,7 +576,7 @@ setMethod("deepcopy", signature(object ="gpuMatrix"),
               
           })
 
-
+#' @rdname gpuR-block
 setMethod("block",
           signature(object = "gpuMatrix", 
                     rowStart = "integer", rowEnd = "integer",
@@ -733,9 +756,17 @@ setMethod("rbind2",
               return(ptr)
           })
 
-#' @title gpuMatrix Summary methods
-#' @param x A gpuMatrix object
+
+#' @title gpuR Summary methods
+#' @description Methods for the base Summary methods \link[methods]{S4groupGeneric}
+#' @param x A gpuR object
+#' @param ... Additional arguments passed to method (not currently used)
+#' @param na.rm a logical indicating whether missing values should be removed (
+#' not currently used)
 #' @return For \code{min} or \code{max}, a length-one vector
+#' @docType methods
+#' @rdname Summary-methods
+#' @aliases Summary-gpuR-method
 #' @export
 setMethod("Summary", c(x="gpuMatrix"),
           function(x, ..., na.rm)

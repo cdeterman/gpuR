@@ -102,15 +102,15 @@ setClass("dvclVector",
              TRUE
          })
 
-#' @export
+# @export
 setClass("ivclVectorSlice", 
          contains = "ivclVector")
 
-#' @export
+# @export
 setClass("fvclVectorSlice", 
          contains = "fvclVector")
 
-#' @export
+# @export
 setClass("dvclVectorSlice", 
          contains = "dvclVector")
 

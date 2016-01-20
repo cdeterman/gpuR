@@ -2,9 +2,7 @@
 % Please edit documentation in R/methods-gpuVector.R, R/methods-vclVector.R
 \docType{methods}
 \name{length,gpuVector-method}
-\alias{length,gpuVector}
 \alias{length,gpuVector-method}
-\alias{length,vclVector}
 \alias{length,vclVector-method}
 \title{Length of gpuVector}
 \usage{
@@ -13,9 +11,12 @@
 \S4method{length}{vclVector}(x)
 }
 \arguments{
-\item{x}{A gpuVector or vclVector object}
+\item{x}{A gpuVector/vclVector object}
 }
 \value{
 A numeric value
+}
+\description{
+Get the length of a gpuR vector object
 }
 

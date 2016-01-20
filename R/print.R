@@ -1,4 +1,5 @@
 #' @title S3 print for gpuMatrix objects
+#' @description prints a gpuMatrix object that is truncated to fit the screen
 #' @param x A gpuMatrix object
 #' @param ... Additional arguments to print
 #' @param n Number of rows to display

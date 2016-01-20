@@ -1,14 +1,5 @@
 
-#' @title Extract or Replace Parts of vclMatrix
-#' @param x A vclMatrix object
-#' @param i indices specifying rows
-#' @param j indices specifying columns
-#' @param drop missing
-#' @param value data of similar type to be added to vclMatrix object
-#' @aliases [,vclMatrix
-#' @aliases [<-,vclMatrix
-#' @author Charles Determan Jr.
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "missing", drop = "missing"),
@@ -20,7 +11,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "numeric", drop="missing"),
@@ -33,7 +24,7 @@ setMethod("[",
           })
 
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "missing", drop="missing"),
@@ -45,7 +36,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", drop="missing"),
@@ -57,7 +48,7 @@ setMethod("[",
               )
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "vclMatrix", i = "missing", j = "numeric", value = "numeric"),
@@ -78,7 +69,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "ivclMatrix", i = "missing", j = "numeric", value = "integer"),
@@ -98,7 +89,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "vclMatrix", i = "numeric", j = "missing", value = "numeric"),
@@ -119,7 +110,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "ivclMatrix", i = "numeric", j = "missing", value = "integer"),
@@ -140,7 +131,7 @@ setMethod("[<-",
           })
 
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", value = "numeric"),
@@ -156,7 +147,7 @@ setMethod("[<-",
               return(x)
           })
 
-#' @rdname extract-vclMatrix
+#' @rdname extract-methods
 #' @export
 setMethod("[<-",
           signature(x = "ivclMatrix", i = "numeric", j = "numeric", value = "integer"),
@@ -171,10 +162,7 @@ setMethod("[<-",
               return(x)
           })
  
-#' @title vclMatrix Multiplication
-#' @param x A vclMatrix object
-#' @param y A vclMatrix object
-#' @return A vclMatrix
+#' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
           function(x,y)
@@ -187,10 +175,7 @@ setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
           valueClass = "vclMatrix"
 )
 
-#' @title vclMatrix Arith methods
-#' @param e1 A vclMatrix object
-#' @param e2 A vclMatrix object
-#' @return A vclMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
           function(e1, e2)
@@ -208,10 +193,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
           valueClass = "vclMatrix"
 )
 
-#' @title vclMatrix Arith methods
-#' @param e1 A vclMatrix object
-#' @param e2 A numeric object
-#' @return A vclMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
           function(e1, e2)
@@ -237,10 +219,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
           valueClass = "gpuMatrix"
 )
 
-#' @title vclMatrix Arith methods
-#' @param e1 A numeric object
-#' @param e2 A vclMatrix object
-#' @return A vclMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
           function(e1, e2)
@@ -272,10 +251,7 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
           valueClass = "vclMatrix"
 )
 
-#' @title vclMatrix Arith methods
-#' @param e1 A vclMatrix object
-#' @param e2 missing
-#' @return A vclMatrix object
+#' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="missing"),
           function(e1, e2)
@@ -290,9 +266,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="missing"),
 )
 
 
-#' @title vclMatrix Math methods
-#' @param x A vclMatrix object
-#' @return A vclMatrix object
+#' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="vclMatrix"),
           function(x)
@@ -317,12 +291,7 @@ setMethod("Math", c(x="vclMatrix"),
           valueClass = "vclMatrix"
 )
 
-#' @title vclMatrix Logarithms
-#' @param x A vclMatrix object
-#' @return A vclMatrix object
-#' @param base A positive number (complex not currently supported by OpenCL):
-#' the base with respect to which logarithms are computed.  Defaults to the
-#' natural log.
+#' @rdname log-methods
 #' @export
 setMethod("log", c(x="vclMatrix"),
           function(x, base=NULL)
@@ -340,13 +309,7 @@ setMethod("log", c(x="vclMatrix"),
 
 
 
-#' @title The Number of Rows/Columns of a vclMatrix
-#' @param x A vclMatrix object
-#' @return An integer of length 1
-#' @rdname nrow.vclMatrix
-#' @aliases nrow,vclMatrix
-#' @aliases ncol,vclMatrix
-#' @author Charles Determan Jr.
+#' @rdname nrow-gpuR
 #' @export
 setMethod('nrow', signature(x="vclMatrix"), 
           function(x) {
@@ -358,7 +321,7 @@ setMethod('nrow', signature(x="vclMatrix"),
           }
 )
 
-#' @rdname nrow.vclMatrix
+#' @rdname nrow-gpuR
 #' @export
 setMethod('ncol', signature(x="vclMatrix"),
           function(x) {
@@ -371,11 +334,8 @@ setMethod('ncol', signature(x="vclMatrix"),
 )
 
 
-#' @title vclMatrix dim method
-#' @param x A vclMatrix object
-#' @return A length 2 vector of the number of rows and columns respectively.
-#' @author Charles Determan Jr.
-#' @aliases dim,vclMatrix
+#' @rdname dim-methods
+#' @aliases dim-vclMatrix
 #' @export
 setMethod('dim', signature(x="vclMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
@@ -427,17 +387,7 @@ setMethod("tcrossprod",
               vcl_tcrossprod(x, y)
           })
 
-
-#' @title Covariance (vclMatrix)
-#' @param x A vclMatrix object
-#' @param y Not used
-#' @param use Not used
-#' @param method Character string indicating which covariance to be computed.
-#' @return A \code{vclMatrix} containing the symmetric covariance values.
-#' @author Charles Determan Jr.
-#' @docType methods
-#' @rdname vclMatrix.cov
-#' @aliases cov,vclMatrix
+#' @rdname cov-methods
 #' @export
 setMethod("cov",
           signature(x = "vclMatrix", y = "missing", use = "missing", method = "missing"),
@@ -448,7 +398,7 @@ setMethod("cov",
               return(vclMatrix_pmcc(x))
           })
 
-#' @rdname vclMatrix.cov
+#' @rdname cov-methods
 #' @export
 setMethod("cov",
           signature(x = "vclMatrix", y = "missing", use = "missing", method = "character"),
@@ -506,9 +456,7 @@ setMethod("rowMeans",
           })
 
 
-#' @title vclMatrix Summary methods
-#' @param x A vclMatrix object
-#' @return For \code{min} or \code{max}, a length-one vector
+#' @rdname Summary-methods
 #' @export
 setMethod("Summary", c(x="vclMatrix"),
           function(x, ..., na.rm)
@@ -573,6 +521,7 @@ setMethod("dist", signature(x="vclMatrix"),
 )
 
 
+#' @rdname gpuR-deepcopy
 setMethod("deepcopy", signature(object ="vclMatrix"),
           function(object){
               
@@ -588,6 +537,7 @@ setMethod("deepcopy", signature(object ="vclMatrix"),
               return(out)
           })
 
+#' @rdname gpuR-block
 setMethod("block",
           signature(object = "vclMatrix", 
                     rowStart = "integer", rowEnd = "integer",
