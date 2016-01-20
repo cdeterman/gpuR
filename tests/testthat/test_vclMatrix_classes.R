@@ -54,23 +54,17 @@ test_that("vclMatrix double class initializer" ,{
     expect_equal(typeof(vclD), "double")
 })
 
-test_that("vclMatrix vector initializers", {
+test_that("vclMatrix integer vector initializers", {
     
     has_gpu_skip()
-    has_double_skip()
     
-    v <- rnorm(10)
     vi <- seq.int(10)
-    A <- matrix(v, nrow=5)
     Ai <- matrix(vi, nrow=2)
     err <- c(TRUE, FALSE)
     err2 <- c("hello", FALSE, 6)
     
-    vclA <- vclMatrix(v, nrow=5, ncol=2, type="double")
     vclAi <- vclMatrix(vi, nrow=2, ncol=5)
     
-    expect_equivalent(vclA[], A)
-    expect_equal(dim(A), dim(vclA))
     expect_is(vclAi, "ivclMatrix")
     expect_equivalent(vclAi[], Ai)
     expect_equal(dim(Ai), dim(vclAi))
@@ -79,28 +73,83 @@ test_that("vclMatrix vector initializers", {
     expect_error(vclMatrix(err2, nrow=1, ncol=3, type="double"))
 })
 
-test_that("vclMatrix scalar initializers", {
+test_that("vclMatrix float vector initializers", {
+    
+    has_gpu_skip()
+    
+    v <- rnorm(10)
+    A <- matrix(v, nrow=5)
+    
+    vclA <- vclMatrix(v, nrow=5, ncol=2, type="float")
+    
+    expect_equal(vclA[], A, tolerance=1e-07)
+    expect_equal(dim(A), dim(vclA))
+    expect_is(vclA, "fvclMatrix")
+})
+
+test_that("vclMatrix double vector initializers", {
     
     has_gpu_skip()
     has_double_skip()
     
-    v <- 3
+    v <- rnorm(10)
+    A <- matrix(v, nrow=5)
+    
+    vclA <- vclMatrix(v, nrow=5, ncol=2, type="double")
+    
+    expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5)
+    expect_equal(dim(A), dim(vclA))
+    expect_is(vclA, "dvclMatrix")
+})
+
+test_that("vclMatrix integer scalar initializers", {
+    
+    has_gpu_skip()
+    
     vi <- 4L
-    A <- matrix(v, nrow=5, ncol=5)
     Ai <- matrix(vi, nrow=2, ncol=7)
     
-    vclA <- vclMatrix(v, nrow=5, ncol=5, type="double")
     ivclA <- vclMatrix(vi, nrow=2, ncol=7, type="integer")
     
     expect_error(vclMatrix(v, nrow=5, ncol=5, type="integer"))
     
-    expect_equivalent(vclA[], A,
-                      "scalar double elements not equivalent")
-    expect_equal(dim(A), dim(vclA),
-                 "scalar double dimensions not equivalent")
     expect_is(ivclA, "ivclMatrix")
     expect_equivalent(ivclA[], Ai,
                       "scalar integer elements not equivalent")
     expect_equal(dim(Ai), dim(ivclA),
                  "scalar integer dimensions not equivalent")
 })
+
+test_that("vclMatrix float scalar initializers", {
+    
+    has_gpu_skip()
+    
+    v <- 3
+    A <- matrix(v, nrow=5, ncol=5)
+    
+    vclA <- vclMatrix(v, nrow=5, ncol=5, type="float")
+    
+    expect_equal(vclA[], A, tolerance=1e-07,
+                 "scalar double elements not equivalent")
+    expect_equal(dim(A), dim(vclA),
+                 "scalar double dimensions not equivalent")
+    expect_is(vclA, "fvclMatrix")
+})
+
+test_that("vclMatrix double scalar initializers", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    v <- 3
+    A <- matrix(v, nrow=5, ncol=5)
+    
+    vclA <- vclMatrix(v, nrow=5, ncol=5, type="double")
+    
+    expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5,
+                 "scalar double elements not equivalent")
+    expect_equal(dim(A), dim(vclA),
+                 "scalar double dimensions not equivalent")
+    expect_is(vclA, "dvclMatrix")
+})
+
