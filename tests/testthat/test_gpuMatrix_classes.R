@@ -37,7 +37,9 @@ test_that("gpuMatrix integer vector initializers", {
     has_gpu_skip()
     
     vi <- seq.int(10)
+    v <- rnorm(10)
     Ai <- matrix(vi, nrow=2)
+    A <- matrix(v, nrow=5)
     err <- c(TRUE, FALSE)
     err2 <- c("hello", FALSE, 6)
     
@@ -49,6 +51,7 @@ test_that("gpuMatrix integer vector initializers", {
     expect_error(gpuMatrix(err, nrow=1, ncol=2, type="double"))
     expect_error(gpuMatrix(err, nrow=1, ncol=2))
     expect_error(gpuMatrix(err2, nrow=1, ncol=3, type="double"))
+    expect_error(gpuMatrix(v, nrow=5, ncol=2, type="integer"))
 })
 
 test_that("gpuMatrix float vector initializers", {
@@ -56,13 +59,19 @@ test_that("gpuMatrix float vector initializers", {
     has_gpu_skip()
     
     v <- rnorm(10)
+    vi <- seq.int(10)
     A <- matrix(v, nrow=5)
+    Ai <- matrix(vi, nrow=2)
     
     vclA <- gpuMatrix(v, nrow=5, ncol=2, type="float")
+    vclAi <- gpuMatrix(vi, nrow=2, ncol=5, type="float")
     
     expect_equal(vclA[], A, tolerance=1e-07)
     expect_equal(dim(A), dim(vclA))
+    expect_equal(vclAi[], Ai, tolerance=1e-07)
+    expect_equal(dim(Ai), dim(vclAi))
     expect_is(vclA, "fgpuMatrix")
+    expect_is(vclAi, "fgpuMatrix")
 })
 
 test_that("gpuMatrix double vector initializers", {
@@ -71,31 +80,38 @@ test_that("gpuMatrix double vector initializers", {
     has_double_skip()
     
     v <- rnorm(10)
+    vi <- seq.int(10)
     A <- matrix(v, nrow=5)
+    Ai <- matrix(vi, nrow=2)
     
     vclA <- gpuMatrix(v, nrow=5, ncol=2, type="double")
+    vclAi <- gpuMatrix(vi, nrow=2, ncol=5, type="double")
     
     expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5)
     expect_equal(dim(A), dim(vclA))
+    expect_equal(vclAi[], Ai, tolerance=.Machine$double.eps^0.5)
+    expect_equal(dim(Ai), dim(vclAi))
     expect_is(vclA, "dgpuMatrix")
+    expect_is(vclAi, "dgpuMatrix")
 })
 
 test_that("gpuMatrix integer scalar initializers", {
     
     has_gpu_skip()
     
+    v <- 3
     vi <- 4L
+    A <- matrix(v, nrow=5, ncol=5)
     Ai <- matrix(vi, nrow=2, ncol=7)
     
     ivclA <- gpuMatrix(vi, nrow=2, ncol=7, type="integer")
     
-    expect_error(gpuMatrix(v, nrow=5, ncol=5, type="integer"))
-    
     expect_is(ivclA, "igpuMatrix")
     expect_equivalent(ivclA[], Ai,
-                      "scalar integer elements not equivalent")
+                      info = "scalar integer elements not equivalent")
     expect_equivalent(dim(Ai), dim(ivclA),
-                      "scalar integer dimensions not equivalent")
+                      info = "scalar integer dimensions not equivalent")
+    expect_error(gpuMatrix(v, nrow=5, ncol=5, type="integer"))
 })
 
 test_that("gpuMatrix float scalar initializers", {
@@ -103,15 +119,24 @@ test_that("gpuMatrix float scalar initializers", {
     has_gpu_skip()
     
     v <- 3
+    vi <- 4L
     A <- matrix(v, nrow=5, ncol=5)
+    Ai <- matrix(vi, nrow=2, ncol=7)
     
     vclA <- gpuMatrix(v, nrow=5, ncol=5, type="float")
+    ivclA <- gpuMatrix(vi, nrow=2, ncol=7, type="float")
     
     expect_equal(vclA[], A, tolerance=1e-07,
-                 info="scalar double elements not equivalent")
+                 info="scalar float elements not equivalent")
     expect_equivalent(dim(A), dim(vclA),
-                      info="scalar double dimensions not equivalent")
+                      info="scalar float dimensions not equivalent")
+    
+    expect_equal(ivclA[], Ai, tolerance=1e-07,
+                      info = "integer scalar float elements not equivalent")
+    expect_equivalent(dim(Ai), dim(ivclA),
+                      info = "integer scalar float dimensions not equivalent")
     expect_is(vclA, "fgpuMatrix")
+    expect_is(ivclA, "fgpuMatrix")
 })
 
 test_that("gpuMatrix double scalar initializers", {
@@ -120,15 +145,23 @@ test_that("gpuMatrix double scalar initializers", {
     has_double_skip()
     
     v <- 3
+    vi <- 4L
     A <- matrix(v, nrow=5, ncol=5)
+    Ai <- matrix(vi, nrow=2, ncol=7)
     
     vclA <- gpuMatrix(v, nrow=5, ncol=5, type="double")
+    ivclA <- gpuMatrix(vi, nrow=2, ncol=7, type="double")
     
     expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5,
                  info = "scalar double elements not equivalent")
     expect_equivalent(dim(A), dim(vclA),
                       info = "scalar double dimensions not equivalent")
+    expect_equal(ivclA[], Ai, tolerance=.Machine$double.eps^0.5,
+                 info = "integer scalar double elements not equivalent")
+    expect_equivalent(dim(Ai), dim(ivclA),
+                      info = "integer scalar double dimensions not equivalent")
     expect_is(vclA, "dgpuMatrix")
+    expect_is(ivclA, "dgpuMatrix")
 })
 
 test_that("fgpuMatrixBlock class present", {
