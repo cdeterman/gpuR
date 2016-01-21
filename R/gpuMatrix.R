@@ -111,10 +111,7 @@ setMethod('gpuMatrix',
               
               if(length(data) > 1){
                   data = switch(type,
-                                integer = {
-                                    new("igpuMatrix", 
-                                        address=sexpVecToEigenXptr(data, nrow, ncol, 4L))
-                                },
+                                integer = stop("Cannot create integer gpuMatrix from numeric"),
                                 float = {
                                     new("fgpuMatrix", 
                                         address=sexpVecToEigenXptr(data, nrow, ncol, 6L))
@@ -128,10 +125,7 @@ setMethod('gpuMatrix',
                   )
               }else{
                   data = switch(type,
-                                integer = {
-                                    new("igpuMatrix", 
-                                        address=initScalarEigenXptr(as.integer(data), nrow, ncol, 4L))
-                                },
+                                integer = stop("Cannot create integer gpuMatrix from numeric"),
                                 float = {
                                     new("fgpuMatrix", 
                                         address=initScalarEigenXptr(data, nrow, ncol, 6L))
