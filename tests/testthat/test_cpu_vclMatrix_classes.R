@@ -131,9 +131,9 @@ test_that("CPU vclMatrix float scalar initializers", {
     vclA <- vclMatrix(v, nrow=5, ncol=5, type="float")
     
     expect_equal(vclA[], A, tolerance=1e-07,
-                 "scalar double elements not equivalent")
+                 info = "scalar double elements not equivalent")
     expect_equivalent(dim(A), dim(vclA),
-                 "scalar double dimensions not equivalent")
+                      info = "scalar double dimensions not equivalent")
     expect_is(vclA, "fvclMatrix")
 })
 
@@ -147,9 +147,9 @@ test_that("CPU vclMatrix double scalar initializers", {
     vclA <- vclMatrix(v, nrow=5, ncol=5, type="double")
     
     expect_equal(vclA[], A, tolerance=.Machine$double.eps^0.5,
-                 "scalar double elements not equivalent")
+                 info = "scalar double elements not equivalent")
     expect_equivalent(dim(A), dim(vclA),
-                 "scalar double dimensions not equivalent")
+                      info = "scalar double dimensions not equivalent")
     expect_is(vclA, "dvclMatrix")
 })
 
