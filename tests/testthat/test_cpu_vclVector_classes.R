@@ -12,12 +12,15 @@ test_that("CPU vclVector integer class initializer" ,{
     has_cpu_skip()
     
     vclA <- vclVector(A)
+    vclMiss <- vclVector(length = 3L, type = "integer")
     
     expect_is(vclA, "ivclVector")
+    expect_is(vclMiss, "ivclVector")
     expect_equivalent(vclA[], A, 
                       info="vcl integer vector elements not equivalent")
     expect_equal(length(vclA), length(A))
     expect_equal(typeof(vclA), "integer")
+    expect_equal(length(vclMiss), 3)
 })
 
 test_that("CPU vclVector float class initializer" ,{
