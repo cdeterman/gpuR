@@ -94,6 +94,11 @@ setMethod('vclMatrix',
               if (is.null(type)) type <- getOption("gpuR.default.type")
               device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
               
+              if(is.na(nrow)) stop("must indicate number of rows: nrow")
+              if(is.na(ncol)) stop("must indicate number of columns: ncol")
+              assert_is_numeric(nrow)
+              assert_is_numeric(ncol)
+              
               if(length(data) == 1){
                   data <- vclMatInitNumScalar(data, nrow, ncol, type, device_flag)
               }else{
@@ -112,6 +117,11 @@ setMethod('vclMatrix',
               
               if (is.null(type)) type <- "integer"
               device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              
+              if(is.na(nrow)) stop("must indicate number of rows: nrow")
+              if(is.na(ncol)) stop("must indicate number of columns: ncol")
+              assert_is_numeric(nrow)
+              assert_is_numeric(ncol)
               
               if(length(data) == 1){
                   data <- vclMatInitIntScalar(data, nrow, ncol, type, device_flag)
