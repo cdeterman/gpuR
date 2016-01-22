@@ -64,6 +64,60 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
     return pOut;
 }
 
+//cbind two vclMatrix objects
+template <typename T>
+SEXP
+cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int device_flag)
+{        
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > pB  = ptrB->data();
+    
+    viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2());
+    
+    viennacl::matrix_range<viennacl::matrix<T> > C_right(C, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + pB.size2()));
+    viennacl::matrix_range<viennacl::matrix<T> > C_left(C, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
+    
+    C_right = pB;
+    C_left = pA;
+    
+    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1(), pA.size2() + pB.size2(), device_flag);
+    mat->setMatrix(C);
+    mat->setDims(pA.size1(), pA.size2() + pB.size2());
+    mat->setRange(0, pA.size1(), 0, pA.size2() + pB.size2());
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
+    return pMat;
+}
+
+//rbind two vclMatrix objects
+template <typename T>
+SEXP
+cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int device_flag)
+{        
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > pB  = ptrB->data();
+    
+    viennacl::matrix<T> C(pA.size1() + pB.size1(), pA.size2());
+    
+    viennacl::matrix_range<viennacl::matrix<T> > C_top(C, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
+    viennacl::matrix_range<viennacl::matrix<T> > C_bottom(C, viennacl::range(pA.size1(), pA.size1() + pB.size1()), viennacl::range(0, pA.size2()));
+    
+    C_top = pA;
+    C_bottom = pB;
+    
+    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1() + pB.size1(), pA.size2(), device_flag);
+    mat->setMatrix(C);
+    mat->setDims(pA.size1() + pB.size1(), pA.size2());
+    mat->setRange(0, pA.size1() + pB.size1(), 0, pA.size2());
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
+    return pMat;
+}
+
 template <typename T>
 SEXP
 cpp_vclMatrix_block(
@@ -434,6 +488,48 @@ cpp_vclMatrix_block(
             return cpp_vclMatrix_block<float>(ptrA, rowStart, rowEnd, colStart, colEnd);
         case 8:
             return cpp_vclMatrix_block<double>(ptrA, rowStart, rowEnd, colStart, colEnd);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+/*** vclMatrix cbind ***/
+// [[Rcpp::export]]
+SEXP
+cpp_cbind_vclMatrix(
+    SEXP ptrA, 
+    SEXP ptrB,
+    int type_flag,
+    int device_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return cpp_cbind_vclMatrix<int>(ptrA, ptrB, device_flag);
+        case 6:
+            return cpp_cbind_vclMatrix<float>(ptrA, ptrB, device_flag);
+        case 8:
+            return cpp_cbind_vclMatrix<double>(ptrA, ptrB, device_flag);
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+/*** vclMatrix rbind ***/
+// [[Rcpp::export]]
+SEXP
+cpp_rbind_vclMatrix(
+    SEXP ptrA, 
+    SEXP ptrB,
+    int type_flag,
+    int device_flag)
+{    
+    switch(type_flag) {
+        case 4:
+            return cpp_rbind_vclMatrix<int>(ptrA, ptrB, device_flag);
+        case 6:
+            return cpp_rbind_vclMatrix<float>(ptrA, ptrB, device_flag);
+        case 8:
+            return cpp_rbind_vclMatrix<double>(ptrA, ptrB, device_flag);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

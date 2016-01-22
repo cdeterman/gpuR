@@ -404,20 +404,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// cpp_gpu_two_vec
-void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, SEXP kernel_function_);
-RcppExport SEXP gpuR_cpp_gpu_two_vec(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
-    cpp_gpu_two_vec(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_);
-    return R_NilValue;
-END_RCPP
-}
 // cpp_gpuVector_iaxpy
 void cpp_gpuVector_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_, SEXP sourceCode_, int device_type);
 RcppExport SEXP gpuR_cpp_gpuVector_iaxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP sourceCode_SEXP, SEXP device_typeSEXP) {
@@ -429,6 +415,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< int >::type device_type(device_typeSEXP);
     cpp_gpuVector_iaxpy(alpha_, ptrA_, ptrB_, sourceCode_, device_type);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpu_two_vec
+void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, SEXP kernel_function_);
+RcppExport SEXP gpuR_cpp_gpu_two_vec(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
+    cpp_gpu_two_vec(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_);
     return R_NilValue;
 END_RCPP
 }
@@ -479,6 +479,105 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
     Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
     __result = Rcpp::wrap(truncDoublegpuMat(ptrA_, nr, nc));
+    return __result;
+END_RCPP
+}
+// vcl_dncol
+int vcl_dncol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_dncol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_dncol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_fncol
+int vcl_fncol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_fncol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_fncol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_incol
+int vcl_incol(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_incol(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_incol(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_dnrow
+int vcl_dnrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_dnrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_dnrow(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_fnrow
+int vcl_fnrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_fnrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_fnrow(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_inrow
+int vcl_inrow(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_inrow(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_inrow(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_dgpuVec_size
+int vcl_dgpuVec_size(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_dgpuVec_size(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_dgpuVec_size(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_fgpuVec_size
+int vcl_fgpuVec_size(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_fgpuVec_size(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_fgpuVec_size(ptrA));
+    return __result;
+END_RCPP
+}
+// vcl_igpuVec_size
+int vcl_igpuVec_size(SEXP ptrA);
+RcppExport SEXP gpuR_vcl_igpuVec_size(SEXP ptrASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    __result = Rcpp::wrap(vcl_igpuVec_size(ptrA));
     return __result;
 END_RCPP
 }
@@ -605,105 +704,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// vcl_dncol
-int vcl_dncol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_dncol(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_dncol(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_fncol
-int vcl_fncol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_fncol(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_fncol(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_incol
-int vcl_incol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_incol(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_incol(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_dnrow
-int vcl_dnrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_dnrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_dnrow(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_fnrow
-int vcl_fnrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_fnrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_fnrow(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_inrow
-int vcl_inrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_inrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_inrow(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_dgpuVec_size
-int vcl_dgpuVec_size(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_dgpuVec_size(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_dgpuVec_size(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_fgpuVec_size
-int vcl_fgpuVec_size(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_fgpuVec_size(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_fgpuVec_size(ptrA));
-    return __result;
-END_RCPP
-}
-// vcl_igpuVec_size
-int vcl_igpuVec_size(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_igpuVec_size(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    __result = Rcpp::wrap(vcl_igpuVec_size(ptrA));
-    return __result;
-END_RCPP
-}
 // cpp_deepcopy_vclMatrix
 SEXP cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag);
 RcppExport SEXP gpuR_cpp_deepcopy_vclMatrix(SEXP ptrASEXP, SEXP type_flagSEXP) {
@@ -755,6 +755,34 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type colEnd(colEndSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     __result = Rcpp::wrap(cpp_vclMatrix_block(ptrA, rowStart, rowEnd, colStart, colEnd, type_flag));
+    return __result;
+END_RCPP
+}
+// cpp_cbind_vclMatrix
+SEXP cpp_cbind_vclMatrix(SEXP ptrA, SEXP ptrB, int type_flag, int device_flag);
+RcppExport SEXP gpuR_cpp_cbind_vclMatrix(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP device_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< int >::type device_flag(device_flagSEXP);
+    __result = Rcpp::wrap(cpp_cbind_vclMatrix(ptrA, ptrB, type_flag, device_flag));
+    return __result;
+END_RCPP
+}
+// cpp_rbind_vclMatrix
+SEXP cpp_rbind_vclMatrix(SEXP ptrA, SEXP ptrB, int type_flag, int device_flag);
+RcppExport SEXP gpuR_cpp_rbind_vclMatrix(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP device_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< int >::type device_flag(device_flagSEXP);
+    __result = Rcpp::wrap(cpp_rbind_vclMatrix(ptrA, ptrB, type_flag, device_flag));
     return __result;
 END_RCPP
 }

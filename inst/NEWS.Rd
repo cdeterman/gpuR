@@ -14,11 +14,11 @@
             \item 'log','log10', & 'exp' methods for vector objects
             \item 'abs' method added for all objects
             \item 'max' & 'min' method for all objects
-            \item 'cbind' & 'rbind' methods for gpuMatrix objects
+            \item 'cbind' & 'rbind' methods for gpuMatrix/vclMatrix objects
         }
         \item Features in Progress:
         \itemize{
-            \item Additional matrix functions (QR-decompsition, SVD)
+            \item Additional matrix functions (QR-decompsition, SVD, Cholesky, solve)
             \item 'device type' checks (i.e. deal with CPU & GPU objects), perhaps detect type from object?
         }
     }

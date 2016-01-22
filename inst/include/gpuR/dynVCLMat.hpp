@@ -52,6 +52,10 @@ class dynVCLMat {
             A = mat;
             ptr = &A;
         }
+        void setMatrix(viennacl::matrix<T> mat){
+            A = mat;
+            ptr = &A;
+        }
         void setDims(int nr_in, int nc_in){
             nr = nr_in;
             nc = nc_in;

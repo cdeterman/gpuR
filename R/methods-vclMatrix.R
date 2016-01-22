@@ -216,7 +216,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
                      stop("undefined operation")
               )
           },
-          valueClass = "gpuMatrix"
+          valueClass = "vclMatrix"
 )
 
 #' @rdname Arith-methods
@@ -564,3 +564,202 @@ setMethod("block",
               
           })
 
+setMethod("cbind2",
+          signature(x = "vclMatrix", y = "vclMatrix"),
+          function(x, y, ...){
+              if(nrow(x) != nrow(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("cbind2",
+          signature(x = "numeric", y = "vclMatrix"),
+          function(x, y, ...){
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("cbind2",
+          signature(x = "vclMatrix", y = "numeric"),
+          function(x, y, ...){
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("rbind2",
+          signature(x = "vclMatrix", y = "vclMatrix"),
+          function(x, y, ...){
+              if(ncol(x) != ncol(y)){
+                  stop("number of columns of matrices must match")
+              }
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("rbind2",
+          signature(x = "numeric", y = "vclMatrix"),
+          function(x, y, ...){
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              x <- vclMatrix(x, nrow=1, ncol=ncol(y), type=typeof(y))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })
+
+setMethod("rbind2",
+          signature(x = "vclMatrix", y = "numeric"),
+          function(x, y, ...){
+              
+              device_flag <- 
+                  switch(options("gpuR.default.device")$gpuR.default.device,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              y <- vclMatrix(y, nrow=1, ncol=ncol(x), type=typeof(x))
+              
+              ptr <- switch(typeof(x),
+                            "integer" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
+                                new("ivclMatrix", address = address)
+                            },
+                            "float" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
+                                new("fvclMatrix", address = address)
+                            },
+                            "double" = {
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
+                                new("dvclMatrix", address = address)
+                            },
+                            stop("type not recognized")
+              )
+              
+              return(ptr)
+          })

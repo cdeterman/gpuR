@@ -17,7 +17,7 @@ Imports:
     methods
 LinkingTo: Rcpp,
     RcppEigen,
-    RViennaCL,
+    RViennaCL (>= 1.7.1),
     BH
 NeedsCompilation: yes
 Suggests:
