@@ -285,7 +285,7 @@ vcl_crossprod <- function(X, Y){
                )
         )
     
-    if(ncol(X) != ncol(Y)){
+    if(nrow(X) != nrow(Y)){
         stop("matrices non-conformable")
     }
     
