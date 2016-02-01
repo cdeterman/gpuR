@@ -4,7 +4,7 @@
     options(gpuR.default.device.type = "gpu")
     
     # Initialize all possible contexts
-    initContexts()
+    if (!identical(Sys.getenv("APPVEYOR"), "True")) initContexts()
 #     options(gpuR.default.device = 1L)
 #     options(gpuR.default.platform = 1L)
 }

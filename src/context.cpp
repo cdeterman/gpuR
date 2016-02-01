@@ -126,7 +126,10 @@ listContexts()
 void
 setContext(int id)
 {
-    viennacl::ocl::switch_context(id);
+    if(id <= 0){
+        stop("Index cannot be 0 or less")
+    }
+    viennacl::ocl::switch_context(id-1);
 }
 
 
