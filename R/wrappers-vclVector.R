@@ -3,7 +3,7 @@
 vclVecInner <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -50,7 +50,7 @@ vclVecOuter <- function(A, B){
     if(length(B) != length(A)) stop("Non conformant arguments")
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -98,7 +98,7 @@ vclVecOuter <- function(A, B){
 vclVec_axpy <- function(alpha, A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -145,7 +145,7 @@ vclVec_axpy <- function(alpha, A, B){
 # GPU axpy wrapper
 vclVector_unary_axpy <- function(A){
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option")
@@ -181,7 +181,7 @@ vclVector_unary_axpy <- function(A){
 vclVecElemMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -226,7 +226,7 @@ vclVecElemMult <- function(A, B){
 vclVecScalarMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -264,7 +264,7 @@ vclVecScalarMult <- function(A, B){
 vclVecElemDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -308,7 +308,7 @@ return(C)
 vclVecScalarDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -346,7 +346,7 @@ vclVecScalarDiv <- function(A, B){
 vclVecElemPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -390,7 +390,7 @@ vclVecElemPow <- function(A, B){
 vclVecScalarPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -430,7 +430,7 @@ vclVecScalarPow <- function(A, B){
 vclVecElemSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -468,7 +468,7 @@ return(C)
 vclVecElemArcSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -506,7 +506,7 @@ vclVecElemArcSin <- function(A){
 vclVecElemHypSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -544,7 +544,7 @@ vclVecElemHypSin <- function(A){
 vclVecElemCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -582,7 +582,7 @@ vclVecElemCos <- function(A){
 vclVecElemArcCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -621,7 +621,7 @@ return(C)
 vclVecElemHypCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -660,7 +660,7 @@ return(C)
 vclVecElemTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -699,7 +699,7 @@ return(C)
 vclVecElemArcTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -738,7 +738,7 @@ return(C)
 vclVecElemHypTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -777,7 +777,7 @@ return(C)
 vclVecElemLog <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -816,7 +816,7 @@ return(C)
 vclVecElemLogBase <- function(A, base){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -856,7 +856,7 @@ vclVecElemLogBase <- function(A, base){
 vclVecElemLog10 <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -895,7 +895,7 @@ return(C)
 vclVecElemExp <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -933,7 +933,7 @@ vclVecElemExp <- function(A){
 vclVecElemAbs <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -971,7 +971,7 @@ vclVecElemAbs <- function(A){
 vclVecMax <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -1005,7 +1005,7 @@ vclVecMax <- function(A){
 vclVecMin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"

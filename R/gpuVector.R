@@ -24,24 +24,41 @@ setMethod('gpuVector',
               
               if (is.null(type)) type <- typeof(data)
               
+              device_index <- 0L
+              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              platform_index <- currentPlatform()$platform_index
+              platform_name <- platformInfo(platform_index)$platformName
+              
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
                                     address=sexpVecToEigenVecXptr(data, 
                                                                   length(data),
-                                                                  4L))
+                                                                  4L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             float = {
                                 new("fgpuVector", 
                                     address=sexpVecToEigenVecXptr(data, 
                                                                   length(data),
-                                                                  6L))
+                                                                  6L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             double = {
                                 new("dgpuVector",
                                     address = sexpVecToEigenVecXptr(data,
                                                                     length(data),
-                                                                    8L))
+                                                                    8L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -62,18 +79,35 @@ setMethod('gpuVector',
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
+              device_index <- 0L
+              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              platform_index <- currentPlatform()$platform_index
+              platform_name <- platformInfo(platform_index)$platformName
+              
               data = switch(type,
                             integer = {
                                 new("igpuVector", 
-                                    address=emptyEigenVecXptr(length, 4L))
+                                    address=emptyEigenVecXptr(length, 4L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             float = {
                                 new("fgpuVector", 
-                                    address=emptyEigenVecXptr(length, 6L))
+                                    address=emptyEigenVecXptr(length, 6L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             double = {
                                 new("dgpuVector",
-                                    address = emptyEigenVecXptr(length, 8L))
+                                    address = emptyEigenVecXptr(length, 8L),
+                                    .platform_index = platform_index,
+                                    .platform_name = platform_name,
+                                    .device_index = device_index,
+                                    .device_name = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

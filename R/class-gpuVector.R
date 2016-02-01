@@ -17,7 +17,11 @@ setClassUnion("missingOrNULL", c("missing", "NULL"))
 #' @seealso \code{\link{igpuVector-class}}
 #' @export
 setClass('gpuVector', 
-         slots = c(address="externalptr"))
+         slots = c(address="externalptr",
+                   .platform_index = "integer",
+                   .platform_name = "character",
+                   .device_index = "integer",
+                   .device_name = "character"))
 
 # setClass('gpuVector',
 #          representation("VIRTUAL"),

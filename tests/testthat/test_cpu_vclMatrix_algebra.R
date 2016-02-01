@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU vclMatrix algebra")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 # set seed
 set.seed(123)
@@ -325,4 +325,4 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Division", {
 #                  info="integer matrix elements not equivalent")  
 # })
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

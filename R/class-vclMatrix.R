@@ -36,7 +36,11 @@
 #' \code{\link{dvclMatrix-class}}
 #' @export
 setClass('vclMatrix', 
-         slots = c(address="externalptr"))
+         slots = c(address="externalptr",
+                   .platform_index = "integer",
+                   .platform_name = "character",
+                   .device_index = "integer",
+                   .device_name = "character"))
 
 
 #' @title ivclMatrix Class

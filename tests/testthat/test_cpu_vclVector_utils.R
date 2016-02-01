@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU vclVector Utility Functions")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 set.seed(123)
 ORDER <- 100
@@ -117,4 +117,4 @@ test_that("dvclVector set accession method successful", {
 })
 
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

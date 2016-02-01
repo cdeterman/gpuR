@@ -530,7 +530,7 @@ setMethod("dist", signature(x="gpuMatrix"),
           function(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
           {
               device_flag <- 
-                  switch(options("gpuR.default.device")$gpuR.default.device,
+                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
                          "gpu" = 0,
                          stop("unrecognized default device option"

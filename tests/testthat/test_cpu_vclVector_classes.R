@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU vclVector classes")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 set.seed(123)
 A <- seq.int(10)
@@ -102,5 +102,5 @@ test_that("CPU dvclVectorSlice class present", {
                  info = "source dvclVector length has been changed")
 })
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")
 

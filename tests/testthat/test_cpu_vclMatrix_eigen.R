@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU vclMatrix eigen decomposition")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 # set seed
 set.seed(123)
@@ -110,4 +110,4 @@ test_that("vclMatrix Symmetric Double Precision Matrix Eigen Decomposition",
 #                  info="float eigenvectors not equivalent")  
 # })
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

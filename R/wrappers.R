@@ -14,7 +14,7 @@
 gpu_Mat_axpy <- function(alpha, A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -72,7 +72,7 @@ gpu_Mat_axpy <- function(alpha, A, B){
 gpuMatrix_unary_axpy <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -117,7 +117,7 @@ gpu_Mat_mult <- function(A, B){
     kernel <- readChar(file, file.info(file)$size)
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -168,7 +168,7 @@ return(C)
 gpuMatElemMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -213,7 +213,7 @@ return(C)
 gpuMatScalarMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -251,7 +251,7 @@ gpuMatScalarMult <- function(A, B){
 gpuMatElemDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -295,7 +295,7 @@ gpuMatElemDiv <- function(A, B){
 gpuMatScalarDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -333,7 +333,7 @@ gpuMatScalarDiv <- function(A, B){
 gpuMatElemPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -377,7 +377,7 @@ gpuMatElemPow <- function(A, B){
 gpuMatScalarPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -417,7 +417,7 @@ gpuMatScalarPow <- function(A, B){
 gpuMatElemSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -456,7 +456,7 @@ return(C)
 gpuMatElemArcSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -495,7 +495,7 @@ return(C)
 gpuMatElemHypSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -534,7 +534,7 @@ return(C)
 gpuMatElemCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -573,7 +573,7 @@ return(C)
 gpuMatElemArcCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -612,7 +612,7 @@ return(C)
 gpuMatElemHypCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -651,7 +651,7 @@ return(C)
 gpuMatElemTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -690,7 +690,7 @@ return(C)
 gpuMatElemArcTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -729,7 +729,7 @@ return(C)
 gpuMatElemHypTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -768,7 +768,7 @@ return(C)
 gpuMatElemLog <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -808,7 +808,7 @@ gpuMatElemLog <- function(A){
 gpuMatElemLogBase <- function(A, base){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -849,7 +849,7 @@ return(C)
 gpuMatElemLog10 <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -888,7 +888,7 @@ return(C)
 gpuMatElemExp <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -927,7 +927,7 @@ return(C)
 gpu_colSums <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -966,7 +966,7 @@ gpu_colSums <- function(A){
 gpu_rowSums <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1007,7 +1007,7 @@ gpu_rowSums <- function(A){
 gpu_colMeans <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1041,7 +1041,7 @@ gpu_colMeans <- function(A){
 gpu_rowMeans <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1075,7 +1075,7 @@ gpu_rowMeans <- function(A){
 gpu_pmcc <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1109,7 +1109,7 @@ gpu_crossprod <- function(X, Y){
     }
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1149,7 +1149,7 @@ gpu_tcrossprod <- function(X, Y){
     }
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1186,7 +1186,7 @@ gpu_tcrossprod <- function(X, Y){
 gpuMatrix_euclidean <- function(A, D, diag, upper, p){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1216,7 +1216,7 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p){
 gpuMatElemAbs <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"

@@ -29,7 +29,7 @@ setMethod('vclVector',
                           in data")
               }
               
-              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
               data = switch(type,
                             integer = {
@@ -63,7 +63,7 @@ setMethod('vclVector',
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
-              device_flag <- ifelse(options("gpuR.default.device") == "gpu", 0, 1)
+              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
               data = switch(type,
                             integer = {

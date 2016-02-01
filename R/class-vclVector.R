@@ -15,7 +15,11 @@
 #' @seealso \code{\link{ivclVector-class}}
 #' @export
 setClass('vclVector', 
-         slots = c(address="externalptr"))
+         slots = c(address="externalptr",
+                   .platform_index = "integer",
+                   .platform_name = "character",
+                   .device_index = "integer",
+                   .device_name = "character"))
 
 # setClass('vclVector',
 #          representation("VIRTUAL"),

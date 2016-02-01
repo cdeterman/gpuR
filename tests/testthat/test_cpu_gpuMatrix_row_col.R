@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU gpuMatrix Row and Column Methods")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 # set seed
 set.seed(123)
@@ -238,4 +238,4 @@ test_that("CPU gpuMatrix Double Precision rbind",
 })
 
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

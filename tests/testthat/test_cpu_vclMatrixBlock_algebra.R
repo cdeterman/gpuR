@@ -2,7 +2,7 @@ library(gpuR)
 context("vclMatrixBlock algebra")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 # set seed
 set.seed(123)
@@ -670,5 +670,5 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
 
 
 # set option back to GPU
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")
 

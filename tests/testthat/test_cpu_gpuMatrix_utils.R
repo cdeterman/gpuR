@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU gpuMatrix Utility Functions")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 set.seed(123)
 A <- matrix(sample(seq.int(100), 100), 10)
@@ -161,4 +161,4 @@ test_that("gpuMatrix confirm print doesn't error", {
     expect_that(print(dgpu), prints_text("Source: gpuR Matrix"))
 })
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

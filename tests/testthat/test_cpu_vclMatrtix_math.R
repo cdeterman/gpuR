@@ -8,7 +8,7 @@ set.seed(123)
 options(warn=-1)
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 ORDER <- 4
 
@@ -259,4 +259,4 @@ test_that("CPU vclMatrix Double Precision Maximum/Minimum", {
 })
 
 # set option back to GPU
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

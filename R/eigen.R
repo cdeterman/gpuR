@@ -38,7 +38,7 @@ setMethod("eigen", signature(x="gpuMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
           {
               device_flag <- 
-                  switch(options("gpuR.default.device")$gpuR.default.device,
+                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
                          "gpu" = 0,
                          stop("unrecognized default device option"
@@ -104,7 +104,7 @@ setMethod("eigen", signature(x="vclMatrix"),
               }
               
               device_flag <- 
-                  switch(options("gpuR.default.device")$gpuR.default.device,
+                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
                          "gpu" = 0,
                          stop("unrecognized default device option"

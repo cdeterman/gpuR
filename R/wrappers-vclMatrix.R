@@ -2,19 +2,32 @@
 # vclMatrix numeric vector initializer
 vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
     
+    device_index <- 0L
+    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    platform_index <- currentPlatform()$platform_index
+    platform_name <- platformInfo(platform_index)$platformName
+    
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
                   float = {
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, device_flag))
+                                                 6L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name)
                   },
                   double = {
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, device_flag))
+                                                   8L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name)
                   },
                   stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -26,6 +39,11 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix numeric initializer
 vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
     
+    device_index <- 0L
+    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    platform_index <- currentPlatform()$platform_index
+    platform_name <- platformInfo(platform_index)$platformName
+    
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
                   float = {
@@ -34,7 +52,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, device_flag)
+                                  6L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name
                       )
                   },
                   double = {
@@ -43,7 +65,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, device_flag)
+                                  8L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name
                       )
                   },
                   stop("this is an unrecognized 
@@ -56,24 +82,41 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix integer vector initializer
 vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
     
+    device_index <- 0L
+    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    platform_index <- currentPlatform()$platform_index
+    platform_name <- platformInfo(platform_index)$platformName
+    
     data = switch(type,
                   integer = {
                       new("ivclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol,
-                                                 4L, device_flag))
+                                                 4L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name)
                   },
                   float = {
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, device_flag))
+                                                 6L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name)
                   },
                   double = {
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, device_flag))
+                                                   8L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name)
                   },
                   stop("this is an unrecognized 
                                      or unimplemented data type")
@@ -85,6 +128,11 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix integer scalar initializer
 vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
     
+    device_index <- 0L
+    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    platform_index <- currentPlatform()$platform_index
+    platform_name <- platformInfo(platform_index)$platformName
+    
     data = switch(type,
                   integer = {
                       new("ivclMatrix", 
@@ -92,7 +140,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  4L, device_flag)
+                                  4L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name
                       )
                   },
                   float = {
@@ -101,7 +153,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, device_flag)
+                                  6L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name
                       )
                   },
                   double = {
@@ -110,7 +166,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, device_flag)
+                                  8L, device_flag),
+                          .platform_index = platform_index,
+                          .platform_name = platform_name,
+                          .device_index = device_index,
+                          .device_name = device_name
                       )
                   },
                   stop("this is an unrecognized 
@@ -132,7 +192,7 @@ vclMatMult <- function(A, B){
 #     kernel <- readChar(file, file.info(file)$size)
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -181,7 +241,7 @@ return(C)
 vclMat_axpy <- function(alpha, A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -241,7 +301,7 @@ return(Z)
 vclMatrix_unary_axpy <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -278,7 +338,7 @@ vclMatrix_unary_axpy <- function(A){
 vcl_crossprod <- function(X, Y){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -314,7 +374,7 @@ vcl_crossprod <- function(X, Y){
 vcl_tcrossprod <- function(X, Y){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -352,7 +412,7 @@ vcl_tcrossprod <- function(X, Y){
 vclMatElemMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -396,7 +456,7 @@ vclMatElemMult <- function(A, B){
 vclMatScalarMult <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -434,7 +494,7 @@ vclMatScalarMult <- function(A, B){
 vclMatElemDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -478,7 +538,7 @@ vclMatElemDiv <- function(A, B){
 vclMatScalarDiv <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -516,7 +576,7 @@ vclMatScalarDiv <- function(A, B){
 vclMatElemPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -560,7 +620,7 @@ vclMatElemPow <- function(A, B){
 vclMatScalarPow <- function(A, B){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -600,7 +660,7 @@ vclMatScalarPow <- function(A, B){
 vclMatElemSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -639,7 +699,7 @@ return(C)
 vclMatElemArcSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -678,7 +738,7 @@ return(C)
 vclMatElemHypSin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -717,7 +777,7 @@ return(C)
 vclMatElemCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -756,7 +816,7 @@ return(C)
 vclMatElemArcCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -795,7 +855,7 @@ return(C)
 vclMatElemHypCos <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -834,7 +894,7 @@ return(C)
 vclMatElemTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -873,7 +933,7 @@ return(C)
 vclMatElemArcTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -912,7 +972,7 @@ return(C)
 vclMatElemHypTan <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -951,7 +1011,7 @@ return(C)
 vclMatElemLog <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -990,7 +1050,7 @@ return(C)
 vclMatElemLogBase <- function(A, base){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1031,7 +1091,7 @@ return(C)
 vclMatElemLog10 <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1070,7 +1130,7 @@ return(C)
 vclMatElemExp <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1109,7 +1169,7 @@ return(C)
 vclMatrix_colSums <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1144,7 +1204,7 @@ vclMatrix_colSums <- function(A){
 vclMatrix_rowSums <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1179,7 +1239,7 @@ vclMatrix_rowSums <- function(A){
 vclMatrix_colMeans <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1214,7 +1274,7 @@ vclMatrix_colMeans <- function(A){
 vclMatrix_rowMeans <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1248,7 +1308,7 @@ vclMatrix_rowMeans <- function(A){
 vclMatrix_pmcc <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1278,7 +1338,7 @@ vclMatrix_pmcc <- function(A){
 vclMatrix_euclidean <- function(A, D, diag, upper, p){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1307,7 +1367,7 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p){
 vclMatElemAbs <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1, 
                "gpu" = 0,
                stop("unrecognized default device option"
@@ -1345,7 +1405,7 @@ vclMatElemAbs <- function(A){
 vclMatMax <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"
@@ -1379,7 +1439,7 @@ vclMatMax <- function(A){
 vclMatMin <- function(A){
     
     device_flag <- 
-        switch(options("gpuR.default.device")$gpuR.default.device,
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                "cpu" = 1L, 
                "gpu" = 0L,
                stop("unrecognized default device option"

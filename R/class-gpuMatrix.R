@@ -33,7 +33,11 @@
 #' \code{\link{dgpuMatrix-class}}
 #' @export
 setClass('gpuMatrix', 
-         slots = c(address="externalptr"))
+         slots = c(address="externalptr",
+                   .platform_index = "integer",
+                   .platform_name = "character",
+                   .device_index = "integer",
+                   .device_name = "character"))
 
 
 #' @title igpuMatrix Class

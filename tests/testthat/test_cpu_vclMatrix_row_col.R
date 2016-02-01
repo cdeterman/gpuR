@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU vclMatrix Row and Column Methods")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 # set seed
 set.seed(123)
@@ -230,4 +230,4 @@ test_that("CPU vclMatrix Double Precision rbind",
                  info="double scalar rbind not equivalent") 
 })
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

@@ -2,7 +2,7 @@ library(gpuR)
 context("CPU gpuMatrix classes")
 
 # set option to use CPU instead of GPU
-options(gpuR.default.device = "cpu")
+options(gpuR.default.device.type = "cpu")
 
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
@@ -165,4 +165,4 @@ test_that("CPU gpuMatrix double scalar initializers", {
 })
 
 
-options(gpuR.default.device = "gpu")
+options(gpuR.default.device.type = "gpu")

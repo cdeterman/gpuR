@@ -6,15 +6,33 @@
 
 using namespace Rcpp;
 
-// cpp_detectCPUs
-SEXP cpp_detectCPUs(SEXP platform_idx);
-RcppExport SEXP gpuR_cpp_detectCPUs(SEXP platform_idxSEXP) {
+// initContexts
+void initContexts();
+RcppExport SEXP gpuR_initContexts() {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    initContexts();
+    return R_NilValue;
+END_RCPP
+}
+// listContexts
+DataFrame listContexts();
+RcppExport SEXP gpuR_listContexts() {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx(platform_idxSEXP);
-    __result = Rcpp::wrap(cpp_detectCPUs(platform_idx));
+    __result = Rcpp::wrap(listContexts());
     return __result;
+END_RCPP
+}
+// setContext
+void setContext(int id);
+RcppExport SEXP gpuR_setContext(SEXP idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type id(idSEXP);
+    setContext(id);
+    return R_NilValue;
 END_RCPP
 }
 // cpp_detectGPUs
@@ -28,13 +46,36 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// detectPlatforms
-SEXP detectPlatforms();
-RcppExport SEXP gpuR_detectPlatforms() {
+// cpp_gpuInfo
+List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_);
+RcppExport SEXP gpuR_cpp_gpuInfo(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(detectPlatforms());
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
+    __result = Rcpp::wrap(cpp_gpuInfo(platform_idx_, gpu_idx_));
+    return __result;
+END_RCPP
+}
+// setGPU
+void setGPU(SEXP gpu_idx_);
+RcppExport SEXP gpuR_setGPU(SEXP gpu_idx_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
+    setGPU(gpu_idx_);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_detectCPUs
+SEXP cpp_detectCPUs(SEXP platform_idx);
+RcppExport SEXP gpuR_cpp_detectCPUs(SEXP platform_idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx(platform_idxSEXP);
+    __result = Rcpp::wrap(cpp_detectCPUs(platform_idx));
     return __result;
 END_RCPP
 }
@@ -364,18 +405,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// cpp_gpuInfo
-List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_);
-RcppExport SEXP gpuR_cpp_gpuInfo(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
-    __result = Rcpp::wrap(cpp_gpuInfo(platform_idx_, gpu_idx_));
-    return __result;
-END_RCPP
-}
 // cpp_gpuMatrix_iaxpy
 void cpp_gpuMatrix_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_, SEXP sourceCode_, int device_type);
 RcppExport SEXP gpuR_cpp_gpuMatrix_iaxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP sourceCode_SEXP, SEXP device_typeSEXP) {
@@ -430,6 +459,36 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
     cpp_gpu_two_vec(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_);
     return R_NilValue;
+END_RCPP
+}
+// detectPlatforms
+SEXP detectPlatforms();
+RcppExport SEXP gpuR_detectPlatforms() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(detectPlatforms());
+    return __result;
+END_RCPP
+}
+// setPlatform
+void setPlatform(SEXP platform_idx_);
+RcppExport SEXP gpuR_setPlatform(SEXP platform_idx_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
+    setPlatform(platform_idx_);
+    return R_NilValue;
+END_RCPP
+}
+// currentPlatform
+SEXP currentPlatform();
+RcppExport SEXP gpuR_currentPlatform() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(currentPlatform());
+    return __result;
 END_RCPP
 }
 // cpp_platformInfo
