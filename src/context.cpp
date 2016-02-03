@@ -88,7 +88,7 @@ listContexts()
 //        }
     }
     
-    std::cout << num_contexts << std::endl;
+//    std::cout << num_contexts << std::endl;
     
     Rcpp::IntegerVector context_index(num_contexts);
     Rcpp::CharacterVector platform_name(num_contexts);

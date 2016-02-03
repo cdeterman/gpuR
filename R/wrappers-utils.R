@@ -18,6 +18,7 @@ detectCPUs <- function(platform_idx=1L){
         setContext(current_context_id)
         return(0)
     }else{
+        setContext(current_context_id)
         return(cpus)
     }
 }
@@ -32,7 +33,18 @@ detectGPUs <- function(platform_idx=1L){
     assert_is_integer(platform_idx)
     assert_all_are_positive(platform_idx)
     
-    out <- cpp_detectGPUs(platform_idx)
+    current_context_id <- currentContext()
+    
+    gpus <- try(cpp_detectGPUs(platform_idx), silent=TRUE)
+    if(class(gpus)[1] == "try-error"){
+        # need to make sure if errors out to switch back to original context
+        setContext(current_context_id)
+        return(0)
+    }else{
+        setContext(current_context_id)
+        return(gpus)
+    }
+    
     return(out)
 }
 
