@@ -28,6 +28,10 @@ cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }
 
+cpp_cpuInfo <- function(platform_idx_, cpu_idx_) {
+    .Call('gpuR_cpp_cpuInfo', PACKAGE = 'gpuR', platform_idx_, cpu_idx_)
+}
+
 #' @export
 currentDevice <- function() {
     .Call('gpuR_currentDevice', PACKAGE = 'gpuR')

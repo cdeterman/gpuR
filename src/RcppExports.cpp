@@ -69,6 +69,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_cpuInfo
+List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_);
+RcppExport SEXP gpuR_cpp_cpuInfo(SEXP platform_idx_SEXP, SEXP cpu_idx_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type cpu_idx_(cpu_idx_SEXP);
+    __result = Rcpp::wrap(cpp_cpuInfo(platform_idx_, cpu_idx_));
+    return __result;
+END_RCPP
+}
 // currentDevice
 SEXP currentDevice();
 RcppExport SEXP gpuR_currentDevice() {

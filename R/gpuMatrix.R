@@ -28,9 +28,17 @@ setMethod('gpuMatrix',
           function(data, type=NULL){
               
               if (is.null(type)) type <- typeof(data)
+              
+              device <- currentDevice()
+              
               context_index <- currentContext()
-              device_index <- currentDevice()$device_index
-              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
+              device_index <- device$device_index
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -91,9 +99,16 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
+              device <- currentDevice()
+              
               context_index <- currentContext()
-              device_index <- currentDevice()$device_index
-              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
+              device_index <- device$device_index
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -150,9 +165,16 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
+              device <- currentDevice()
+              
               context_index <- currentContext()
-              device_index <- currentDevice()$device_index
-              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
+              device_index <- device$device_index
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -222,9 +244,16 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
+              device <- currentDevice()
+              
               context_index <- currentContext()
-              device_index <- currentDevice()$device_index
-              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
+              device_index <- device$device_index
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               

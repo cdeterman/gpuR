@@ -165,6 +165,77 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
                         Named("deviceExtensions") = extensionsVector);
 }
 
+// [[Rcpp::export]]
+List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
+{
+
+    // declarations and housekeeping
+    long current_context_id = viennacl::ocl::backend<>::current_context_id();
+    long id = 998;
+    
+    // subtract one for zero indexing
+    unsigned int plat_idx = as<unsigned int>(platform_idx_) - 1;
+    unsigned int cpu_idx = as<unsigned int>(cpu_idx_) - 1;   
+    
+    // Get available platforms
+    typedef std::vector< viennacl::ocl::platform > platforms_type;
+    platforms_type platforms = viennacl::ocl::get_platforms();
+    
+    if(platforms.size() == 0){
+        stop("No platforms found. Check OpenCL installation!");
+    }
+
+    if (plat_idx > platforms.size()){
+        stop("platform index greater than number of platforms.");
+    }
+    
+    // Select context used only for GPUs (999)
+    viennacl::ocl::switch_context(id);
+    
+    // Set the platform
+    viennacl::ocl::set_context_platform_index(id, plat_idx);
+    
+    // Make sure only GPUs
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+    
+    // Get device
+    viennacl::ocl::device working_device;
+    working_device = viennacl::ocl::current_context().devices()[cpu_idx];
+    
+    std::string deviceName = working_device.name();
+    std::string deviceVendor = working_device.vendor();
+    cl_uint numCores = working_device.max_compute_units();
+    cl_long amountOfMemory = working_device.global_mem_size();
+    cl_uint clockFreq = working_device.max_clock_frequency();
+    cl_ulong localMem = working_device.local_mem_size();
+    cl_ulong maxAlocatableMem = working_device.max_mem_alloc_size();
+    cl_bool available = working_device.available();
+    cl_uint maxWorkGroupSize = working_device.max_work_group_size();
+    cl_uint maxWorkItemDim = working_device.max_work_item_dimensions();
+    std::vector<std::size_t> maxWorkItemSizes = working_device.max_work_item_sizes();
+    std::string deviceExtensions = working_device.extensions();
+
+
+    std::vector<std::string> extensionsVector;
+    boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
+    std::string available_str = (available == 1) ? "yes" : "no";
+    
+    viennacl::ocl::switch_context(current_context_id);
+    
+    return List::create(Named("deviceName") = deviceName,
+                        Named("deviceVendor") = deviceVendor,
+                        Named("numberOfCores") = numCores,
+                        Named("maxWorkGroupSize") = maxWorkGroupSize,
+                        Named("maxWorkItemDim") = maxWorkItemDim,
+                        Named("maxWorkItemSizes") = maxWorkItemSizes,
+                        Named("deviceMemory") = amountOfMemory,
+                        Named("clockFreq") = clockFreq,
+                        Named("localMem") = localMem,
+                        Named("maxAllocatableMem") = maxAlocatableMem,
+                        Named("available") = available_str,
+                        Named("deviceExtensions") = extensionsVector);
+}
+
 //// [[Rcpp::export]]
 //List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 //{
@@ -256,8 +327,24 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 // [[Rcpp::export]]
 SEXP currentDevice()
 {
+    std::string device_type;
+    
+    switch(viennacl::ocl::current_device().type()){
+                case 2: 
+                    device_type = "cpu";
+                    break;
+                case 4: 
+                    device_type = "gpu";
+                    break;
+                case 8: 
+                    device_type = "accelerator";
+                    break;
+                default: throw Rcpp::exception("unrecognized device detected");
+            }
+            
     return List::create(Named("device") = wrap(viennacl::ocl::current_context().current_device().name()),
-                        Named("device_index") = wrap(viennacl::ocl::current_context().current_device_id() + 1));
+                        Named("device_index") = wrap(viennacl::ocl::current_context().current_device_id() + 1),
+                        Named("device_type") = wrap(device_type));
 }
 
 //// [[Rcpp::export]]

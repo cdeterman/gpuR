@@ -83,6 +83,18 @@ gpuInfo <- function(platform_idx=1L, gpu_idx=1L){
 }
 
 
+#' @export
+cpuInfo <- function(platform_idx=1L, cpu_idx=1L){
+    assert_is_integer(platform_idx)
+    assert_all_are_positive(platform_idx)
+    assert_is_integer(cpu_idx)
+    assert_all_are_positive(cpu_idx)
+    
+    out <- cpp_cpuInfo(platform_idx, cpu_idx)
+    return(out)
+}
+
+
 #' @title OpenCL Platform Information
 #' @description Get basic information about the OpenCL platform
 #' @param platform_idx An integer value to specify which platform to check
@@ -114,7 +126,7 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     assert_is_integer(gpu_idx)
     assert_all_are_positive(gpu_idx)
     
-    if(options("gpuR.default.device") == "cpu"){
+    if(options("gpuR.default.device.type") == "cpu"){
         return(TRUE)
     }else{
         out <- cpp_device_has_double(platform_idx, gpu_idx)
