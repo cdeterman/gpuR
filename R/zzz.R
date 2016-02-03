@@ -5,8 +5,6 @@
     
     # Initialize all possible contexts
     if (!identical(Sys.getenv("APPVEYOR"), "True")) {
-        #print("initialized contexts")
-        
         # initialize contexts and return default device
 #         default_device <- initContexts()
 #         packageStartupMessage(paste0("gpuR 1.1.0\nDefault device: ", default_device))
