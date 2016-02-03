@@ -3,6 +3,7 @@ branches:
   only:
     - master
     - macosx
+    - develop
 
 language: r
 
