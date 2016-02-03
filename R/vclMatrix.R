@@ -30,8 +30,9 @@ setMethod('vclMatrix',
               if (is.null(type)) type <- typeof(data)
               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -39,26 +40,29 @@ setMethod('vclMatrix',
                             integer = {
                                 new("ivclMatrix", 
                                     address=cpp_sexp_mat_to_vclMatrix(data, 4L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             float = {
                                 new("fvclMatrix", 
                                     address=cpp_sexp_mat_to_vclMatrix(data, 6L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             double = {
                                 new("dvclMatrix",
                                     address = cpp_sexp_mat_to_vclMatrix(data, 8L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -78,8 +82,9 @@ setMethod('vclMatrix',
               if (is.null(type)) type <- getOption("gpuR.default.type")
               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -87,26 +92,29 @@ setMethod('vclMatrix',
                             integer = {
                                 new("ivclMatrix", 
                                     address=cpp_zero_vclMatrix(nrow, ncol, 4L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             float = {
                                 new("fvclMatrix", 
                                     address=cpp_zero_vclMatrix(nrow, ncol, 6L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             double = {
                                 new("dvclMatrix",
                                     address = cpp_zero_vclMatrix(nrow, ncol, 8L, device_flag),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")

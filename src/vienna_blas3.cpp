@@ -15,6 +15,7 @@
 #define VIENNACL_WITH_EIGEN 1
 
 // ViennaCL headers
+#include "viennacl/ocl/backend.hpp"
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/matrix.hpp"
@@ -299,19 +300,25 @@ void cpp_vclMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_,
-    int device_flag)
+    int context_flag)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
+//    // define device type to use
+//    if(device_flag == 0){
+//        //use only GPUs
+//        long id = 0;
+//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+//        viennacl::ocl::switch_context(id);
+//    }else{
+//        // use only CPUs
+//        long id = 1;
+//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+//        viennacl::ocl::switch_context(id);
+//    }
+
+    int current_context_id = viennacl::ocl::backend<>::current_context_id();
+    
+    if(current_context_id != context_flag - 1){
+        viennacl::ocl::switch_context(context_flag - 1);
     }
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -323,6 +330,10 @@ void cpp_vclMatrix_gemm(
     viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
 
     C = viennacl::linalg::prod(A, B);
+    
+    if(current_context_id != context_flag - 1){
+        viennacl::ocl::switch_context(current_context_id);
+    }
 }
 
 template <typename T>
@@ -395,19 +406,19 @@ cpp_vclMatrix_tcrossprod(
 void
 cpp_vclMatrix_gemm(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
+    int context_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC, context_flag);
             return;
         case 6:
-            cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC, context_flag);
             return;
         case 8:
-            cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC, context_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

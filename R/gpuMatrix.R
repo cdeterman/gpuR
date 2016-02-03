@@ -28,8 +28,9 @@ setMethod('gpuMatrix',
           function(data, type=NULL){
               
               if (is.null(type)) type <- typeof(data)
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -40,10 +41,11 @@ setMethod('gpuMatrix',
                                                             nrow(data),
                                                             ncol(data), 
                                                             4L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             float = {
                                 new("fgpuMatrix", 
@@ -51,10 +53,11 @@ setMethod('gpuMatrix',
                                                             nrow(data),
                                                             ncol(data), 
                                                             6L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             double = {
                                 new("dgpuMatrix",
@@ -62,10 +65,11 @@ setMethod('gpuMatrix',
                                                               nrow(data),
                                                               ncol(data), 
                                                               8L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -87,8 +91,9 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -100,26 +105,29 @@ setMethod('gpuMatrix',
                             integer = {
                                 new("igpuMatrix", 
                                     address=emptyEigenXptr(nrow, ncol, 4L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             float = {
                                 new("fgpuMatrix", 
                                     address=emptyEigenXptr(nrow, ncol, 6L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             double = {
                                 new("dgpuMatrix",
                                     address = emptyEigenXptr(nrow, ncol, 8L),
+                                    .context_index = context_index,
                                     .platform_index = platform_index,
-                                    .platform_name = platform_name,
+                                    .platform = platform_name,
                                     .device_index = device_index,
-                                    .device_name = device_name)
+                                    .device = device_name)
                             },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -142,8 +150,9 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -153,18 +162,20 @@ setMethod('gpuMatrix',
                                 float = {
                                     new("fgpuMatrix", 
                                         address=sexpVecToEigenXptr(data, nrow, ncol, 6L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 double = {
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -175,18 +186,20 @@ setMethod('gpuMatrix',
                                 float = {
                                     new("fgpuMatrix", 
                                         address=initScalarEigenXptr(data, nrow, ncol, 6L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 double = {
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -209,8 +222,9 @@ setMethod('gpuMatrix',
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
               
-              device_index <- 0L
-              device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+              context_index <- currentContext()
+              device_index <- currentDevice()$device_index
+              device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
@@ -219,26 +233,29 @@ setMethod('gpuMatrix',
                                 integer = {
                                     new("igpuMatrix", 
                                         address=sexpVecToEigenXptr(data, nrow, ncol, 4L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 float = {
                                     new("fgpuMatrix", 
                                         address=sexpVecToEigenXptr(data, nrow, ncol, 6L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 double = {
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -248,26 +265,29 @@ setMethod('gpuMatrix',
                                 integer = {
                                     new("igpuMatrix", 
                                         address=initScalarEigenXptr(data, nrow, ncol, 4L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 float = {
                                     new("fgpuMatrix", 
                                         address=initScalarEigenXptr(data, nrow, ncol, 6L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 double = {
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
+                                        .context_index = context_index,
                                         .platform_index = platform_index,
-                                        .platform_name = platform_name,
+                                        .platform = platform_name,
                                         .device_index = device_index,
-                                        .device_name = device_name)
+                                        .device = device_name)
                                 },
                                 stop("this is an unrecognized 
                                  or unimplemented data type")

@@ -34,10 +34,11 @@
 #' @export
 setClass('gpuMatrix', 
          slots = c(address="externalptr",
+                   .context_index = "integer",
                    .platform_index = "integer",
-                   .platform_name = "character",
+                   .platform = "character",
                    .device_index = "integer",
-                   .device_name = "character"))
+                   .device = "character"))
 
 
 #' @title igpuMatrix Class

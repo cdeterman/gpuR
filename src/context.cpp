@@ -5,6 +5,7 @@
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
+//#define VIENNACL_DEBUG_ALL 1
 
 // ViennaCL headers
 #include "viennacl/ocl/device.hpp"
@@ -18,10 +19,10 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-void initContexts(){
+SEXP initContexts(){
     
     // declarations
-    long id = 0;
+    int id = 0;
     
     // get platforms
     typedef std::vector< viennacl::ocl::platform > platforms_type;
@@ -29,44 +30,65 @@ void initContexts(){
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
     
-        for(unsigned int gpu_idx=0; gpu_idx < viennacl::ocl::current_context().devices().size(); gpu_idx++){
-        
+        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+                    
             // Select the platform
             viennacl::ocl::switch_context(id);
             viennacl::ocl::set_context_platform_index(id, plat_idx);
+        
+            // Get available devices
+//            std::vector<viennacl::ocl::device> const & devices = viennacl::ocl::platform().devices();
+            
+//            std::cout << devices[gpu_idx].name() << std::endl;
+            
+            // take the n-th available device from 'devices'
+//            std::vector< viennacl::ocl::device > my_devices;
+//            my_devices.push_back(devices[gpu_idx]);
             
             // Select device
+//            viennacl::ocl::setup_context(id, my_devices);
+//            viennacl::ocl::current_context().switch_device(gpu_idx);
             viennacl::ocl::get_context(id).switch_device(gpu_idx);
+//            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
             
             // increment context
             id++;
         }
     }
     
-    return;
+    viennacl::ocl::switch_context(0);
+    
+//    std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+    return wrap(viennacl::ocl::current_context().current_device().name());
 }
 
 
+//' @export
 // [[Rcpp::export]]
 DataFrame 
 listContexts()
 {
     // declarations
     int id = 0;
-    int num_contexts;
+    long current_context_id = viennacl::ocl::backend<>::current_context_id();
+    int num_contexts = 0;
+    int num_devices;
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     
     // get platforms
     platforms_type platforms = viennacl::ocl::get_platforms();  
     
     // count number of contexts initialized
-    // for each platform
+    // for each platform    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
-        // for each device on platform
-        for(unsigned int gpu_idx=0; gpu_idx < viennacl::ocl::current_context().devices().size(); gpu_idx++){
-            num_contexts++;
-        }
+        
+        num_contexts += platforms[plat_idx].devices().size();
+//        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+//            num_contexts++;
+//        }
     }
+    
+    std::cout << num_contexts << std::endl;
     
     Rcpp::IntegerVector context_index(num_contexts);
     Rcpp::CharacterVector platform_name(num_contexts);
@@ -78,7 +100,7 @@ listContexts()
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
         
-        for(unsigned int gpu_idx=0; gpu_idx < viennacl::ocl::current_context().devices().size(); gpu_idx++){
+        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
         
             // Select the platform
             viennacl::ocl::switch_context(id);
@@ -114,6 +136,8 @@ listContexts()
         }
     }
     
+    viennacl::ocl::switch_context(current_context_id);
+    
     return Rcpp::DataFrame::create(Rcpp::Named("context") = context_index,
     			  Rcpp::Named("platform") = platform_name,
                   Rcpp::Named("platform_index") = platform_index,
@@ -122,6 +146,16 @@ listContexts()
                   Rcpp::Named("device_type") = device_type);
 }
 
+
+//' @export
+// [[Rcpp::export]]
+int currentContext()
+{
+    return viennacl::ocl::backend<>::current_context_id() + 1;
+}
+
+
+//' @export
 // [[Rcpp::export]]
 void
 setContext(int id)

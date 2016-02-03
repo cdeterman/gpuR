@@ -30,25 +30,25 @@ SEXP detectPlatforms()
     return wrap(platforms.size());
 }
 
-// [[Rcpp::export]]
-void setPlatform(SEXP platform_idx_)
-{
-    unsigned int platform_idx = as<unsigned int>(platform_idx_);
-    typedef std::vector< viennacl::ocl::platform > platforms_type;
-    
-    // get platforms
-    platforms_type platforms = viennacl::ocl::get_platforms();
-    unsigned int platforms_size = platforms.size();
-    
-    if(platform_idx > platforms_size){
-        stop("Platform index out of bounds");
-    }
-    
-    // subtract one for zero indexing    
-    // set platform
-    long id = 0;
-    viennacl::ocl::set_context_platform_index(id, platform_idx - 1);
-}
+//// [[Rcpp::export]]
+//void setPlatform(SEXP platform_idx_)
+//{
+//    unsigned int platform_idx = as<unsigned int>(platform_idx_);
+//    typedef std::vector< viennacl::ocl::platform > platforms_type;
+//    
+//    // get platforms
+//    platforms_type platforms = viennacl::ocl::get_platforms();
+//    unsigned int platforms_size = platforms.size();
+//    
+//    if(platform_idx > platforms_size){
+//        stop("Platform index out of bounds");
+//    }
+//    
+//    // subtract one for zero indexing    
+//    // set platform
+//    long id = 0;
+//    viennacl::ocl::set_context_platform_index(id, platform_idx - 1);
+//}
 
 //' @title Return Current Platform
 //' @description Find out which platform is currently in use

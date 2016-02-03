@@ -2,8 +2,9 @@
 # vclMatrix numeric vector initializer
 vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
     
-    device_index <- 0L
-    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    context_index <- currentContext()
+    device_index <- currentDevice()$device_index
+    device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
@@ -14,20 +15,22 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
                                                  6L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name)
+                          .device = device_name)
                   },
                   double = {
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
                                                    8L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name)
+                          .device = device_name)
                   },
                   stop("this is an unrecognized 
                                  or unimplemented data type")
@@ -39,8 +42,9 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix numeric initializer
 vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
     
-    device_index <- 0L
-    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    context_index <- currentContext()
+    device_index <- currentDevice()$device_index
+    device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
@@ -53,10 +57,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                                   data, 
                                   nrow, ncol, 
                                   6L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name
+                          .device = device_name
                       )
                   },
                   double = {
@@ -66,10 +71,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                                   data, 
                                   nrow, ncol, 
                                   8L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name
+                          .device = device_name
                       )
                   },
                   stop("this is an unrecognized 
@@ -82,8 +88,9 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix integer vector initializer
 vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
     
-    device_index <- 0L
-    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    context_index <- currentContext()
+    device_index <- currentDevice()$device_index
+    device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
@@ -93,30 +100,33 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol,
                                                  4L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name)
+                          .device = device_name)
                   },
                   float = {
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
                                                  6L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name)
+                          .device = device_name)
                   },
                   double = {
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
                                                    8L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name)
+                          .device = device_name)
                   },
                   stop("this is an unrecognized 
                                      or unimplemented data type")
@@ -128,8 +138,9 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
 # vclMatrix integer scalar initializer
 vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
     
-    device_index <- 0L
-    device_name <- gpuInfo(gpu_idx = device_index + 1L)$deviceName
+    context_index <- currentContext()
+    device_index <- currentDevice()$device_index
+    device_name <- gpuInfo(gpu_idx = as.integer(device_index))$deviceName
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
@@ -141,10 +152,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                                   data, 
                                   nrow, ncol, 
                                   4L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name
+                          .device = device_name
                       )
                   },
                   float = {
@@ -154,10 +166,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                                   data, 
                                   nrow, ncol, 
                                   6L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name
+                          .device = device_name
                       )
                   },
                   double = {
@@ -167,10 +180,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                                   data, 
                                   nrow, ncol, 
                                   8L, device_flag),
+                          .context_index = context_index,
                           .platform_index = platform_index,
-                          .platform_name = platform_name,
+                          .platform = platform_name,
                           .device_index = device_index,
-                          .device_name = device_name
+                          .device = device_name
                       )
                   },
                   stop("this is an unrecognized 
@@ -190,16 +204,18 @@ vclMatMult <- function(A, B){
 #         stop("kernel file does not exist")
 #     }
 #     kernel <- readChar(file, file.info(file)$size)
-    
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+#     
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1L, 
+#                "gpu" = 0L,
+#                stop("unrecognized default device option"
+#                )
+#         )
     
     type <- typeof(A)
+    
+    assert_all_are_identical(A@.context_index, B@.context_index)
     
     C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
     
@@ -218,7 +234,7 @@ vclMatMult <- function(A, B){
            float = {cpp_vclMatrix_gemm(A@address,
                                        B@address,
                                        C@address,
-                                       device_flag,
+                                       C@.context_index,
                                        6L)
            },
            double = {
@@ -227,14 +243,13 @@ vclMatMult <- function(A, B){
                }else{cpp_vclMatrix_gemm(A@address,
                                         B@address,
                                         C@address,
-                                        device_flag,
+                                        C@.context_index,
                                         8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    return(C)
 }
 
 # vclMatrix AXPY
