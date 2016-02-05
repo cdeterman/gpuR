@@ -26,7 +26,6 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     // Select context used only for GPUs
     long id = 999;
     viennacl::ocl::switch_context(id);
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     
     // subtract one for zero indexing
     unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
@@ -41,6 +40,9 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
 //    std::cout << "changing platform" << std::endl;
     // Select the platform
     viennacl::ocl::set_context_platform_index(id, plat_idx);
+    
+    // set device type
+    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
     
 //    std::cout << "get devices" << std::endl;
     // get the devices
