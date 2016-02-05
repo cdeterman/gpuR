@@ -128,7 +128,10 @@ listContexts()
                 case 8: 
                     device_type[id] = "accelerator";
                     break;
-                default: throw Rcpp::exception("unrecognized device detected");
+                default:
+                    Rcpp::Rcout << "device found" << std::endl;
+                    Rcpp::Rcout << device_type[id] << std::endl;
+                    throw Rcpp::exception("unrecognized device detected");
             }
         
             // increment context
