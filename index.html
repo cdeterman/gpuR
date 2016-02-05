@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>gpuR by cdeterman</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/cdeterman/gpuR">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/cdeterman/gpuR/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/cdeterman/gpuR/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>gpuR</h1>
+          <p>R interface to use GPU&#39;s</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/cdeterman">cdeterman</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="gpur" class="anchor" href="#gpur" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>gpuR</h1>
+
+<h3>
+<a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build Status</h3>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Build</th>
+<th>Dev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux x86_64</td>
+<td><a href="https://travis-ci.org/cdeterman/gpuR"><img src="https://travis-ci.org/cdeterman/gpuR.png?branch=master" alt="Build Status"></a></td>
+<td><a href="https://travis-ci.org/cdeterman/gpuR"><img src="https://travis-ci.org/cdeterman/gpuR.png?branch=develop" alt="Build Status"></a></td>
+</tr>
+<tr>
+<td>OSX</td>
+<td><a href="https://travis-ci.org/cdeterman/gpuR"><img src="https://travis-ci.org/cdeterman/gpuR.png?branch=macosx" alt="Build Status"></a></td>
+<td></td>
+</tr>
+<tr>
+<td>Windows x86</td>
+<td><a href="https://ci.appveyor.com/project/cdeterman/gpuR"><img src="https://ci.appveyor.com/api/projects/status/github/cdeterman/gpuR?branch=master&amp;svg=true" alt="Appveyor Build Status"></a></td>
+<td><a href="https://ci.appveyor.com/project/cdeterman/gpuR"><img src="https://ci.appveyor.com/api/projects/status/github/cdeterman/gpuR?branch=develop&amp;svg=true" alt="Appveyor Build Status"></a></td>
+</tr>
+</tbody>
+</table>
+
+<p>Test coverage: <a href="https://coveralls.io/r/cdeterman/gpuR?branch=master"><img src="https://coveralls.io/repos/cdeterman/gpuR/badge.svg" alt="Coverage Status"></a></p>
+
+<p>Community Use: <a href="http://www.r-pkg.org/pkg/gpuR"><img src="http://cranlogs.r-pkg.org/badges/gpuR?color=brightgreen" alt="Downloads"></a></p>
+
+<p>Welcome to my R package for simple GPU computing.  Although there are a few
+existing packages to leverage the power of GPU's they are either specific
+to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this
+package is to provide the user a very simple R API that can be used with
+any GPU (via an OpenCL backend).  This is accomplished by interfacing with the 
+ViennaCL library that I have packaged in the R package 
+<a href="http://github.com/cdeterman/RViennaCL">RViennaCL</a>.  To make the R API simple,
+I created new classes similar to the structure of the 
+<a href="http://cran.r-project.org/web/packages/Matrix/index.html">Matrix</a>
+package.  By doing so, typical methods may be overloaded to make for a very
+pleasing sytax.  For example, to perform vector addition the syntax is: </p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">A</span> <span class="pl-k">&lt;-</span> seq.int(<span class="pl-v">from</span><span class="pl-k">=</span><span class="pl-c1">0</span>, <span class="pl-v">to</span><span class="pl-k">=</span><span class="pl-c1">999</span>)
+<span class="pl-smi">B</span> <span class="pl-k">&lt;-</span> seq.int(<span class="pl-v">from</span><span class="pl-k">=</span><span class="pl-c1">1000</span>, <span class="pl-v">to</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
+<span class="pl-smi">gpuA</span> <span class="pl-k">&lt;-</span> gpuVector(<span class="pl-smi">A</span>)
+<span class="pl-smi">gpuB</span> <span class="pl-k">&lt;-</span> gpuVector(<span class="pl-smi">B</span>)
+
+<span class="pl-smi">C</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">A</span> <span class="pl-k">+</span> <span class="pl-smi">B</span>
+<span class="pl-smi">gpuC</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">gpuA</span> <span class="pl-k">+</span> <span class="pl-smi">gpuB</span>
+
+all(<span class="pl-smi">C</span> <span class="pl-k">==</span> <span class="pl-smi">gpuC</span>)
+[<span class="pl-c1">1</span>] <span class="pl-c1">TRUE</span></pre></div>
+
+<p>I also recommend you read the vignette I included with this package to
+get a better understanding of its' capabilities.</p>
+
+<div class="highlight highlight-source-r"><pre>vignette(<span class="pl-s"><span class="pl-pds">"</span>gpuR<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>Please note, all the functions herein use an OpenCL backend.  If you prefer
+to have a CUDA based backend, please see my other package 
+<a href="http://github.com/cdeterman/gpuRcuda">gpuRcuda</a> which is simply an extension
+on top of this package where all functions herein are still applicable
+but also have the CUDA option available.  </p>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>INSTALL</h1>
+
+<p>Please see my <a href="https://github.com/cdeterman/gpuR/wiki">github wiki</a> for
+installation instructions relevant to your operating system.</p>
+
+<h1>
+<a id="things-to-do" class="anchor" href="#things-to-do" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Things to Do</h1>
+
+<ol>
+<li>Multiple GPU support</li>
+<li>Iterative solvers (e.g. QR, SVD, etc.)</li>
+<li>Would love any suggestions :) (submit in the issues)</li>
+</ol>
+
+<h1>
+<a id="testing-hardware" class="anchor" href="#testing-hardware" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing Hardware</h1>
+
+<p>I would love volunteers, who have additional hardware (e.g. different GPU vendors, multiple GPUs), willing to test this package.  As an individual developer I can't possibly have access to every GPU on the market so the community testing would be immensely helpful.  If you so wish to test and you find an error, please open an issue on my <a href="https://github.com/cdeterman/gpuR/issues">github</a> with the device description (at least name such as NVIDIA GeForce GTX 970).  I will do my best to help troubleshoot these problems.  Naturally I would appreciate any contributions if solved by users :)</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
