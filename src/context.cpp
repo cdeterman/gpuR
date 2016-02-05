@@ -130,7 +130,7 @@ listContexts()
                     break;
                 default:
                     Rcpp::Rcout << "device found" << std::endl;
-                    Rcpp::Rcout << device_type[id] << std::endl;
+                    Rcpp::Rcout << viennacl::ocl::current_device().type() << std::endl;
                     throw Rcpp::exception("unrecognized device detected");
             }
         
