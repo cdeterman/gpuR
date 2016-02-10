@@ -145,6 +145,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     cl_uint maxWorkItemDim = working_device.max_work_item_dimensions();
     std::vector<std::size_t> maxWorkItemSizes = working_device.max_work_item_sizes();
     std::string deviceExtensions = working_device.extensions();
+    bool double_support = working_device.double_support();
 
 
     std::vector<std::string> extensionsVector;
@@ -164,7 +165,8 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
                         Named("localMem") = localMem,
                         Named("maxAllocatableMem") = maxAlocatableMem,
                         Named("available") = available_str,
-                        Named("deviceExtensions") = extensionsVector);
+                        Named("deviceExtensions") = extensionsVector,
+                        Named("double_support") = double_support);
 }
 
 // [[Rcpp::export]]

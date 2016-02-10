@@ -72,7 +72,7 @@ listContexts()
     int id = 0;
     long current_context_id = viennacl::ocl::backend<>::current_context_id();
     int num_contexts = 0;
-    int num_devices;
+    //int num_devices;
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     
     // get platforms
