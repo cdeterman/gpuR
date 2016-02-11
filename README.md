@@ -1,5 +1,7 @@
 # gpuR
 
+[![Join the chat at https://gitter.im/cdeterman/gpuR](https://badges.gitter.im/cdeterman/gpuR.svg)](https://gitter.im/cdeterman/gpuR?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### Build Status
 |                 | Build           | Dev             |
 |-----------------|-----------------|-----------------|
