@@ -460,61 +460,61 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
 //    return(wrap(devices.size()));
 //}
 
-// [[Rcpp::export]]
-bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_)
-{
-    // declarations and housekeeping
-    long current_context_id = viennacl::ocl::backend<>::current_context_id();
-    long id = 999;
-    
-    // subtract one for zero indexing
-    unsigned int plat_idx = as<unsigned int>(platform_idx_) - 1;
-    unsigned int gpu_idx = as<unsigned int>(gpu_idx_) - 1;   
-    
-    // Get available platforms
-    typedef std::vector< viennacl::ocl::platform > platforms_type;
-    platforms_type platforms = viennacl::ocl::get_platforms();
-    
-    if(platforms.size() == 0){
-        stop("No platforms found. Check OpenCL installation!");
-    }
-
-    if (plat_idx > platforms.size()){
-        stop("platform index greater than number of platforms.");
-    }
-    
-    // Select context used only for GPUs (999)
-    viennacl::ocl::switch_context(id);
-    
-    // Set the platform
-    viennacl::ocl::set_context_platform_index(id, plat_idx);
-    
-    // Make sure only GPUs
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    
-    // Get device
-    viennacl::ocl::device working_device;
-    working_device = viennacl::ocl::current_context().devices()[gpu_idx];
-    
-    bool double_support = working_device.double_support();
-    
-    viennacl::ocl::switch_context(current_context_id);
-    
-    return wrap(double_support);
-}
-
-//' @export
-// [[Rcpp::export]]
-bool cpp_device_has_double_test()
-{    
-    // Get device
-    viennacl::ocl::device working_device;
-    working_device = viennacl::ocl::current_device();
-    
-    bool double_support = working_device.double_support();
-    
-    return wrap(double_support);
-}
+//// [[Rcpp::export]]
+//bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_)
+//{
+//    // declarations and housekeeping
+//    long current_context_id = viennacl::ocl::backend<>::current_context_id();
+//    long id = 999;
+//    
+//    // subtract one for zero indexing
+//    unsigned int plat_idx = as<unsigned int>(platform_idx_) - 1;
+//    unsigned int gpu_idx = as<unsigned int>(gpu_idx_) - 1;   
+//    
+//    // Get available platforms
+//    typedef std::vector< viennacl::ocl::platform > platforms_type;
+//    platforms_type platforms = viennacl::ocl::get_platforms();
+//    
+//    if(platforms.size() == 0){
+//        stop("No platforms found. Check OpenCL installation!");
+//    }
+//
+//    if (plat_idx > platforms.size()){
+//        stop("platform index greater than number of platforms.");
+//    }
+//    
+//    // Select context used only for GPUs (999)
+//    viennacl::ocl::switch_context(id);
+//    
+//    // Set the platform
+//    viennacl::ocl::set_context_platform_index(id, plat_idx);
+//    
+//    // Make sure only GPUs
+//    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+//    
+//    // Get device
+//    viennacl::ocl::device working_device;
+//    working_device = viennacl::ocl::current_context().devices()[gpu_idx];
+//    
+//    bool double_support = working_device.double_support();
+//    
+//    viennacl::ocl::switch_context(current_context_id);
+//    
+//    return wrap(double_support);
+//}
+//
+////' @export
+//// [[Rcpp::export]]
+//bool cpp_device_has_double_test()
+//{    
+//    // Get device
+//    viennacl::ocl::device working_device;
+//    working_device = viennacl::ocl::current_device();
+//    
+//    bool double_support = working_device.double_support();
+//    
+//    return wrap(double_support);
+//}
     
 ////[[Rcpp::export]]
 //bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_){

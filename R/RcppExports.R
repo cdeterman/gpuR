@@ -41,15 +41,6 @@ cpp_detectCPUs <- function(platform_idx) {
     .Call('gpuR_cpp_detectCPUs', PACKAGE = 'gpuR', platform_idx)
 }
 
-cpp_device_has_double <- function(platform_idx_, gpu_idx_) {
-    .Call('gpuR_cpp_device_has_double', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
-}
-
-#' @export
-cpp_device_has_double_test <- function() {
-    .Call('gpuR_cpp_device_has_double_test', PACKAGE = 'gpuR')
-}
-
 cpp_deepcopy_gpuMatrix <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_deepcopy_gpuMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }

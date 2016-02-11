@@ -129,7 +129,7 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     if(options("gpuR.default.device.type") == "cpu"){
         return(TRUE)
     }else{
-        out <- cpp_device_has_double(platform_idx, gpu_idx)
+        out <- gpuInfo(platform_idx, gpu_idx)$double_support
         return(out)
     }
     

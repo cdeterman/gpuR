@@ -102,28 +102,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// cpp_device_has_double
-bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_);
-RcppExport SEXP gpuR_cpp_device_has_double(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
-    __result = Rcpp::wrap(cpp_device_has_double(platform_idx_, gpu_idx_));
-    return __result;
-END_RCPP
-}
-// cpp_device_has_double_test
-bool cpp_device_has_double_test();
-RcppExport SEXP gpuR_cpp_device_has_double_test() {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(cpp_device_has_double_test());
-    return __result;
-END_RCPP
-}
 // cpp_deepcopy_gpuMatrix
 SEXP cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag);
 RcppExport SEXP gpuR_cpp_deepcopy_gpuMatrix(SEXP ptrASEXP, SEXP type_flagSEXP) {
