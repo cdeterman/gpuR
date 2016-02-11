@@ -15,6 +15,11 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
+    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+        stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+    }
+    
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
                   float = {
@@ -61,6 +66,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
     )
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
+    
+    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+        stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+    }
     
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
@@ -114,6 +124,11 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
     )
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
+    
+    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+        stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+    }
     
     data = switch(type,
                   integer = {
@@ -171,6 +186,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
     )
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
+    
+    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+        stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+    }
     
     data = switch(type,
                   integer = {

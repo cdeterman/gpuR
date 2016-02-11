@@ -42,6 +42,12 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
+              
+              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+                  stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+              }
+              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
@@ -112,9 +118,10 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-#               print("empty gpuMatrix dims")
-#               print(nrow)
-#               print(ncol)
+              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+                  stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+              }
               
               data = switch(type,
                             integer = {
@@ -177,6 +184,11 @@ setMethod('gpuMatrix',
               )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
+              
+              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+                  stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+              }
               
               if(length(data) > 1){
                   data = switch(type,
@@ -256,6 +268,11 @@ setMethod('gpuMatrix',
               )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
+              
+              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+                  stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+              }
               
               if(length(data) > 1){
                   data = switch(type,
