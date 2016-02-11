@@ -114,6 +114,16 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_device_has_double_test
+bool cpp_device_has_double_test();
+RcppExport SEXP gpuR_cpp_device_has_double_test() {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    __result = Rcpp::wrap(cpp_device_has_double_test());
+    return __result;
+END_RCPP
+}
 // cpp_deepcopy_gpuMatrix
 SEXP cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag);
 RcppExport SEXP gpuR_cpp_deepcopy_gpuMatrix(SEXP ptrASEXP, SEXP type_flagSEXP) {

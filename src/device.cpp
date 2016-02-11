@@ -502,6 +502,19 @@ bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_)
     
     return wrap(double_support);
 }
+
+//' @export
+// [[Rcpp::export]]
+bool cpp_device_has_double_test()
+{    
+    // Get device
+    viennacl::ocl::device working_device;
+    working_device = viennacl::ocl::current_device();
+    
+    bool double_support = working_device.double_support();
+    
+    return wrap(double_support);
+}
     
 ////[[Rcpp::export]]
 //bool cpp_device_has_double(SEXP platform_idx_, SEXP gpu_idx_){
