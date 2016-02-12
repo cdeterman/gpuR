@@ -1532,3 +1532,29 @@ vclMatMin <- function(A){
     return(C)
 }
 
+# GPU Matrix transpose
+vclMatrix_t <- function(A){
+    
+    type <- typeof(A)
+    
+    B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type)
+    
+    device_flag <- 
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    switch(type,
+           integer = {cpp_vclMatrix_transpose(A@address, B@address, device_flag, 4L)},
+           float = {cpp_vclMatrix_transpose(A@address, B@address, device_flag,  6L)},
+           double = {cpp_vclMatrix_transpose(A@address, B@address, device_flag,  8L)},
+           stop("type not recognized")
+    )
+    
+    return(B)
+}
+
+

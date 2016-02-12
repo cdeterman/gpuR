@@ -166,7 +166,7 @@ detectPlatforms <- function() {
 #' @description Find out which platform is currently in use
 #' @return \item{platform}{Name of the current platform}
 #' @return \item{platform_index}{Index of current platform}
-#' @seealso \link{detectPlatforms} \link{setPlatform}
+#' @seealso \link{detectPlatforms}
 #' @export
 currentPlatform <- function() {
     .Call('gpuR_currentPlatform', PACKAGE = 'gpuR')
@@ -760,6 +760,10 @@ cpp_gpuMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
 }
 
+cpp_gpuMatrix_transpose <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+}
+
 cpp_vclMatrix_gemm <- function(ptrA, ptrB, ptrC, context_flag, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_gemm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, context_flag, type_flag))
 }
@@ -770,6 +774,10 @@ cpp_vclMatrix_crossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
 
 cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+}
+
+cpp_vclMatrix_transpose <- function(ptrA, ptrB, device_flag, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
 }
 
 cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {

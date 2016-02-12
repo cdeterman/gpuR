@@ -54,7 +54,7 @@ SEXP detectPlatforms()
 //' @description Find out which platform is currently in use
 //' @return \item{platform}{Name of the current platform}
 //' @return \item{platform_index}{Index of current platform}
-//' @seealso \link{detectPlatforms} \link{setPlatform}
+//' @seealso \link{detectPlatforms}
 //' @export
 // [[Rcpp::export]]
 SEXP currentPlatform()

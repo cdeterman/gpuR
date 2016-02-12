@@ -763,3 +763,9 @@ setMethod("rbind2",
               
               return(ptr)
           })
+
+setMethod("t", c(x = "vclMatrix"),
+          function(x){
+              return(vclMatrix_t(x))
+          }
+)

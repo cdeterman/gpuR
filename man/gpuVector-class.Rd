@@ -14,6 +14,18 @@ There are multiple child classes that correspond
 to the particular data type contained.  These include
 \code{igpuVector}.
 }
+\section{Slots}{
+
+ Common to all vclMatrix objects in the package
+ \describe{
+     \item{\code{address}:}{Pointer to data matrix}
+     \item{\code{.context_index}:}{Integer index of OpenCL contexts}
+     \item{\code{.platform_index}:}{Integer index of OpenCL platforms}
+     \item{\code{.platform}:}{Name of OpenCL platform}
+     \item{\code{.device_index}:}{Integer index of active device}
+     \item{\code{.device}:}{Name of active device}
+ }
+}
 \author{
 Charles Determan Jr.
 }

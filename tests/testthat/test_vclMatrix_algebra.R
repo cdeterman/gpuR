@@ -279,6 +279,20 @@ test_that("vclMatrix Single Precision tcrossprod", {
     expect_error(crossprod(fvclX, fvclZ))
 })
 
+test_that("vclMatrix Single Precision transpose", {
+    
+    has_gpu_skip()
+    
+    At <- t(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuAt <- t(fgpuA)
+    
+    expect_is(fgpuAt, "fvclMatrix")
+    expect_equal(fgpuAt[,], At, tolerance=1e-07, 
+                 info="transposed float matrix elements not equivalent") 
+})
+
 # Double Precision Tests
 
 test_that("vclMatrix Double Precision Matrix multiplication", {
@@ -555,6 +569,21 @@ test_that("vclMatrix Double Precision tcrossprod", {
     expect_equal(fvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(fvclX, fvclZ))
+})
+
+test_that("vclMatrix Double Precision transpose", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    At <- t(A)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuAt <- t(fgpuA)
+    
+    expect_is(fgpuAt, "dvclMatrix")
+    expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps^0.5, 
+                 info="transposed double matrix elements not equivalent") 
 })
 
 

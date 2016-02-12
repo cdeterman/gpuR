@@ -218,6 +218,60 @@ cpp_gpuMatrix_tcrossprod(
     viennacl::copy(vcl_C, Cm);
 }
 
+template <typename T>
+void 
+cpp_gpuMatrix_transpose(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    int device_flag)
+{
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
+    
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
+//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Bm(
+        refB.data(), refB.rows(), refB.cols(),
+        Eigen::OuterStride<>(refB.outerStride())
+    );
+    
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int N = Bm.rows();
+    const int P = Bm.cols();
+    
+    viennacl::matrix<T> vcl_A(K,M);
+    viennacl::matrix<T> vcl_B(N,P);
+    
+    viennacl::copy(Am, vcl_A); 
+    
+    vcl_B = trans(vcl_A);
+    
+    viennacl::copy(vcl_B, Bm);
+}
+
 
 /*** gpuMatrix Functions ***/
 
@@ -286,6 +340,29 @@ cpp_gpuMatrix_tcrossprod(
             return;
         case 8:
             cpp_gpuMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_transpose(
+    SEXP ptrA, SEXP ptrB, 
+    int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_transpose<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_transpose<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_transpose<double>(ptrA, ptrB, device_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -400,6 +477,35 @@ cpp_vclMatrix_tcrossprod(
     C = viennacl::linalg::prod(A, trans(B));
 }
 
+template <typename T>
+void
+cpp_vclMatrix_transpose(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    int device_flag)
+{
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    
+    B = trans(A);
+}
+
 /*** vclMatrix Functions ***/
 
 // [[Rcpp::export]]
@@ -467,6 +573,29 @@ cpp_vclMatrix_tcrossprod(
             return;
         case 8:
             cpp_vclMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_transpose(
+    SEXP ptrA, SEXP ptrB, 
+    int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_transpose<int>(ptrA, ptrB, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_transpose<float>(ptrA, ptrB, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_transpose<double>(ptrA, ptrB, device_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

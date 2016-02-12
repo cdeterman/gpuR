@@ -44,8 +44,6 @@ detectGPUs <- function(platform_idx=1L){
         setContext(current_context_id)
         return(gpus)
     }
-    
-    return(out)
 }
 
 #' @title GPU Information

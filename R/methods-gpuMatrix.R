@@ -782,3 +782,10 @@ setMethod("Summary", c(x="gpuMatrix"),
 )
 
 
+setMethod("t", c(x = "gpuMatrix"),
+          function(x){
+              return(gpuMatrix_t(x))
+          }
+)
+
+
