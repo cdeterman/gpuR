@@ -286,6 +286,20 @@ test_that("CPU gpuMatrix Single Precision tcrossprod", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
+test_that("CPU gpuMatrix Single Precision transpose", {
+    
+    has_cpu_skip()
+    
+    At <- t(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuAt <- t(fgpuA)
+    
+    expect_is(fgpuAt, "fgpuMatrix")
+    expect_equal(fgpuAt[,], At, tolerance=1e-07, 
+                 info="transposed float matrix elements not equivalent") 
+})
+
 # Integer tests
 
 test_that("CPU gpuMatrix Integer Matrix multiplication", {
@@ -617,6 +631,19 @@ test_that("CPU gpuMatrix Double Precision tcrossprod", {
     expect_error(crossprod(fgpuX, fgpuZ))
 })
 
+test_that("CPU gpuMatrix Double Precision transpose", {
+    
+    has_cpu_skip()
+    
+    At <- t(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    fgpuAt <- t(fgpuA)
+    
+    expect_is(fgpuAt, "dgpuMatrix")
+    expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps^0.5, 
+                 info="transposed double matrix elements not equivalent") 
+})
 
 
 # set option back to GPU
