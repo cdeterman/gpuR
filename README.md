@@ -1,6 +1,10 @@
 # gpuR
 
-[![Join the chat at https://gitter.im/cdeterman/gpuR](https://badges.gitter.im/cdeterman/gpuR.svg)](https://gitter.im/cdeterman/gpuR?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+###Gitter rooms available for discussion
+[![chat](https://img.shields.io/badge/gitter-chat-brightgreen.svg)](https://gitter.im/cdeterman/gpuR)
+[![general](https://img.shields.io/badge/gitter-general-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/general)
+[![development](https://img.shields.io/badge/gitter-development-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/development)
+[![testing](https://img.shields.io/badge/gitter-testing-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/Tested_GPUs)
 
 ### Build Status
 |                 | Build           | Dev             |
