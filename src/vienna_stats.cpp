@@ -557,6 +557,96 @@ cpp_gpuMatrix_eucl(
 
 template <typename T>
 void 
+cpp_gpuMatrix_peucl(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrD_,
+    bool squareDist,
+    int device_flag)
+{
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }    
+    
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    XPtr<dynEigenMat<T> > ptrD(ptrD_);
+    
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refD = ptrD->data();
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
+        refA.data(), refA.rows(), refA.cols(),
+        Eigen::OuterStride<>(refA.outerStride())
+    );    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Bm(
+        refB.data(), refB.rows(), refB.cols(),
+        Eigen::OuterStride<>(refB.outerStride())
+    );    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Dm(
+        refD.data(), refD.rows(), refD.cols(),
+        Eigen::OuterStride<>(refD.outerStride())
+    );
+    
+    const int M = Am.cols();
+    const int K = Am.rows();
+    const int R = Bm.cols();
+    const int Q = Bm.rows();
+    
+    // copy to GPU
+    viennacl::matrix<T> vcl_A(K,M);  
+    viennacl::matrix<T> vcl_B(R,Q);    
+    viennacl::copy(Am, vcl_A);    
+    viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::vector<T> A_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
+    viennacl::vector<T> B_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+    
+    // this will definitely need to be updated with the next ViennaCL release
+    // currently doesn't support the single scalar operation with
+    // element_pow below
+    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2);
+    
+    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
+    viennacl::matrix<T> square_B = viennacl::linalg::element_pow(vcl_B, twos);
+    
+    viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
+    viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
+    
+    vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
+    vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
+    
+    viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, B_row_ones);
+    viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(A_row_ones, vcl_B_rowsum);
+    
+//    std::cout << "vclXX" << std::endl;
+//    std::cout << vclXX << std::endl;
+//    std::cout << "vclYY" << std::endl;
+//    std::cout << vclYY << std::endl;
+    
+    viennacl::matrix<T> vcl_D = vclXX + vclYY;
+    vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_B)));
+    
+    if(!squareDist){
+        vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
+    }
+    
+    viennacl::copy(vcl_D, Dm);
+        
+}
+
+template <typename T>
+void 
 cpp_vclMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
@@ -615,6 +705,75 @@ cpp_vclMatrix_eucl(
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
     }
+//    viennacl::diag(vcl_D) = viennacl::zero_vector<T>(vcl_A.size1());
+        
+}
+
+template <typename T>
+void 
+cpp_vclMatrix_peucl(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrD_,
+    bool squareDist,
+    int device_flag)
+{
+    // define device type to use
+    if(device_flag == 0){
+        //use only GPUs
+        long id = 0;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        viennacl::ocl::switch_context(id);
+    }else{
+        // use only CPUs
+        long id = 1;
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        viennacl::ocl::switch_context(id);
+    }    
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrD(ptrD_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_B = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_D = ptrD->data();
+    
+    viennacl::vector<T> A_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
+    viennacl::vector<T> B_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+    
+    // this will definitely need to be updated with the next ViennaCL release
+    // currently doesn't support the single scalar operation with
+    // element_pow below
+    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2);
+    
+    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
+    viennacl::matrix<T> square_B = viennacl::linalg::element_pow(vcl_B, twos);
+    
+    viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
+    viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
+    
+    vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
+    vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
+    
+    viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, B_row_ones);
+    viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(A_row_ones, vcl_B_rowsum);
+    
+//    std::cout << "vclXX" << std::endl;
+//    std::cout << vclXX << std::endl;
+//    std::cout << "vclYY" << std::endl;
+//    std::cout << vclYY << std::endl;
+    
+    vcl_D = vclXX + vclYY;
+    vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_B)));
+    
+    if(!squareDist){
+        vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
+    }
+    
+//    for(unsigned int i=0; i < vcl_D.size1(); i++){
+//        vcl_D(i,i) = 0;
+//    }
 //    viennacl::diag(vcl_D) = viennacl::zero_vector<T>(vcl_A.size1());
         
 }
@@ -694,6 +853,30 @@ cpp_vclMatrix_eucl(
 
 // [[Rcpp::export]]
 void
+cpp_vclMatrix_peucl(
+    SEXP ptrA, SEXP ptrB, SEXP ptrD,
+    bool squareDist,
+    int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_peucl<int>(ptrA, ptrB, ptrD, squareDist, device_flag);
+            return;
+        case 6:
+            cpp_vclMatrix_peucl<float>(ptrA, ptrB, ptrD, squareDist, device_flag);
+            return;
+        case 8:
+            cpp_vclMatrix_peucl<double>(ptrA, ptrB, ptrD, squareDist, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
 cpp_gpuMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
     bool squareDist,
@@ -710,6 +893,30 @@ cpp_gpuMatrix_eucl(
             return;
         case 8:
             cpp_gpuMatrix_eucl<double>(ptrA, ptrD, squareDist, device_flag);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_peucl(
+    SEXP ptrA, SEXP ptrB, SEXP ptrD,
+    bool squareDist,
+    int device_flag,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_peucl<int>(ptrA, ptrB, ptrD, squareDist, device_flag);
+            return;
+        case 6:
+            cpp_gpuMatrix_peucl<float>(ptrA, ptrB, ptrD, squareDist, device_flag);
+            return;
+        case 8:
+            cpp_gpuMatrix_peucl<double>(ptrA, ptrB, ptrD, squareDist, device_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");

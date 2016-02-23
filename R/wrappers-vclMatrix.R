@@ -1397,7 +1397,7 @@ vclMatrix_pmcc <- function(A){
     return(B)
 }
 
-# GPU Pearson Covariance
+# GPU Euclidean Distance
 vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     
     device_flag <- 
@@ -1418,6 +1418,39 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
                                         device_flag,
                                         6L),
            "double" = cpp_vclMatrix_eucl(A@address, 
+                                         D@address,
+                                         squareDist,
+                                         device_flag,
+                                         8L),
+           stop("Unsupported matrix type")
+    )
+    
+    invisible(D)
+}
+
+# GPU Pairwise Euclidean Distance
+vclMatrix_peuclidean <- function(A, B, D, squareDist){
+    
+    device_flag <- 
+        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+               "cpu" = 1, 
+               "gpu" = 0,
+               stop("unrecognized default device option"
+               )
+        )
+    
+    type <- typeof(D)
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vclMatrix_peucl(A@address,
+                                         B@address,
+                                        D@address, 
+                                        squareDist, 
+                                        device_flag,
+                                        6L),
+           "double" = cpp_vclMatrix_peucl(A@address, 
+                                          B@address,
                                          D@address,
                                          squareDist,
                                          device_flag,

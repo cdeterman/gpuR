@@ -103,7 +103,9 @@ setGeneric("deepcopy", function(object){
 #     standardGeneric("colSums")
 # }, useAsDefault=base::colSums)
 
-
-setGeneric("distance", function(x, y, method){
+#' @rdname dist-vclMatrix
+#' @aliases distance
+#' @export
+setGeneric("distance", function(x, y, method = "euclidean"){
     standardGeneric("distance")
 })

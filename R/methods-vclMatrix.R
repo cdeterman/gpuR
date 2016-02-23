@@ -528,6 +528,44 @@ setMethod("dist", signature(x="vclMatrix"),
           }
 )
 
+#' @rdname dist-vclMatrix
+#' @aliases distance,vclMatrix
+setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
+          function(x, y, method = "euclidean")
+          {
+              device_flag <- 
+                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+                         "cpu" = 1, 
+                         "gpu" = 0,
+                         stop("unrecognized default device option"
+                         )
+                  )
+              
+              type = typeof(x)
+              
+              if( type == "integer"){
+                  stop("Integer type not currently supported")
+              }
+              
+              D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
+              
+              switch(method,
+                     "euclidean" = vclMatrix_peuclidean(
+                         x, 
+                         y,
+                         D,
+                         FALSE),
+                     "sqEuclidean" = vclMatrix_peuclidean(
+                         x, 
+                         y,
+                         D,
+                         TRUE),
+                     stop("method not currently supported")
+              )
+              
+              return(D)
+          }
+)
 
 #' @rdname gpuR-deepcopy
 setMethod("deepcopy", signature(object ="vclMatrix"),

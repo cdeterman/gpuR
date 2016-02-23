@@ -69,5 +69,67 @@ test_that("CPU vclMatrixDouble Precision Squared Euclidean Distance",
                  check.attributes=FALSE) 
 })
 
+
+test_that("CPU vclMatrix Single Precision Pairwise Euclidean Distance",
+{
+    
+    has_cpu_skip()
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuB <- vclMatrix(B, type="float")
+    
+    E <- distance(fgpuA, fgpuB)
+    
+    expect_equal(E[], pD, tolerance=1e-06, 
+                 info="float euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("CPU vclMatrix Double Precision Pairwise Euclidean Distance", 
+{
+    
+    has_cpu_skip()
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuB <- vclMatrix(B, type="double")
+    
+    E <- distance(fgpuA, fgpuB)
+    
+    expect_equal(E[], pD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+})
+
+test_that("CPU vclMatrix Single Precision Pairwise Squared Euclidean Distance",
+{
+    
+    has_cpu_skip()
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuB <- vclMatrix(B, type="float")
+    
+    E <- distance(fgpuA, fgpuB, method = "sqEuclidean")
+    
+    expect_equal(E[], sqpD, tolerance=1e-06, 
+                 info="float squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("CPU vclMatrix Double Precision Pairwise Squared Euclidean Distance", 
+{
+    
+    has_cpu_skip()
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuB <- vclMatrix(B, type="double")
+    
+    E <- distance(fgpuA, fgpuB, method = "sqEuclidean")
+    
+    expect_equal(E[], sqpD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+})
+
+
 options(gpuR.default.device.type = "gpu")
 
