@@ -482,6 +482,7 @@ void
 cpp_gpuMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
+    bool squareDist,
     int device_flag)
 {
     // define device type to use
@@ -542,7 +543,10 @@ cpp_gpuMatrix_eucl(
     
     vcl_D += trans(vcl_D);
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
-    vcl_D = viennacl::linalg::element_sqrt(vcl_D);
+    
+    if(!squareDist){
+        vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
+    }
     
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
@@ -556,6 +560,7 @@ void
 cpp_vclMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
+    bool squareDist,
     int device_flag)
 {
     // define device type to use
@@ -603,7 +608,9 @@ cpp_vclMatrix_eucl(
 //    std::cout << temp << std::endl;
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
 //    vcl_D -= temp;
-    vcl_D = viennacl::linalg::element_sqrt(vcl_D);
+    if(!squareDist){
+        vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
+    }
     
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
@@ -665,19 +672,20 @@ cpp_vclMatrix_pmcc(
 void
 cpp_vclMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
+    bool squareDist,
     int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_eucl<int>(ptrA, ptrD, device_flag);
+            cpp_vclMatrix_eucl<int>(ptrA, ptrD, squareDist, device_flag);
             return;
         case 6:
-            cpp_vclMatrix_eucl<float>(ptrA, ptrD, device_flag);
+            cpp_vclMatrix_eucl<float>(ptrA, ptrD, squareDist, device_flag);
             return;
         case 8:
-            cpp_vclMatrix_eucl<double>(ptrA, ptrD, device_flag);
+            cpp_vclMatrix_eucl<double>(ptrA, ptrD, squareDist, device_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -688,19 +696,20 @@ cpp_vclMatrix_eucl(
 void
 cpp_gpuMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
+    bool squareDist,
     int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_eucl<int>(ptrA, ptrD, device_flag);
+            cpp_gpuMatrix_eucl<int>(ptrA, ptrD, squareDist, device_flag);
             return;
         case 6:
-            cpp_gpuMatrix_eucl<float>(ptrA, ptrD, device_flag);
+            cpp_gpuMatrix_eucl<float>(ptrA, ptrD, squareDist, device_flag);
             return;
         case 8:
-            cpp_gpuMatrix_eucl<double>(ptrA, ptrD, device_flag);
+            cpp_gpuMatrix_eucl<double>(ptrA, ptrD, squareDist, device_flag);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");

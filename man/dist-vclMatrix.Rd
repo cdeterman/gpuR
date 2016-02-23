@@ -6,10 +6,14 @@
 \alias{dist,gpuMatrix-method}
 \alias{dist,vclMatrix}
 \alias{dist,vclMatrix-method}
+\alias{distance}
+\alias{distance,gpuMatrix,gpuMatrix-method}
 \title{GPU Distance Matrix Computations}
 \usage{
 \S4method{dist}{gpuMatrix}(x, method = "euclidean", diag = FALSE,
   upper = FALSE, p = 2)
+
+\S4method{distance}{gpuMatrix,gpuMatrix}(x, y, method)
 
 \S4method{dist}{vclMatrix}(x, method = "euclidean", diag = FALSE,
   upper = FALSE, p = 2)
@@ -17,11 +21,11 @@
 \arguments{
 \item{x}{A gpuMatrix or vclMatrix object}
 
-\item{method}{the distance measure to be used. Only "euclidean" currently
-implemented}
+\item{method}{the distance measure to be used. This must be one of
+"euclidean" or "sqEuclidean".}
 
 \item{diag}{logical value indicating whether the diagonal of the distance 
-matrix}
+matrix should be printed}
 
 \item{upper}{logical value indicating whether the upper triangle of the 
 distance matrix}

@@ -476,10 +476,10 @@ setMethod("Summary", c(x="vclMatrix"),
 #' computed by using the specified distance measure to compute the distances 
 #' between the rows of a data matrix.
 #' @param x A gpuMatrix or vclMatrix object
-#' @param method the distance measure to be used. Only "euclidean" currently
-#' implemented
+#' @param method the distance measure to be used. This must be one of
+#' "euclidean" or "sqEuclidean".
 #' @param diag logical value indicating whether the diagonal of the distance 
-#' matrix
+#' matrix should be printed
 #' @param upper logical value indicating whether the upper triangle of the 
 #' distance matrix
 #' @param p The power of the Minkowski distance (not currently used)
@@ -512,7 +512,15 @@ setMethod("dist", signature(x="vclMatrix"),
                          D,
                          diag,
                          upper,
-                         p),
+                         p,
+                         FALSE),
+                     "sqEuclidean" = vclMatrix_euclidean(
+                         x, 
+                         D,
+                         diag,
+                         upper,
+                         p,
+                         TRUE),
                      stop("method not currently supported")
               )
               

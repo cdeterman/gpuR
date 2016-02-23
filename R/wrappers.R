@@ -1183,7 +1183,7 @@ gpu_tcrossprod <- function(X, Y){
 }
 
 # GPU Pearson Covariance
-gpuMatrix_euclidean <- function(A, D, diag, upper, p){
+gpuMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     
     device_flag <- 
         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
@@ -1199,10 +1199,12 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_gpuMatrix_eucl(A@address, 
                                         D@address, 
+                                        squareDist,
                                         device_flag,
                                         6L),
            "double" = cpp_gpuMatrix_eucl(A@address, 
                                          D@address,
+                                         squareDist,
                                          device_flag,
                                          8L),
            stop("Unsupported matrix type")

@@ -1398,7 +1398,7 @@ vclMatrix_pmcc <- function(A){
 }
 
 # GPU Pearson Covariance
-vclMatrix_euclidean <- function(A, D, diag, upper, p){
+vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     
     device_flag <- 
         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
@@ -1414,10 +1414,12 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_eucl(A@address, 
                                         D@address, 
+                                        squareDist, 
                                         device_flag,
                                         6L),
            "double" = cpp_vclMatrix_eucl(A@address, 
                                          D@address,
+                                         squareDist,
                                          device_flag,
                                          8L),
            stop("Unsupported matrix type")

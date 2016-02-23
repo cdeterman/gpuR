@@ -10,6 +10,7 @@ ORDER <- 4
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 
 D <- as.matrix(dist(A))
+sqD <- D^2
 
 test_that("gpuMatrix Single Precision Euclidean Distance",
 {
@@ -37,5 +38,34 @@ test_that("gpuMatrix Double Precision Euclidean Distance",
     
     expect_equal(E[], D, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double euclidean distances not equivalent",
+                 check.attributes=FALSE) 
+})
+
+test_that("gpuMatrix Single Precision Squared Euclidean Distance",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- gpuMatrix(A, type="float")
+    
+    E <- dist(fgpuX, method = "sqEuclidean")
+    
+    expect_equal(E[], sqD, tolerance=1e-06, 
+                 info="float squared euclidean distances not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("gpuMatrix Double Precision Squared Euclidean Distance", 
+{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    fgpuX <- gpuMatrix(A, type="double")
+    
+    E <- dist(fgpuX, method = "sqEuclidean")
+    
+    expect_equal(E[], sqD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double squared euclidean distances not equivalent",
                  check.attributes=FALSE) 
 })

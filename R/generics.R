@@ -104,3 +104,6 @@ setGeneric("deepcopy", function(object){
 # }, useAsDefault=base::colSums)
 
 
+setGeneric("distance", function(x, y, method){
+    standardGeneric("distance")
+})

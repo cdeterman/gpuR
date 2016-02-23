@@ -551,11 +551,30 @@ setMethod("dist", signature(x="gpuMatrix"),
                          D,
                          diag,
                          upper,
-                         p),
+                         p,
+                         FALSE),
+                     "sqEuclidean" = gpuMatrix_euclidean(
+                         x, 
+                         D,
+                         diag,
+                         upper,
+                         p,
+                         TRUE),
                      stop("method not currently supported")
               )
               
               return(D)
+          }
+)
+
+#' @rdname dist-vclMatrix
+#' @aliases distance
+#' @aliases distance,gpuMatrix
+#' @aliases distance,vclMatrix
+setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
+          function(x, y, method)
+          {
+              stop("function not implemented yet")
           }
 )
 
