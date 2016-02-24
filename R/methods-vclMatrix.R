@@ -533,6 +533,13 @@ setMethod("dist", signature(x="vclMatrix"),
 setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
           function(x, y, method = "euclidean")
           {
+              if(identical(x, y)){
+                  same <- TRUE
+                  warning("x is the same as y, did you mean to use 'dist' instead?")
+              }else{
+                  same <- FALSE
+              }
+              
               device_flag <- 
                   switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
@@ -562,6 +569,12 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
                          TRUE),
                      stop("method not currently supported")
               )
+              
+              if(same){
+                  for(i in 1:ncol(D)){
+                      D[i,i] <- 0
+                  }
+              }
               
               return(D)
           }
