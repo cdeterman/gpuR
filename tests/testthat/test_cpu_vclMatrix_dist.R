@@ -11,9 +11,23 @@ ORDER <- 4
 
 # Base R objects
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
+B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 
 D <- as.matrix(dist(A))
 sqD <- D^2
+
+# (A^2 %*% matrix(1, nrow=ncol(A))) %*% t(matrix(1, nrow=nrow(B)))
+# matrix(1, nrow=nrow(A)) %*% t(B^2 %*% matrix(1, nrow=ncol(B)))
+
+pD <- matrix(0, nrow=nrow(A), ncol=nrow(B))
+# Pairwise check
+for(i in 1:nrow(A)){
+    for(j in 1:nrow(B)){
+        pD[i,j] <- sqrt(sum((A[i,] - B[j,])^2))
+    }
+}
+
+sqpD <- pD^2
 
 test_that("CPU vclMatrixSingle Precision Euclidean Distance",
 {
