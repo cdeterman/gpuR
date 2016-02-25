@@ -540,6 +540,10 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
                   same <- FALSE
               }
               
+              if(ncol(x) != ncol(y)){
+                  stop("columns in x and y are not equivalent")
+              }
+              
               device_flag <- 
                   switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
@@ -554,7 +558,7 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
+              D <- vclMatrix(nrow=nrow(x), ncol=nrow(y), type=type)
               
               switch(method,
                      "euclidean" = vclMatrix_peuclidean(

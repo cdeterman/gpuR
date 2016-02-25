@@ -579,6 +579,10 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
                   same <- FALSE
               }
               
+              if(ncol(x) != ncol(y)){
+                  stop("columns in x and y are not equivalent")
+              }
+              
               device_flag <- 
                   switch(options("gpuR.default.device.type")$gpuR.default.device.type,
                          "cpu" = 1, 
@@ -593,7 +597,7 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              D <- gpuMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
+              D <- gpuMatrix(nrow=nrow(x), ncol=nrow(y), type=type)
               
               switch(method,
                      "euclidean" = gpuMatrix_peuclidean(

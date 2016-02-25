@@ -13,6 +13,12 @@ ORDER <- 4
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 
+# none square matrix
+C <- matrix(rnorm(20), nrow = 5, ncol = 4)
+
+# matrix for error check
+G <- matrix(rnorm(25), nrow = 5, ncol = 5)
+
 D <- as.matrix(dist(A))
 sqD <- D^2
 
@@ -24,7 +30,25 @@ for(i in 1:nrow(A)){
     }
 }
 
+lpD <- matrix(0, nrow=nrow(A), ncol=nrow(C))
+# Pairwise check
+for(i in 1:nrow(A)){
+    for(j in 1:nrow(C)){
+        lpD[i,j] <- sqrt(sum((A[i,] - C[j,])^2))
+    }
+}
+
+rpD <- matrix(0, nrow=nrow(C), ncol=nrow(A))
+# Pairwise check
+for(i in 1:nrow(C)){
+    for(j in 1:nrow(A)){
+        rpD[i,j] <- sqrt(sum((C[i,] - A[j,])^2))
+    }
+}
+
 sqpD <- pD^2
+lsqpD <- lpD^2
+rsqpD <- rpD^2
 
 test_that("CPU gpuMatrixSingle Precision Euclidean Distance",
 {
@@ -89,12 +113,23 @@ test_that("CPU gpuMatrix Single Precision Pairwise Euclidean Distance",
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
+    fgpuC <- gpuMatrix(C, type="float")
+    fgpuG <- gpuMatrix(G, type="float")
     
     E <- distance(fgpuA, fgpuB)
+    lE <- distance(fgpuA, fgpuC)
+    rE <- distance(fgpuC, fgpuA)
     
     expect_equal(E[], pD, tolerance=1e-06, 
                  info="float euclidean pairwise distances not equivalent",
                  check.attributes=FALSE)  
+    expect_equal(lE[], lpD, tolerance=1e-06, 
+                 info="float euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE)  
+    expect_equal(rE[], rpD, tolerance=1e-06, 
+                 info="float euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE)  
+    expect_error(distance(fgpuA, fgpuG))
 })
 
 test_that("CPU gpuMatrix Double Precision Pairwise Euclidean Distance", 
@@ -104,10 +139,19 @@ test_that("CPU gpuMatrix Double Precision Pairwise Euclidean Distance",
     
     fgpuA <- gpuMatrix(A, type="double")
     fgpuB <- gpuMatrix(B, type="double")
+    fgpuC <- gpuMatrix(C, type="double")
     
     E <- distance(fgpuA, fgpuB)
+    lE <- distance(fgpuA, fgpuC)
+    rE <- distance(fgpuC, fgpuA)
     
     expect_equal(E[], pD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(lE[], lpD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(rE[], rpD, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double euclidean pairwise distances not equivalent",
                  check.attributes=FALSE) 
 })
@@ -119,12 +163,23 @@ test_that("CPU gpuMatrix Single Precision Pairwise Squared Euclidean Distance",
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
+    fgpuC <- gpuMatrix(C, type="float")
+    fgpuG <- gpuMatrix(G, type="float")
     
     E <- distance(fgpuA, fgpuB, method = "sqEuclidean")
+    lE <- distance(fgpuA, fgpuC, method = "sqEuclidean")
+    rE <- distance(fgpuC, fgpuA, method = "sqEuclidean")
     
     expect_equal(E[], sqpD, tolerance=1e-06, 
                  info="float squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(lE[], lsqpD, tolerance=1e-06, 
+                 info="float squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(rE[], rsqpD, tolerance=1e-06, 
+                 info="float squared euclidean pairwise distances not equivalent",
                  check.attributes=FALSE)  
+    expect_error(distance(fgpuA, fgpuG))
 })
 
 test_that("CPU gpuMatrix Double Precision Pairwise Squared Euclidean Distance", 
@@ -134,10 +189,19 @@ test_that("CPU gpuMatrix Double Precision Pairwise Squared Euclidean Distance",
     
     fgpuA <- gpuMatrix(A, type="double")
     fgpuB <- gpuMatrix(B, type="double")
+    fgpuC <- gpuMatrix(C, type="double")
     
     E <- distance(fgpuA, fgpuB, method = "sqEuclidean")
+    lE <- distance(fgpuA, fgpuC, method = "sqEuclidean")
+    rE <- distance(fgpuC, fgpuA, method = "sqEuclidean")
     
     expect_equal(E[], sqpD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(lE[], lsqpD, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double squared euclidean pairwise distances not equivalent",
+                 check.attributes=FALSE) 
+    expect_equal(rE[], rsqpD, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double squared euclidean pairwise distances not equivalent",
                  check.attributes=FALSE) 
 })
