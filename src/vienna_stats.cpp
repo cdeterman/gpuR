@@ -685,22 +685,38 @@ cpp_vclMatrix_eucl(
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_D = ptrD->data();
     
-//    std::cout << vcl_A << std::endl;
+//    std::cout << "pulled data" << std::endl;
+//    std::cout << vcl_A.size1() << std::endl;
     
-    viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
-    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
+//    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
+    viennacl::vector<T> vcl_sqrt;
+    
+//    std::cout << "row of zeros" << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
-    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size1(), 2);
+    {
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2);
     
-    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
-    vcl_sqrt = viennacl::linalg::row_sum(square_A);
+//        std::cout << "create 'twos' matrix" << std::endl;
+        
+        viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
+        vcl_sqrt = viennacl::linalg::row_sum(square_A);
+    }
     
-//    std::cout << vcl_sqrt << std::endl;
     
-    vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
+//    std::cout << "powers and rowsum completed" << std::endl;
+    
+    {
+        viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
+        
+//        std::cout << "row of ones" << std::endl;
+        
+        vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
+    }
+    
+//    std::cout << "outer product completed" << std::endl;
     
 //    std::cout << vcl_D << std::endl;
     
@@ -754,29 +770,44 @@ cpp_vclMatrix_peucl(
     viennacl::matrix_range<viennacl::matrix<T> > vcl_B = ptrB->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_D = ptrD->data();
     
-    viennacl::vector<T> x_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
-    viennacl::vector<T> y_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+    viennacl::matrix<T> square_A;
+    viennacl::matrix<T> square_B;
+    
+//    std::cout << "pulled data" << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
-    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(vcl_A.size1(), vcl_B.size1()), std::max(vcl_A.size2(), vcl_B.size2()), 2);
+    {
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(vcl_A.size1(), vcl_B.size1()), std::max(vcl_A.size2(), vcl_B.size2()), 2);
     
-    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
-    viennacl::matrix<T> square_B = viennacl::linalg::element_pow(vcl_B, twos);
+        square_A = viennacl::linalg::element_pow(vcl_A, twos);
+        square_B = viennacl::linalg::element_pow(vcl_B, twos);
+    }
     
-    viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
-    viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
+//    std::cout << "power calculation complete" << std::endl;
     
-    vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
-    vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
+    {
+        viennacl::vector<T> x_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
+        viennacl::vector<T> y_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+        
+        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
+        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
+        
+        vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
+        vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
+        
+//        std::cout << "row sums complete" << std::endl;
+        
+        viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, y_row_ones);
+        //std::cout << vclXX << std::endl;
+        viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(x_row_ones, vcl_B_rowsum);
+//        std::cout << "outer products complete" << std::endl;
+        //    std::cout << vclYY << std::endl;
+        vcl_D = vclXX + vclYY;
+    }
     
-    viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, y_row_ones);
-    //std::cout << vclXX << std::endl;
-    viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(x_row_ones, vcl_B_rowsum);
-//    std::cout << vclYY << std::endl;
     
-    vcl_D = vclXX + vclYY;
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_B)));
     
     if(!squareDist){

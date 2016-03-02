@@ -15,6 +15,9 @@
             \item 'abs' method added for all objects
             \item 'max' & 'min' method for all objects
             \item 'cbind' & 'rbind' methods for gpuMatrix/vclMatrix objects
+            \item 'distance' method for pairwise distances
+            \item 'squared euclidean' distance added ('sqEuclidean')
+            \item 't' method added
         }
         \item Features in Progress:
         \itemize{
