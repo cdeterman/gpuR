@@ -16,6 +16,11 @@ C <- colSums(A)
 RM <- rowMeans(A)
 CM <- colMeans(A)
 
+RS <- rowSums(A[2:4, 2:4])
+CS <- colSums(A[2:4, 2:4])
+RMS <- rowMeans(A[2:4, 2:4])
+CMS <- colMeans(A[2:4, 2:4])
+
 
 test_that("vclMatrix Single Precision Column Sums",
 {
@@ -242,5 +247,128 @@ test_that("vclMatrix Double Precision rbind",
                  info="double scalar rbind not equivalent") 
 })
 
+# 'block' object tests
 
+test_that("vclMatrix Single Precision Block Column Sums",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- vclMatrix(A, type="float")
+    fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- colSums(fgpuXS)
+    
+    expect_is(gpuC, "fvclVector")
+    expect_equal(gpuC[], CS, tolerance=1e-06, 
+                 info="float colSums not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Block Column Sums", 
+{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- vclMatrix(A, type="double")
+    dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- colSums(dgpuXS)
+    
+    expect_is(gpuC, "dvclVector")
+    expect_equal(gpuC[], CS, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colSums not equivalent")  
+})
+
+
+test_that("vclMatrix Single Precision Block Row Sums",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- vclMatrix(A, type="float")
+    fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- rowSums(fgpuXS)
+    
+    expect_is(gpuC, "fvclVector")
+    expect_equal(gpuC[], RS, tolerance=1e-06, 
+                 info="float rowSums not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Block Row Sums", 
+{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- vclMatrix(A, type="double")
+    dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- rowSums(dgpuXS)
+    
+    expect_is(gpuC, "dvclVector")
+    expect_equal(gpuC[], RS, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colSums not equivalent")  
+})
+
+test_that("vclMatrix Single Precision Block Column Means",
+{
+    
+    has_gpu_skip()
+    
+    fgpuX <- vclMatrix(A, type="float")
+    fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- colMeans(fgpuXS)
+    
+    expect_is(gpuC, "fvclVector")
+    expect_equal(gpuC[], CMS, tolerance=1e-06, 
+                 info="float colMeans not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Block Column Means", 
+{
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- vclMatrix(A, type="double")
+    dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- colMeans(dgpuXS)
+    
+    expect_is(gpuC, "dvclVector")
+    expect_equal(gpuC[], CMS, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colMeans not equivalent")  
+})
+
+
+test_that("vclMatrix Single Precision Block Row Means",
+{
+    has_gpu_skip()
+    
+    fgpuX <- vclMatrix(A, type="float")
+    fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- rowMeans(fgpuXS)
+    
+    expect_is(gpuC, "fvclVector")
+    expect_equal(gpuC[], RMS, tolerance=1e-06, 
+                 info="float rowMeans not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Block Row Means", 
+{
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpuX <- vclMatrix(A, type="double")
+    dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- rowMeans(dgpuXS)
+    
+    expect_is(gpuC, "dvclVector")
+    expect_equal(gpuC[], RMS, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double rowMeans not equivalent")  
+})
 

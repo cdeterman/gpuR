@@ -2,6 +2,16 @@
 #ifndef DYNEIGEN_MAT_HPP
 #define DYNEIGEN_MAT_HPP
 
+// Use OpenCL with ViennaCL
+#define VIENNACL_WITH_OPENCL 1
+
+// Use ViennaCL algorithms on Eigen objects
+#define VIENNACL_WITH_EIGEN 1
+
+// ViennaCL headers
+#include "viennacl/matrix.hpp"
+#include "viennacl/matrix_proxy.hpp"
+
 #include <RcppEigen.h>
 
 template <class T> 
@@ -60,24 +70,13 @@ class dynEigenMat {
             ptr = ptr_;
         }
         Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > data();
-        //Eigen::Matrix<T, Eigen::Dynamic, 1> data() { return A; }
-//        Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > data() { 
-//            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr, nr, nc);
-//////            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block(&temp(c_start*c_end-1), last - begin + 1);
-//            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
-//            std::cout << "internal block" << std::endl;
-//            std::cout << block << std::endl;
-////            std::cout << nr << nc << r_start << c_start << r_end << c_end << r_end-r_start + 1 << c_end - c_start + 1 << std::endl; 
-////            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block(block_temp.data(), block_temp.rows(), block_temp.cols());
-//            return block;
-////            return temp;
-//        }
         Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > matrix() {
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > mat(ptr, nr, nc);
 //            Eigen::Matrix<T, Eigen::Dynamic, 1>& vec = A;
             return mat;
         }
-        
+        viennacl::matrix<T> device_data();
+        void to_host(viennacl::matrix<T> &vclMat);
 };
 
 #endif

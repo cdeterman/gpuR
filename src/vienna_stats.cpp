@@ -45,32 +45,18 @@ cpp_gpuMatrix_colmean(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colMeans(ptrC->data(), ptrC->rows(),1);
-
 
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colMeans = ptrC->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
     
-    const int M = Am.cols();
-    const int K = Am.rows();
+    const int K = vcl_A.size1();
     const int V = colMeans.size();
     
-    viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_colMeans(V);
-    
-    viennacl::copy(Am, vcl_A); 
     
     vcl_colMeans = viennacl::linalg::column_sum(vcl_A);
     vcl_colMeans *= (T)(1)/(T)(K);
@@ -96,31 +82,16 @@ cpp_gpuMatrix_colsum(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colSums(ptrC->data(), ptrC->rows(),1);
-    
+
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > colSums = ptrC->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-    
-    const int M = Am.cols();
-    const int K = Am.rows();
     const int V = colSums.size();
     
-    viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_colSums(V);
-    
-    viennacl::copy(Am, vcl_A); 
     
     vcl_colSums = viennacl::linalg::column_sum(vcl_A);
     
@@ -145,31 +116,17 @@ cpp_gpuMatrix_rowmean(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowMeans(ptrC->data(), ptrC->rows(),1);
-    
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowMeans = ptrC->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-
-    const int M = Am.cols();
-    const int K = Am.rows();
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    
+    const int M = vcl_A.size2();
     const int V = rowMeans.size();
     
-    viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_rowMeans(V);
-    
-    viennacl::copy(Am, vcl_A); 
     
     vcl_rowMeans = viennacl::linalg::row_sum(vcl_A);
     vcl_rowMeans *= (T)(1)/(T)(M);
@@ -195,31 +152,17 @@ cpp_gpuMatrix_rowsum(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowSums(ptrC->data(), ptrC->rows(),1);
-
+    
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenVec<T> > ptrC(ptrC_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > rowSums = ptrC->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-
-    const int M = Am.cols();
-    const int K = Am.rows();
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    
     const int V = rowSums.size();
     
-    viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> vcl_rowSums(V);
-    
-    viennacl::copy(Am, vcl_A); 
     
     vcl_rowSums = viennacl::linalg::row_sum(vcl_A);
     
@@ -377,38 +320,18 @@ cpp_gpuMatrix_pmcc(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(ptrB->data(), ptrB->rows(), ptrB->cols());
-    
     
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
     
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Bm(refB.data(), ptrB->nrow(), ptrB->ncol());
-
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Bm(
-        refB.data(), refB.rows(), refB.cols(),
-        Eigen::OuterStride<>(refB.outerStride())
-    );
+    const int K = vcl_A.size1();
+    const int M = vcl_A.size2();
     
-    const int M = Am.cols();
-    const int K = Am.rows();
-    
-    viennacl::matrix<T> vcl_A(K,M);
     viennacl::vector<T> ones = viennacl::scalar_vector<T>(K, 1);
     viennacl::vector<T> vcl_meanVec(M);
     viennacl::matrix<T> vcl_meanMat(K,M);
-    
-    viennacl::copy(Am, vcl_A); 
     
     // vector of column means
     vcl_meanVec = viennacl::linalg::column_sum(vcl_A);
@@ -423,7 +346,7 @@ cpp_gpuMatrix_pmcc(
     viennacl::matrix<T> vcl_B = viennacl::linalg::prod(trans(tmp), tmp);
     vcl_B *= (T)(1)/(T)(K-1);
     
-    viennacl::copy(vcl_B, Bm);
+    ptrB->to_host(vcl_B);
 }
 
 template <typename T>
@@ -497,59 +420,34 @@ cpp_gpuMatrix_eucl(
         viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
         viennacl::ocl::switch_context(id);
     }
-//    
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Dm(ptrD->data(), ptrD->rows(), ptrD->cols());
-    
     
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenMat<T> > ptrD(ptrD_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refD = ptrD->data();
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> vcl_D;
     
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(refA.data(), ptrA->nrow(), ptrA->ncol());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Dm(refD.data(), ptrD->nrow(), ptrD->ncol());
+    // other temp objects
+    viennacl::matrix<T> twos;
+    viennacl::matrix<T> square_A;
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Dm(
-        refD.data(), refD.rows(), refD.cols(),
-        Eigen::OuterStride<>(refD.outerStride())
-    );
-    
-    const int M = Am.cols();
-    const int K = Am.rows();
-    
-    // copy to GPU
-    viennacl::matrix<T> vcl_A(K,M);    
-    viennacl::copy(Am, vcl_A); 
-    
-//    std::cout << vcl_A << std::endl;
+    const int K = vcl_A.size1();
       
     // temp objects
-    viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
-    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
+    viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(K, 1);
+    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(K);
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
-    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size1(), 2);
+    twos = viennacl::scalar_matrix<T>(K, K, 2);
     
-    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
+    square_A = viennacl::linalg::element_pow(vcl_A, twos);
     vcl_sqrt = viennacl::linalg::row_sum(square_A);
     
-//    std::cout << vcl_sqrt << std::endl;
-    
-    viennacl::matrix<T> vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
-    
-//    std::cout << vcl_D << std::endl;
+    vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
     
     vcl_D += trans(vcl_D);
-    
-//    std::cout << vcl_D << std::endl;
     
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
     
@@ -561,7 +459,7 @@ cpp_gpuMatrix_eucl(
         vcl_D(i,i) = 0;
     }
     
-    viennacl::copy(vcl_D, Dm);
+    ptrD->to_host(vcl_D);
 }
 
 template <typename T>
@@ -590,67 +488,51 @@ cpp_gpuMatrix_peucl(
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     XPtr<dynEigenMat<T> > ptrD(ptrD_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refB = ptrB->data();
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refD = ptrD->data();
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Bm(
-        refB.data(), refB.rows(), refB.cols(),
-        Eigen::OuterStride<>(refB.outerStride())
-    );    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Dm(
-        refD.data(), refD.rows(), refD.cols(),
-        Eigen::OuterStride<>(refD.outerStride())
-    );
-    
-    const int M = Am.cols();
-    const int K = Am.rows();
-    const int R = Bm.cols();
-    const int Q = Bm.rows();
-    
     // copy to GPU
-    viennacl::matrix<T> vcl_A(K,M);  
-    viennacl::matrix<T> vcl_B(Q,R);    
-    viennacl::copy(Am, vcl_A);    
-    viennacl::copy(Bm, vcl_B); 
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> vcl_B = ptrB->device_data();
+    viennacl::matrix<T> vcl_D;
     
-    viennacl::vector<T> A_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
-    viennacl::vector<T> B_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+    const int M = vcl_A.size2();
+    const int K = vcl_A.size1();
+    const int R = vcl_B.size2();
+    const int Q = vcl_B.size1();
+    
+    viennacl::vector<T> A_row_ones = viennacl::scalar_vector<T>(K, 1);
+    viennacl::vector<T> B_row_ones = viennacl::scalar_vector<T>(Q, 1);
+    
+    viennacl::matrix<T> square_A;
+    viennacl::matrix<T> square_B;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
-    viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(vcl_A.size1(), vcl_B.size1()), std::max(vcl_A.size2(), vcl_B.size2()), 2);
+    {
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(K, Q), std::max(M, R), 2);
     
-    viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
-    viennacl::matrix<T> square_B = viennacl::linalg::element_pow(vcl_B, twos);
+        square_A = viennacl::linalg::element_pow(vcl_A, twos);
+        square_B = viennacl::linalg::element_pow(vcl_B, twos);
+    }
     
-    viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
-    viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
-    
-    vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
-    vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
-    
-    viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, B_row_ones);
-    viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(A_row_ones, vcl_B_rowsum);
-    
-//    std::cout << "vclXX" << std::endl;
-//    std::cout << vclXX << std::endl;
-//    std::cout << "vclYY" << std::endl;
-//    std::cout << vclYY << std::endl;
-    
-    viennacl::matrix<T> vcl_D = vclXX + vclYY;
-    vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_B)));
+    {
+        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(K);
+        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(Q);
+        
+        vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
+        vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
+        
+        viennacl::matrix<T> vclXX = viennacl::linalg::outer_prod(vcl_A_rowsum, B_row_ones);
+        viennacl::matrix<T> vclYY = viennacl::linalg::outer_prod(A_row_ones, vcl_B_rowsum);
+        
+        vcl_D = vclXX + vclYY;
+        vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_B)));
+    }
     
     if(!squareDist){
         vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
     }
     
-    viennacl::copy(vcl_D, Dm);
+    ptrD->to_host(vcl_D);
         
 }
 

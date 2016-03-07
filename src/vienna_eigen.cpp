@@ -53,30 +53,11 @@ void cpp_gpu_eigen(
     XPtr<dynEigenMat<T> > ptrA(Am);
     XPtr<dynEigenMat<T> > ptrQ(Qm);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refQ = ptrQ->data();
+    const int K = ptrA->nrow();
     
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A(refA.data(), ptrA->nrow(), ptrA->ncol());
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_Q(refQ.data(), ptrQ->nrow(), ptrQ->ncol());
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > eigen_A(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> >eigen_Q(
-        refQ.data(), refQ.rows(), refQ.cols(),
-        Eigen::OuterStride<>(refQ.outerStride())
-    );
-    
-    int M = eigen_A.cols();
-    int K = eigen_A.rows();
-    
-    viennacl::matrix<T> vcl_A(K,M);
-    viennacl::matrix<T> vcl_Q(K,M);
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> vcl_Q = ptrQ->device_data();
     viennacl::vector<T> vcl_eigenvalues(K);
-    
-    viennacl::copy(eigen_A, vcl_A); 
-    viennacl::copy(eigen_Q, vcl_Q); 
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
@@ -84,7 +65,8 @@ void cpp_gpu_eigen(
     
     viennacl::linalg::detail::qr_method(vcl_A, vcl_Q, D, E, symmetric);
     
-    viennacl::copy(vcl_Q, eigen_Q);
+    ptrQ->to_host(vcl_Q);
+    
     std::copy(D.begin(), D.end(), &eigen_eigenvalues(0));
 }
 
