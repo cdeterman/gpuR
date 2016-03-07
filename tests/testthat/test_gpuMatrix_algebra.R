@@ -265,7 +265,7 @@ test_that("gpuMatrix Single Precision tcrossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
-    Z <- matrix(rnorm(10), nrow=5)
+    Z <- matrix(rnorm(12), nrow=2)
     
     C <- tcrossprod(X,Y)
     Cs <- tcrossprod(X)
@@ -282,7 +282,7 @@ test_that("gpuMatrix Single Precision tcrossprod", {
                  info="float matrix elements not equivalent")  
     expect_equal(fgpuCs[,], Cs, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
-    expect_error(crossprod(fgpuX, fgpuZ))
+    expect_error(tcrossprod(fgpuX, fgpuZ))
 })
 
 test_that("gpuMatrix Single Precision transpose", {
@@ -610,7 +610,7 @@ test_that("gpuMatrix Double Precision tcrossprod", {
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
-    Z <- matrix(rnorm(10), nrow=5)
+    Z <- matrix(rnorm(12), nrow=2)
     
     C <- tcrossprod(X,Y)
     Cs <- tcrossprod(X)
@@ -627,7 +627,7 @@ test_that("gpuMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent")  
     expect_equal(fgpuCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
-    expect_error(crossprod(fgpuX, fgpuZ))
+    expect_error(tcrossprod(fgpuX, fgpuZ))
 })
 
 test_that("gpuMatrix Double Precision transpose", {

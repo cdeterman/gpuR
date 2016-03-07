@@ -1144,7 +1144,7 @@ gpu_crossprod <- function(X, Y){
 # GPU tcrossprod
 gpu_tcrossprod <- function(X, Y){
     
-    if(nrow(X) != nrow(Y)){
+    if(ncol(X) != ncol(Y)){
         stop("matrices non-conformable")
     }
     
