@@ -99,10 +99,28 @@ Install \Rpackage{gpuR} using
 <<install, eval = FALSE>>=
 # Stable version
 install.packages("gpuR")
-
-# Dev version
-devtools::install_github("cdeterman/gpuR")
 @
+
+If a user is interested in using the current development version they should
+install directly from my github account.
+
+<<installDev, eval = FALSE>>=
+# Dev version
+devtools::install_github("cdeterman/gpuR", ref = "develop")
+
+# Note this may require install of the RViennaCL from my github
+# if updates have been made
+#devtools::install_github("cdeterman/RViennaCL")
+@
+
+\maketitle
+\section{Getting Help}
+If you find an error/bug while using this package I would like to know about it.  
+Likewise, if there is a method you think would be useful for others feel free
+to request it's addition (or provide a contribution yourself to be added).  
+Please submit the all such reports and requests on my github 
+\href{https://github.com/cdeterman/gpuR/issues}{Issues}.
+
 
 \newpage
 \maketitle
@@ -126,13 +144,15 @@ gpuB <- gpuA %*% gpuA
 Most linear algebra methods have been created to be executed for the 
 \Rclass{gpuMatrix} and \Rclass{gpuVector} objects.  These methods include basic 
 Aithmetic functions \Rcode{\%*\%}, \Rcode{+}, \Rcode{-}, \Rcode{*}, 
-\Rcode{/}, \Rcode{crossprod}, \Rcode{tcrossprod}, \Rcode{colMeans},
+\Rcode{/}, \Rcode{t}, \Rcode{crossprod}, \Rcode{tcrossprod}, \Rcode{colMeans},
 \Rcode{colSums}, \Rcode{rowMean}, and \Rcode{rowSums}.  Math functions include 
 \Rcode{sin}, \Rcode{asin}, \Rcode{sinh}, \Rcode{cos}, \Rcode{acos},
 \Rcode{cosh}, \Rcode{tan}, \Rcode{atan}, \Rcode{tanh}, \Rcode{exp}, 
-\Rcode{log}, \Rcode{log10}.  Additional operations include some linear algebra 
-routines such as \Rcode{cov} (Pearson Covariance) and \Rcode{eigen}. With many 
-more in development.
+\Rcode{log}, \Rcode{log10}, \Rcode{exp}, \Rcode{abs}, \Rcode{max}, and
+\Rcode{min}.  Additional operations include some linear algebra routines such 
+as \Rcode{cov} (Pearson Covariance) and \Rcode{eigen}. A few 'distance' routines
+have also been added with the \Rcode{dist} and \Rcode{distance} (for pairwise) 
+functions.  These currently include 'Euclidean' and 'SqEuclidean' methods.  
 
 The objects may also be created specifying data type including int, float, and 
 double.  Float type was included to provide a smaller memory footprint and also 
@@ -156,5 +176,95 @@ amounts of RAM.  The interactive nature of R often has many objects existing
 simultaenously where you may exceed your GPU's RAM.  As such, the 
 \Rclass{gpuMatrix} class is provided.
 
+\maketitle
+\section{'block' \& 'slice' object}
+Sometimes it is useful to only refer to a subset of a matrix and apply
+some operations.  This has been accomplished by providing the \Rcode{block} and
+\Rcode{slice} methods for matrix and vector classes respectively.  The resulting
+object is a child class of the parent object (e.g. \Rcode{gpuMatrixBlock} from
+\Rcode{gpuMatrix}).  As such, nearly all methods defined for the parent objects
+are also defined for the child class.
+
+<<matBlock, eval=FALSE>>=
+
+# create gpuMatrix
+set.seed(123)
+gpuA <- gpuMatrix(rnorm(16), nrow=4, ncol=4)
+
+# create block omitting the 1st row
+gpuB <- block(gpuA, 
+              rowStart = 2L, rowEnd = 4L, 
+              colStart = 1L, colEnd = 4L)
+@
+
+The resulting object is a reference to the parent objects elements to avoid
+memory duplication.  As such, any changes to the 'block' or 'slice' object will 
+alter the parent elements.  If the user wishes to make these objects distinct,
+they should use the \Rcode{deepcopy} function.
+
+\maketitle
+\section{GPU Memory Management}
+This package has been written to utilize the capabilities provided by 
+\CRANpkg{Rcpp}.  As such, the pointers referenced in the objects herein are
+handled by the 'XPtr' object.  Once the object is deleted in the R session
+\textbf{and the garbage collector has run} the GPU memory will be freed.
+
+It is important for the user to respect the rate at which the R garbage 
+collector is called.  It has been shown that when some of these functions are
+called repeatedly in a loop the GPU processing goes too rapidly for the garbage
+collector to be called to release the memory resulting in the GPU becoming 
+filled.  Explicitly calling \Rcode{gc()} within loops following \Rcode{rm} of
+the temporary object should alleviate problems such as these.
+
+
+\newpage
+\maketitle
+\section{Contributing Back}
+Given the broad use for this package (i.e. many different GPUs)
+it would be useful if you could report success cases.  A curated list of 
+tested platforms would be valuable for future users.  Please see report your
+Operating System, OpenCL Platform (can be seen with \Rcode{platformInfo}),
+and your GPU(s) also on my gitter 
+\href{https://gitter.im/cdeterman/gpuR/Tested_GPUs}{Tested GPUs} page.
+
+\section{Crowd-source Testing}
+As with the above statements, there a many architecture possibilities that this
+package 'should' run on.  That said, it is impossible for me to have access
+to all the different hardware.  As such, I am hoping that users can continually
+test this package as well.
+\newline
+\newline
+1. Test current release
+The simplest approach is to test the current CRAN version.  Simply download the
+tar file from CRAN archive for \CRANpkg{gpuR}.  Then you can just run:
+\newline
+\newline
+\Rcode{R CMD check gpuR\_version}. 
+\newline
+\newline
+\textbf{NOTE} - you will likely receive 3 NOTES (checking repository 
+dependencies, package size, and pandoc).  You also
+will likely see a WARNING referring to the Date field being old.  YOu can safely
+ignore these results.  Any error should be reported to my github 
+\href{https://github.com/cdeterman/gpuR/issues}{Issues}.  Please include the
+OS, OpenCL Platform, \& GPU(s).  Ideally you can at least report which test
+is failing if returned by \Rcode{R CMD check}.
+\newline
+\newline
+2. Test development version.  
+This requires a little bit more effort on the users part.  First, you need to
+to clone my development branch from my git repository.
+\newline
+\newline
+\Rcode{git clone -b develop https://github.com/cdeterman/gpuR.git}
+\newline
+\newline
+Then you can enter the gpuR directory and run \Rcode{devtools::test()}.
+\newline
+\newline
+Ideally, users will try to at least diagnose at least which function the error
+is originating (or sequence of functions).  It is important that if the user
+cannot solve the bug that it is reproducible so that I (or others) are able
+to try to approach the problem.
 
 \end{document}

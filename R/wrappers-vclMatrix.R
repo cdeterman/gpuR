@@ -8,8 +8,8 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
-                          "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                           stop("Unrecognized device type")
     )
     platform_index <- currentPlatform()$platform_index
@@ -60,8 +60,8 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
-                          "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                           stop("Unrecognized device type")
     )
     platform_index <- currentPlatform()$platform_index
@@ -118,8 +118,8 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
-                          "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                           stop("Unrecognized device type")
     )
     platform_index <- currentPlatform()$platform_index
@@ -180,8 +180,8 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
-                          "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                           stop("Unrecognized device type")
     )
     platform_index <- currentPlatform()$platform_index
@@ -265,6 +265,11 @@ vclMatMult <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
+    
     C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
     
     switch(type,
@@ -282,7 +287,6 @@ vclMatMult <- function(A, B){
            float = {cpp_vclMatrix_gemm(A@address,
                                        B@address,
                                        C@address,
-                                       C@.context_index,
                                        6L)
            },
            double = {
@@ -291,12 +295,16 @@ vclMatMult <- function(A, B){
                }else{cpp_vclMatrix_gemm(A@address,
                                         B@address,
                                         C@address,
-                                        C@.context_index,
                                         8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
@@ -400,16 +408,23 @@ vclMatrix_unary_axpy <- function(A){
 # vclMatrix crossprod
 vcl_crossprod <- function(X, Y){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1L, 
+#                "gpu" = 0L,
+#                stop("unrecognized default device option"
+#                )
+#         )
     
     if(nrow(X) != nrow(Y)){
         stop("matrices non-conformable")
+    }
+    
+    assert_are_identical(X@.context_index, Y@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != X@.context_index){
+        setContext(X@.context_index)
     }
     
     type <- typeof(X)
@@ -421,14 +436,16 @@ vcl_crossprod <- function(X, Y){
            "float" = cpp_vclMatrix_crossprod(X@address, 
                                              Y@address, 
                                              Z@address,
-                                             device_flag,
                                              6L),
            "double" = cpp_vclMatrix_crossprod(X@address, 
                                               Y@address, 
                                               Z@address,
-                                              device_flag,
                                               8L)
     )
+    
+    if(oldContext != X@.context_index){
+        setContext(oldContext)
+    }
     
     return(Z)
 }
@@ -436,16 +453,23 @@ vcl_crossprod <- function(X, Y){
 # vclMatrix crossprod
 vcl_tcrossprod <- function(X, Y){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1L, 
+#                "gpu" = 0L,
+#                stop("unrecognized default device option"
+#                )
+#         )
     
     if(ncol(X) != ncol(Y)){
         stop("matrices non-conformable")
+    }
+    
+    assert_are_identical(X@.context_index, Y@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != X@.context_index){
+        setContext(X@.context_index)
     }
     
     type <- typeof(X)
@@ -457,15 +481,17 @@ vcl_tcrossprod <- function(X, Y){
            "float" = cpp_vclMatrix_tcrossprod(X@address,
                                               Y@address, 
                                               Z@address,
-                                              device_flag,
                                               6L),
            "double" = cpp_vclMatrix_tcrossprod(X@address, 
                                                Y@address, 
                                                Z@address,
-                                               device_flag,
                                                8L),
            stop("type not recognized")
     )
+    
+    if(oldContext != X@.context_index){
+        setContext(oldContext)
+    }
     
     return(Z)
 }
@@ -1572,20 +1598,25 @@ vclMatrix_t <- function(A){
     
     type <- typeof(A)
     
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1, 
+#                "gpu" = 0,
+#                stop("unrecognized default device option"
+#                )
+#         )
+
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
+
     B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type)
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
-    
     switch(type,
-           integer = {cpp_vclMatrix_transpose(A@address, B@address, device_flag, 4L)},
-           float = {cpp_vclMatrix_transpose(A@address, B@address, device_flag,  6L)},
-           double = {cpp_vclMatrix_transpose(A@address, B@address, device_flag,  8L)},
+           integer = {cpp_vclMatrix_transpose(A@address, B@address, 4L)},
+           float = {cpp_vclMatrix_transpose(A@address, B@address, 6L)},
+           double = {cpp_vclMatrix_transpose(A@address, B@address, 8L)},
            stop("type not recognized")
     )
     

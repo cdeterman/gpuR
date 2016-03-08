@@ -655,11 +655,23 @@ setMethod("block",
               ptr <- switch(typeof(object),
                             "float" = {
                                 address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 6L)
-                                new("fgpuMatrixBlock", address = address)
+                                new("fgpuMatrixBlock", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             "double" = {
                                 address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 8L)
-                                new("dgpuMatrixBlock", address = address)
+                                new("dgpuMatrixBlock", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             stop("type not recognized")
               )

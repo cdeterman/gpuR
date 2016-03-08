@@ -476,6 +476,7 @@ setMethod("Summary", c(x="vclMatrix"),
 #' computed by using the specified distance measure to compute the distances 
 #' between the rows of a data matrix.
 #' @param x A gpuMatrix or vclMatrix object
+#' @param y A gpuMatrix or vclMatrix object
 #' @param method the distance measure to be used. This must be one of
 #' "euclidean" or "sqEuclidean".
 #' @param diag logical value indicating whether the diagonal of the distance 
@@ -614,11 +615,23 @@ setMethod("block",
               ptr <- switch(typeof(object),
                             "float" = {
                                 address <- cpp_vclMatrix_block(object@address, rowStart-1, rowEnd, colStart-1, colEnd, 6L)
-                                new("fvclMatrixBlock", address = address)
+                                new("fvclMatrixBlock", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             "double" = {
                                 address <- cpp_vclMatrix_block(object@address, rowStart-1, rowEnd, colStart-1, colEnd, 8L)
-                                new("dvclMatrixBlock", address = address)
+                                new("dvclMatrixBlock", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             stop("type not recognized")
               )

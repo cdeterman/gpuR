@@ -5,16 +5,33 @@ initContexts <- function() {
     .Call('gpuR_initContexts', PACKAGE = 'gpuR')
 }
 
+#' @title Available OpenCL Contexts
+#' @description Provide a data.frame of available OpenCL contexts and
+#' associated information.
+#' @return data.frame containing the following fields
+#' @return \item{context}{Integer identifying context}
+#' @return \item{platform}{Character string listing OpenCL platform}
+#' @return \item{platform_index}{Integer identifying platform}
+#' @return \item{device}{Character string listing device name}
+#' @return \item{device_index}{Integer identifying device}
+#' @return \item{device_type}{Character string labeling device (e.g. gpu)}
 #' @export
 listContexts <- function() {
     .Call('gpuR_listContexts', PACKAGE = 'gpuR')
 }
 
+#' @title Current Context
+#' @description Get current context index
+#' @return An integer reflecting the context listed in \link{listContexts}
 #' @export
 currentContext <- function() {
     .Call('gpuR_currentContext', PACKAGE = 'gpuR')
 }
 
+#' @title Set Context
+#' @description Change the current context used by default
+#' @param id Integer identifying which context to set
+#' @seealso \link{listContexts}
 #' @export
 setContext <- function(id) {
     invisible(.Call('gpuR_setContext', PACKAGE = 'gpuR', id))
@@ -32,6 +49,12 @@ cpp_cpuInfo <- function(platform_idx_, cpu_idx_) {
     .Call('gpuR_cpp_cpuInfo', PACKAGE = 'gpuR', platform_idx_, cpu_idx_)
 }
 
+#' @title Current Device Information
+#' @description Check current device information
+#' @return list containing
+#' @return \item{device}{Character string of device name}
+#' @return \item{device_index}{Integer identifying device}
+#' @return \item{device_type}{Character string identifying device type (e.g. gpu)}
 #' @export
 currentDevice <- function() {
     .Call('gpuR_currentDevice', PACKAGE = 'gpuR')
@@ -764,20 +787,20 @@ cpp_gpuMatrix_transpose <- function(ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
 }
 
-cpp_vclMatrix_gemm <- function(ptrA, ptrB, ptrC, context_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_gemm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, context_flag, type_flag))
+cpp_vclMatrix_gemm <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_gemm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
-cpp_vclMatrix_crossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_vclMatrix_crossprod <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
-cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
-cpp_vclMatrix_transpose <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_vclMatrix_transpose <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {

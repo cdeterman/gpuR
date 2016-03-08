@@ -63,6 +63,16 @@ SEXP initContexts(){
 }
 
 
+//' @title Available OpenCL Contexts
+//' @description Provide a data.frame of available OpenCL contexts and
+//' associated information.
+//' @return data.frame containing the following fields
+//' @return \item{context}{Integer identifying context}
+//' @return \item{platform}{Character string listing OpenCL platform}
+//' @return \item{platform_index}{Integer identifying platform}
+//' @return \item{device}{Character string listing device name}
+//' @return \item{device_index}{Integer identifying device}
+//' @return \item{device_type}{Character string labeling device (e.g. gpu)}
 //' @export
 // [[Rcpp::export]]
 DataFrame 
@@ -150,6 +160,9 @@ listContexts()
 }
 
 
+//' @title Current Context
+//' @description Get current context index
+//' @return An integer reflecting the context listed in \link{listContexts}
 //' @export
 // [[Rcpp::export]]
 int currentContext()
@@ -158,6 +171,10 @@ int currentContext()
 }
 
 
+//' @title Set Context
+//' @description Change the current context used by default
+//' @param id Integer identifying which context to set
+//' @seealso \link{listContexts}
 //' @export
 // [[Rcpp::export]]
 void

@@ -28,6 +28,8 @@ distance(x, y, method = "euclidean")
 \arguments{
 \item{x}{A gpuMatrix or vclMatrix object}
 
+\item{y}{A gpuMatrix or vclMatrix object}
+
 \item{method}{the distance measure to be used. This must be one of
 "euclidean" or "sqEuclidean".}
 

@@ -327,6 +327,13 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
 //    viennacl::ocl::get_context(id).switch_device(gpu_idx);
 //}
 
+
+//' @title Current Device Information
+//' @description Check current device information
+//' @return list containing
+//' @return \item{device}{Character string of device name}
+//' @return \item{device_index}{Integer identifying device}
+//' @return \item{device_type}{Character string identifying device type (e.g. gpu)}
 //' @export
 // [[Rcpp::export]]
 SEXP currentDevice()

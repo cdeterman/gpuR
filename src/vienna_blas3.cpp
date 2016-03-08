@@ -32,7 +32,7 @@ cpp_gpuMatrix_gemm(
     SEXP ptrB_, 
     SEXP ptrC_,
     int device_flag)
-{
+{    
     // define device type to use
     if(device_flag == 0){
         //use only GPUs
@@ -274,8 +274,7 @@ template <typename T>
 void cpp_vclMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_,
-    int context_flag)
+    SEXP ptrC_)
 {
 //    // define device type to use
 //    if(device_flag == 0){
@@ -289,12 +288,6 @@ void cpp_vclMatrix_gemm(
 //        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
 //        viennacl::ocl::switch_context(id);
 //    }
-
-    int current_context_id = viennacl::ocl::backend<>::current_context_id();
-    
-    if(current_context_id != context_flag - 1){
-        viennacl::ocl::switch_context(context_flag - 1);
-    }
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -305,10 +298,6 @@ void cpp_vclMatrix_gemm(
     viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
 
     C = viennacl::linalg::prod(A, B);
-    
-    if(current_context_id != context_flag - 1){
-        viennacl::ocl::switch_context(current_context_id);
-    }
 }
 
 template <typename T>
@@ -316,22 +305,8 @@ void
 cpp_vclMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
@@ -348,22 +323,8 @@ void
 cpp_vclMatrix_tcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
-{
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    SEXP ptrC_)
+{    
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
@@ -379,22 +340,8 @@ template <typename T>
 void
 cpp_vclMatrix_transpose(
     SEXP ptrA_, 
-    SEXP ptrB_,
-    int device_flag)
-{
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    SEXP ptrB_)
+{    
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     
@@ -410,19 +357,18 @@ cpp_vclMatrix_transpose(
 void
 cpp_vclMatrix_gemm(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int context_flag,
-    const int type_flag)
+    int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC, context_flag);
+            cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC, context_flag);
+            cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC, context_flag);
+            cpp_vclMatrix_gemm<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -434,19 +380,18 @@ cpp_vclMatrix_gemm(
 void
 cpp_vclMatrix_crossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
-    const int type_flag)
+    int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_crossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_crossprod<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclMatrix_crossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_crossprod<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclMatrix_crossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_crossprod<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -458,19 +403,18 @@ cpp_vclMatrix_crossprod(
 void
 cpp_vclMatrix_tcrossprod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
-    const int type_flag)
+    int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_tcrossprod<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_tcrossprod<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclMatrix_tcrossprod<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_tcrossprod<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclMatrix_tcrossprod<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclMatrix_tcrossprod<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -481,19 +425,18 @@ cpp_vclMatrix_tcrossprod(
 void
 cpp_vclMatrix_transpose(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
-    const int type_flag)
+    int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_transpose<int>(ptrA, ptrB, device_flag);
+            cpp_vclMatrix_transpose<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclMatrix_transpose<float>(ptrA, ptrB, device_flag);
+            cpp_vclMatrix_transpose<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclMatrix_transpose<double>(ptrA, ptrB, device_flag);
+            cpp_vclMatrix_transpose<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

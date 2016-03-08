@@ -35,8 +35,8 @@ setMethod('gpuMatrix',
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                                     stop("Unrecognized device type")
               )
               platform_index <- currentPlatform()$platform_index
@@ -111,8 +111,8 @@ setMethod('gpuMatrix',
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                                     stop("Unrecognized device type")
               )
               platform_index <- currentPlatform()$platform_index
@@ -178,8 +178,8 @@ setMethod('gpuMatrix',
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                                     stop("Unrecognized device type")
               )
               platform_index <- currentPlatform()$platform_index
@@ -262,8 +262,8 @@ setMethod('gpuMatrix',
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(gpu_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(cpu_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
                                     stop("Unrecognized device type")
               )
               platform_index <- currentPlatform()$platform_index

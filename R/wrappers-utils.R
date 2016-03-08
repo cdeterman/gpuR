@@ -46,12 +46,12 @@ detectGPUs <- function(platform_idx=1L){
     }
 }
 
-#' @title GPU Information
-#' @description Get basic information about selected GPU
+#' @title Device Information
+#' @description Get basic information about selected device (e.g. GPU)
 #' @param platform_idx An integer value indicating which platform to query.
-#' @param gpu_idx An integer value indicating which gpu to query.
-#' @return \item{deviceName}{GPU Name}
-#' @return \item{deviceVendor}{GPU Vendor}
+#' @param device_idx An integer value indicating which device to query.
+#' @return \item{deviceName}{Device Name}
+#' @return \item{deviceVendor}{Device Vendor}
 #' @return \item{numberOfCores}{Number of Computing Units 
 #'  (which execute the work groups)}
 #' @return \item{maxWorkGroupSize}{Maximum number of work items
@@ -67,28 +67,31 @@ detectGPUs <- function(platform_idx=1L){
 #' @return \item{maxAllocatableMem}{Maximum amount of memory in a single 
 #' piece (bytes)}
 #' @return \item{available}{Whether the device is available}
-#' @seealso \link{detectPlatforms} \link{detectGPUs}
+#' @seealso \link{detectPlatforms} \link{detectGPUs} \link{detectCPUs} \link{cpuInfo}
 #' @author Charles Determan Jr.
+#' @rdname deviceInfo
+#' @aliases gpuInfo
 #' @export
-gpuInfo <- function(platform_idx=1L, gpu_idx=1L){
+gpuInfo <- function(platform_idx=1L, device_idx=1L){
     assert_is_integer(platform_idx)
     assert_all_are_positive(platform_idx)
-    assert_is_integer(gpu_idx)
-    assert_all_are_positive(gpu_idx)
+    assert_is_integer(device_idx)
+    assert_all_are_positive(device_idx)
     
-    out <- cpp_gpuInfo(platform_idx, gpu_idx)
+    out <- cpp_gpuInfo(platform_idx, device_idx)
     return(out)
 }
 
-
+#' @rdname deviceInfo
+#' @aliases cpuInfo
 #' @export
-cpuInfo <- function(platform_idx=1L, cpu_idx=1L){
+cpuInfo <- function(platform_idx=1L, device_idx=1L){
     assert_is_integer(platform_idx)
     assert_all_are_positive(platform_idx)
-    assert_is_integer(cpu_idx)
-    assert_all_are_positive(cpu_idx)
+    assert_is_integer(device_idx)
+    assert_all_are_positive(device_idx)
     
-    out <- cpp_cpuInfo(platform_idx, cpu_idx)
+    out <- cpp_cpuInfo(platform_idx, device_idx)
     return(out)
 }
 
