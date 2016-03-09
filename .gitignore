@@ -4,6 +4,8 @@
 src/*.o
 src/*.so
 src/*.dll
+src/Makevars
+src/Makevars.win
 
 #Autotools
 
