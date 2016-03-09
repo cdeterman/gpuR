@@ -26,11 +26,11 @@ case `uname` in
             echo "Using OPENCL_INC = " $OPENCL_INC
         fi
         
-        if test -e "$OPENCL_INC/CL/cl2.hpp"; then
+        if test -e "$OPENCL_INC/cl2.hpp"; then
             FLAGS="${FLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
             echo "cl2.hpp header exists"
         else
-            if test -e "$OPENCL_INC/CL/cl.hpp"; then
+            if test -e "$OPENCL_INC/cl.hpp"; then
                 FLAGS="${FLAGS} -I$OPENCL_INC"
                 echo "cl.hpp header exists"
             else
