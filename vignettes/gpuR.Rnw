@@ -143,7 +143,7 @@ gpuB <- gpuA %*% gpuA
 
 Most linear algebra methods have been created to be executed for the 
 \Rclass{gpuMatrix} and \Rclass{gpuVector} objects.  These methods include basic 
-Aithmetic functions \Rcode{\%*\%}, \Rcode{+}, \Rcode{-}, \Rcode{*}, 
+Arithmetic functions \Rcode{\%*\%}, \Rcode{+}, \Rcode{-}, \Rcode{*}, 
 \Rcode{/}, \Rcode{t}, \Rcode{crossprod}, \Rcode{tcrossprod}, \Rcode{colMeans},
 \Rcode{colSums}, \Rcode{rowMean}, and \Rcode{rowSums}.  Math functions include 
 \Rcode{sin}, \Rcode{asin}, \Rcode{sinh}, \Rcode{cos}, \Rcode{acos},
@@ -244,7 +244,7 @@ tar file from CRAN archive for \CRANpkg{gpuR}.  Then you can just run:
 \newline
 \textbf{NOTE} - you will likely receive 3 NOTES (checking repository 
 dependencies, package size, and pandoc).  You also
-will likely see a WARNING referring to the Date field being old.  YOu can safely
+will likely see a WARNING referring to the Date field being old.  You can safely
 ignore these results.  Any error should be reported to my github 
 \href{https://github.com/cdeterman/gpuR/issues}{Issues}.  Please include the
 OS, OpenCL Platform, \& GPU(s).  Ideally you can at least report which test
