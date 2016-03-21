@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
 
-\section{Unreleased Version 1.1.0}{
+\section{Version 1.1.0}{
     \itemize{
         \item New Features:
         \itemize{
