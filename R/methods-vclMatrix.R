@@ -658,15 +658,34 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device
+                                    )
                             },
                             "double" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -691,15 +710,33 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -724,15 +761,33 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -758,15 +813,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -791,16 +864,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix",
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
-                            },
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)                            },
                             stop("type not recognized")
               )
               
@@ -824,15 +914,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, device_flag)
-                                new("ivclMatrix", address = address)
+                                new("ivclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, device_flag)
-                                new("fvclMatrix", address = address)
+                                new("fvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, device_flag)
-                                new("dvclMatrix", address = address)
+                                new("dvclMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )

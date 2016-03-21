@@ -691,15 +691,33 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -716,15 +734,33 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -741,15 +777,33 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -767,15 +821,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -792,15 +864,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
@@ -817,15 +907,33 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", address = address)
+                                new("igpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", address = address)
+                                new("fgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", address = address)
+                                new("dgpuMatrix", 
+                                    address = address,
+                                    .context_index = x@.context_index,
+                                    .platform_index = x@.platform_index,
+                                    .platform = x@.platform,
+                                    .device_index = x@.device_index,
+                                    .device = x@.device)
                             },
                             stop("type not recognized")
               )
