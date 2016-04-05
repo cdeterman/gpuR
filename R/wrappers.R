@@ -26,8 +26,10 @@ gpu_Mat_axpy <- function(alpha, A, B){
     nrB = nrow(B)
     ncB = ncol(B)
     
-    pkg_path <- find.package("gpuR", .libPaths())
-    file <- file.path(pkg_path, "CL", "basic_axpy.cl")
+#     pkg_path <- find.package("gpuR", .libPaths())
+#     file <- file.path(pkg_path, "CL", "basic_axpy.cl")
+    
+    file <- system.file("CL", "basic_axpy.cl", package = "gpuR")
     
     if(!file_test("-f", file)){
         stop("kernel file does not exist")
@@ -108,8 +110,10 @@ gpuMatrix_unary_axpy <- function(A){
 # GPU Matrix Multiplication
 gpu_Mat_mult <- function(A, B){
     
-    pkg_path <- find.package("gpuR", .libPaths())
-    file <- file.path(pkg_path, "CL", "basic_gemm.cl")
+#     pkg_path <- find.package("gpuR", .libPaths())
+#     file <- file.path(pkg_path, "CL", "basic_gemm.cl")
+    
+    file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
     
     if(!file_test("-f", file)){
         stop("kernel file does not exist")
