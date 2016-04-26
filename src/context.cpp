@@ -73,7 +73,9 @@ void debugContexts(){
     platforms_type platforms = viennacl::ocl::get_platforms();  
     
     std::vector< viennacl::ocl::device > devices;
-    devices = viennacl::ocl::current_context().devices();
+    devices = platforms[0].devices();
+    
+    //devices = viennacl::ocl::current_context().devices();
     
     Rcout << "devices found on default platform" << std::endl;
     Rcout << devices.size() << std::endl;
