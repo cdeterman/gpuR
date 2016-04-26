@@ -88,6 +88,9 @@ listContexts()
     // get platforms
     platforms_type platforms = viennacl::ocl::get_platforms();  
     
+    Rcout << "number of platforms found" << std::endl;
+    Rcout << platforms.size() << std::endl;
+    
     // count number of contexts initialized
     // for each platform    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
@@ -98,7 +101,8 @@ listContexts()
 //        }
     }
     
-//    std::cout << num_contexts << std::endl;
+    Rcout << "number of total contexts to create" << std::endl;
+    Rcout << num_contexts << std::endl;
     
     Rcpp::IntegerVector context_index(num_contexts);
     Rcpp::CharacterVector platform_name(num_contexts);
@@ -112,6 +116,9 @@ listContexts()
         
         for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
         
+            Rcout << "context id" << std::endl;
+            Rcout << id << std::endl;
+            
             // Select the platform
             viennacl::ocl::switch_context(id);
             
@@ -127,6 +134,12 @@ listContexts()
             // Get device info
             device_index[id] = gpu_idx;
             device_name[id] = viennacl::ocl::current_device().name();
+            
+            Rcout << "current device index" << std::endl;
+            Rcout << device_index[id] << std::endl;
+            
+            Rcout << "current device name" << std::endl;
+            Rcout << device_name[id] << std::endl;
             
             switch(viennacl::ocl::current_device().type()){
                 case 2: 
