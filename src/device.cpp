@@ -116,7 +116,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
         stop("No platforms found. Check OpenCL installation!");
     }
 
-    if (plat_idx > platforms.size()){
+    if (plat_idx + 1 > platforms.size()){
         stop("platform index greater than number of platforms.");
     }
     
