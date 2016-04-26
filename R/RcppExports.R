@@ -5,6 +5,11 @@ initContexts <- function() {
     .Call('gpuR_initContexts', PACKAGE = 'gpuR')
 }
 
+#'@export
+debugContexts <- function() {
+    invisible(.Call('gpuR_debugContexts', PACKAGE = 'gpuR'))
+}
+
 #' @title Available OpenCL Contexts
 #' @description Provide a data.frame of available OpenCL contexts and
 #' associated information.
