@@ -119,6 +119,9 @@ listContexts()
             Rcout << "context id" << std::endl;
             Rcout << id << std::endl;
             
+            Rcout << "current platform index" << std::endl;
+            Rcout << plat_idx << std::endl;
+            
             // Select the platform
             viennacl::ocl::switch_context(id);
             
