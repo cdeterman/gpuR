@@ -131,8 +131,12 @@ listContexts()
             
             viennacl::ocl::set_context_platform_index(id, plat_idx);
             
+            Rcout << "set platform successfully" << std::endl;
+            
             // Select device
             viennacl::ocl::get_context(id).switch_device(gpu_idx);
+            
+            Rcout << "switched device successfully" << std::endl;
             
             // Get device info
             device_index[id] = gpu_idx;
