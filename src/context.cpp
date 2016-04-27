@@ -146,7 +146,7 @@ listContexts()
         std::vector< viennacl::ocl::device > devices;
         devices = platforms[plat_idx].devices();
         
-        for(unsigned int gpu_idx=0; gpu_idx < devices().size(); gpu_idx++){
+        for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
         
             Rcout << "context id" << std::endl;
             Rcout << id << std::endl;
