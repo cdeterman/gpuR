@@ -117,8 +117,8 @@ listContexts()
     // get platforms
     platforms_type platforms = viennacl::ocl::get_platforms();  
     
-    Rcout << "number of platforms found" << std::endl;
-    Rcout << platforms.size() << std::endl;
+//    Rcout << "number of platforms found" << std::endl;
+//    Rcout << platforms.size() << std::endl;
     
     // count number of contexts initialized
     // for each platform    
@@ -130,8 +130,8 @@ listContexts()
 //        }
     }
     
-    Rcout << "number of total contexts to create" << std::endl;
-    Rcout << num_contexts << std::endl;
+//    Rcout << "number of total contexts to create" << std::endl;
+//    Rcout << num_contexts << std::endl;
     
     Rcpp::IntegerVector context_index(num_contexts);
     Rcpp::CharacterVector platform_name(num_contexts);
@@ -148,11 +148,11 @@ listContexts()
         
         for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
         
-            Rcout << "context id" << std::endl;
-            Rcout << id << std::endl;
+//            Rcout << "context id" << std::endl;
+//            Rcout << id << std::endl;
             
-            Rcout << "current platform index" << std::endl;
-            Rcout << plat_idx << std::endl;
+//            Rcout << "current platform index" << std::endl;
+//            Rcout << plat_idx << std::endl;
             
             // Select the platform
             viennacl::ocl::switch_context(id);
@@ -163,22 +163,22 @@ listContexts()
             
             viennacl::ocl::set_context_platform_index(id, plat_idx);
             
-            Rcout << "set platform successfully" << std::endl;
+//            Rcout << "set platform successfully" << std::endl;
             
             // Select device
             viennacl::ocl::setup_context(id, devices[gpu_idx]);
             
-            Rcout << "switched device successfully" << std::endl;
+//            Rcout << "switched device successfully" << std::endl;
             
             // Get device info
             device_index[id] = gpu_idx;
             device_name[id] = viennacl::ocl::current_device().name();
             
-            Rcout << "current device index" << std::endl;
-            Rcout << device_index[id] << std::endl;
+//            Rcout << "current device index" << std::endl;
+//            Rcout << device_index[id] << std::endl;
             
-            Rcout << "current device name" << std::endl;
-            Rcout << device_name[id] << std::endl;
+//            Rcout << "current device name" << std::endl;
+//            Rcout << device_name[id] << std::endl;
             
             switch(viennacl::ocl::current_device().type()){
                 case 2: 
