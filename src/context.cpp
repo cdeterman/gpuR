@@ -30,7 +30,10 @@ SEXP initContexts(){
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
     
-        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+        std::vector< viennacl::ocl::device > devices;
+        devices = platforms[plat_idx].devices();
+    
+        for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
                     
             // Select the platform
             viennacl::ocl::switch_context(id);
@@ -48,7 +51,8 @@ SEXP initContexts(){
             // Select device
 //            viennacl::ocl::setup_context(id, my_devices);
 //            viennacl::ocl::current_context().switch_device(gpu_idx);
-            viennacl::ocl::get_context(id).switch_device(gpu_idx);
+            viennacl::ocl::setup_context(id, devices[gpu_idx]);
+//            viennacl::ocl::get_context(id).switch_device(gpu_idx);
 //            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
             
             // increment context
