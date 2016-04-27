@@ -143,7 +143,10 @@ listContexts()
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
         
-        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+        std::vector< viennacl::ocl::device > devices;
+        devices = platforms[plat_idx].devices();
+        
+        for(unsigned int gpu_idx=0; gpu_idx < devices().size(); gpu_idx++){
         
             Rcout << "context id" << std::endl;
             Rcout << id << std::endl;
@@ -163,7 +166,7 @@ listContexts()
             Rcout << "set platform successfully" << std::endl;
             
             // Select device
-            viennacl::ocl::get_context(id).switch_device(gpu_idx);
+            viennacl::ocl::setup_context(id, devices[gpu_idx]);
             
             Rcout << "switched device successfully" << std::endl;
             
