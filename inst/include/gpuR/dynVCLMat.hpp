@@ -11,6 +11,7 @@
 // ViennaCL headers
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#include "viennacl/ocl/backend.hpp"
 #include "viennacl/matrix.hpp"
 #include "viennacl/matrix_proxy.hpp"
 
@@ -28,14 +29,14 @@ class dynVCLMat {
         viennacl::matrix<T> A;
         
         dynVCLMat() { } // private default constructor
-        dynVCLMat(SEXP A_, int device_flag);
+        dynVCLMat(SEXP A_, int context_index);
         dynVCLMat(
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am,
             int nr_in, int nc_in,
-            int device_flag
+            int context_index
             );
-        dynVCLMat(int nr_in, int nc_in, int device_flag);
-        dynVCLMat(int nr_in, int nc_in, T scalar, int device_flag);
+        dynVCLMat(int nr_in, int nc_in, int context_index);
+        dynVCLMat(int nr_in, int nc_in, T scalar, int context_index);
         dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat);
         
         viennacl::matrix<T>* getPtr() { return ptr; }
@@ -48,14 +49,8 @@ class dynVCLMat {
             int row_start, int row_end,
             int col_start, int col_end
             );
-        void setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat){
-            A = mat;
-            ptr = &A;
-        }
-        void setMatrix(viennacl::matrix<T> mat){
-            A = mat;
-            ptr = &A;
-        }
+        void setMatrix(viennacl::matrix<T> mat);
+        void setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat);
         void setDims(int nr_in, int nc_in){
             nr = nr_in;
             nc = nc_in;

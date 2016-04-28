@@ -1,6 +1,6 @@
 
 # vclMatrix numeric vector initializer
-vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
+vclMatInitNumVec <- function(data, nrow, ncol, type){
     
     device <- currentDevice()
     
@@ -26,7 +26,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, device_flag),
+                                                 6L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -37,7 +37,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, device_flag),
+                                                   8L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -52,7 +52,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, device_flag){
 }
 
 # vclMatrix numeric initializer
-vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
+vclMatInitNumScalar <- function(data, nrow, ncol, type, context_index){
     
     device <- currentDevice()
     
@@ -80,7 +80,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, device_flag),
+                                  6L, context_index-1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -94,7 +94,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, device_flag),
+                                  8L, context_index-1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -110,7 +110,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, device_flag){
 }
 
 # vclMatrix integer vector initializer
-vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
+vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
     
     device <- currentDevice()
     
@@ -135,7 +135,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
                       new("ivclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol,
-                                                 4L, device_flag),
+                                                 4L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -146,7 +146,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, device_flag),
+                                                 6L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -157,7 +157,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, device_flag),
+                                                   8L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -172,7 +172,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, device_flag){
 }
 
 # vclMatrix integer scalar initializer
-vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
+vclMatInitIntScalar <- function(data, nrow, ncol, type, context_index){
     
     device <- currentDevice()
     
@@ -199,7 +199,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  4L, device_flag),
+                                  4L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -213,7 +213,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, device_flag),
+                                  6L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -227,7 +227,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, device_flag){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, device_flag),
+                                  8L, context_index),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -311,13 +311,20 @@ vclMatMult <- function(A, B){
 # vclMatrix AXPY
 vclMat_axpy <- function(alpha, A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1L, 
+#                "gpu" = 0L,
+#                stop("unrecognized default device option"
+#                )
+#         )
+    
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     nrA = nrow(A)
     ncA = ncol(A)
@@ -353,31 +360,33 @@ vclMat_axpy <- function(alpha, A, B){
            float = {cpp_vclMatrix_axpy(alpha, 
                                        A@address, 
                                        Z@address,
-                                       device_flag,
                                        6L)
            },
            double = {cpp_vclMatrix_axpy(alpha, 
                                         A@address,
                                         Z@address,
-                                        device_flag,
                                         8L)
            },
             stop("type not recognized")
     )
 
-return(Z)
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(Z)
 }
 
 # vclMatrix unary AXPY
 vclMatrix_unary_axpy <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+#     device_flag <- 
+#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
+#                "cpu" = 1, 
+#                "gpu" = 0,
+#                stop("unrecognized default device option"
+#                )
+#         )
     
     type = typeof(A)
     
@@ -386,17 +395,14 @@ vclMatrix_unary_axpy <- function(A){
     switch(type,
            integer = {
                cpp_vclMatrix_unary_axpy(Z@address, 
-                                        device_flag,
                                         4L)
            },
            float = {
                cpp_vclMatrix_unary_axpy(Z@address, 
-                                        device_flag,
                                         6L)
            },
            double = {
                cpp_vclMatrix_unary_axpy(Z@address,
-                                        device_flag,
                                         8L)
            },
            stop("type not recognized")

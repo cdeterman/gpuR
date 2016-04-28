@@ -20,41 +20,51 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 SEXP cpp_detectGPUs(SEXP platform_idx)
 {    
-    int device_count;
+    int device_count = 0;
     long current_context_id = viennacl::ocl::backend<>::current_context_id();
     
     // Select context used only for GPUs
     long id = 999;
     viennacl::ocl::switch_context(id);
     
-    // subtract one for zero indexing
-    unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
-    
     // Get available platforms
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     platforms_type platforms = viennacl::ocl::get_platforms();
+    
+    if(Rf_isNull(platform_idx)){
+        for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
+            device_count += platforms[plat_idx].devices().size();
+        }
+    }else{
+        // subtract one for zero indexing
+        unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
+        device_count += platforms[plat_idx].devices().size();
+    }
+    
+    
    
 //    std::cout << "num platforms found" << std::endl;
 //    std::cout << platforms.size() << std::endl;
     
 //    std::cout << "changing platform" << std::endl;
     // Select the platform
-    viennacl::ocl::set_context_platform_index(id, plat_idx);
+//    viennacl::ocl::set_context_platform_index(id, plat_idx);
+//    
+//    // set device type
+//    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+//    
+////    std::cout << "get devices" << std::endl;
+//    // get the devices
+//    std::vector< viennacl::ocl::device > devices;
+//    devices = viennacl::ocl::current_context().devices();
+//    
+////    std::cout << "num devices" << std::endl;
+////    std::cout << devices.size() << std::endl;
+//
+//    device_count = devices.size();
+//
+//    viennacl::ocl::switch_context(current_context_id);
     
-    // set device type
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    
-//    std::cout << "get devices" << std::endl;
-    // get the devices
-    std::vector< viennacl::ocl::device > devices;
-    devices = viennacl::ocl::current_context().devices();
-    
-//    std::cout << "num devices" << std::endl;
-//    std::cout << devices.size() << std::endl;
-
-    device_count = devices.size();
-
-    viennacl::ocl::switch_context(current_context_id);
     
     return(wrap(device_count));
 }
