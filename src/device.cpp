@@ -109,10 +109,6 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
 // [[Rcpp::export]]
 List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 {
-
-    // declarations and housekeeping
-    long current_context_id = viennacl::ocl::backend<>::current_context_id();
-    long id = 999;
     
     // subtract one for zero indexing
     unsigned int plat_idx = as<unsigned int>(platform_idx_) - 1;
@@ -130,18 +126,9 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
         stop("platform index greater than number of platforms.");
     }
     
-    // Select context used only for GPUs (999)
-    viennacl::ocl::switch_context(id);
-    
-    // Set the platform
-    viennacl::ocl::set_context_platform_index(id, plat_idx);
-    
-    // Make sure only GPUs
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-    
     // Get device
     viennacl::ocl::device working_device;
-    working_device = viennacl::ocl::current_context().devices()[gpu_idx];
+    working_device = platforms[plat_idx].devices()[gpu_idx];
     
     std::string deviceName = working_device.name();
     std::string deviceVendor = working_device.vendor();
@@ -161,8 +148,6 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     std::vector<std::string> extensionsVector;
     boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
     std::string available_str = (available == 1) ? "yes" : "no";
-    
-    viennacl::ocl::switch_context(current_context_id);
     
     return List::create(Named("deviceName") = deviceName,
                         Named("deviceVendor") = deviceVendor,
