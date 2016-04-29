@@ -157,7 +157,7 @@ setMethod('vclMatrix',
           signature(data = 'numeric'),
           function(data, nrow, ncol, type=NULL){
               
-#               if (is.null(type)) type <- getOption("gpuR.default.type")
+              if (is.null(type)) type <- getOption("gpuR.default.type")
 #               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
               if(is.na(nrow)) stop("must indicate number of rows: nrow")
