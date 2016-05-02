@@ -274,9 +274,9 @@ vclMatMult <- function(A, B){
     
     print("A context")
     print(A@.context_index)
-    print("A context")
+    print("B context")
     print(B@.context_index)
-    print("A context")
+    print("C context")
     print(C@.context_index)
     
     print("current context")
