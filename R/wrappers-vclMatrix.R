@@ -272,6 +272,16 @@ vclMatMult <- function(A, B){
     
     C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
     
+    print("A context")
+    print(A@.context_index)
+    print("A context")
+    print(B@.context_index)
+    print("A context")
+    print(C@.context_index)
+    
+    print("current context")
+    print(currentContext())
+    
     switch(type,
            integer = {
                stop("OpenCL integer GEMM not currently
