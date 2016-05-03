@@ -2,12 +2,14 @@
     options(gpuR.print.warning=TRUE)
     options(gpuR.default.type = "double")
     options(gpuR.default.device.type = "gpu")
-    
+}
+
+.onAttach <- function(libname, pkgname) {
     # Initialize all possible contexts
-    if (!identical(Sys.getenv("APPVEYOR"), "True")) {
+    if (!identical(Sys.getenv("APPVEYOR"), "True") | !identical(Sys.getenv("TRAVIS"), "true")) {
         # initialize contexts and return default device
         default_device <- initContexts()
-        packageStartupMessage(paste0("gpuR 1.1.1\nDefault device: ", default_device))
+        packageStartupMessage(paste0("gpuR 1.1.2\nDefault device: ", default_device))
     }
 }
 
