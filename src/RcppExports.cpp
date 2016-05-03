@@ -16,15 +16,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// debugContexts
-void debugContexts();
-RcppExport SEXP gpuR_debugContexts() {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    debugContexts();
-    return R_NilValue;
-END_RCPP
-}
 // listContexts
 DataFrame listContexts();
 RcppExport SEXP gpuR_listContexts() {

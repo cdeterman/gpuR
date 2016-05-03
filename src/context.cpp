@@ -67,33 +67,33 @@ SEXP initContexts(){
 }
 
 
-//'@export
-// [[Rcpp::export]]
-void debugContexts(){
-    
-    typedef std::vector< viennacl::ocl::platform > platforms_type;
-    
-    // get platforms
-    platforms_type platforms = viennacl::ocl::get_platforms();  
-    
-    std::vector< viennacl::ocl::device > devices;
-    devices = platforms[0].devices();
-    
-    //devices = viennacl::ocl::current_context().devices();
-    
-    Rcout << "devices found on default platform" << std::endl;
-    Rcout << devices.size() << std::endl;
-    
-    for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
-        viennacl::ocl::device gpu = devices[gpu_idx];
-        
-        Rcout << "device index" << std::endl;
-        Rcout << gpu_idx << std::endl;
-        
-        Rcout << "device name" << std::endl;
-        Rcout << gpu.name() << std::endl;
-    }
-}
+////'@export
+//// [[Rcpp::export]]
+//void debugContexts(){
+//    
+//    typedef std::vector< viennacl::ocl::platform > platforms_type;
+//    
+//    // get platforms
+//    platforms_type platforms = viennacl::ocl::get_platforms();  
+//    
+//    std::vector< viennacl::ocl::device > devices;
+//    devices = platforms[0].devices();
+//    
+//    //devices = viennacl::ocl::current_context().devices();
+//    
+//    Rcout << "devices found on default platform" << std::endl;
+//    Rcout << devices.size() << std::endl;
+//    
+//    for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
+//        viennacl::ocl::device gpu = devices[gpu_idx];
+//        
+//        Rcout << "device index" << std::endl;
+//        Rcout << gpu_idx << std::endl;
+//        
+//        Rcout << "device name" << std::endl;
+//        Rcout << gpu.name() << std::endl;
+//    }
+//}
 
 
 //' @title Available OpenCL Contexts
