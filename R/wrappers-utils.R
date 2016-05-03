@@ -3,23 +3,54 @@
 #' @title Detect Available OpenCL enabled CPUs
 #' @description Find out how many CPUs available
 #' @param platform_idx An integer value indicating which platform to query.
+#' If NULL it will iterate over all platforms and sum results
 #' @return An integer representing the number of available CPUs
 #' @seealso \link{detectPlatforms} \link{detectGPUs}
 #' @export
-detectCPUs <- function(platform_idx=1L){
+detectCPUs <- function(platform_idx=NULL){
     assert_is_integer(platform_idx)
     assert_all_are_positive(platform_idx)
     
     current_context_id <- currentContext()
     
-    cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
-    if(class(cpus)[1] == "try-error"){
-        # need to make sure if errors out to switch back to original context
+#     cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
+#     if(class(cpus)[1] == "try-error"){
+#         # need to make sure if errors out to switch back to original context
+#         setContext(current_context_id)
+#         return(0)
+#     }else{
+#         setContext(current_context_id)
+#         return(cpus)
+#     }
+    
+    if(is.null(platform_idx)){
+        total_cpus = 0
+        for(p in seq(detectPlatforms())){
+            cpus <- try(cpp_detectCPUs(p), silent=TRUE)
+            if(class(cpus)[1] == "try-error"){
+                # need to make sure if errors out to switch back to original context
+                total_cpus = total_cpus + 0
+            }else{
+                total_cpus = total_cpus + cpus
+            }
+        }
         setContext(current_context_id)
-        return(0)
+        
+        return(total_cpus)
+        
     }else{
-        setContext(current_context_id)
-        return(cpus)
+        assert_is_integer(platform_idx)
+        assert_all_are_positive(platform_idx)
+        
+        cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
+        if(class(cpus)[1] == "try-error"){
+            # need to make sure if errors out to switch back to original context
+            setContext(current_context_id)
+            return(0)
+        }else{
+            setContext(current_context_id)
+            return(cpus)
+        }
     }
 }
 
@@ -32,26 +63,26 @@ detectCPUs <- function(platform_idx=1L){
 #' @export
 detectGPUs <- function(platform_idx=NULL){
     
+    current_context_id <- currentContext()
+    
     if(is.null(platform_idx)){
         total_gpus = 0
-        current_context_id <- currentContext()
         for(p in seq(detectPlatforms())){
             gpus <- try(cpp_detectGPUs(p), silent=TRUE)
             if(class(gpus)[1] == "try-error"){
                 # need to make sure if errors out to switch back to original context
-                setContext(current_context_id)
+                total_gpus = total_gpus + 0
             }else{
-                setContext(current_context_id)
                 total_gpus = total_gpus + gpus
             }
         }
+        setContext(current_context_id)
+        
         return(total_gpus)
         
     }else{
         assert_is_integer(platform_idx)
         assert_all_are_positive(platform_idx)
-        
-        current_context_id <- currentContext()
         
         gpus <- try(cpp_detectGPUs(platform_idx), silent=TRUE)
         if(class(gpus)[1] == "try-error"){
