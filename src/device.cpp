@@ -21,9 +21,9 @@ using namespace Rcpp;
 SEXP cpp_detectGPUs(SEXP platform_idx)
 {    
     int device_count = 0;
-    long current_context_id = viennacl::ocl::backend<>::current_context_id();
-    
-    // Select context used only for GPUs
+//    long current_context_id = viennacl::ocl::backend<>::current_context_id();
+//    
+//    // Select context used only for GPUs
     long id = 999;
     viennacl::ocl::switch_context(id);
     
@@ -33,12 +33,28 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     
     if(Rf_isNull(platform_idx)){
         for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
-            device_count += platforms[plat_idx].devices().size();
+                // Select the platform
+                viennacl::ocl::set_context_platform_index(id, plat_idx);
+                
+                // set device type
+                viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+                
+                // get the devices
+                device_count += viennacl::ocl::current_context().devices().size();
+                //device_count += platforms[plat_idx].devices().size();
         }
     }else{
         // subtract one for zero indexing
         unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
-        device_count += platforms[plat_idx].devices().size();
+        // Select the platform
+        viennacl::ocl::set_context_platform_index(id, plat_idx);
+        
+        // set device type
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
+        
+        // get the devices
+        device_count += viennacl::ocl::current_context().devices().size();
+//        device_count += platforms[plat_idx].devices().size();
     }
     
     
@@ -395,7 +411,7 @@ SEXP currentDevice()
 SEXP cpp_detectCPUs(SEXP platform_idx)
 {    
     int device_count;
-    long current_context_id = viennacl::ocl::backend<>::current_context_id();
+//    long current_context_id = viennacl::ocl::backend<>::current_context_id();
     
     // Select context used only for CPUs
     long id = 998;
@@ -408,20 +424,47 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     platforms_type platforms = viennacl::ocl::get_platforms();
    
-    // Select the platform
-    viennacl::ocl::set_context_platform_index(id, plat_idx);
-    
-    // filter to only CPUs
-    viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-    
-    // get the devices
-    std::vector< viennacl::ocl::device > devices;
-    devices = viennacl::ocl::current_context().devices();
-    
-    device_count = devices.size();
+    if(Rf_isNull(platform_idx)){
+        for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
+                // Select the platform
+                viennacl::ocl::set_context_platform_index(id, plat_idx);
+                
+                // set device type
+                viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+                
+                // get the devices
+                device_count += viennacl::ocl::current_context().devices().size();
+                //device_count += platforms[plat_idx].devices().size();
+        }
+    }else{
+        // subtract one for zero indexing
+        unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
+        // Select the platform
+        viennacl::ocl::set_context_platform_index(id, plat_idx);
+        
+        // set device type
+        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+        
+        // get the devices
+        device_count += viennacl::ocl::current_context().devices().size();
+    //        device_count += platforms[plat_idx].devices().size();
+    }
+   
+   
+//    // Select the platform
+//    viennacl::ocl::set_context_platform_index(id, plat_idx);
+//    
+//    // filter to only CPUs
+//    viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
+//    
+//    // get the devices
+//    std::vector< viennacl::ocl::device > devices;
+//    devices = viennacl::ocl::current_context().devices();
+//    
+//    device_count = devices.size();
 
-    // switch back to original context
-    viennacl::ocl::switch_context(current_context_id);
+//    // switch back to original context
+//    viennacl::ocl::switch_context(current_context_id);
     
     return(wrap(device_count));
 }
