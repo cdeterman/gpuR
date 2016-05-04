@@ -67,6 +67,20 @@ dynVCLMat<T>::dynVCLMat(
 }
 
 template<typename T>
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
+{    
+    A = viennacl::zero_matrix<T>(nr_in, nc_in);
+       
+    nr = nr_in;
+    nc = nc_in;
+    ptr = &A;
+    viennacl::range temp_rr(0, nr);
+    viennacl::range temp_cr(0, nc);
+    row_r = temp_rr;
+    col_r = temp_cr;
+}
+
+template<typename T>
 dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int context_index)
 {
     // define context to use

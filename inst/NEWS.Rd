@@ -1,6 +1,21 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
 
+\section{Version 1.1.2}{
+    \itemize{
+        \item New Features:
+        \itemize{
+            \item fixed major bugs with cbind/rbind and deepcopy reflecting new class architectures
+        }
+        \item Features in Progress:
+        \itemize{
+            \item Additional matrix functions (QR-decompsition, SVD, Cholesky, solve)
+            \item 'device type' checks (i.e. deal with CPU & GPU objects), perhaps detect type from object?
+            \item Control over OpenCL contexts for mutliple GPUs
+        }
+    }
+}
+
 \section{Version 1.1.0}{
     \itemize{
         \item New Features:

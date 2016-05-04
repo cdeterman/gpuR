@@ -35,6 +35,7 @@ class dynVCLMat {
             int nr_in, int nc_in,
             int context_index
             );
+        dynVCLMat(int nr_in, int nc_in);
         dynVCLMat(int nr_in, int nc_in, int context_index);
         dynVCLMat(int nr_in, int nc_in, T scalar, int context_index);
         dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat);

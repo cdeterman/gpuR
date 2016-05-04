@@ -70,7 +70,7 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
 //cbind two vclMatrix objects
 template <typename T>
 SEXP
-cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int context_index)
+cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_)
 {        
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -85,7 +85,7 @@ cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int context_index)
     C_right = pB;
     C_left = pA;
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1(), pA.size2() + pB.size2(), context_index);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1(), pA.size2() + pB.size2());
     mat->setMatrix(C);
     mat->setDims(pA.size1(), pA.size2() + pB.size2());
     mat->setRange(0, pA.size1(), 0, pA.size2() + pB.size2());
@@ -97,7 +97,7 @@ cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int context_index)
 //rbind two vclMatrix objects
 template <typename T>
 SEXP
-cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int context_index)
+cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_)
 {        
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -112,7 +112,7 @@ cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int context_index)
     C_top = pA;
     C_bottom = pB;
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1() + pB.size1(), pA.size2(), context_index);
+    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1() + pB.size1(), pA.size2());
     mat->setMatrix(C);
     mat->setDims(pA.size1() + pB.size1(), pA.size2());
     mat->setRange(0, pA.size1() + pB.size1(), 0, pA.size2());
@@ -502,16 +502,15 @@ SEXP
 cpp_cbind_vclMatrix(
     SEXP ptrA, 
     SEXP ptrB,
-    int type_flag,
-    int context_index)
+    int type_flag)
 {    
     switch(type_flag) {
         case 4:
-            return cpp_cbind_vclMatrix<int>(ptrA, ptrB, context_index);
+            return cpp_cbind_vclMatrix<int>(ptrA, ptrB);
         case 6:
-            return cpp_cbind_vclMatrix<float>(ptrA, ptrB, context_index);
+            return cpp_cbind_vclMatrix<float>(ptrA, ptrB);
         case 8:
-            return cpp_cbind_vclMatrix<double>(ptrA, ptrB, context_index);
+            return cpp_cbind_vclMatrix<double>(ptrA, ptrB);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -523,16 +522,15 @@ SEXP
 cpp_rbind_vclMatrix(
     SEXP ptrA, 
     SEXP ptrB,
-    int type_flag,
-    int context_index)
+    int type_flag)
 {    
     switch(type_flag) {
         case 4:
-            return cpp_rbind_vclMatrix<int>(ptrA, ptrB, context_index);
+            return cpp_rbind_vclMatrix<int>(ptrA, ptrB);
         case 6:
-            return cpp_rbind_vclMatrix<float>(ptrA, ptrB, context_index);
+            return cpp_rbind_vclMatrix<float>(ptrA, ptrB);
         case 8:
-            return cpp_rbind_vclMatrix<double>(ptrA, ptrB, context_index);
+            return cpp_rbind_vclMatrix<double>(ptrA, ptrB);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

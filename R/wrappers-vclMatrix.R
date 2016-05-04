@@ -252,14 +252,6 @@ vclMatMult <- function(A, B){
 #         stop("kernel file does not exist")
 #     }
 #     kernel <- readChar(file, file.info(file)$size)
-#     
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1L, 
-#                "gpu" = 0L,
-#                stop("unrecognized default device option"
-#                )
-#         )
     
     type <- typeof(A)
     
@@ -310,14 +302,6 @@ vclMatMult <- function(A, B){
 
 # vclMatrix AXPY
 vclMat_axpy <- function(alpha, A, B){
-    
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1L, 
-#                "gpu" = 0L,
-#                stop("unrecognized default device option"
-#                )
-#         )
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -380,13 +364,10 @@ vclMat_axpy <- function(alpha, A, B){
 # vclMatrix unary AXPY
 vclMatrix_unary_axpy <- function(A){
     
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1, 
-#                "gpu" = 0,
-#                stop("unrecognized default device option"
-#                )
-#         )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type = typeof(A)
     
@@ -408,19 +389,15 @@ vclMatrix_unary_axpy <- function(A){
            stop("type not recognized")
     )
     
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(Z)
 }
 
 # vclMatrix crossprod
 vcl_crossprod <- function(X, Y){
-    
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1L, 
-#                "gpu" = 0L,
-#                stop("unrecognized default device option"
-#                )
-#         )
     
     if(nrow(X) != nrow(Y)){
         stop("matrices non-conformable")
@@ -458,14 +435,6 @@ vcl_crossprod <- function(X, Y){
 
 # vclMatrix crossprod
 vcl_tcrossprod <- function(X, Y){
-    
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1L, 
-#                "gpu" = 0L,
-#                stop("unrecognized default device option"
-#                )
-#         )
     
     if(ncol(X) != ncol(Y)){
         stop("matrices non-conformable")
@@ -506,16 +475,15 @@ vcl_tcrossprod <- function(X, Y){
 # GPU Element-Wise Multiplication
 vclMatElemMult <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
-    
     if(!all(dim(A) == dim(B))){
         stop("matrices not conformable")
+    }
+    
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
     }
     
     type <- typeof(A)
@@ -529,7 +497,6 @@ vclMatElemMult <- function(A, B){
            float = {cpp_vclMatrix_elem_prod(A@address,
                                             B@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -538,25 +505,26 @@ vclMatElemMult <- function(A, B){
                }else{cpp_vclMatrix_elem_prod(A@address,
                                              B@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Scalar Element-Wise Multiplication
 vclMatScalarMult <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -568,7 +536,6 @@ vclMatScalarMult <- function(A, B){
            },
            float = {cpp_vclMatrix_scalar_prod(C@address,
                                               B,
-                                              device_flag,
                                               6L)
            },
            double = {
@@ -576,28 +543,31 @@ vclMatScalarMult <- function(A, B){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_scalar_prod(C@address,
                                                B,
-                                               device_flag,
                                                8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Element-Wise Division
 vclMatElemDiv <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
-    
     if(!all(dim(A) == dim(B))){
         stop("matrices not conformable")
+    }
+    
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
     }
     
     type <- typeof(A)
@@ -611,7 +581,6 @@ vclMatElemDiv <- function(A, B){
            float = {cpp_vclMatrix_elem_div(A@address,
                                            B@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -620,25 +589,26 @@ vclMatElemDiv <- function(A, B){
                }else{cpp_vclMatrix_elem_div(A@address,
                                             B@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },           
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Scalar Element-Wise Division
 vclMatScalarDiv <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -650,7 +620,6 @@ vclMatScalarDiv <- function(A, B){
            },
            float = {cpp_vclMatrix_scalar_div(C@address,
                                              B,
-                                             device_flag,
                                              6L)
            },
            double = {
@@ -658,25 +627,28 @@ vclMatScalarDiv <- function(A, B){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_scalar_div(C@address,
                                               B,
-                                              device_flag,
                                               8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Element-Wise Power
 vclMatElemPow <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     if(!all(dim(A) == dim(B))){
         stop("matrices not conformable")
@@ -693,7 +665,6 @@ vclMatElemPow <- function(A, B){
            float = {cpp_vclMatrix_elem_pow(A@address,
                                            B@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -702,25 +673,26 @@ vclMatElemPow <- function(A, B){
                }else{cpp_vclMatrix_elem_pow(A@address,
                                             B@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Element-Wise Power
 vclMatScalarPow <- function(A, B){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -733,7 +705,6 @@ vclMatScalarPow <- function(A, B){
            float = {cpp_vclMatrix_scalar_pow(A@address,
                                              B,
                                              C@address,
-                                             device_flag,
                                              6L)
            },
            double = {
@@ -742,25 +713,26 @@ vclMatScalarPow <- function(A, B){
                }else{cpp_vclMatrix_scalar_pow(A@address,
                                               B,
                                               C@address,
-                                              device_flag,
                                               8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Element-Wise Sine
 vclMatElemSin <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -772,7 +744,6 @@ vclMatElemSin <- function(A){
            },
            float = {cpp_vclMatrix_elem_sin(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -780,26 +751,26 @@ vclMatElemSin <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_sin(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Arc Sine
 vclMatElemArcSin <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -811,7 +782,6 @@ vclMatElemArcSin <- function(A){
            },
            float = {cpp_vclMatrix_elem_asin(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -819,26 +789,26 @@ vclMatElemArcSin <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_asin(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Hyperbolic Sine
 vclMatElemHypSin <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -850,7 +820,6 @@ vclMatElemHypSin <- function(A){
            },
            float = {cpp_vclMatrix_elem_sinh(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -858,26 +827,26 @@ vclMatElemHypSin <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_sinh(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    return(C)
 }
 
 # GPU Element-Wise Cos
 vclMatElemCos <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -889,7 +858,6 @@ vclMatElemCos <- function(A){
            },
            float = {cpp_vclMatrix_elem_cos(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -897,26 +865,26 @@ vclMatElemCos <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_cos(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Arc Cos
 vclMatElemArcCos <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -928,7 +896,6 @@ vclMatElemArcCos <- function(A){
            },
            float = {cpp_vclMatrix_elem_acos(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -936,26 +903,26 @@ vclMatElemArcCos <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_acos(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Hyperbolic Cos
 vclMatElemHypCos <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -967,7 +934,6 @@ vclMatElemHypCos <- function(A){
            },
            float = {cpp_vclMatrix_elem_cosh(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -975,26 +941,26 @@ vclMatElemHypCos <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_cosh(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Tan
 vclMatElemTan <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1006,7 +972,6 @@ vclMatElemTan <- function(A){
            },
            float = {cpp_vclMatrix_elem_tan(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -1014,26 +979,26 @@ vclMatElemTan <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_tan(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Arc Tan
 vclMatElemArcTan <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1045,7 +1010,6 @@ vclMatElemArcTan <- function(A){
            },
            float = {cpp_vclMatrix_elem_atan(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -1053,26 +1017,26 @@ vclMatElemArcTan <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_atan(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Hyperbolic Tan
 vclMatElemHypTan <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1084,7 +1048,6 @@ vclMatElemHypTan <- function(A){
            },
            float = {cpp_vclMatrix_elem_tanh(A@address,
                                             C@address,
-                                            device_flag,
                                             6L)
            },
            double = {
@@ -1092,26 +1055,26 @@ vclMatElemHypTan <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_tanh(A@address,
                                              C@address,
-                                             device_flag,
                                              8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Natural Log
 vclMatElemLog <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1123,7 +1086,6 @@ vclMatElemLog <- function(A){
            },
            float = {cpp_vclMatrix_elem_log(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -1131,26 +1093,26 @@ vclMatElemLog <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_log(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Log Base
 vclMatElemLogBase <- function(A, base){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1163,7 +1125,6 @@ vclMatElemLogBase <- function(A, base){
            float = {cpp_vclMatrix_elem_log_base(A@address,
                                                 C@address,
                                                 base,
-                                                device_flag,
                                                 6L)
            },
            double = {
@@ -1172,26 +1133,26 @@ vclMatElemLogBase <- function(A, base){
                }else{cpp_vclMatrix_elem_log_base(A@address,
                                                  C@address,
                                                  base,
-                                                 device_flag,
                                                  8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Base 10 Log
 vclMatElemLog10 <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1203,7 +1164,6 @@ vclMatElemLog10 <- function(A){
            },
            float = {cpp_vclMatrix_elem_log10(A@address,
                                              C@address,
-                                             device_flag,
                                              6L)
            },
            double = {
@@ -1211,26 +1171,26 @@ vclMatElemLog10 <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_log10(A@address,
                                               C@address,
-                                              device_flag,
                                               8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # GPU Element-Wise Exponential
 vclMatElemExp <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1242,7 +1202,6 @@ vclMatElemExp <- function(A){
            },
            float = {cpp_vclMatrix_elem_exp(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -1250,26 +1209,26 @@ vclMatElemExp <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_exp(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
+    return(C)
 }
 
 # vclMatrix colSums
 vclMatrix_colSums <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1283,14 +1242,16 @@ vclMatrix_colSums <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_colsum(A@address, 
                                           sums@address, 
-                                          device_flag,
                                           6L),
            "double" = cpp_vclMatrix_colsum(A@address, 
                                            sums@address, 
-                                           device_flag,
                                            8L),
            stop("unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(sums)
 }
@@ -1298,13 +1259,10 @@ vclMatrix_colSums <- function(A){
 # vclMatrix rowSums
 vclMatrix_rowSums <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1318,14 +1276,16 @@ vclMatrix_rowSums <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_rowsum(A@address, 
                                           sums@address, 
-                                          device_flag,
                                           6L),
            "double" = cpp_vclMatrix_rowsum(A@address, 
                                            sums@address, 
-                                           device_flag,
                                            8L),
            stop("unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(sums)
 }
@@ -1333,13 +1293,10 @@ vclMatrix_rowSums <- function(A){
 # vclMatrix colMeans
 vclMatrix_colMeans <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1353,14 +1310,16 @@ vclMatrix_colMeans <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_colmean(A@address, 
                                            sums@address, 
-                                           device_flag,
                                            6L),
            "double" = cpp_vclMatrix_colmean(A@address, 
                                             sums@address, 
-                                            device_flag,
                                             8L),
            stop("unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(sums)
 }
@@ -1368,13 +1327,10 @@ vclMatrix_colMeans <- function(A){
 # vclMatrix rowMeans
 vclMatrix_rowMeans <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1387,14 +1343,17 @@ vclMatrix_rowMeans <- function(A){
     switch(type,
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_rowmean(A@address, 
-                                           sums@address, 
-                                           device_flag,
+                                           sums@address,
                                            6L),
            "double" = cpp_vclMatrix_rowmean(A@address, 
                                             sums@address, 
-                                            device_flag,
-                                            8L)
+                                            8L),
+           stop("unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(sums)
 }
@@ -1402,13 +1361,10 @@ vclMatrix_rowMeans <- function(A){
 # GPU Pearson Covariance
 vclMatrix_pmcc <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1418,13 +1374,16 @@ vclMatrix_pmcc <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_pmcc(A@address, 
                                         B@address, 
-                                        device_flag,
                                         6L),
            "double" = cpp_vclMatrix_pmcc(A@address, 
                                          B@address,
-                                         device_flag,
-                                         8L)
+                                         8L),
+           stop("unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(B)
 }
@@ -1432,13 +1391,12 @@ vclMatrix_pmcc <- function(A){
 # GPU Euclidean Distance
 vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    assert_are_identical(A@.context_index, D@.context_index)
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(D)
     
@@ -1447,15 +1405,17 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
            "float" = cpp_vclMatrix_eucl(A@address, 
                                         D@address, 
                                         squareDist, 
-                                        device_flag,
                                         6L),
            "double" = cpp_vclMatrix_eucl(A@address, 
                                          D@address,
                                          squareDist,
-                                         device_flag,
                                          8L),
            stop("Unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     invisible(D)
 }
@@ -1463,13 +1423,14 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
 # GPU Pairwise Euclidean Distance
 vclMatrix_peuclidean <- function(A, B, D, squareDist){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    if(length(unique(c(A@.context_index, B@.context_index, D@.context_index))) != 1){
+        stop("Context indices don't match between arguments")
+    }
+    
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(D)
     
@@ -1479,16 +1440,18 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
                                          B@address,
                                         D@address, 
                                         squareDist, 
-                                        device_flag,
                                         6L),
            "double" = cpp_vclMatrix_peucl(A@address, 
                                           B@address,
                                          D@address,
                                          squareDist,
-                                         device_flag,
                                          8L),
            stop("Unsupported matrix type")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     invisible(D)
 }
@@ -1496,13 +1459,10 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
 # GPU Element-Wise Absolute Value
 vclMatElemAbs <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1, 
-               "gpu" = 0,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1514,7 +1474,6 @@ vclMatElemAbs <- function(A){
            },
            float = {cpp_vclMatrix_elem_abs(A@address,
                                            C@address,
-                                           device_flag,
                                            6L)
            },
            double = {
@@ -1522,25 +1481,26 @@ vclMatElemAbs <- function(A){
                    stop("Selected GPU does not support double precision")
                }else{cpp_vclMatrix_elem_abs(A@address,
                                             C@address,
-                                            device_flag,
                                             8L)
                }
            },
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Vector maximum
 vclMatMax <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1549,32 +1509,32 @@ vclMatMax <- function(A){
                     stop("integer not currently implemented")
                 },
                 float = {cpp_vclMatrix_max(A@address,
-                                           device_flag,
                                            6L)
                 },
                 double = {
                     if(!deviceHasDouble()){
                         stop("Selected GPU does not support double precision")
                     }else{cpp_vclMatrix_max(A@address,
-                                            device_flag,
                                             8L)
                     }
                 },
                 stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
 # GPU Vector minimum
 vclMatMin <- function(A){
     
-    device_flag <- 
-        switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-               "cpu" = 1L, 
-               "gpu" = 0L,
-               stop("unrecognized default device option"
-               )
-        )
+    oldContext <- currentContext()
+    if(oldContext != A@.context_index){
+        setContext(A@.context_index)
+    }
     
     type <- typeof(A)
     
@@ -1583,19 +1543,22 @@ vclMatMin <- function(A){
                     stop("integer not currently implemented")
                 },
                 float = {cpp_vclMatrix_min(A@address,
-                                           device_flag,
                                            6L)
                 },
                 double = {
                     if(!deviceHasDouble()){
                         stop("Selected GPU does not support double precision")
                     }else{cpp_vclMatrix_min(A@address,
-                                            device_flag,
                                             8L)
                     }
                 },
                 stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
+    
     return(C)
 }
 
@@ -1603,14 +1566,6 @@ vclMatMin <- function(A){
 vclMatrix_t <- function(A){
     
     type <- typeof(A)
-    
-#     device_flag <- 
-#         switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-#                "cpu" = 1, 
-#                "gpu" = 0,
-#                stop("unrecognized default device option"
-#                )
-#         )
 
     oldContext <- currentContext()
     if(oldContext != A@.context_index){
@@ -1625,6 +1580,10 @@ vclMatrix_t <- function(A){
            double = {cpp_vclMatrix_transpose(A@address, B@address, 8L)},
            stop("type not recognized")
     )
+    
+    if(oldContext != A@.context_index){
+        setContext(oldContext)
+    }
     
     return(B)
 }
