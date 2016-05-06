@@ -186,3 +186,14 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     }
     
 }
+
+#' @title Set Context
+#' @description Change the current context used by default
+#' @param id Integer identifying which context to set
+#' @seealso \link{listContexts}
+#' @export
+setContext <- function(id = 1L){
+    if(!id %in% listContexts()$context){
+        stop("context index not initialized")
+    }
+}

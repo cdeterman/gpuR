@@ -103,13 +103,10 @@ setMethod("eigen", signature(x="vclMatrix"),
                   stop("vclMatrixBlock not currently supported")
               }
               
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
+              oldContext <- currentContext()
+              if(oldContext != x@.context_index){
+                  setContext(x@.context_index)
+              }
               
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
@@ -139,14 +136,12 @@ setMethod("eigen", signature(x="vclMatrix"),
                                              Q@address, 
                                              V@address,
                                              symmetric,
-                                             6L,
-                                             device_flag),
+                                             6L),
                      "double" = cpp_vcl_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
-                                              8L,
-                                              device_flag),
+                                              8L),
                      stop("type not currently supported")
               )
               
@@ -155,6 +150,11 @@ setMethod("eigen", signature(x="vclMatrix"),
               }else{
                   out <- list(values = V, vectors = Q)
               }
+              
+              if(oldContext != x@.context_index){
+                  setContext(oldContext)
+              }
+              
               return(out)
           },
           valueClass = "list"

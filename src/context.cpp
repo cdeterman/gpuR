@@ -227,14 +227,9 @@ int currentContext()
 }
 
 
-//' @title Set Context
-//' @description Change the current context used by default
-//' @param id Integer identifying which context to set
-//' @seealso \link{listContexts}
-//' @export
 // [[Rcpp::export]]
 void
-setContext(int id)
+cpp_setContext(int id)
 {
     if(id <= 0){
         stop("Index cannot be 0 or less");

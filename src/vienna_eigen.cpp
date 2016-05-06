@@ -75,30 +75,11 @@ void cpp_vcl_eigen(
     SEXP &Am, 
     SEXP &Qm,
     SEXP &eigenvalues,
-    bool symmetric,
-    int device_flag)
-{    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    bool symmetric)
+{        
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
     Rcpp::XPtr<dynVCLMat<T> > ptrQ(Qm);
-    
-//    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
-//    viennacl::matrix<T> vcl_A = static_cast<viennacl::matrix<T> >(A);
-    
-//    viennacl::matrix_range<viennacl::matrix<T> > vcl_Q = ptrQ->data();
 
     // want copy of A to prevent overwriting original matrix
     viennacl::matrix<T> vcl_A = ptrA->matrix();
@@ -164,18 +145,17 @@ cpp_vcl_eigen(
     SEXP Qm,
     SEXP eigenvalues,
     const bool symmetric,
-    const int type_flag, 
-    int device_flag)
+    const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric);
             return;
         case 6:
-            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric);
             return;
         case 8:
-            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

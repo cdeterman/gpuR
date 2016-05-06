@@ -1,8 +1,5 @@
 library(gpuR)
-context("CPU vclMatrixBlock algebra")
-
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
+context("Switching GPU vclMatrixBlock algebra")
 
 # set seed
 set.seed(123)
@@ -18,16 +15,20 @@ E <- matrix(rnorm(15), nrow=5)
 
 # Single Precision Matrix Block tests
 
-test_that("CPU vclMatrix Single Precision Block Matrix multiplication", {
+test_that("Switching GPU vclMatrixBlock Single Precision Block Matrix multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS %*% BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -37,18 +38,26 @@ test_that("CPU vclMatrix Single Precision Block Matrix multiplication", {
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Single Precision Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS - BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -60,19 +69,27 @@ test_that("CPU vclMatrix Single Precision Matrix Subtraction", {
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_error(fvclAS - fvclE)
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Scalar Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Single Precision Scalar Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     
     C <- AS - 1
     C2 <- 1 - AS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
+    
+    setContext(1L)
     
     fvclC <- fvclAS - 1    
     fvclC2 <- 1 - fvclAS
@@ -83,16 +100,27 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Subtraction", {
     expect_is(fvclC2, "fvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Unary Scalar Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Single Precision Unary Scalar Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     C <- -AS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
+    
+    setContext(1L)
+    
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     
     fvclC <- -fvclAS
@@ -100,18 +128,26 @@ test_that("CPU vclMatrix Single Precision Unary Scalar Matrix Subtraction", {
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Addition", {
+test_that("Switching GPU vclMatrixBlock Single Precision Matrix Addition", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS + BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -123,17 +159,26 @@ test_that("CPU vclMatrix Single Precision Matrix Addition", {
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_error(fvclA + fvclE)
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Scalar Matrix Addition", {
+test_that("Switching GPU vclMatrixBlock Single Precision Scalar Matrix Addition", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     C <- AS + 1
     C2 <- 1 + AS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
+    
+    setContext(1L)
+    
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     
     fvclC <- fvclAS + 1
@@ -145,18 +190,28 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Addition", {
     expect_is(fvclC2, "fvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Element-Wise Multiplication", {
+test_that("Switching GPU vclMatrixBlock Single Precision Matrix Element-Wise Multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS * BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -167,18 +222,26 @@ test_that("CPU vclMatrix Single Precision Matrix Element-Wise Multiplication", {
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_error(fvclA * fvclE)
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Scalar Matrix Multiplication", {
+test_that("Switching GPU vclMatrixBlock Single Precision Scalar Matrix Multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     C <- AS * 2
     C2 <- 2 * AS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
+    
+    setContext(1L)
     
     fvclC <- fvclAS * 2
     fvclC2 <- 2 * fvclAS
@@ -189,18 +252,28 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Multiplication", {
     expect_is(fvclC2, "fvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Element-Wise Division", {
+test_that("Switching GPU vclMatrixBlock Single Precision Matrix Element-Wise Division", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS / BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -212,17 +285,26 @@ test_that("CPU vclMatrix Single Precision Matrix Element-Wise Division", {
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_error(fvclA / fvclE)
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Scalar Matrix Division", {
+test_that("Switching GPU vclMatrixBlock Single Precision Scalar Matrix Division", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     C <- AS/2
     C2 <- 2/AS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
+    
+    setContext(1L)
+    
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     
     fvclC <- fvclAS/2
@@ -234,18 +316,28 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Division", {
     expect_is(fvclC2, "fvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Element-Wise Power", {
+test_that("Switching GPU vclMatrixBlock Single Precision Matrix Element-Wise Power", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS ^ BS
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    
+    setContext(1L)
     
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     fvclBS <- block(fvclB, 2L,4L,2L,4L)
@@ -257,16 +349,25 @@ test_that("CPU vclMatrix Single Precision Matrix Element-Wise Power", {
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_error(fvclA ^ fvclE)
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision Scalar Matrix Power", {
+test_that("Switching GPU vclMatrixBlock Single Precision Scalar Matrix Power", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     AS = A[2:4, 2:4]
     C <- AS^2
     
+    setContext(2L)
+    
     fvclA <- vclMatrix(A, type="float")
+    
+    setContext(1L)
+    
     fvclAS <- block(fvclA, 2L,4L,2L,4L)
     
     fvclC <- fvclAS^2
@@ -274,11 +375,15 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Power", {
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision crossprod", {
+test_that("Switching GPU vclMatrixBlock Single Precision crossprod", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -290,9 +395,13 @@ test_that("CPU vclMatrix Single Precision crossprod", {
     C <- crossprod(XS,YS)
     Cs <- crossprod(XS)
     
+    setContext(2L)
+    
     fvclX <- vclMatrix(X, type="float")
     fvclY <- vclMatrix(Y, type="float")
     fvclZ <- vclMatrix(Z, type="float")
+    
+    setContext(1L)
     
     fvclXS <- block(fvclX, 1L,2L,2L,5L)
     fvclYS <- block(fvclY, 1L,2L,2L,5L)
@@ -307,11 +416,17 @@ test_that("CPU vclMatrix Single Precision crossprod", {
     expect_equal(fvclCs[,], Cs, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
     expect_error(crossprod(fvclXS, fvclZS))
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclCs@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Single Precision tcrossprod", {
+test_that("Switching GPU vclMatrixBlock Single Precision tcrossprod", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -323,9 +438,13 @@ test_that("CPU vclMatrix Single Precision tcrossprod", {
     C <- tcrossprod(XS,YS)
     Cs <- tcrossprod(XS)
     
+    setContext(2L)
+    
     fvclX <- vclMatrix(X, type="float")
     fvclY <- vclMatrix(Y, type="float")
     fvclZ <- vclMatrix(Z, type="float")
+    
+    setContext(1L)
     
     fvclXS <- block(fvclX, 1L,2L,2L,5L)
     fvclYS <- block(fvclY, 1L,2L,2L,5L)
@@ -340,20 +459,31 @@ test_that("CPU vclMatrix Single Precision tcrossprod", {
     expect_equal(fvclCs[,], Cs, tolerance=1e-06, 
                  info="float matrix elements not equivalent") 
     expect_error(crossprod(fvclXS, fvclZS))
+    expect_equal(fvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(fvclCs@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
 # Double Precision Matrix Block tests
 
-test_that("CPU vclMatrix Double Precision Block Matrix multiplication", {
+test_that("Switching GPU vclMatrixBlock Double Precision Block Matrix multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS %*% BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -362,19 +492,28 @@ test_that("CPU vclMatrix Double Precision Block Matrix multiplication", {
     
     expect_is(dvclC, "dvclMatrix")
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
+                 info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally") 
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Double Precision Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS - BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -386,18 +525,28 @@ test_that("CPU vclMatrix Double Precision Matrix Subtraction", {
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_error(dvclAS - dvclE)
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Scalar Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Double Precision Scalar Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     
     C <- AS - 1
     C2 <- 1 - AS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- dvclAS - 1    
@@ -409,16 +558,28 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Subtraction", {
     expect_is(dvclC2, "dvclMatrix")
     expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Unary Scalar Matrix Subtraction", {
+test_that("Switching GPU vclMatrixBlock Double Precision Unary Scalar Matrix Subtraction", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     C <- -AS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- -dvclAS
@@ -426,18 +587,27 @@ test_that("CPU vclMatrix Double Precision Unary Scalar Matrix Subtraction", {
     expect_is(dvclC, "dvclMatrix")
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Addition", {
+test_that("Switching GPU vclMatrixBlock Double Precision Matrix Addition", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS + BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -449,17 +619,27 @@ test_that("CPU vclMatrix Double Precision Matrix Addition", {
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_error(dvclA + dvclE)
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Scalar Matrix Addition", {
+test_that("Switching GPU vclMatrixBlock Double Precision Scalar Matrix Addition", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     C <- AS + 1
     C2 <- 1 + AS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- dvclAS + 1
@@ -471,18 +651,29 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Addition", {
     expect_is(dvclC2, "dvclMatrix")
     expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Element-Wise Multiplication", {
+test_that("Switching GPU vclMatrixBlock Double Precision Matrix Element-Wise Multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS * BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -493,17 +684,27 @@ test_that("CPU vclMatrix Double Precision Matrix Element-Wise Multiplication", {
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_error(dvclA * dvclE)
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Scalar Matrix Multiplication", {
+test_that("Switching GPU vclMatrixBlock Double Precision Scalar Matrix Multiplication", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     C <- AS * 2
     C2 <- 2 * AS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- dvclAS * 2
@@ -515,18 +716,29 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Multiplication", {
     expect_is(dvclC2, "dvclMatrix")
     expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Element-Wise Division", {
+test_that("Switching GPU vclMatrixBlock Double Precision Matrix Element-Wise Division", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS / BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -538,17 +750,27 @@ test_that("CPU vclMatrix Double Precision Matrix Element-Wise Division", {
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_error(dvclA / dvclE)
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Scalar Matrix Division", {
+test_that("Switching GPU vclMatrixBlock Double Precision Scalar Matrix Division", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     C <- AS/2
     C2 <- 2/AS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- dvclAS/2
@@ -560,18 +782,29 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Division", {
     expect_is(dvclC2, "dvclMatrix")
     expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclC2@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Element-Wise Power", {
+test_that("Switching GPU vclMatrixBlock Double Precision Matrix Element-Wise Power", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
     C <- AS ^ BS
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
     dvclB <- vclMatrix(B, type="double")
+    
+    setContext(1L)
     
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     dvclBS <- block(dvclB, 2L,4L,2L,4L)
@@ -583,16 +816,26 @@ test_that("CPU vclMatrix Double Precision Matrix Element-Wise Power", {
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_error(dvclA ^ dvclE)
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision Scalar Matrix Power", {
+test_that("Switching GPU vclMatrixBlock Double Precision Scalar Matrix Power", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     AS = A[2:4, 2:4]
     C <- AS^2
     
+    setContext(2L)
+    
     dvclA <- vclMatrix(A, type="double")
+    
+    setContext(1L)
+    
     dvclAS <- block(dvclA, 2L,4L,2L,4L)
     
     dvclC <- dvclAS^2
@@ -600,11 +843,16 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Power", {
     expect_is(dvclC, "dvclMatrix")
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision crossprod", {
+test_that("Switching GPU vclMatrixBlock Double Precision crossprod", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -616,9 +864,13 @@ test_that("CPU vclMatrix Double Precision crossprod", {
     C <- crossprod(XS,YS)
     Cs <- crossprod(XS)
     
+    setContext(2L)
+    
     dvclX <- vclMatrix(X, type="double")
     dvclY <- vclMatrix(Y, type="double")
     dvclZ <- vclMatrix(Z, type="double")
+    
+    setContext(1L)
     
     dvclXS <- block(dvclX, 1L,2L,2L,5L)
     dvclYS <- block(dvclY, 1L,2L,2L,5L)
@@ -633,11 +885,18 @@ test_that("CPU vclMatrix Double Precision crossprod", {
     expect_equal(dvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dvclXS, dvclZS))
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclCs@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
 
-test_that("CPU vclMatrix Double Precision tcrossprod", {
+test_that("Switching GPU vclMatrixBlock Double Precision tcrossprod", {
     
-    has_cpu_skip()
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -649,9 +908,13 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
     C <- tcrossprod(XS,YS)
     Cs <- tcrossprod(XS)
     
+    setContext(2L)
+    
     dvclX <- vclMatrix(X, type="double")
     dvclY <- vclMatrix(Y, type="double")
     dvclZ <- vclMatrix(Z, type="double")
+    
+    setContext(1L)
     
     dvclXS <- block(dvclX, 1L,2L,2L,5L)
     dvclYS <- block(dvclY, 1L,2L,2L,5L)
@@ -666,9 +929,10 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
     expect_equal(dvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dvclXS, dvclZS))
+    expect_equal(dvclC@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(dvclCs@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
 })
-
-
-# set option back to GPU
-options(gpuR.default.device.type = "gpu")
-

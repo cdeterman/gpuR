@@ -36,13 +36,13 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// setContext
-void setContext(int id);
-RcppExport SEXP gpuR_setContext(SEXP idSEXP) {
+// cpp_setContext
+void cpp_setContext(int id);
+RcppExport SEXP gpuR_cpp_setContext(SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< int >::type id(idSEXP);
-    setContext(id);
+    cpp_setContext(id);
     return R_NilValue;
 END_RCPP
 }
@@ -2455,8 +2455,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vcl_eigen
-void cpp_vcl_eigen(SEXP Am, SEXP Qm, SEXP eigenvalues, const bool symmetric, const int type_flag, int device_flag);
-RcppExport SEXP gpuR_cpp_vcl_eigen(SEXP AmSEXP, SEXP QmSEXP, SEXP eigenvaluesSEXP, SEXP symmetricSEXP, SEXP type_flagSEXP, SEXP device_flagSEXP) {
+void cpp_vcl_eigen(SEXP Am, SEXP Qm, SEXP eigenvalues, const bool symmetric, const int type_flag);
+RcppExport SEXP gpuR_cpp_vcl_eigen(SEXP AmSEXP, SEXP QmSEXP, SEXP eigenvaluesSEXP, SEXP symmetricSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type Am(AmSEXP);
@@ -2464,8 +2464,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type eigenvalues(eigenvaluesSEXP);
     Rcpp::traits::input_parameter< const bool >::type symmetric(symmetricSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type device_flag(device_flagSEXP);
-    cpp_vcl_eigen(Am, Qm, eigenvalues, symmetric, type_flag, device_flag);
+    cpp_vcl_eigen(Am, Qm, eigenvalues, symmetric, type_flag);
     return R_NilValue;
 END_RCPP
 }

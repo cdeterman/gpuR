@@ -28,13 +28,8 @@ currentContext <- function() {
     .Call('gpuR_currentContext', PACKAGE = 'gpuR')
 }
 
-#' @title Set Context
-#' @description Change the current context used by default
-#' @param id Integer identifying which context to set
-#' @seealso \link{listContexts}
-#' @export
-setContext <- function(id) {
-    invisible(.Call('gpuR_setContext', PACKAGE = 'gpuR', id))
+cpp_setContext <- function(id) {
+    invisible(.Call('gpuR_cpp_setContext', PACKAGE = 'gpuR', id))
 }
 
 cpp_detectGPUs <- function(platform_idx) {
@@ -807,8 +802,8 @@ cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag
     invisible(.Call('gpuR_cpp_gpu_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
 }
 
-cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {
-    invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
+cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag) {
+    invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag))
 }
 
 cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, device_flag, type_flag) {
