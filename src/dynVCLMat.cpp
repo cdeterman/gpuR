@@ -1,14 +1,12 @@
-
+#include <iostream>
 
 #include "gpuR/windows_check.hpp"
 #include "gpuR/dynVCLMat.hpp"
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(SEXP A_, int context_index)
+dynVCLMat<T>::dynVCLMat(SEXP A_)
 {
 
-    // remove context_id argument
-    
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A_);
     
@@ -31,15 +29,14 @@ dynVCLMat<T>::dynVCLMat(SEXP A_, int context_index)
 template<typename T>
 dynVCLMat<T>::dynVCLMat(
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am, 
-    int nr_in, int nc_in,
-    int context_index
+    int nr_in, int nc_in
     )
 {    
-
-    // remove context_id argument
-
+    std::cout << "starting copy" << std::endl;
     A = viennacl::matrix<T>(nr_in, nc_in);
+    std::cout << "vcl matrix initialized" << std::endl;
     viennacl::copy(Am, A); 
+    std::cout << "data copied" << std::endl;
     
     nr = nr_in;
     nc = nc_in;
@@ -65,21 +62,7 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
 }
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int context_index)
-{
-    A = viennacl::zero_matrix<T>(nr_in, nc_in);
-    
-    nr = nr_in;
-    nc = nc_in;
-    ptr = &A;
-    viennacl::range temp_rr(0, nr);
-    viennacl::range temp_cr(0, nc);
-    row_r = temp_rr;
-    col_r = temp_cr;
-}
-
-template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int context_index)
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar)
 {
     A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar);
     

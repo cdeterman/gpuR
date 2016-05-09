@@ -310,20 +310,20 @@ cpp_rbind_vclMatrix <- function(ptrA, ptrB, type_flag) {
     .Call('gpuR_cpp_rbind_vclMatrix', PACKAGE = 'gpuR', ptrA, ptrB, type_flag)
 }
 
-cpp_sexp_mat_to_vclMatrix <- function(ptrA, type_flag, context_index) {
-    .Call('gpuR_cpp_sexp_mat_to_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag, context_index)
+cpp_sexp_mat_to_vclMatrix <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_sexp_mat_to_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 VCLtoMatSEXP <- function(ptrA, type_flag) {
     .Call('gpuR_VCLtoMatSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-cpp_zero_vclMatrix <- function(nr, nc, type_flag, context_index) {
-    .Call('gpuR_cpp_zero_vclMatrix', PACKAGE = 'gpuR', nr, nc, type_flag, context_index)
+cpp_zero_vclMatrix <- function(nr, nc, type_flag) {
+    .Call('gpuR_cpp_zero_vclMatrix', PACKAGE = 'gpuR', nr, nc, type_flag)
 }
 
-cpp_scalar_vclMatrix <- function(scalar, nr, nc, type_flag, context_index) {
-    .Call('gpuR_cpp_scalar_vclMatrix', PACKAGE = 'gpuR', scalar, nr, nc, type_flag, context_index)
+cpp_scalar_vclMatrix <- function(scalar, nr, nc, type_flag) {
+    .Call('gpuR_cpp_scalar_vclMatrix', PACKAGE = 'gpuR', scalar, nr, nc, type_flag)
 }
 
 vclSetCol <- function(ptrA, nc, newdata, type_flag) {
@@ -362,8 +362,8 @@ vectorToVCL <- function(ptrA, type_flag) {
     .Call('gpuR_vectorToVCL', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-vectorToMatVCL <- function(ptrA, nr, nc, type_flag, context_index) {
-    .Call('gpuR_vectorToMatVCL', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag, context_index)
+vectorToMatVCL <- function(ptrA, nr, nc, type_flag) {
+    .Call('gpuR_vectorToMatVCL', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
 VCLtoVecSEXP <- function(ptrA, type_flag) {

@@ -51,7 +51,7 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=cpp_sexp_mat_to_vclMatrix(data, 4L, context_index - 1),
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 4L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -60,7 +60,7 @@ setMethod('vclMatrix',
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=cpp_sexp_mat_to_vclMatrix(data, 6L, context_index - 1),
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 6L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -69,7 +69,7 @@ setMethod('vclMatrix',
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = cpp_sexp_mat_to_vclMatrix(data, 8L, context_index - 1),
+                                    address = cpp_sexp_mat_to_vclMatrix(data, 8L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -115,7 +115,7 @@ setMethod('vclMatrix',
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
-                                    address=cpp_zero_vclMatrix(nrow, ncol, 4L, context_index - 1),
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 4L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -124,7 +124,7 @@ setMethod('vclMatrix',
                             },
                             float = {
                                 new("fvclMatrix", 
-                                    address=cpp_zero_vclMatrix(nrow, ncol, 6L, context_index - 1),
+                                    address=cpp_zero_vclMatrix(nrow, ncol, 6L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -133,7 +133,7 @@ setMethod('vclMatrix',
                             },
                             double = {
                                 new("dvclMatrix",
-                                    address = cpp_zero_vclMatrix(nrow, ncol, 8L, context_index - 1),
+                                    address = cpp_zero_vclMatrix(nrow, ncol, 8L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -190,9 +190,9 @@ setMethod('vclMatrix',
               assert_is_numeric(ncol)
               
               if(length(data) == 1){
-                  data <- vclMatInitIntScalar(data, nrow, ncol, type, device_flag)
+                  data <- vclMatInitIntScalar(data, nrow, ncol, type)
               }else{
-                  data <- vclMatInitIntVec(data, nrow, ncol, type, device_flag)
+                  data <- vclMatInitIntVec(data, nrow, ncol, type)
               }
               
               return(data)

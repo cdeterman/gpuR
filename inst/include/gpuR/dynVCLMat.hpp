@@ -23,21 +23,19 @@ class dynVCLMat {
         int nr, nc;
         viennacl::range row_r;
         viennacl::range col_r;
-        viennacl::matrix<T> *ptr;
+        viennacl::matrix<T> *ptr = &A;
     
     public:
         viennacl::matrix<T> A;
         
         dynVCLMat() { } // private default constructor
-        dynVCLMat(SEXP A_, int context_index);
+        dynVCLMat(SEXP A_);
         dynVCLMat(
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am,
-            int nr_in, int nc_in,
-            int context_index
+            int nr_in, int nc_in
             );
         dynVCLMat(int nr_in, int nc_in);
-        dynVCLMat(int nr_in, int nc_in, int context_index);
-        dynVCLMat(int nr_in, int nc_in, T scalar, int context_index);
+        dynVCLMat(int nr_in, int nc_in, T scalar);
         dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat);
         
         viennacl::matrix<T>* getPtr() { return ptr; }

@@ -1,7 +1,7 @@
 
 # vclMatrix numeric vector initializer
 vclMatInitNumVec <- function(data, nrow, ncol, type){
-    
+
     device <- currentDevice()
     
     context_index <- currentContext()
@@ -26,7 +26,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, context_index - 1),
+                                                 6L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -37,7 +37,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, context_index - 1),
+                                                   8L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -52,7 +52,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
 }
 
 # vclMatrix numeric initializer
-vclMatInitNumScalar <- function(data, nrow, ncol, type, context_index){
+vclMatInitNumScalar <- function(data, nrow, ncol, type){
     
     device <- currentDevice()
     
@@ -80,7 +80,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, context_index){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, context_index-1),
+                                  6L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -94,7 +94,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, context_index){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, context_index-1),
+                                  8L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -110,7 +110,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, context_index){
 }
 
 # vclMatrix integer vector initializer
-vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
+vclMatInitIntVec <- function(data, nrow, ncol, type){
     
     device <- currentDevice()
     
@@ -135,7 +135,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
                       new("ivclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol,
-                                                 4L, context_index),
+                                                 4L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -146,7 +146,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L, context_index),
+                                                 6L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -157,7 +157,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L, context_index),
+                                                   8L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -172,7 +172,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, context_index){
 }
 
 # vclMatrix integer scalar initializer
-vclMatInitIntScalar <- function(data, nrow, ncol, type, context_index){
+vclMatInitIntScalar <- function(data, nrow, ncol, type){
     
     device <- currentDevice()
     
@@ -199,7 +199,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, context_index){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  4L, context_index),
+                                  4L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -213,7 +213,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, context_index){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L, context_index),
+                                  6L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -227,7 +227,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, context_index){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L, context_index),
+                                  8L),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
