@@ -27,10 +27,10 @@ class dynVCLVec {
         viennacl::vector<T> A;
         
         dynVCLVec() { } // private default constructor
-        dynVCLVec(SEXP A_, int device_flag);
+        dynVCLVec(SEXP A_);
 //        dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
 //        dynVCLVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);
-        dynVCLVec(int size_in, int device_flag);
+        dynVCLVec(int size_in);
 //        dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
         dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec);
         

@@ -185,9 +185,9 @@ SEXP cpp_zero_vclMatrix(int nr, int nc, int context_index)
 // convert SEXP Vector to ViennaCL vector
 template <typename T>
 SEXP 
-sexpVecToVCL(SEXP A, int context_index)
+sexpVecToVCL(SEXP A)
 {        
-    dynVCLVec<T> *vec = new dynVCLVec<T>(A, context_index);
+    dynVCLVec<T> *vec = new dynVCLVec<T>(A);
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
     return pVec;
 }
@@ -261,9 +261,9 @@ vectorToMatVCL(SEXP A, const int nr, const int nc, int context_index)
 
 // empty ViennaCL Vector
 template <typename T>
-SEXP emptyVecVCL(int length, int context_index)
+SEXP emptyVecVCL(int length)
 {
-    dynVCLVec<T> *vec = new dynVCLVec<T>(length, context_index);
+    dynVCLVec<T> *vec = new dynVCLVec<T>(length);
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
     return pVec;
 }
@@ -762,15 +762,15 @@ vclVecSetElement(SEXP ptrA, const int idx, SEXP newdata, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-vectorToVCL(SEXP ptrA, const int type_flag, int context_index)
+vectorToVCL(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return sexpVecToVCL<int>(ptrA, context_index);
+            return sexpVecToVCL<int>(ptrA);
         case 6:
-            return sexpVecToVCL<float>(ptrA, context_index);
+            return sexpVecToVCL<float>(ptrA);
         case 8:
-            return sexpVecToVCL<double>(ptrA, context_index);
+            return sexpVecToVCL<double>(ptrA);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -820,15 +820,15 @@ VCLtoVecSEXP(SEXP ptrA, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-emptyVecVCL(int length, const int type_flag, int context_index)
+emptyVecVCL(int length, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return emptyVecVCL<int>(length, context_index);
+            return emptyVecVCL<int>(length);
         case 6:
-            return emptyVecVCL<float>(length, context_index);
+            return emptyVecVCL<float>(length);
         case 8:
-            return emptyVecVCL<double>(length, context_index);
+            return emptyVecVCL<double>(length);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

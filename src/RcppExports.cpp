@@ -1005,15 +1005,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // vectorToVCL
-SEXP vectorToVCL(SEXP ptrA, const int type_flag, int context_index);
-RcppExport SEXP gpuR_vectorToVCL(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP context_indexSEXP) {
+SEXP vectorToVCL(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_vectorToVCL(SEXP ptrASEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type context_index(context_indexSEXP);
-    __result = Rcpp::wrap(vectorToVCL(ptrA, type_flag, context_index));
+    __result = Rcpp::wrap(vectorToVCL(ptrA, type_flag));
     return __result;
 END_RCPP
 }
@@ -1045,15 +1044,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // emptyVecVCL
-SEXP emptyVecVCL(int length, const int type_flag, int context_index);
-RcppExport SEXP gpuR_emptyVecVCL(SEXP lengthSEXP, SEXP type_flagSEXP, SEXP context_indexSEXP) {
+SEXP emptyVecVCL(int length, const int type_flag);
+RcppExport SEXP gpuR_emptyVecVCL(SEXP lengthSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< int >::type length(lengthSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type context_index(context_indexSEXP);
-    __result = Rcpp::wrap(emptyVecVCL(length, type_flag, context_index));
+    __result = Rcpp::wrap(emptyVecVCL(length, type_flag));
     return __result;
 END_RCPP
 }

@@ -29,8 +29,6 @@ setMethod('vclVector',
                           in data")
               }
               
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
-              
               device <- currentDevice()
               
               context_index <- currentContext()
@@ -52,7 +50,7 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=vectorToVCL(data, 4L, device_flag),
+                                    address=vectorToVCL(data, 4L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -61,7 +59,7 @@ setMethod('vclVector',
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=vectorToVCL(data, 6L, device_flag),
+                                    address=vectorToVCL(data, 6L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -70,7 +68,7 @@ setMethod('vclVector',
                             },
                             double = {
                                 new("dvclVector",
-                                    address = vectorToVCL(data, 8L, device_flag),
+                                    address = vectorToVCL(data, 8L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -96,8 +94,6 @@ setMethod('vclVector',
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
-              
               device <- currentDevice()
               
               context_index <- currentContext()
@@ -119,7 +115,7 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=emptyVecVCL(length, 4L, device_flag),
+                                    address=emptyVecVCL(length, 4L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -128,7 +124,7 @@ setMethod('vclVector',
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=emptyVecVCL(length, 6L, device_flag),
+                                    address=emptyVecVCL(length, 6L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -137,7 +133,7 @@ setMethod('vclVector',
                             },
                             double = {
                                 new("dvclVector",
-                                    address = emptyVecVCL(length, 8L, device_flag),
+                                    address = emptyVecVCL(length, 8L),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -150,4 +146,5 @@ setMethod('vclVector',
               
               return(data)
           },
-          valueClass = "vclVector")
+          valueClass = "vclVector"
+)

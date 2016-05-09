@@ -48,7 +48,9 @@ test_that("Switching GPU vclMatrix Symmetric Single Precision Matrix Eigen Decom
                  info="float source matrices not equivalent") 
     
     # context checks
-    expect_equal(E@.context_index, 2L, 
+    expect_equal(E$values@.context_index, 2L, 
+                 info = "context index hasn't been assigned correctly")
+    expect_equal(E$vectors@.context_index, 2L, 
                  info = "context index hasn't been assigned correctly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
@@ -84,7 +86,9 @@ test_that("Switching GPU vclMatrix Symmetric Double Precision Matrix Eigen Decom
                  info="double source matrices not equivalent") 
     
     # context checks
-    expect_equal(E@.context_index, 2L, 
+    expect_equal(E$values@.context_index, 2L, 
+                 info = "context index hasn't been assigned correctly")
+    expect_equal(E$vectors@.context_index, 2L, 
                  info = "context index hasn't been assigned correctly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
