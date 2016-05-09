@@ -276,7 +276,7 @@ test_that("Switching GPU vclMatrix Double Precision cbind",
                  info="double scalar cbind not equivalent") 
     expect_equal(gpu_scalar@.context_index, 2L,
                  info = "context index not assigned properly")
-    expect_equal(gpuC_scalar2@.context_index, 2L,
+    expect_equal(gpu_scalar2@.context_index, 2L,
                  info = "context index not assigned properly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")

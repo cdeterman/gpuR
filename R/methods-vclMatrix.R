@@ -70,7 +70,6 @@ setMethod("[",
                      stop("unsupported matrix type")
               )
               
-              oldContext <- currentContext()
               if(oldContext != x@.context_index){
                   setContext(oldContext)
               }
@@ -111,11 +110,6 @@ setMethod("[<-",
           signature(x = "vclMatrix", i = "missing", j = "numeric", value = "numeric"),
           function(x, i, j, value) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               if(length(value) != nrow(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
@@ -123,7 +117,12 @@ setMethod("[<-",
               if(j > ncol(x)){
                   stop("column index exceeds number of columns")
               }
-              
+
+              oldContext <- currentContext()
+              if(oldContext != x@.context_index){
+                  setContext(x@.context_index)
+              }
+
               switch(typeof(x),
                      "float" = vclSetCol(x@address, j, value, 6L),
                      "double" = vclSetCol(x@address, j, value, 8L),
@@ -143,11 +142,6 @@ setMethod("[<-",
           signature(x = "ivclMatrix", i = "missing", j = "numeric", value = "integer"),
           function(x, i, j, value) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               if(length(value) != nrow(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
@@ -155,7 +149,12 @@ setMethod("[<-",
               if(j > ncol(x)){
                   stop("column index exceeds number of columns")
               }
-              
+
+              oldContext <- currentContext()
+              if(oldContext != x@.context_index){
+                  setContext(x@.context_index)
+              }
+
               switch(typeof(x),
                      "integer" = vclSetCol(x@address, j, value, 4L),
                      stop("unsupported matrix type")
@@ -174,12 +173,7 @@ setMethod("[<-",
           signature(x = "vclMatrix", i = "numeric", j = "missing", value = "numeric"),
           function(x, i, j, value) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
-              if(length(value) != ncol(x)){
+	      if(length(value) != ncol(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
               
@@ -187,6 +181,13 @@ setMethod("[<-",
                   stop("row index exceeds number of rows")
               }
               
+
+	      oldContext <- currentContext()
+              if(oldContext != x@.context_index){
+                  setContext(x@.context_index)
+              }
+              
+
               switch(typeof(x),
                      "float" = vclSetRow(x@address, i, value, 6L),
                      "double" = vclSetRow(x@address, i, value, 8L),
@@ -206,17 +207,17 @@ setMethod("[<-",
           signature(x = "ivclMatrix", i = "numeric", j = "missing", value = "integer"),
           function(x, i, j, value) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               if(length(value) != ncol(x)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
               
               if(i > nrow(x)){
                   stop("row index exceeds number of rows")
+              }
+
+	      oldContext <- currentContext()
+              if(oldContext != x@.context_index){
+                  setContext(x@.context_index)
               }
               
               switch(typeof(x),
@@ -238,14 +239,15 @@ setMethod("[<-",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", value = "numeric"),
           function(x, i, j, value) {
               
+              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
+	      assert_is_scalar(value)
+
               oldContext <- currentContext()
               if(oldContext != x@.context_index){
                   setContext(x@.context_index)
-              }
-              
-              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
-              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
-                            
+              }              
+
               switch(typeof(x),
                      "float" = vclSetElement(x@address, i, j, value, 6L),
                      "double" = vclSetElement(x@address, i, j, value, 8L),
@@ -265,13 +267,14 @@ setMethod("[<-",
           signature(x = "ivclMatrix", i = "numeric", j = "numeric", value = "integer"),
           function(x, i, j, value) {
               
+              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
+              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
+	      assert_is_scalar(value)
+
               oldContext <- currentContext()
               if(oldContext != x@.context_index){
                   setContext(x@.context_index)
               }
-              
-              assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
-              assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
               
               switch(typeof(x),
                      "integer" = vclSetElement(x@address, i, j, value, 4L),

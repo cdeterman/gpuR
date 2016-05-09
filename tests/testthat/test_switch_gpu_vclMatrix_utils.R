@@ -39,13 +39,14 @@ test_that("Switching GPU vclMatrix get element access", {
                  info = "float row subset not equivalent ")
     expect_equivalent(igpu[1,], A[1,],
                       info = "integer row subset not equivalent")
-    
+
     expect_equivalent(dgpu[1,2], D[1,2],
                       info = "double element subset not equivalent")
     expect_equal(fgpu[1,2], D[1,2], tolerance = 1e-07,
                  info = "float element subset not equivalent ")
     expect_equivalent(igpu[1,2], A[1,2],
                       info = "integer element subset not equivalent")
+
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
@@ -200,18 +201,22 @@ test_that("Switching GPU vclMatrix set element access", {
                       info = "updated dvclMatrix not equivalent")
     expect_equivalent(gpuB[], D, 
                       info = "updated dvclMatrix elemnent not reflected in 'copy'")
+
     expect_equal(gpuF[1,3], float, tolerance=1e-07,
                  info = "updated fvclMatrix element not equivalent")
     expect_equal(gpuF[], D, tolerance=1e-07,
                  info = "updated fvclMatrix not equivalent")
+
     expect_equivalent(gpuA[1,3], int,
                       info = "updated ivclMatrix element not equivalent")
     expect_equivalent(gpuA[], A,
                       info = "updated ivclMatrix not equivalent")
+
     expect_error(gpuA[11,3] <- int,
                  info = "no error when index greater than dims")
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
+
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
