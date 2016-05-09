@@ -66,7 +66,7 @@ test_that("Switching GPU vclMatrix Single Precision Euclidean Distance",
     expect_equal(E[], D, tolerance=1e-06, 
                  info="float euclidean distances not equivalent",
                  check.attributes=FALSE)  
-    expect_equal(fgpuX@.context_index, 1L,
+    expect_equal(fgpuX@.context_index, 2L,
                  info = "context index not assigned properly")
     expect_equal(E@.context_index, 2L, 
                  info = "context index hasn't been assigned correctly")

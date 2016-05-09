@@ -6,15 +6,11 @@
 template<typename T>
 dynVCLMat<T>::dynVCLMat(SEXP A_, int context_index)
 {
+
+    // remove context_id argument
     
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A_);
-    
-    // define context to use
-    int old_context = viennacl::ocl::backend<>::current_context_id();
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(context_index);
-    }
     
     int K = Am.rows();
     int M = Am.cols();
@@ -22,10 +18,6 @@ dynVCLMat<T>::dynVCLMat(SEXP A_, int context_index)
     A = viennacl::matrix<T>(K,M);
       
     viennacl::copy(Am, A); 
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(old_context);
-    }
     
     nr = K;
     nc = M;
@@ -43,19 +35,11 @@ dynVCLMat<T>::dynVCLMat(
     int context_index
     )
 {    
-    // define context to use
-    int old_context = viennacl::ocl::backend<>::current_context_id();
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(context_index);
-    }
-        
+
+    // remove context_id argument
+
     A = viennacl::matrix<T>(nr_in, nc_in);
     viennacl::copy(Am, A); 
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(old_context);
-    }
     
     nr = nr_in;
     nc = nc_in;
@@ -83,18 +67,7 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
 template<typename T>
 dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int context_index)
 {
-    // define context to use
-    int old_context = viennacl::ocl::backend<>::current_context_id();
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(context_index);
-    }
-    
     A = viennacl::zero_matrix<T>(nr_in, nc_in);
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(old_context);
-    }
     
     nr = nr_in;
     nc = nc_in;
@@ -108,18 +81,7 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int context_index)
 template<typename T>
 dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int context_index)
 {
-    // define context to use
-    int old_context = viennacl::ocl::backend<>::current_context_id();
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(context_index);
-    }
-    
     A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar);
-    
-    if(old_context != context_index){
-        viennacl::ocl::switch_context(old_context);
-    }
     
     nr = nr_in;
     nc = nc_in;

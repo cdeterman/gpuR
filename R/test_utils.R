@@ -85,8 +85,8 @@ has_multiple_double_skip <- function() {
     
     for(i in seq(nrow(contexts))){
         gpuCheck <- try(
-            deviceHasDouble(contexts$platform_index[i] + 1, 
-                            contexts$device_index[i] + 1)
+            deviceHasDouble(contexts$platform_index[i] + 1L, 
+                            contexts$device_index[i] + 1L)
             , silent=TRUE)
         if(class(gpuCheck)[1] == "try-error"){
             next

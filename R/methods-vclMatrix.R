@@ -10,16 +10,19 @@ setMethod("[",
                   setContext(x@.context_index)
               }
               
-              switch(typeof(x),
-                     "integer" = return(VCLtoMatSEXP(x@address, 4L)),
-                     "float" = return(VCLtoMatSEXP(x@address, 6L)),
-                     "double" = return(VCLtoMatSEXP(x@address, 8L)),
+              Rmat <- switch(typeof(x),
+                     "integer" = VCLtoMatSEXP(x@address, 4L),
+                     "float" = VCLtoMatSEXP(x@address, 6L),
+                     "double" = VCLtoMatSEXP(x@address, 8L),
                      stop("unsupported matrix type")
               )
               
               if(oldContext != x@.context_index){
                   setContext(oldContext)
               }
+
+	      return(Rmat)
+
           })
 
 #' @rdname extract-methods
@@ -33,16 +36,19 @@ setMethod("[",
                   setContext(x@.context_index)
               }
               
-              switch(typeof(x),
-                     "integer" = return(vclGetCol(x@address, j, 4L)),
-                     "float" = return(vclGetCol(x@address, j, 6L)),
-                     "double" = return(vclGetCol(x@address, j, 8L)),
+              Rmat <- switch(typeof(x),
+                     "integer" = vclGetCol(x@address, j, 4L),
+                     "float" = vclGetCol(x@address, j, 6L),
+                     "double" = vclGetCol(x@address, j, 8L),
                      stop("unsupported matrix type")
               )
               
               if(oldContext != x@.context_index){
                   setContext(oldContext)
               }
+
+	      return(Rmat)
+
           })
 
 
@@ -57,10 +63,10 @@ setMethod("[",
                   setContext(x@.context_index)
               }
               
-              switch(typeof(x),
-                     "integer" = return(vclGetRow(x@address, i, 4L)),
-                     "float" = return(vclGetRow(x@address, i, 6L)),
-                     "double" = return(vclGetRow(x@address, i, 8L)),
+              Rmat <- switch(typeof(x),
+                     "integer" = vclGetRow(x@address, i, 4L),
+                     "float" = vclGetRow(x@address, i, 6L),
+                     "double" = vclGetRow(x@address, i, 8L),
                      stop("unsupported matrix type")
               )
               
@@ -68,6 +74,9 @@ setMethod("[",
               if(oldContext != x@.context_index){
                   setContext(oldContext)
               }
+
+	      return(Rmat)
+
           })
 
 #' @rdname extract-methods
@@ -81,16 +90,19 @@ setMethod("[",
                   setContext(x@.context_index)
               }
               
-              switch(typeof(x),
-                     "integer" = return(vclGetElement(x@address, i, j, 4L)),
-                     "float" = return(vclGetElement(x@address, i, j, 6L)),
-                     "double" = return(vclGetElement(x@address, i, j, 8L)),
+              Rmat <- switch(typeof(x),
+                     "integer" = vclGetElement(x@address, i, j, 4L),
+                     "float" = vclGetElement(x@address, i, j, 6L),
+                     "double" = vclGetElement(x@address, i, j, 8L),
                      stop("unsupported matrix type")
               )
               
               if(oldContext != x@.context_index){
                   setContext(oldContext)
               }
+
+	      return(Rmat)
+
           })
 
 #' @rdname extract-methods
@@ -310,15 +322,30 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
           function(e1, e2)
           {
               assert_is_of_length(e2, 1)
-              
+
+	      oldContext <- currentContext()
+
               op = .Generic[[1]]
               switch(op,
                      `+` = {
+			 if(oldContext != e1@.context_index){
+			    setContext(e1@.context_index)
+			 }
                          e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
+			 if(oldContext != e1@.context_index){
+			    setContext(oldContext)
+			 }
                          vclMat_axpy(1, e1, e2)
                      },
                      `-` = {
+                         if(oldContext != e1@.context_index){
+			    setContext(e1@.context_index)
+			 }
                          e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
+			 if(oldContext != e1@.context_index){
+			    setContext(oldContext)
+			 }
+                         
                          vclMat_axpy(-1, e2, e1)
                      },
                      `*` = vclMatScalarMult(e1, e2),
@@ -326,6 +353,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
                      `^` = vclMatScalarPow(e1, e2),
                      stop("undefined operation")
               )
+
           },
           valueClass = "vclMatrix"
 )
@@ -336,24 +364,50 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
           function(e1, e2)
           {
               assert_is_of_length(e1, 1)
-              
+
+	      oldContext <- currentContext()
+
               op = .Generic[[1]]
               switch(op,
                      `+` = {
+			 if(oldContext != e2@.context_index){
+			    setContext(e2@.context_index)
+			 }
                          e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+			 if(oldContext != e2@.context_index){
+			    setContext(oldContext)
+			 }
                          vclMat_axpy(1, e1, e2)
                      },
                      `-` = {
+                         if(oldContext != e2@.context_index){
+			    setContext(e2@.context_index)
+			 }
                          e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         if(oldContext != e2@.context_index){
+			    setContext(oldContext)
+			 }
                          vclMat_axpy(-1, e2, e1)
                      },
                      `*` = vclMatScalarMult(e2, e1),
                      `/` = {
+                         if(oldContext != e2@.context_index){
+			    setContext(e2@.context_index)
+			 }
                          e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         if(oldContext != e2@.context_index){
+			    setContext(oldContext)
+			 }
                          vclMatElemDiv(e1, e2)
                      },
                      `^` = {
+                         if(oldContext != e2@.context_index){
+			    setContext(e2@.context_index)
+			 }
                          e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
+                         if(oldContext != e2@.context_index){
+			    setContext(oldContext)
+			 }
                          vclMatElemPow(e1, e2)
                      },
                      stop("undefined operation")

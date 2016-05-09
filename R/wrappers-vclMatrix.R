@@ -19,7 +19,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
         stop("Double precision not supported for current device. 
                        Try setting 'type = 'float'' or change device if multiple available.")
     }
-    
+
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
                   float = {
@@ -328,10 +328,13 @@ vclMat_axpy <- function(alpha, A, B){
     Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type)
     if(!missing(B))
     {
-        if(length(B[]) != length(A[])) stop("Lengths of matrices must match")
+        if(length(B[]) != length(A[])){
+		if(oldContext != A@.context_index) setContext(oldContext)
+		stop("Lengths of matrices must match")
+	i}
         Z <- deepcopy(B)
     }
-    
+
     switch(type,
            integer = {
                stop("OpenCL integer GEMM not currently
@@ -521,12 +524,20 @@ vclMatElemMult <- function(A, B){
 # GPU Scalar Element-Wise Multiplication
 vclMatScalarMult <- function(A, B){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
+
+    oldContext <- currentContext()
+
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(A@.context_index)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(B@.context_index)
+	    }
+
+    }
     
     C <- deepcopy(A)
     
@@ -548,11 +559,18 @@ vclMatScalarMult <- function(A, B){
            },
            stop("type not recognized")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
+
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(oldContext)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(oldContext)
+	    }
+
     }
-    
+
     return(C)
 }
 
@@ -609,6 +627,18 @@ vclMatScalarDiv <- function(A, B){
     if(oldContext != A@.context_index){
         setContext(A@.context_index)
     }
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(A@.context_index)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(B@.context_index)
+	    }
+
+    }
+
+
     
     type <- typeof(A)
     
@@ -632,11 +662,18 @@ vclMatScalarDiv <- function(A, B){
            },
            stop("type not recognized")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
+
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(oldContext)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(oldContext)
+	    }
+
     }
-    
+
     return(C)
 }
 
@@ -645,15 +682,16 @@ vclMatElemPow <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
+    if(!all(dim(A) == dim(B))){
+        stop("matrices not conformable")
+    }
+    
     oldContext <- currentContext()
     if(oldContext != A@.context_index){
         setContext(A@.context_index)
     }
     
-    if(!all(dim(A) == dim(B))){
-        stop("matrices not conformable")
-    }
-    
+
     type <- typeof(A)
     
     C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
@@ -690,8 +728,16 @@ vclMatElemPow <- function(A, B){
 vclMatScalarPow <- function(A, B){
     
     oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
+
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(A@.context_index)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(B@.context_index)
+	    }
+
     }
     
     type <- typeof(A)
@@ -718,10 +764,17 @@ vclMatScalarPow <- function(A, B){
            },
            stop("type not recognized")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
+ 
+    if(is(A, "vclMatrix")){
+	    if(oldContext != A@.context_index){
+		setContext(oldContext)
+	    }
+    }else{
+	    if(oldContext != B@.context_index){
+		setContext(oldContext)
+	    }
+
+    }   
     
     return(C)
 }
@@ -1573,7 +1626,7 @@ vclMatrix_t <- function(A){
     }
 
     B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type)
-    
+
     switch(type,
            integer = {cpp_vclMatrix_transpose(A@address, B@address, 4L)},
            float = {cpp_vclMatrix_transpose(A@address, B@address, 6L)},

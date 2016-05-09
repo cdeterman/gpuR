@@ -196,4 +196,5 @@ setContext <- function(id = 1L){
     if(!id %in% listContexts()$context){
         stop("context index not initialized")
     }
+    cpp_setContext(id)
 }

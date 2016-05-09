@@ -64,7 +64,7 @@ test_that("Switching GPU vclMatrixBlock Single Precision Matrix Subtraction", {
     fvclE <- block(fvclA, 1L,4L,2L,4L)
     
     fvclC <- fvclAS - fvclBS
-    
+
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  

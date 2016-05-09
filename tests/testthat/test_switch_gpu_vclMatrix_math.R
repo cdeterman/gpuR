@@ -300,7 +300,7 @@ test_that("Switching GPU vclMatrix Single Precision Matrix Absolute Value", {
     expect_is(fvcl_abs, "fvclMatrix")
     expect_equal(fvcl_abs[,], R_abs, tolerance=1e-07, 
                  info="abs float matrix elements not equivalent")  
-    expect_equal(fgpu_abs@.context_index, 2L,
+    expect_equal(fvcl_abs@.context_index, 2L,
                  info = "context index not assigned properly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
@@ -352,9 +352,9 @@ test_that("Switching GPU vclMatrix Single Precision Maximum/Minimum", {
                  info="max float matrix element not equivalent")  
     expect_equal(fvcl_min, R_min, tolerance=1e-07, 
                  info="min float matrix element not equivalent")  
-    expect_equal(fgpu_max@.context_index, 2L,
+    expect_equal(fvcl_max@.context_index, 2L,
                  info = "context index not assigned properly")
-    expect_equal(fgpu_min@.context_index, 2L,
+    expect_equal(fvcl_min@.context_index, 2L,
                  info = "context index not assigned properly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
@@ -382,9 +382,9 @@ test_that("Switching GPU vclMatrix Double Precision Maximum/Minimum", {
                  info="max double matrix element not equivalent") 
     expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double matrix element not equivalent") 
-    expect_equal(fgpu_max@.context_index, 2L,
+    expect_equal(fvcl_max@.context_index, 2L,
                  info = "context index not assigned properly")
-    expect_equal(fgpu_min@.context_index, 2L,
+    expect_equal(fvcl_min@.context_index, 2L,
                  info = "context index not assigned properly") 
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")

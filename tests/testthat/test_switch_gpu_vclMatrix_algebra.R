@@ -15,7 +15,7 @@ E <- matrix(rnorm(15), nrow=5)
 
 # Single Precision Tests
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Multiplication", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Multiplication", {
     
     has_multiple_gpu_skip()
     
@@ -32,7 +32,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Multiplication", {
     setContext(1L)
     
     fvclC <- fvclA %*% fvclB
-    
+
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
@@ -42,7 +42,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Multiplication", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Subtraction", {
     
     has_multiple_gpu_skip()
     
@@ -69,7 +69,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Subtraction", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Single Precision Scalar Matrix Subtraction", {
     
     has_multiple_gpu_skip()
     
@@ -102,7 +102,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Subtraction", 
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Unary Scalar Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Single Precision Unary Scalar Matrix Subtraction", {
     
     has_multiple_gpu_skip()
     
@@ -128,7 +128,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Unary Scalar Matrix Subtract
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Addition", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Addition", {
     
     has_multiple_gpu_skip()
     
@@ -149,16 +149,13 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Addition", {
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
-    expect_is(fvclC2, "fvclMatrix")
-    expect_equal(fvclC2[,], C, tolerance=1e-07, 
-                 info="float matrix elements not equivalent")  
-    expect_equal(fvclC2@.context_index, 2L, 
+    expect_equal(fvclC@.context_index, 2L, 
                  info = "context index hasn't been assigned correctly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Addition", {
+test_that("Switching GPUs vclMatrix Single Precision Scalar Matrix Addition", {
     
     has_multiple_gpu_skip()
     
@@ -191,7 +188,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Addition", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Multiplication", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Element-Wise Multiplication", {
     
     has_multiple_gpu_skip()
     
@@ -218,7 +215,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Multipli
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Multiplication", {
+test_that("Switching GPUs vclMatrix Single Precision Scalar Matrix Multiplication", {
     
     has_multiple_gpu_skip()
     
@@ -251,7 +248,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Multiplication
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Division", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Element-Wise Division", {
     
     has_multiple_gpu_skip()
     
@@ -278,7 +275,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Division
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Division", {
+test_that("Switching GPUs vclMatrix Single Precision Scalar Matrix Division", {
     
     has_multiple_gpu_skip()
     
@@ -311,7 +308,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Division", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Power", {
+test_that("Switching GPUs vclMatrix Single Precision Matrix Element-Wise Power", {
     
     has_multiple_gpu_skip()
     
@@ -319,8 +316,8 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Power", 
     
     setContext(2L)
     
-    fvclA2 <- vclMatrix(A, type="float")
-    fvclB2 <- vclMatrix(B, type="float")
+    fvclA <- vclMatrix(A, type="float")
+    fvclB <- vclMatrix(B, type="float")
     
     expect_equal(currentContext(), 2L, 
                  info = "context hasn't been changed")
@@ -338,7 +335,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Matrix Element-Wise Power", 
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Power", {
+test_that("Switching GPUs vclMatrix Single Precision Scalar Matrix Power", {
     
     has_multiple_gpu_skip()
     
@@ -364,7 +361,7 @@ test_that("Switching GPUs vclMatrixSingle Precision Scalar Matrix Power", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision crossprod", {
+test_that("Switching GPUs vclMatrix Single Precision crossprod", {
     
     has_multiple_gpu_skip()
     
@@ -403,7 +400,7 @@ test_that("Switching GPUs vclMatrixSingle Precision crossprod", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision tcrossprod", {
+test_that("Switching GPUs vclMatrix Single Precision tcrossprod", {
     
     has_multiple_gpu_skip()
     
@@ -428,7 +425,8 @@ test_that("Switching GPUs vclMatrixSingle Precision tcrossprod", {
     fvclC <- tcrossprod(fvclX, fvclY)
     fvclCs <- tcrossprod(fvclX)
     
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclCs, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
     expect_equal(fvclCs[,], Cs, tolerance=1e-07, 
@@ -442,7 +440,7 @@ test_that("Switching GPUs vclMatrixSingle Precision tcrossprod", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixSingle Precision transpose", {
+test_that("Switching GPUs vclMatrix Single Precision transpose", {
     
     has_multiple_gpu_skip()
     
@@ -465,7 +463,7 @@ test_that("Switching GPUs vclMatrixSingle Precision transpose", {
 
 # Double Precision Tests
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Multiplication", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Multiplication", {
     
     has_multiple_double_skip()
     
@@ -483,7 +481,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Multiplication", {
     
     fvclC <- fvclA %*% fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclC@.context_index, 2L, 
@@ -492,7 +490,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Multiplication", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Subtraction", {
     
     has_multiple_double_skip()
     
@@ -510,7 +508,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Subtraction", {
     
     fvclC <- fvclA - fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclC@.context_index, 2L, 
@@ -519,7 +517,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Subtraction", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Double Precision Scalar Matrix Subtraction", {
     
     has_multiple_double_skip()
     
@@ -538,10 +536,10 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Subtraction", 
     fvclC <- fvclA - 1    
     fvclC2 <- 1 - fvclA
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC2, "dvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC@.context_index, 2L, 
@@ -552,7 +550,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Subtraction", 
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Unary Scalar Matrix Subtraction", {
+test_that("Switching GPUs vclMatrix Double Precision Unary Scalar Matrix Subtraction", {
     
     has_multiple_double_skip()
     
@@ -568,9 +566,8 @@ test_that("Switching GPUs vclMatrixDouble Precision Unary Scalar Matrix Subtract
     setContext(1L)
     
     fvclC <- -fvclA
-    fvclC2 <- -fvclA2
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC@.context_index, 2L, 
@@ -579,7 +576,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Unary Scalar Matrix Subtract
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Addition", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Addition", {
     
     has_multiple_double_skip()
     
@@ -597,7 +594,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Addition", {
     
     fvclC <- fvclA + fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclC@.context_index, 2L, 
@@ -606,7 +603,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Addition", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Addition", {
+test_that("Switching GPUs vclMatrix Double Precision Scalar Matrix Addition", {
     
     has_multiple_double_skip()
     
@@ -625,10 +622,10 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Addition", {
     fvclC <- fvclA + 1
     fvclC2 <- 1 + fvclA
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC2, "dvclMatrix")
     expect_equal(fvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC@.context_index, 2L, 
@@ -639,7 +636,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Addition", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Multiplication", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Element-Wise Multiplication", {
     
     has_multiple_double_skip()
     
@@ -657,7 +654,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Multipli
     
     fvclC <- fvclA * fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC@.context_index, 2L, 
@@ -666,7 +663,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Multipli
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Multiplication", {
+test_that("Switching GPUs vclMatrix Double Precision Scalar Matrix Multiplication", {
     
     has_multiple_double_skip()
     
@@ -685,8 +682,8 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Multiplication
     fvclC <- fvclA * 2
     fvclC2 <- 2 * fvclA
     
-    expect_is(fvclC, "fvclMatrix")
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
+    expect_is(fvclC2, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
@@ -699,7 +696,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Multiplication
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Division", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Element-Wise Division", {
     
     has_multiple_double_skip()
     
@@ -707,8 +704,8 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Division
     
     setContext(2L)
     
-    fvclA2 <- vclMatrix(A, type="double")
-    fvclB2 <- vclMatrix(B, type="double")
+    fvclA <- vclMatrix(A, type="double")
+    fvclB <- vclMatrix(B, type="double")
     
     expect_equal(currentContext(), 2L, 
                  info = "context hasn't been changed")
@@ -717,7 +714,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Division
     
     fvclC <- fvclA / fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclC@.context_index, 2L, 
@@ -726,7 +723,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Division
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Division", {
+test_that("Switching GPUs vclMatrix Double Precision Scalar Matrix Division", {
     
     has_multiple_double_skip()
     
@@ -745,8 +742,8 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Division", {
     fvclC <- fvclA / 2
     fvclC2 <- 2 / fvclA
     
-    expect_is(fvclC, "fvclMatrix")
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
+    expect_is(fvclC2, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
@@ -759,7 +756,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Division", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Power", {
+test_that("Switching GPUs vclMatrix Double Precision Matrix Element-Wise Power", {
     
     has_multiple_double_skip()
     
@@ -772,12 +769,12 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Power", 
     
     setContext(1L)
     
-    expect_equal(currentContext(), 2L, 
+    expect_equal(currentContext(), 1L, 
                  info = "context hasn't been changed")
     
     fvclC <- fvclA ^ fvclB
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclC@.context_index, 2L, 
@@ -786,7 +783,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Matrix Element-Wise Power", 
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Power", {
+test_that("Switching GPUs vclMatrix Double Precision Scalar Matrix Power", {
     
     has_multiple_double_skip()
     
@@ -798,12 +795,12 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Power", {
     
     setContext(1L)
     
-    expect_equal(currentContext(), 2L, 
+    expect_equal(currentContext(), 1L, 
                  info = "context hasn't been changed")
     
     fvclC <- fvclA^2
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent") 
     expect_equal(fvclC@.context_index, 2L, 
@@ -812,7 +809,7 @@ test_that("Switching GPUs vclMatrixDouble Precision Scalar Matrix Power", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision crossprod", {
+test_that("Switching GPUs vclMatrix Double Precision crossprod", {
     
     has_multiple_double_skip()
     
@@ -837,7 +834,7 @@ test_that("Switching GPUs vclMatrixDouble Precision crossprod", {
     fvclC <- crossprod(fvclX, fvclY)
     fvclCs <- crossprod(fvclX)
     
-    expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
@@ -851,7 +848,7 @@ test_that("Switching GPUs vclMatrixDouble Precision crossprod", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision tcrossprod", {
+test_that("Switching GPUs vclMatrix Double Precision tcrossprod", {
     
     has_multiple_double_skip()
     
@@ -876,7 +873,8 @@ test_that("Switching GPUs vclMatrixDouble Precision tcrossprod", {
     fvclC <- tcrossprod(fvclX, fvclY)
     fvclCs <- tcrossprod(fvclX)
     
-    expect_is(fvclC2, "fvclMatrix")
+    expect_is(fvclC, "dvclMatrix")
+    expect_is(fvclCs, "dvclMatrix")
     expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
     expect_equal(fvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
@@ -890,7 +888,7 @@ test_that("Switching GPUs vclMatrixDouble Precision tcrossprod", {
                  info = "context index has been change unintentionally")
 })
 
-test_that("Switching GPUs vclMatrixDouble Precision transpose", {
+test_that("Switching GPUs vclMatrix Double Precision transpose", {
     
     has_multiple_double_skip()
     
@@ -904,10 +902,10 @@ test_that("Switching GPUs vclMatrixDouble Precision transpose", {
     
     fgpuAt <- t(fgpuA)
     
-    expect_is(fgpuAt, "fvclMatrix")
+    expect_is(fgpuAt, "dvclMatrix")
     expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps ^ 0.5, 
                  info="transposed double matrix elements not equivalent") 
-    expect_equal(fvclAt@.context_index, 2L, 
+    expect_equal(fgpuAt@.context_index, 2L, 
                  info = "context index hasn't been assigned correctly")
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
