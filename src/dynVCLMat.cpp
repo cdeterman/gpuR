@@ -4,16 +4,19 @@
 #include "gpuR/dynVCLMat.hpp"
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(SEXP A_)
+dynVCLMat<T>::dynVCLMat(SEXP A_, int ctx_id)
 {
-
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A_);
     
     int K = Am.rows();
     int M = Am.cols();
+    viennacl::context ctx;
     
-    A = viennacl::matrix<T>(K,M);
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::matrix<T>(K,M, ctx);
       
     viennacl::copy(Am, A); 
     
@@ -29,11 +32,17 @@ dynVCLMat<T>::dynVCLMat(SEXP A_)
 template<typename T>
 dynVCLMat<T>::dynVCLMat(
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am, 
-    int nr_in, int nc_in
+    int nr_in, int nc_in,
+    int ctx_id
     )
 {    
     std::cout << "starting copy" << std::endl;
-    A = viennacl::matrix<T>(nr_in, nc_in);
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::matrix<T>(nr_in, nc_in, ctx);
     std::cout << "vcl matrix initialized" << std::endl;
     viennacl::copy(Am, A); 
     std::cout << "data copied" << std::endl;
@@ -48,9 +57,14 @@ dynVCLMat<T>::dynVCLMat(
 }
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int ctx_id)
 {    
-    A = viennacl::zero_matrix<T>(nr_in, nc_in);
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::zero_matrix<T>(nr_in, nc_in, ctx);
        
     nr = nr_in;
     nc = nc_in;
@@ -62,9 +76,14 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in)
 }
 
 template<typename T>
-dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar)
+dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int ctx_id)
 {
-    A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar);
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar, ctx);
     
     nr = nr_in;
     nc = nc_in;

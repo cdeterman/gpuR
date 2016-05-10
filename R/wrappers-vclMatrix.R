@@ -26,7 +26,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L),
+                                                 6L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -37,7 +37,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L),
+                                                   8L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -80,7 +80,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L),
+                                  6L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -94,7 +94,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L),
+                                  8L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -135,7 +135,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type){
                       new("ivclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol,
-                                                 4L),
+                                                 4L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -146,7 +146,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type){
                       new("fvclMatrix", 
                           address=vectorToMatVCL(data, 
                                                  nrow, ncol, 
-                                                 6L),
+                                                 6L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -157,7 +157,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type){
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
-                                                   8L),
+                                                   8L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -199,7 +199,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  4L),
+                                  4L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -213,7 +213,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  6L),
+                                  6L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -227,7 +227,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type){
                               cpp_scalar_vclMatrix(
                                   data, 
                                   nrow, ncol, 
-                                  8L),
+                                  8L, context_index - 1),
                           .context_index = context_index,
                           .platform_index = platform_index,
                           .platform = platform_name,
@@ -257,10 +257,10 @@ vclMatMult <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
+#     oldContext <- currentContext()
+#     if(oldContext != A@.context_index){
+#         setContext(A@.context_index)
+#     }
     
     C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
     
@@ -293,9 +293,9 @@ vclMatMult <- function(A, B){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
+#     if(oldContext != A@.context_index){
+#         setContext(oldContext)
+#     }
     
     return(C)
 }

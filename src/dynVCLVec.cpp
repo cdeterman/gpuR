@@ -4,14 +4,20 @@
 #include "gpuR/dynVCLVec.hpp"
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(SEXP A_)
+dynVCLVec<T>::dynVCLVec(
+    SEXP A_,
+    int ctx_id)
 {
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
     
     int K = Am.size();
+    viennacl::context ctx;
     
-    A = viennacl::vector<T>(K);    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::vector<T>(K, ctx);    
     viennacl::copy(Am, A); 
     
     size = K;
@@ -23,10 +29,16 @@ dynVCLVec<T>::dynVCLVec(SEXP A_)
 }
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(int size_in)
+dynVCLVec<T>::dynVCLVec(
+    int size_in,
+    int ctx_id)
 {
+    viennacl::context ctx;
     
-    A = viennacl::zero_vector<T>(size_in);
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+
+    A = viennacl::zero_vector<T>(size_in, ctx);
     begin = 1;
     last = size_in;
     ptr = &A;

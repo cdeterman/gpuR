@@ -885,14 +885,15 @@ setMethod("cbind2",
               
               assert_are_identical(x@.context_index, y@.context_index)
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != x@.context_index){
+#                   setContext(x@.context_index)
+#               }
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L,
+                                                               x@.context_index - 1)
                                 new("ivclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -902,7 +903,8 @@ setMethod("cbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L,
+                                                               x@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -913,7 +915,8 @@ setMethod("cbind2",
                                     )
                             },
                             "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L,
+                                                               x@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -925,9 +928,9 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != x@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })
@@ -936,16 +939,16 @@ setMethod("cbind2",
           signature(x = "numeric", y = "vclMatrix"),
           function(x, y, ...){
               
-              oldContext <- currentContext()
-              if(oldContext != y@.context_index){
-                  setContext(y@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != y@.context_index){
+#                   setContext(y@.context_index)
+#               }
               
               x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y))
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, y@.context_index - 1)
                                 new("ivclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -955,7 +958,7 @@ setMethod("cbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, y@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -965,7 +968,7 @@ setMethod("cbind2",
                                     .device = x@.device)
                             },
                             "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, y@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -977,9 +980,9 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != y@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != y@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })
@@ -988,16 +991,16 @@ setMethod("cbind2",
           signature(x = "vclMatrix", y = "numeric"),
           function(x, y, ...){
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != x@.context_index){
+#                   setContext(x@.context_index)
+#               }
               
               y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x))
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, x@.context_index - 1)
                                 new("ivclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1007,7 +1010,7 @@ setMethod("cbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, x@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1017,7 +1020,7 @@ setMethod("cbind2",
                                     .device = x@.device)
                             },
                             "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, x@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1029,9 +1032,9 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != x@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })
@@ -1045,14 +1048,14 @@ setMethod("rbind2",
               
               assert_are_identical(x@.context_index, y@.context_index)
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != x@.context_index){
+#                   setContext(x@.context_index)
+#               }
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, x@.context_index - 1)
                                 new("ivclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1062,7 +1065,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, x@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1072,7 +1075,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "double" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, x@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1084,9 +1087,9 @@ setMethod("rbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != x@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })
@@ -1095,16 +1098,16 @@ setMethod("rbind2",
           signature(x = "numeric", y = "vclMatrix"),
           function(x, y, ...){
               
-              oldContext <- currentContext()
-              if(oldContext != y@.context_index){
-                  setContext(y@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != y@.context_index){
+#                   setContext(y@.context_index)
+#               }
               
               x <- vclMatrix(x, nrow=1, ncol=ncol(y), type=typeof(y))
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, y@.context_index - 1)
                                 new("ivclMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1114,7 +1117,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, y@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1124,7 +1127,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "double" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, y@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1135,9 +1138,9 @@ setMethod("rbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != y@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != y@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })
@@ -1146,16 +1149,16 @@ setMethod("rbind2",
           signature(x = "vclMatrix", y = "numeric"),
           function(x, y, ...){
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
+#               oldContext <- currentContext()
+#               if(oldContext != x@.context_index){
+#                   setContext(x@.context_index)
+#               }
               
               y <- vclMatrix(y, nrow=1, ncol=ncol(x), type=typeof(x))
               
               ptr <- switch(typeof(x),
                             "integer" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 4L, x@.context_index - 1)
                                 new("ivclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1165,7 +1168,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "float" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 6L, x@.context_index - 1)
                                 new("fvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1175,7 +1178,7 @@ setMethod("rbind2",
                                     .device = x@.device)
                             },
                             "double" = {
-                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L)
+                                address <- cpp_rbind_vclMatrix(x@address, y@address, 8L, x@.context_index - 1)
                                 new("dvclMatrix", 
                                     address = address,
                                     .context_index = x@.context_index,
@@ -1187,9 +1190,9 @@ setMethod("rbind2",
                             stop("type not recognized")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
+#               if(oldContext != x@.context_index){
+#                   setContext(oldContext)
+#               }
               
               return(ptr)
           })

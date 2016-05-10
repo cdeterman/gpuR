@@ -17,7 +17,6 @@
 //using namespace cl;
 using namespace Rcpp;
 
-
 // [[Rcpp::export]]
 SEXP initContexts(){
     
