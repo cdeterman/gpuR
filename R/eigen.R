@@ -103,11 +103,6 @@ setMethod("eigen", signature(x="vclMatrix"),
                   stop("vclMatrixBlock not currently supported")
               }
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
               }
@@ -126,8 +121,8 @@ setMethod("eigen", signature(x="vclMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              Q <- vclMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
-              V <- vclVector(length=as.integer(nrow(x)), type=type)
+              Q <- vclMatrix(nrow=nrow(x), ncol=ncol(x), type=type, ctx_id = x@.context_index)
+              V <- vclVector(length=as.integer(nrow(x)), type=type, ctx_id = x@.context_index)
               
               # possible a way to have only values calculated on GPU?
               
@@ -151,11 +146,8 @@ setMethod("eigen", signature(x="vclMatrix"),
                   out <- list(values = V, vectors = Q)
               }
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-              
               return(out)
           },
           valueClass = "list"
 )
+

@@ -21,7 +21,7 @@ setGeneric("vclVector", function(data, length, type=NULL, ...){
 #' @aliases vclVector,vector
 setMethod('vclVector', 
           signature(data = 'vector', length = 'missing'),
-          function(data, length, type=NULL){
+          function(data, length, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
               if (!missing(length)) {
@@ -31,7 +31,7 @@ setMethod('vclVector',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -88,7 +88,7 @@ setMethod('vclVector',
 #' @aliases vclVector,missing
 setMethod('vclVector', 
           signature(data = 'missing'),
-          function(data, length, type=NULL){
+          function(data, length, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               if (length <= 0) stop("length must be a positive integer")
@@ -96,7 +96,7 @@ setMethod('vclVector',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,

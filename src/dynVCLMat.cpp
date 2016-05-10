@@ -3,6 +3,47 @@
 #include "gpuR/windows_check.hpp"
 #include "gpuR/dynVCLMat.hpp"
 
+
+template<typename T>
+dynVCLMat<T>::dynVCLMat(viennacl::matrix_range<viennacl::matrix<T> > mat, int ctx_id){
+
+	std::cout << mat << std::endl;
+    viennacl::context ctx;
+
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+
+	std::cout << "pulled context" << std::endl;
+	std::cout << ctx_id << std::endl;
+
+	viennacl::matrix<T> temp = viennacl::matrix<T>(mat.size1(), mat.size2(), ctx);
+
+	std::cout << "can create another matrix" << std::endl;
+
+	temp = mat;
+
+	std::cout << "can assign new matrix" << std::endl;
+    
+    A = temp;
+
+	std::cout << "can assign temp matrix" << std::endl;
+    A = viennacl::matrix<T>(mat.size1(),mat.size2(), ctx);
+
+	std::cout << A << std::endl;
+
+    A = mat;
+
+	std::cout << A << std::endl;
+ 
+    nr = A.size1();
+    nc = A.size2();
+    ptr = &A;
+    viennacl::range temp_rr(0, nr);
+    viennacl::range temp_cr(0, nc);
+    row_r = temp_rr;
+    col_r = temp_cr;
+}
+
 template<typename T>
 dynVCLMat<T>::dynVCLMat(SEXP A_, int ctx_id)
 {
@@ -115,6 +156,28 @@ dynVCLMat<T>::setRange(
     viennacl::range temp_cr(col_start, col_end);
     row_r = temp_rr;
     col_r = temp_cr;
+}
+
+
+template<typename T>
+void
+dynVCLMat<T>::createMatrix(int nr_in, int nc_in, int ctx_id){
+
+    std::cout << "creating matrix" << std::endl;
+
+    viennacl::context ctx;
+
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+
+    std::cout << "pulled context" << std::endl;
+    std::cout << ctx_id << std::endl;
+
+    A = viennacl::matrix<T>(nr_in, nc_in, ctx=ctx);
+
+    std::cout << "assigned new matrix" << std::endl;
+
+    ptr = &A;
 }
 
 template<typename T>

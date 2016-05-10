@@ -89,14 +89,14 @@ setMethod('vclMatrix',
 #' @aliases vclMatrix,missing
 setMethod('vclMatrix', 
           signature(data = 'missing'),
-          function(data, nrow=NA, ncol=NA, type=NULL){
+          function(data, nrow=NA, ncol=NA, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
+              #device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
               device <- currentDevice()
-              
-              context_index <- currentContext()
+
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -155,7 +155,7 @@ setMethod('vclMatrix',
 #' @aliases vclMatrix,numeric
 setMethod('vclMatrix', 
           signature(data = 'numeric'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
 #               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
@@ -166,9 +166,9 @@ setMethod('vclMatrix',
               assert_is_numeric(ncol)
               
               if(length(data) == 1){
-                  data <- vclMatInitNumScalar(data, nrow, ncol, type)
+                  data <- vclMatInitNumScalar(data, nrow, ncol, type, ctx_id)
               }else{
-                  data <- vclMatInitNumVec(data, nrow, ncol, type)
+                  data <- vclMatInitNumVec(data, nrow, ncol, type, ctx_id)
               }
               
               return(data)
@@ -179,7 +179,7 @@ setMethod('vclMatrix',
 #' @aliases vclMatrix,integer
 setMethod('vclMatrix',
           signature(data = 'integer'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- "integer"
               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
@@ -190,9 +190,9 @@ setMethod('vclMatrix',
               assert_is_numeric(ncol)
               
               if(length(data) == 1){
-                  data <- vclMatInitIntScalar(data, nrow, ncol, type)
+                  data <- vclMatInitIntScalar(data, nrow, ncol, type, ctx_id)
               }else{
-                  data <- vclMatInitIntVec(data, nrow, ncol, type)
+                  data <- vclMatInitIntVec(data, nrow, ncol, type, ctx_id)
               }
               
               return(data)

@@ -5,11 +5,6 @@ setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               Rmat <- switch(typeof(x),
                      "integer" = VCLtoMatSEXP(x@address, 4L),
                      "float" = VCLtoMatSEXP(x@address, 6L),
@@ -17,10 +12,6 @@ setMethod("[",
                      stop("unsupported matrix type")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-
 	      return(Rmat)
 
           })
@@ -31,11 +22,6 @@ setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               Rmat <- switch(typeof(x),
                      "integer" = vclGetCol(x@address, j, 4L),
                      "float" = vclGetCol(x@address, j, 6L),
@@ -43,10 +29,6 @@ setMethod("[",
                      stop("unsupported matrix type")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-
 	      return(Rmat)
 
           })
@@ -58,11 +40,6 @@ setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "missing", drop="missing"),
           function(x, i, j, drop) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               Rmat <- switch(typeof(x),
                      "integer" = vclGetRow(x@address, i, 4L),
                      "float" = vclGetRow(x@address, i, 6L),
@@ -70,10 +47,6 @@ setMethod("[",
                      stop("unsupported matrix type")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-
 	      return(Rmat)
 
           })
@@ -84,11 +57,6 @@ setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               Rmat <- switch(typeof(x),
                      "integer" = vclGetElement(x@address, i, j, 4L),
                      "float" = vclGetElement(x@address, i, j, 6L),
@@ -96,10 +64,6 @@ setMethod("[",
                      stop("unsupported matrix type")
               )
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-
 	      return(Rmat)
 
           })
@@ -118,20 +82,11 @@ setMethod("[<-",
                   stop("column index exceeds number of columns")
               }
 
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-
               switch(typeof(x),
                      "float" = vclSetCol(x@address, j, value, 6L),
                      "double" = vclSetCol(x@address, j, value, 8L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -150,19 +105,10 @@ setMethod("[<-",
                   stop("column index exceeds number of columns")
               }
 
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-
               switch(typeof(x),
                      "integer" = vclSetCol(x@address, j, value, 4L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -181,22 +127,11 @@ setMethod("[<-",
                   stop("row index exceeds number of rows")
               }
               
-
-	      oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
-
               switch(typeof(x),
                      "float" = vclSetRow(x@address, i, value, 6L),
                      "double" = vclSetRow(x@address, i, value, 8L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -215,19 +150,10 @@ setMethod("[<-",
                   stop("row index exceeds number of rows")
               }
 
-	      oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               switch(typeof(x),
                      "integer" = vclSetRow(x@address, i, value, 4L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -243,20 +169,11 @@ setMethod("[<-",
               assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
 	      assert_is_scalar(value)
 
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }              
-
               switch(typeof(x),
                      "float" = vclSetElement(x@address, i, j, value, 6L),
                      "double" = vclSetElement(x@address, i, j, value, 8L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -271,19 +188,10 @@ setMethod("[<-",
               assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
 	      assert_is_scalar(value)
 
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               switch(typeof(x),
                      "integer" = vclSetElement(x@address, i, j, value, 4L),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(x)
           })
@@ -326,29 +234,14 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
           {
               assert_is_of_length(e2, 1)
 
-	      oldContext <- currentContext()
-
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-			 if(oldContext != e1@.context_index){
-			    setContext(e1@.context_index)
-			 }
-                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
-			 if(oldContext != e1@.context_index){
-			    setContext(oldContext)
-			 }
+                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1), ctx_id=e1@.context_index)
                          vclMat_axpy(1, e1, e2)
                      },
                      `-` = {
-                         if(oldContext != e1@.context_index){
-			    setContext(e1@.context_index)
-			 }
-                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1))
-			 if(oldContext != e1@.context_index){
-			    setContext(oldContext)
-			 }
-                         
+                         e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1), ctx_id=e1@.context_index)
                          vclMat_axpy(-1, e2, e1)
                      },
                      `*` = vclMatScalarMult(e1, e2),
@@ -368,49 +261,23 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
           {
               assert_is_of_length(e1, 1)
 
-	      oldContext <- currentContext()
-
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-			 if(oldContext != e2@.context_index){
-			    setContext(e2@.context_index)
-			 }
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
-			 if(oldContext != e2@.context_index){
-			    setContext(oldContext)
-			 }
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), e2@.context_index)
                          vclMat_axpy(1, e1, e2)
                      },
                      `-` = {
-                         if(oldContext != e2@.context_index){
-			    setContext(e2@.context_index)
-			 }
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
-                         if(oldContext != e2@.context_index){
-			    setContext(oldContext)
-			 }
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), e2@.context_index)
                          vclMat_axpy(-1, e2, e1)
                      },
                      `*` = vclMatScalarMult(e2, e1),
                      `/` = {
-                         if(oldContext != e2@.context_index){
-			    setContext(e2@.context_index)
-			 }
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
-                         if(oldContext != e2@.context_index){
-			    setContext(oldContext)
-			 }
+                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), e2@.context_index)
                          vclMatElemDiv(e1, e2)
                      },
                      `^` = {
-                         if(oldContext != e2@.context_index){
-			    setContext(e2@.context_index)
-			 }
-                         e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2))
-                         if(oldContext != e2@.context_index){
-			    setContext(oldContext)
-			 }
+                         e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), e2@.context_index)
                          vclMatElemPow(e1, e2)
                      },
                      stop("undefined operation")
@@ -482,21 +349,12 @@ setMethod("log", c(x="vclMatrix"),
 setMethod('nrow', signature(x="vclMatrix"), 
           function(x) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               result <- switch(typeof(x),
                      "integer" = vcl_inrow(x@address),
                      "float" = vcl_fnrow(x@address),
                      "double" = vcl_dnrow(x@address),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(result)
           }
@@ -507,21 +365,12 @@ setMethod('nrow', signature(x="vclMatrix"),
 setMethod('ncol', signature(x="vclMatrix"),
           function(x) {
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
               result <- switch(typeof(x),
                      "integer" = vcl_incol(x@address),
                      "float" = vcl_fncol(x@address),
                      "double" = vcl_dncol(x@address),
                      stop("unsupported matrix type")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
               return(result)
           }
@@ -695,13 +544,8 @@ setMethod("dist", signature(x="vclMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
-              D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
-              
+              D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type, ctx_id=x@.context_index)
+
               switch(method,
                      "euclidean" = vclMatrix_euclidean(
                          x, 
@@ -719,10 +563,6 @@ setMethod("dist", signature(x="vclMatrix"),
                          TRUE),
                      stop("method not currently supported")
               )
-              
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
               
              return(D)
           }
@@ -752,13 +592,8 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
               
               assert_are_identical(x@.context_index, y@.context_index)
               
-              oldContext <- currentContext()
-              if(oldContext != x@.context_index){
-                  setContext(x@.context_index)
-              }
-              
-              D <- vclMatrix(nrow=nrow(x), ncol=nrow(y), type=type)
-              
+              D <- vclMatrix(nrow=nrow(x), ncol=nrow(y), type=type, ctx_id = x@.context_index)
+
               switch(method,
                      "euclidean" = vclMatrix_peuclidean(
                          x, 
@@ -779,10 +614,6 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
                   }
               }
               
-              if(oldContext != x@.context_index){
-                  setContext(oldContext)
-              }
-              
               return(D)
           }
 )
@@ -791,28 +622,23 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
 setMethod("deepcopy", signature(object ="vclMatrix"),
           function(object){
               
-              oldContext <- currentContext()
-              if(oldContext != object@.context_index){
-                  setContext(object@.context_index)
-              }
-              
               out <- switch(typeof(object),
                             "integer" = new("ivclMatrix",
-                                            address = cpp_deepcopy_vclMatrix(object@address, 4L),
-                            								.context_index = object@.context_index,
-                            								.platform_index = object@.platform_index,
-                            								.platform = object@.platform,
-                            								.device_index = object@.device_index,
-                            								.device = object@.device),
+                                            address = cpp_deepcopy_vclMatrix(object@address, 4L, object@.context_index - 1),
+										.context_index = object@.context_index,
+										.platform_index = object@.platform_index,
+										.platform = object@.platform,
+										.device_index = object@.device_index,
+										.device = object@.device),
                             "float" = new("fvclMatrix", 
-                                          address = cpp_deepcopy_vclMatrix(object@address, 6L),
+                                          address = cpp_deepcopy_vclMatrix(object@address, 6L, object@.context_index - 1),
                             							.context_index = object@.context_index,
                             							.platform_index = object@.platform_index,
                             							.platform = object@.platform,
                             							.device_index = object@.device_index,
                             							.device = object@.device),
                             "double" = new("dvclMatrix", 
-                                           address = cpp_deepcopy_vclMatrix(object@address, 8L),
+                                           address = cpp_deepcopy_vclMatrix(object@address, 8L, object@.context_index - 1),
                             							 .context_index = object@.context_index,
                             							 .platform_index = object@.platform_index,
                             							 .platform = object@.platform,
@@ -820,10 +646,6 @@ setMethod("deepcopy", signature(object ="vclMatrix"),
                             							 .device = object@.device),
                             stop("unsupported matrix type")
               )
-              
-              if(oldContext != object@.context_index){
-                  setContext(oldContext)
-              }
               
               return(out)
           })
@@ -834,11 +656,6 @@ setMethod("block",
                     rowStart = "integer", rowEnd = "integer",
                     colStart = "integer", colEnd = "integer"),
           function(object, rowStart, rowEnd, colStart, colEnd){
-              
-              oldContext <- currentContext()
-              if(oldContext != object@.context_index){
-                  setContext(object@.context_index)
-              }
               
               assert_all_are_positive(c(rowStart, rowEnd, colStart, colEnd))
               assert_all_are_in_range(c(rowStart, rowEnd), lower = 1, upper = nrow(object)+1)
@@ -868,10 +685,6 @@ setMethod("block",
                             stop("type not recognized")
               )
               
-              if(oldContext != object@.context_index){
-                  setContext(oldContext)
-              }
-              
               return(ptr)
               
           })
@@ -884,11 +697,6 @@ setMethod("cbind2",
               }
               
               assert_are_identical(x@.context_index, y@.context_index)
-              
-#               oldContext <- currentContext()
-#               if(oldContext != x@.context_index){
-#                   setContext(x@.context_index)
-#               }
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -928,10 +736,6 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-#               if(oldContext != x@.context_index){
-#                   setContext(oldContext)
-#               }
-              
               return(ptr)
           })
 
@@ -939,12 +743,7 @@ setMethod("cbind2",
           signature(x = "numeric", y = "vclMatrix"),
           function(x, y, ...){
               
-#               oldContext <- currentContext()
-#               if(oldContext != y@.context_index){
-#                   setContext(y@.context_index)
-#               }
-              
-              x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y))
+              x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y), y@.context_index)
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -980,10 +779,6 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-#               if(oldContext != y@.context_index){
-#                   setContext(oldContext)
-#               }
-              
               return(ptr)
           })
 
@@ -991,12 +786,7 @@ setMethod("cbind2",
           signature(x = "vclMatrix", y = "numeric"),
           function(x, y, ...){
               
-#               oldContext <- currentContext()
-#               if(oldContext != x@.context_index){
-#                   setContext(x@.context_index)
-#               }
-              
-              y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x))
+              y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x), x@.context_index)
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -1032,10 +822,6 @@ setMethod("cbind2",
                             stop("type not recognized")
               )
               
-#               if(oldContext != x@.context_index){
-#                   setContext(oldContext)
-#               }
-              
               return(ptr)
           })
 
@@ -1047,11 +833,6 @@ setMethod("rbind2",
               }
               
               assert_are_identical(x@.context_index, y@.context_index)
-              
-#               oldContext <- currentContext()
-#               if(oldContext != x@.context_index){
-#                   setContext(x@.context_index)
-#               }
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -1087,10 +868,6 @@ setMethod("rbind2",
                             stop("type not recognized")
               )
               
-#               if(oldContext != x@.context_index){
-#                   setContext(oldContext)
-#               }
-              
               return(ptr)
           })
 
@@ -1098,12 +875,7 @@ setMethod("rbind2",
           signature(x = "numeric", y = "vclMatrix"),
           function(x, y, ...){
               
-#               oldContext <- currentContext()
-#               if(oldContext != y@.context_index){
-#                   setContext(y@.context_index)
-#               }
-              
-              x <- vclMatrix(x, nrow=1, ncol=ncol(y), type=typeof(y))
+              x <- vclMatrix(x, nrow=1, ncol=ncol(y), type=typeof(y), y@.context_index)
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -1138,10 +910,6 @@ setMethod("rbind2",
                             stop("type not recognized")
               )
               
-#               if(oldContext != y@.context_index){
-#                   setContext(oldContext)
-#               }
-              
               return(ptr)
           })
 
@@ -1149,12 +917,7 @@ setMethod("rbind2",
           signature(x = "vclMatrix", y = "numeric"),
           function(x, y, ...){
               
-#               oldContext <- currentContext()
-#               if(oldContext != x@.context_index){
-#                   setContext(x@.context_index)
-#               }
-              
-              y <- vclMatrix(y, nrow=1, ncol=ncol(x), type=typeof(x))
+              y <- vclMatrix(y, nrow=1, ncol=ncol(x), type=typeof(x), x@.context_index)
               
               ptr <- switch(typeof(x),
                             "integer" = {
@@ -1189,10 +952,6 @@ setMethod("rbind2",
                             },
                             stop("type not recognized")
               )
-              
-#               if(oldContext != x@.context_index){
-#                   setContext(oldContext)
-#               }
               
               return(ptr)
           })

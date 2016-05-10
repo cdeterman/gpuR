@@ -1,10 +1,10 @@
 
 # vclMatrix numeric vector initializer
-vclMatInitNumVec <- function(data, nrow, ncol, type){
+vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
 
     device <- currentDevice()
     
-    context_index <- currentContext()
+    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
@@ -52,11 +52,11 @@ vclMatInitNumVec <- function(data, nrow, ncol, type){
 }
 
 # vclMatrix numeric initializer
-vclMatInitNumScalar <- function(data, nrow, ncol, type){
+vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
     
     device <- currentDevice()
     
-    context_index <- currentContext()
+    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
@@ -110,11 +110,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type){
 }
 
 # vclMatrix integer vector initializer
-vclMatInitIntVec <- function(data, nrow, ncol, type){
+vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
     
     device <- currentDevice()
     
-    context_index <- currentContext()
+    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
@@ -172,11 +172,11 @@ vclMatInitIntVec <- function(data, nrow, ncol, type){
 }
 
 # vclMatrix integer scalar initializer
-vclMatInitIntScalar <- function(data, nrow, ncol, type){
+vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
     
     device <- currentDevice()
     
-    context_index <- currentContext()
+    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
     device_index <- device$device_index
     device_type <- device$device_type
     device_name <- switch(device_type,
@@ -257,12 +257,7 @@ vclMatMult <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-#     oldContext <- currentContext()
-#     if(oldContext != A@.context_index){
-#         setContext(A@.context_index)
-#     }
-    
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(B), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -293,10 +288,6 @@ vclMatMult <- function(A, B){
            stop("type not recognized")
     )
     
-#     if(oldContext != A@.context_index){
-#         setContext(oldContext)
-#     }
-    
     return(C)
 }
 
@@ -304,11 +295,6 @@ vclMatMult <- function(A, B){
 vclMat_axpy <- function(alpha, A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     nrA = nrow(A)
     ncA = ncol(A)
@@ -325,11 +311,10 @@ vclMat_axpy <- function(alpha, A, B){
     
     type <- typeof(A)
     
-    Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type)
+    Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
     if(!missing(B))
     {
         if(length(B[]) != length(A[])){
-		if(oldContext != A@.context_index) setContext(oldContext)
 		stop("Lengths of matrices must match")
 	i}
         Z <- deepcopy(B)
@@ -357,20 +342,11 @@ vclMat_axpy <- function(alpha, A, B){
             stop("type not recognized")
     )
 
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(Z)
 }
 
 # vclMatrix unary AXPY
 vclMatrix_unary_axpy <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type = typeof(A)
     
@@ -392,10 +368,6 @@ vclMatrix_unary_axpy <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(Z)
 }
 
@@ -408,14 +380,9 @@ vcl_crossprod <- function(X, Y){
     
     assert_are_identical(X@.context_index, Y@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != X@.context_index){
-        setContext(X@.context_index)
-    }
-    
     type <- typeof(X)
     
-    Z <- vclMatrix(nrow = ncol(X), ncol = ncol(Y), type = type)
+    Z <- vclMatrix(nrow = ncol(X), ncol = ncol(Y), type = type, ctx_id = X@.context_index)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
@@ -429,10 +396,6 @@ vcl_crossprod <- function(X, Y){
                                               8L)
     )
     
-    if(oldContext != X@.context_index){
-        setContext(oldContext)
-    }
-    
     return(Z)
 }
 
@@ -445,14 +408,9 @@ vcl_tcrossprod <- function(X, Y){
     
     assert_are_identical(X@.context_index, Y@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != X@.context_index){
-        setContext(X@.context_index)
-    }
-    
     type <- typeof(X)
     
-    Z <- vclMatrix(nrow = nrow(X), ncol = nrow(Y), type = type)
+    Z <- vclMatrix(nrow = nrow(X), ncol = nrow(Y), type = type, ctx_id=X@.context_index)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
@@ -467,10 +425,6 @@ vcl_tcrossprod <- function(X, Y){
            stop("type not recognized")
     )
     
-    if(oldContext != X@.context_index){
-        setContext(oldContext)
-    }
-    
     return(Z)
 }
 
@@ -484,14 +438,9 @@ vclMatElemMult <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -514,10 +463,6 @@ vclMatElemMult <- function(A, B){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
@@ -526,19 +471,6 @@ vclMatScalarMult <- function(A, B){
     
     type <- typeof(A)
 
-    oldContext <- currentContext()
-
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(A@.context_index)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(B@.context_index)
-	    }
-
-    }
-    
     C <- deepcopy(A)
     
     switch(type,
@@ -560,17 +492,6 @@ vclMatScalarMult <- function(A, B){
            stop("type not recognized")
     )
 
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(oldContext)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(oldContext)
-	    }
-
-    }
-
     return(C)
 }
 
@@ -583,14 +504,9 @@ vclMatElemDiv <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -613,36 +529,18 @@ vclMatElemDiv <- function(A, B){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Scalar Element-Wise Division
 vclMatScalarDiv <- function(A, B){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(A@.context_index)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(B@.context_index)
-	    }
-
-    }
-
-
-    
     type <- typeof(A)
     
     C <- deepcopy(A)
+
+print(A@.context_index)
+print(C@.context_index)
     
     switch(type,
            integer = {
@@ -663,17 +561,6 @@ vclMatScalarDiv <- function(A, B){
            stop("type not recognized")
     )
 
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(oldContext)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(oldContext)
-	    }
-
-    }
-
     return(C)
 }
 
@@ -686,15 +573,9 @@ vclMatElemPow <- function(A, B){
         stop("matrices not conformable")
     }
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
-
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -717,32 +598,15 @@ vclMatElemPow <- function(A, B){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Power
 vclMatScalarPow <- function(A, B){
     
-    oldContext <- currentContext()
-
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(A@.context_index)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(B@.context_index)
-	    }
-
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -765,31 +629,15 @@ vclMatScalarPow <- function(A, B){
            stop("type not recognized")
     )
  
-    if(is(A, "vclMatrix")){
-	    if(oldContext != A@.context_index){
-		setContext(oldContext)
-	    }
-    }else{
-	    if(oldContext != B@.context_index){
-		setContext(oldContext)
-	    }
-
-    }   
-    
     return(C)
 }
 
 # GPU Element-Wise Sine
 vclMatElemSin <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -810,24 +658,15 @@ vclMatElemSin <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Arc Sine
 vclMatElemArcSin <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -848,24 +687,15 @@ vclMatElemArcSin <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Hyperbolic Sine
 vclMatElemHypSin <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -887,23 +717,15 @@ vclMatElemHypSin <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
     return(C)
 }
 
 # GPU Element-Wise Cos
 vclMatElemCos <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -924,24 +746,15 @@ vclMatElemCos <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Arc Cos
 vclMatElemArcCos <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -962,24 +775,15 @@ vclMatElemArcCos <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Hyperbolic Cos
 vclMatElemHypCos <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1000,24 +804,15 @@ vclMatElemHypCos <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Tan
 vclMatElemTan <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1038,24 +833,15 @@ vclMatElemTan <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Arc Tan
 vclMatElemArcTan <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1076,24 +862,15 @@ vclMatElemArcTan <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Hyperbolic Tan
 vclMatElemHypTan <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1114,24 +891,15 @@ vclMatElemHypTan <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Natural Log
 vclMatElemLog <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1152,24 +920,15 @@ vclMatElemLog <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Log Base
 vclMatElemLogBase <- function(A, base){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1192,24 +951,15 @@ vclMatElemLogBase <- function(A, base){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Base 10 Log
 vclMatElemLog10 <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1230,24 +980,15 @@ vclMatElemLog10 <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Element-Wise Exponential
 vclMatElemExp <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1268,20 +1009,11 @@ vclMatElemExp <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # vclMatrix colSums
 vclMatrix_colSums <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1302,20 +1034,11 @@ vclMatrix_colSums <- function(A){
            stop("unsupported matrix type")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(sums)
 }
 
 # vclMatrix rowSums
 vclMatrix_rowSums <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1336,20 +1059,11 @@ vclMatrix_rowSums <- function(A){
            stop("unsupported matrix type")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(sums)
 }
 
 # vclMatrix colMeans
 vclMatrix_colMeans <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1370,20 +1084,11 @@ vclMatrix_colMeans <- function(A){
            stop("unsupported matrix type")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(sums)
 }
 
 # vclMatrix rowMeans
 vclMatrix_rowMeans <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1404,24 +1109,15 @@ vclMatrix_rowMeans <- function(A){
            stop("unsupported matrix type")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(sums)
 }
 
 # GPU Pearson Covariance
 vclMatrix_pmcc <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type)
+    B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
            "integer" = stop("integer type not currently implemented"),
@@ -1434,10 +1130,6 @@ vclMatrix_pmcc <- function(A){
            stop("unsupported matrix type")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(B)
 }
 
@@ -1446,11 +1138,6 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     
     assert_are_identical(A@.context_index, D@.context_index)
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(D)
     
     switch(type,
@@ -1458,17 +1145,15 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
            "float" = cpp_vclMatrix_eucl(A@address, 
                                         D@address, 
                                         squareDist, 
-                                        6L),
+                                        6L,
+					A@.context_index - 1),
            "double" = cpp_vclMatrix_eucl(A@address, 
                                          D@address,
                                          squareDist,
-                                         8L),
+                                         8L,
+					 A@.context_index - 1),
            stop("Unsupported matrix type")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
     
     invisible(D)
 }
@@ -1480,11 +1165,6 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
         stop("Context indices don't match between arguments")
     }
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(D)
     
     switch(type,
@@ -1493,18 +1173,16 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
                                          B@address,
                                         D@address, 
                                         squareDist, 
-                                        6L),
+                                        6L,
+					A@.context_index - 1),
            "double" = cpp_vclMatrix_peucl(A@address, 
                                           B@address,
                                          D@address,
                                          squareDist,
-                                         8L),
+                                         8L,
+					 A@.context_index - 1),
            stop("Unsupported matrix type")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
     
     invisible(D)
 }
@@ -1512,14 +1190,9 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
 # GPU Element-Wise Absolute Value
 vclMatElemAbs <- function(A){
     
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-    
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type)
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
@@ -1540,20 +1213,11 @@ vclMatElemAbs <- function(A){
            stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Vector maximum
 vclMatMax <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1574,20 +1238,11 @@ vclMatMax <- function(A){
                 stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
 # GPU Vector minimum
 vclMatMin <- function(A){
-    
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
     
     type <- typeof(A)
     
@@ -1608,10 +1263,6 @@ vclMatMin <- function(A){
                 stop("type not recognized")
     )
     
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
-    
     return(C)
 }
 
@@ -1620,12 +1271,7 @@ vclMatrix_t <- function(A){
     
     type <- typeof(A)
 
-    oldContext <- currentContext()
-    if(oldContext != A@.context_index){
-        setContext(A@.context_index)
-    }
-
-    B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type)
+    B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type, ctx_id=A@.context_index)
 
     switch(type,
            integer = {cpp_vclMatrix_transpose(A@address, B@address, 4L)},
@@ -1633,10 +1279,6 @@ vclMatrix_t <- function(A){
            double = {cpp_vclMatrix_transpose(A@address, B@address, 8L)},
            stop("type not recognized")
     )
-    
-    if(oldContext != A@.context_index){
-        setContext(oldContext)
-    }
     
     return(B)
 }

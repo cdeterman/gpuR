@@ -460,8 +460,14 @@ void
 cpp_vclMatrix_eucl(
     SEXP ptrA_, 
     SEXP ptrD_,
-    bool squareDist)
+    bool squareDist,
+    int ctx_id)
 {
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrD(ptrD_);
     
@@ -480,7 +486,7 @@ cpp_vclMatrix_eucl(
     // currently doesn't support the single scalar operation with
     // element_pow below
     {
-        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2);
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2, ctx);
     
 //        std::cout << "create 'twos' matrix" << std::endl;
         
@@ -492,7 +498,7 @@ cpp_vclMatrix_eucl(
 //    std::cout << "powers and rowsum completed" << std::endl;
     
     {
-        viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
+        viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx);
         
 //        std::cout << "row of ones" << std::endl;
         
@@ -529,7 +535,8 @@ cpp_vclMatrix_peucl(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrD_,
-    bool squareDist)
+    bool squareDist,
+    int ctx_id)
 { 
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -542,14 +549,18 @@ cpp_vclMatrix_peucl(
     
     viennacl::matrix<T> square_A;
     viennacl::matrix<T> square_B;
+    viennacl::context ctx;
     
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+ 
 //    std::cout << "pulled data" << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
     {
-        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(vcl_A.size1(), vcl_B.size1()), std::max(vcl_A.size2(), vcl_B.size2()), 2);
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(std::max(vcl_A.size1(), vcl_B.size1()), std::max(vcl_A.size2(), vcl_B.size2()), 2, ctx);
     
         square_A = viennacl::linalg::element_pow(vcl_A, twos);
         square_B = viennacl::linalg::element_pow(vcl_B, twos);
@@ -558,11 +569,11 @@ cpp_vclMatrix_peucl(
 //    std::cout << "power calculation complete" << std::endl;
     
     {
-        viennacl::vector<T> x_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1);
-        viennacl::vector<T> y_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1);
+        viennacl::vector<T> x_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx);
+        viennacl::vector<T> y_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1, ctx);
         
-        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1());
-        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1());
+        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1(), ctx);
+        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1(), ctx);
         
         vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
         vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
@@ -644,18 +655,19 @@ void
 cpp_vclMatrix_eucl(
     SEXP ptrA, SEXP ptrD,
     bool squareDist,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_eucl<int>(ptrA, ptrD, squareDist);
+            cpp_vclMatrix_eucl<int>(ptrA, ptrD, squareDist, ctx_id);
             return;
         case 6:
-            cpp_vclMatrix_eucl<float>(ptrA, ptrD, squareDist);
+            cpp_vclMatrix_eucl<float>(ptrA, ptrD, squareDist, ctx_id);
             return;
         case 8:
-            cpp_vclMatrix_eucl<double>(ptrA, ptrD, squareDist);
+            cpp_vclMatrix_eucl<double>(ptrA, ptrD, squareDist, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -667,18 +679,19 @@ void
 cpp_vclMatrix_peucl(
     SEXP ptrA, SEXP ptrB, SEXP ptrD,
     bool squareDist,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_peucl<int>(ptrA, ptrB, ptrD, squareDist);
+            cpp_vclMatrix_peucl<int>(ptrA, ptrB, ptrD, squareDist, ctx_id);
             return;
         case 6:
-            cpp_vclMatrix_peucl<float>(ptrA, ptrB, ptrD, squareDist);
+            cpp_vclMatrix_peucl<float>(ptrA, ptrB, ptrD, squareDist, ctx_id);
             return;
         case 8:
-            cpp_vclMatrix_peucl<double>(ptrA, ptrB, ptrD, squareDist);
+            cpp_vclMatrix_peucl<double>(ptrA, ptrB, ptrD, squareDist, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

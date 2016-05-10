@@ -286,8 +286,8 @@ vcl_igpuVec_size <- function(ptrA) {
     .Call('gpuR_vcl_igpuVec_size', PACKAGE = 'gpuR', ptrA)
 }
 
-cpp_deepcopy_vclMatrix <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_deepcopy_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
+cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_deepcopy_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
 }
 
 cpp_deepcopy_vclVector <- function(ptrA, type_flag) {
@@ -814,12 +814,12 @@ cpp_vclMatrix_pmcc <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
-cpp_vclMatrix_eucl <- function(ptrA, ptrD, squareDist, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, squareDist, type_flag))
+cpp_vclMatrix_eucl <- function(ptrA, ptrD, squareDist, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, squareDist, type_flag, ctx_id))
 }
 
-cpp_vclMatrix_peucl <- function(ptrA, ptrB, ptrD, squareDist, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_peucl', PACKAGE = 'gpuR', ptrA, ptrB, ptrD, squareDist, type_flag))
+cpp_vclMatrix_peucl <- function(ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_peucl', PACKAGE = 'gpuR', ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_eucl <- function(ptrA, ptrD, squareDist, device_flag, type_flag) {
