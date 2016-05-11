@@ -338,12 +338,12 @@ vclSetElement <- function(ptrA, nr, nc, newdata, type_flag) {
     invisible(.Call('gpuR_vclSetElement', PACKAGE = 'gpuR', ptrA, nr, nc, newdata, type_flag))
 }
 
-vclGetCol <- function(ptrA, nc, type_flag) {
-    .Call('gpuR_vclGetCol', PACKAGE = 'gpuR', ptrA, nc, type_flag)
+vclGetCol <- function(ptrA, nc, type_flag, ctx_id) {
+    .Call('gpuR_vclGetCol', PACKAGE = 'gpuR', ptrA, nc, type_flag, ctx_id)
 }
 
-vclGetRow <- function(ptrA, nr, type_flag) {
-    .Call('gpuR_vclGetRow', PACKAGE = 'gpuR', ptrA, nr, type_flag)
+vclGetRow <- function(ptrA, nr, type_flag, ctx_id) {
+    .Call('gpuR_vclGetRow', PACKAGE = 'gpuR', ptrA, nr, type_flag, ctx_id)
 }
 
 vclGetElement <- function(ptrA, nr, nc, type_flag) {
@@ -466,8 +466,8 @@ cpp_vclMatrix_axpy <- function(alpha, ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, type_flag))
 }
 
-cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_unary_axpy', PACKAGE = 'gpuR', ptrA, type_flag))
+cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_unary_axpy', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_elem_prod <- function(ptrA, ptrB, ptrC, type_flag) {
@@ -490,8 +490,8 @@ cpp_vclMatrix_elem_pow <- function(ptrA, ptrB, ptrC, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_elem_pow', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
-cpp_vclMatrix_scalar_pow <- function(ptrA, scalar, ptrC, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag))
+cpp_vclMatrix_scalar_pow <- function(ptrA, scalar, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_elem_sin <- function(ptrA, ptrB, type_flag) {
@@ -802,16 +802,16 @@ cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag
     invisible(.Call('gpuR_cpp_gpu_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
 }
 
-cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag) {
-    invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag))
+cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, device_flag, type_flag) {
     invisible(.Call('gpuR_cpp_gpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
 }
 
-cpp_vclMatrix_pmcc <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+cpp_vclMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_eucl <- function(ptrA, ptrD, squareDist, type_flag, ctx_id) {

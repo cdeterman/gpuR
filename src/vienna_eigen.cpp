@@ -75,11 +75,13 @@ void cpp_vcl_eigen(
     SEXP &Am, 
     SEXP &Qm,
     SEXP &eigenvalues,
-    bool symmetric)
+    bool symmetric,
+    int ctx_id)
 {        
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
     Rcpp::XPtr<dynVCLMat<T> > ptrQ(Qm);
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
     // want copy of A to prevent overwriting original matrix
     viennacl::matrix<T> vcl_A = ptrA->matrix();
@@ -145,17 +147,18 @@ cpp_vcl_eigen(
     SEXP Qm,
     SEXP eigenvalues,
     const bool symmetric,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric);
+            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 6:
-            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric);
+            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 8:
-            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric);
+            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

@@ -3113,26 +3113,16 @@ void cpp_vclMatrix_axpy(
 template <typename T>
 void 
 cpp_vclMatrix_unary_axpy(
-    SEXP ptrA_)
+    SEXP ptrA_,
+    int ctx_id)
 {
-//    // define device type to use
-//    if(device_flag == 0){
-//        //use only GPUs
-//        long id = 0;
-//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-//        viennacl::ocl::switch_context(id);
-//    }else{
-//        // use only CPUs
-//        long id = 1;
-//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-//        viennacl::ocl::switch_context(id);
-//    }
-    
+   
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);    
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A  = ptrA->data();
+    viennacl::context ctx(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     
     
-    viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A.size1(),vcl_A.size2());
+    viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A.size1(),vcl_A.size2(), ctx);
     
     vcl_Z -= vcl_A;
     vcl_A = vcl_Z;
@@ -3224,18 +3214,20 @@ void
 cpp_vclMatrix_scalar_pow(
     SEXP ptrA_, 
     SEXP scalar_, 
-    SEXP ptrC_)
+    SEXP ptrC_,
+    int ctx_id)
 {    
     
     const T scalar = as<T>(scalar_);    
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A  = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_C  = ptrC->data();
     
-    viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(vcl_A.size1(),vcl_A.size2(),scalar);
+    viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(vcl_A.size1(),vcl_A.size2(),scalar, ctx);
     
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
 }
@@ -3522,18 +3514,19 @@ cpp_vclMatrix_axpy(
 void
 cpp_vclMatrix_unary_axpy(
     SEXP ptrA,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_unary_axpy<int>(ptrA);
+            cpp_vclMatrix_unary_axpy<int>(ptrA, ctx_id);
             return;
         case 6:
-            cpp_vclMatrix_unary_axpy<float>(ptrA);
+            cpp_vclMatrix_unary_axpy<float>(ptrA, ctx_id);
             return;
         case 8:
-            cpp_vclMatrix_unary_axpy<double>(ptrA);
+            cpp_vclMatrix_unary_axpy<double>(ptrA, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -3658,18 +3651,19 @@ cpp_vclMatrix_scalar_pow(
     SEXP ptrA, 
     SEXP scalar, 
     SEXP ptrC,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_scalar_pow<int>(ptrA, scalar, ptrC);
+            cpp_vclMatrix_scalar_pow<int>(ptrA, scalar, ptrC, ctx_id);
             return;
         case 6:
-            cpp_vclMatrix_scalar_pow<float>(ptrA, scalar, ptrC);
+            cpp_vclMatrix_scalar_pow<float>(ptrA, scalar, ptrC, ctx_id);
             return;
         case 8:
-            cpp_vclMatrix_scalar_pow<double>(ptrA, scalar, ptrC);
+            cpp_vclMatrix_scalar_pow<double>(ptrA, scalar, ptrC, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

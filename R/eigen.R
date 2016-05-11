@@ -131,12 +131,14 @@ setMethod("eigen", signature(x="vclMatrix"),
                                              Q@address, 
                                              V@address,
                                              symmetric,
-                                             6L),
+                                             6L,
+					     x@.context_index),
                      "double" = cpp_vcl_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
-                                              8L),
+                                              8L,
+					      x@.context_index),
                      stop("type not currently supported")
               )
               

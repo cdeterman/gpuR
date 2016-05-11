@@ -288,7 +288,8 @@ template <typename T>
 void 
 cpp_vclMatrix_pmcc(
     SEXP ptrA_, 
-    SEXP ptrB_)
+    SEXP ptrB_,
+    int ctx_id)
 {
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -296,13 +297,15 @@ cpp_vclMatrix_pmcc(
     
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_B = ptrB->data();
+
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     const int M = vcl_A.size2();
     const int K = vcl_A.size1();
     
-    viennacl::vector<T> ones = viennacl::scalar_vector<T>(K, 1);
-    viennacl::vector<T> vcl_meanVec(M);
-    viennacl::matrix<T> vcl_meanMat(K,M);
+    viennacl::vector<T> ones = viennacl::scalar_vector<T>(K, 1, ctx=ctx);
+    viennacl::vector<T> vcl_meanVec(M, ctx=ctx);
+    viennacl::matrix<T> vcl_meanMat(K,M, ctx=ctx);
     
     // vector of column means
     vcl_meanVec = viennacl::linalg::column_sum(vcl_A);
@@ -629,18 +632,19 @@ cpp_gpuMatrix_pmcc(
 void
 cpp_vclMatrix_pmcc(
     SEXP ptrA, SEXP ptrB,
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclMatrix_pmcc<int>(ptrA, ptrB);
+            cpp_vclMatrix_pmcc<int>(ptrA, ptrB, ctx_id);
             return;
         case 6:
-            cpp_vclMatrix_pmcc<float>(ptrA, ptrB);
+            cpp_vclMatrix_pmcc<float>(ptrA, ptrB, ctx_id);
             return;
         case 8:
-            cpp_vclMatrix_pmcc<double>(ptrA, ptrB);
+            cpp_vclMatrix_pmcc<double>(ptrA, ptrB, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

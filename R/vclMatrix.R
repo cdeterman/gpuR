@@ -25,14 +25,14 @@ setGeneric("vclMatrix", function(data = NA, nrow=NA, ncol=NA, type=NULL, ...){
 #' @aliases vclMatrix,matrix
 setMethod('vclMatrix', 
           signature(data = 'matrix'),
-          function(data, type=NULL){
+          function(data, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- typeof(data)
               device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -96,7 +96,7 @@ setMethod('vclMatrix',
               
               device <- currentDevice()
 
-              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,

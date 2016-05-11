@@ -21,6 +21,7 @@ nV <- nE$values
 
 test_that("Switching GPU vclMatrix Symmetric Single Precision Matrix Eigen Decomposition",
 {
+    skip("switching contexts not function in ViennaCL yet")
     
     has_multiple_gpu_skip()
     
@@ -58,6 +59,7 @@ test_that("Switching GPU vclMatrix Symmetric Single Precision Matrix Eigen Decom
 
 test_that("Switching GPU vclMatrix Symmetric Double Precision Matrix Eigen Decomposition", 
 {
+    skip("switching contexts not function in ViennaCL yet")
     
     has_multiple_gpu_skip()
     has_multiple_double_skip()

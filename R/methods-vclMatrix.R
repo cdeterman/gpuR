@@ -23,9 +23,9 @@ setMethod("[",
           function(x, i, j, drop) {
               
               Rmat <- switch(typeof(x),
-                     "integer" = vclGetCol(x@address, j, 4L),
-                     "float" = vclGetCol(x@address, j, 6L),
-                     "double" = vclGetCol(x@address, j, 8L),
+                     "integer" = vclGetCol(x@address, j, 4L, x@.context_index - 1),
+                     "float" = vclGetCol(x@address, j, 6L, x@.context_index - 1),
+                     "double" = vclGetCol(x@address, j, 8L, x@.context_index - 1),
                      stop("unsupported matrix type")
               )
               
@@ -41,9 +41,9 @@ setMethod("[",
           function(x, i, j, drop) {
               
               Rmat <- switch(typeof(x),
-                     "integer" = vclGetRow(x@address, i, 4L),
-                     "float" = vclGetRow(x@address, i, 6L),
-                     "double" = vclGetRow(x@address, i, 8L),
+                     "integer" = vclGetRow(x@address, i, 4L, x@.context_index - 1),
+                     "float" = vclGetRow(x@address, i, 6L, x@.context_index - 1),
+                     "double" = vclGetRow(x@address, i, 8L, x@.context_index - 1),
                      stop("unsupported matrix type")
               )
               
