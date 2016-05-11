@@ -23,7 +23,7 @@ class dynVCLMat {
         int nr, nc;
         viennacl::range row_r;
         viennacl::range col_r;
-        viennacl::matrix<T> *ptr = &A;
+        viennacl::matrix<T> *ptr = NULL;
     
     public:
         viennacl::matrix<T> A;
