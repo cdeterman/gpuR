@@ -29,8 +29,7 @@ setMethod('vclMatrix',
           function(data, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- typeof(data)
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
-              
+
               device <- currentDevice()
               
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))

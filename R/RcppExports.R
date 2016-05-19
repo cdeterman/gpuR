@@ -358,92 +358,92 @@ emptyVecVCL <- function(length, type_flag, ctx_id) {
     .Call('gpuR_emptyVecVCL', PACKAGE = 'gpuR', length, type_flag, ctx_id)
 }
 
-cpp_gpuMatrix_elem_prod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_elem_prod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_scalar_prod <- function(ptrC, scalar, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_prod', PACKAGE = 'gpuR', ptrC, scalar, device_flag, type_flag))
+cpp_gpuMatrix_scalar_prod <- function(ptrC, scalar, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_prod', PACKAGE = 'gpuR', ptrC, scalar, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_scalar_div <- function(ptrC, B_scalar, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_div', PACKAGE = 'gpuR', ptrC, B_scalar, device_flag, type_flag))
+cpp_gpuMatrix_scalar_div <- function(ptrC, B_scalar, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_div', PACKAGE = 'gpuR', ptrC, B_scalar, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_div <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_div', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_elem_div <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_div', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_pow <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_pow', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_elem_pow <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_pow', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_scalar_pow <- function(ptrA, scalar, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_scalar_pow <- function(ptrA, scalar, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_sin <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_sin <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_asin <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_asin', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_asin <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_asin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_sinh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_sinh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_sinh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_sinh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_cos <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_cos', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_cos <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_cos', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_acos <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_acos', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_acos <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_acos', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_cosh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_cosh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_cosh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_cosh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_tan <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_tan', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_tan <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_tan', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_atan <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_atan', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_atan <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_atan', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_tanh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_tanh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_tanh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_tanh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_log <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log_base <- function(ptrA, ptrB, base, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log_base', PACKAGE = 'gpuR', ptrA, ptrB, base, device_flag, type_flag))
+cpp_gpuMatrix_elem_log_base <- function(ptrA, ptrB, base, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log_base', PACKAGE = 'gpuR', ptrA, ptrB, base, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log10 <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log10', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_log10 <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_log10', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_exp <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_exp <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_abs <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_elem_abs <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_axpy <- function(alpha, ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_axpy <- function(alpha, ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_unary_axpy <- function(ptrA, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_unary_axpy', PACKAGE = 'gpuR', ptrA, device_flag, type_flag))
+cpp_gpuMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_unary_axpy', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_axpy <- function(alpha, ptrA, ptrB, type_flag) {
@@ -542,108 +542,108 @@ cpp_vclMatrix_min <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-cpp_gpuVector_axpy <- function(alpha, ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_axpy <- function(alpha, ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_unary_axpy <- function(ptrA, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_unary_axpy', PACKAGE = 'gpuR', ptrA, device_flag, type_flag))
+cpp_gpuVector_unary_axpy <- function(ptrA, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_unary_axpy', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id))
 }
 
-cpp_gpuVector_inner_prod <- function(ptrA, ptrB, device_flag, type_flag) {
-    .Call('gpuR_cpp_gpuVector_inner_prod', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag)
+cpp_gpuVector_inner_prod <- function(ptrA, ptrB, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuVector_inner_prod', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id)
 }
 
-cpp_gpuVector_outer_prod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_outer_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuVector_outer_prod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_outer_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_prod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuVector_elem_prod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_prod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuVector_scalar_prod <- function(ptrC, scalar, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_scalar_prod', PACKAGE = 'gpuR', ptrC, scalar, device_flag, type_flag))
+cpp_gpuVector_scalar_prod <- function(ptrC, scalar, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_scalar_prod', PACKAGE = 'gpuR', ptrC, scalar, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_div <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_div', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuVector_elem_div <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_div', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuVector_scalar_div <- function(ptrC, scalar, order, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_scalar_div', PACKAGE = 'gpuR', ptrC, scalar, order, device_flag, type_flag))
+cpp_gpuVector_scalar_div <- function(ptrC, scalar, order, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_scalar_div', PACKAGE = 'gpuR', ptrC, scalar, order, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_pow <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_pow', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuVector_elem_pow <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_pow', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuVector_scalar_pow <- function(ptrA, scalar, ptrC, order, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, order, device_flag, type_flag))
+cpp_gpuVector_scalar_pow <- function(ptrA, scalar, ptrC, order, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, order, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_sin <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_sin <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_asin <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_asin', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_asin <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_asin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_sinh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_sinh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_sinh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_sinh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_cos <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_cos', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_cos <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_cos', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_acos <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_acos', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_acos <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_acos', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_cosh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_cosh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_cosh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_cosh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_tan <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_tan', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_tan <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_tan', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_atan <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_atan', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_atan <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_atan', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_tanh <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_tanh', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_tanh <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_tanh', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_log10 <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_log10', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_log10 <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log10', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_log <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_log', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_log <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_log_base <- function(ptrA, ptrB, base, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_log_base', PACKAGE = 'gpuR', ptrA, ptrB, base, device_flag, type_flag))
+cpp_gpuVector_elem_log_base <- function(ptrA, ptrB, base, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_log_base', PACKAGE = 'gpuR', ptrA, ptrB, base, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_exp <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_exp <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_exp', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_elem_abs <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuVector_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuVector_elem_abs <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_max <- function(ptrA, device_flag, type_flag) {
-    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, device_flag, type_flag)
+cpp_gpuVector_max <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
 }
 
-cpp_gpuVector_min <- function(ptrA, device_flag, type_flag) {
-    .Call('gpuR_cpp_gpuVector_min', PACKAGE = 'gpuR', ptrA, device_flag, type_flag)
+cpp_gpuVector_min <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuVector_min', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
 }
 
 cpp_vclVector_axpy <- function(alpha, ptrA, ptrB, type_flag) {
@@ -750,20 +750,20 @@ cpp_vclVector_min <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_min', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-cpp_gpuMatrix_gemm <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_gemm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_gemm <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_gemm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_crossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_crossprod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, device_flag, type_flag))
+cpp_gpuMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_tcrossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_transpose <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_transpose <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_gemm <- function(ptrA, ptrB, ptrC, type_flag) {
@@ -782,16 +782,16 @@ cpp_vclMatrix_transpose <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
-cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, device_flag) {
-    invisible(.Call('gpuR_cpp_gpu_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, device_flag))
+cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpu_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, ctx_id))
 }
 
 cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
@@ -806,28 +806,28 @@ cpp_vclMatrix_peucl <- function(ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id)
     invisible(.Call('gpuR_cpp_vclMatrix_peucl', PACKAGE = 'gpuR', ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_eucl <- function(ptrA, ptrD, squareDist, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, squareDist, device_flag, type_flag))
+cpp_gpuMatrix_eucl <- function(ptrA, ptrD, squareDist, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_eucl', PACKAGE = 'gpuR', ptrA, ptrD, squareDist, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_peucl <- function(ptrA, ptrB, ptrD, squareDist, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_peucl', PACKAGE = 'gpuR', ptrA, ptrB, ptrD, squareDist, device_flag, type_flag))
+cpp_gpuMatrix_peucl <- function(ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_peucl', PACKAGE = 'gpuR', ptrA, ptrB, ptrD, squareDist, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_colmean <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_colmean', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_colmean <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_colmean', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_colsum <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_colsum', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_colsum <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_colsum', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_rowmean <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_rowmean', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_rowmean <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_rowmean', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_rowsum <- function(ptrA, ptrB, device_flag, type_flag) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_rowsum', PACKAGE = 'gpuR', ptrA, ptrB, device_flag, type_flag))
+cpp_gpuMatrix_rowsum <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_rowsum', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_colmean <- function(ptrA, ptrB, type_flag) {

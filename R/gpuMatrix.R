@@ -10,6 +10,7 @@
 #' @param ncol An integer specifying the number of columns
 #' @param type A character string specifying the type of gpuMatrix.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to gpuMatrix methods
 #' @return A gpuMatrix object
 #' @docType methods
@@ -25,13 +26,13 @@ setGeneric("gpuMatrix", function(data = NA, nrow=NA, ncol=NA, type=NULL, ...){
 #' @aliases gpuMatrix,matrix
 setMethod('gpuMatrix', 
           signature(data = 'matrix'),
-          function(data, type=NULL){
+          function(data, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -93,7 +94,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,missing
 setMethod('gpuMatrix', 
           signature(data = 'missing'),
-          function(data, nrow=NA, ncol=NA, type=NULL){
+          function(data, nrow=NA, ncol=NA, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               
@@ -102,7 +103,7 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -156,7 +157,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,numeric
 setMethod('gpuMatrix', 
           signature(data = 'numeric'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- "double"
                             
@@ -165,7 +166,7 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -237,7 +238,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,integer
 setMethod('gpuMatrix', 
           signature(data = 'integer'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- "integer"
               
@@ -246,7 +247,7 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,

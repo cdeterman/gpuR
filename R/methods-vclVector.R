@@ -122,20 +122,20 @@ setMethod("Arith", c(e1="numeric", e2="vclVector"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          vclVec_axpy(1, e1, e2)
                      },
                      `-` = {
-                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          vclVec_axpy(-1, e2, e1)
                      },
                      `*` = vclVecScalarMult(e2, e1),
                      `/` = {
-                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          vclVecElemDiv(e1, e2)
                      },
                      `^` = {
-                         e1 <- vclVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 <- vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          vclVecElemPow(e1, e2)
                      },
                      stop("undefined operation")
@@ -154,11 +154,11 @@ setMethod("Arith", c(e1="vclVector", e2="numeric"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1))
+                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
                          vclVec_axpy(1, e1, e2)
                      },
                      `-` = {
-                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1))
+                         e2 = vclVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
                          vclVec_axpy(-1, e2, e1)
                      },
                      `*` = vclVecScalarMult(e1, e2),

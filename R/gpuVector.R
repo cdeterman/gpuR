@@ -6,6 +6,7 @@
 #' @param length A non-negative integer specifying the desired length.
 #' @param type A character string specifying the type of gpuVector.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to gpuVector methods
 #' @return A gpuVector object
 #' @docType methods
@@ -20,13 +21,13 @@ setGeneric("gpuVector", function(data, length, type=NULL, ...){
 #' @aliases gpuVector,vector
 setMethod('gpuVector', 
           signature(data = 'vector', length = 'missing'),
-          function(data, type=NULL){
+          function(data, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,
@@ -85,7 +86,7 @@ setMethod('gpuVector',
 #' @aliases gpuVector,missingOrNULL
 setMethod('gpuVector', 
           signature(data = 'missingOrNULL'),
-          function(data, length, type=NULL){
+          function(data, length, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               if (length <= 0) stop("length must be a positive integer")
@@ -93,7 +94,7 @@ setMethod('gpuVector',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- device$device_index
               device_type <- device$device_type
               device_name <- switch(device_type,

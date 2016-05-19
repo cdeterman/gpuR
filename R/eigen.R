@@ -37,14 +37,6 @@ setOldClass("eigen")
 setMethod("eigen", signature(x="gpuMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
           {
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
-              
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
               }
@@ -63,8 +55,8 @@ setMethod("eigen", signature(x="gpuMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              Q <- gpuMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
-              V <- gpuVector(length=as.integer(nrow(x)), type=type)
+              Q <- gpuMatrix(nrow=nrow(x), ncol=ncol(x), type=type, ctx_id = x@.context_index)
+              V <- gpuVector(length=as.integer(nrow(x)), type=type, ctx_id = x@.context_index)
               
               
               switch(type,
@@ -73,13 +65,13 @@ setMethod("eigen", signature(x="gpuMatrix"),
                                              V@address,
                                              symmetric,
                                              6L,
-                                             device_flag),
+                                             x@.context_index - 1),
                      "double" = cpp_gpu_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
                                               8L,
-                                              device_flag),
+                                              x@.context_index - 1),
                      stop("type not currently supported")
                      )
               

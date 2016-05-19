@@ -74,11 +74,11 @@ setMethod("Arith", c(e1="numeric", e2="gpuVector"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          gpuVec_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2))
+                         e1 = gpuVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
                          gpuVec_axpy(-1, e2, e1)
                          },
                      `*` = gpuVecScalarMult(e2, e1),
@@ -101,11 +101,11 @@ setMethod("Arith", c(e1="gpuVector", e2="numeric"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
+                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
                          gpuVec_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1))
+                         e2 = gpuVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
                          gpuVec_axpy(-1, e2, e1)
                          },
                      `*` = gpuVecScalarMult(e1, e2),

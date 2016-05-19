@@ -301,52 +301,52 @@ test_that("gpuMatrix Single Precision transpose", {
 
 # Integer tests
 
-test_that("gpuMatrix Integer Matrix multiplication", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint %*% Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA %*% igpuB
-    
-    expect_equivalent(igpuC[,], Cint, 
-                      info="integer matrix elements not equivalent")      
-})
-
-test_that("gpuMatrix Integer Matrix Subtraction", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint - Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA - igpuB
-    
-    expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC[,], Cint, 
-                 info="integer matrix elements not equivalent")  
-})
-
-test_that("gpuMatrix Integer Matrix Addition", {
-    
-    has_gpu_skip()
-    
-    Cint <- Aint + Bint
-    
-    igpuA <- gpuMatrix(Aint, type="integer")
-    igpuB <- gpuMatrix(Bint, type="integer")
-    
-    igpuC <- igpuA + igpuB
-    
-    expect_is(igpuC, "igpuMatrix")
-    expect_equal(igpuC[,], Cint,
-                 info="integer matrix elements not equivalent")  
-})
+# test_that("gpuMatrix Integer Matrix multiplication", {
+#     
+#     has_gpu_skip()
+#     
+#     Cint <- Aint %*% Bint
+#     
+#     igpuA <- gpuMatrix(Aint, type="integer")
+#     igpuB <- gpuMatrix(Bint, type="integer")
+#     
+#     igpuC <- igpuA %*% igpuB
+#     
+#     expect_equivalent(igpuC[,], Cint, 
+#                       info="integer matrix elements not equivalent")      
+# })
+# 
+# test_that("gpuMatrix Integer Matrix Subtraction", {
+#     
+#     has_gpu_skip()
+#     
+#     Cint <- Aint - Bint
+#     
+#     igpuA <- gpuMatrix(Aint, type="integer")
+#     igpuB <- gpuMatrix(Bint, type="integer")
+#     
+#     igpuC <- igpuA - igpuB
+#     
+#     expect_is(igpuC, "igpuMatrix")
+#     expect_equal(igpuC[,], Cint, 
+#                  info="integer matrix elements not equivalent")  
+# })
+# 
+# test_that("gpuMatrix Integer Matrix Addition", {
+#     
+#     has_gpu_skip()
+#     
+#     Cint <- Aint + Bint
+#     
+#     igpuA <- gpuMatrix(Aint, type="integer")
+#     igpuB <- gpuMatrix(Bint, type="integer")
+#     
+#     igpuC <- igpuA + igpuB
+#     
+#     expect_is(igpuC, "igpuMatrix")
+#     expect_equal(igpuC[,], Cint,
+#                  info="integer matrix elements not equivalent")  
+# })
 
 # Double Precision tests
 

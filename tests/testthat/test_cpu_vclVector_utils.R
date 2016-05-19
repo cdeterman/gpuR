@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclVector Utility Functions")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)

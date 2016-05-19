@@ -75,7 +75,7 @@ class dynEigenMat {
 //            Eigen::Matrix<T, Eigen::Dynamic, 1>& vec = A;
             return mat;
         }
-        viennacl::matrix<T> device_data();
+        viennacl::matrix<T> device_data(long ctx_id);
         void to_host(viennacl::matrix<T> &vclMat);
 };
 

@@ -16,6 +16,47 @@ A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 E <- rnorm(ORDER-1)
 
+# Integer Tests
+
+# test_that("CPU gpuVector integer addition", {
+#     
+#     has_cpu_skip()
+#     
+#     gpuA <- gpuVector(Aint)
+#     gpuB <- gpuVector(Bint)
+#     
+#     # R default
+#     C <- Aint + Bint
+#     
+#     # manual call
+#     #gpuC <- gpu_vec_add(A, B)
+#     
+#     # generic call
+#     gpuC <- gpuA + gpuB
+#     
+#     expect_equivalent(gpuC[], C)
+#     expect_is(gpuC, "gpuVector", "inherits from gpuVector")
+#     expect_is(gpuC, "igpuVector", "is a igpuVector object")
+# })
+# 
+# test_that("CPU gpuVector integer subtraction", {
+#     
+#     has_cpu_skip()
+#     
+#     gpuA <- gpuVector(Aint)
+#     gpuB <- gpuVector(Bint)
+#     
+#     # R default
+#     C <- Aint - Bint
+#     
+#     # generic call
+#     gpuC <- gpuA - gpuB
+#     
+#     expect_equivalent(gpuC[], C)
+#     expect_is(gpuC, "gpuVector", "following vector subtraction")
+#     expect_is(gpuC, "igpuVector", "following vector subtraction")
+# })
+
 # Single Precision Tests
 
 test_that("CPU gpuVector comparison operator", {
@@ -28,45 +69,6 @@ test_that("CPU gpuVector comparison operator", {
                 info = "vector/gpuVector== operator not working correctly")
     expect_true(all(gpuA == A), 
                 info = "gpuVector/vector == operator not working correctly")
-})
-
-test_that("CPU gpuVector integer addition", {
-    
-    has_cpu_skip()
-    
-    gpuA <- gpuVector(Aint)
-    gpuB <- gpuVector(Bint)
-    
-    # R default
-    C <- Aint + Bint
-    
-    # manual call
-    #gpuC <- gpu_vec_add(A, B)
-    
-    # generic call
-    gpuC <- gpuA + gpuB
-    
-    expect_equivalent(gpuC[], C)
-    expect_is(gpuC, "gpuVector", "inherits from gpuVector")
-    expect_is(gpuC, "igpuVector", "is a igpuVector object")
-})
-
-test_that("CPU gpuVector integer subtraction", {
-    
-    has_cpu_skip()
-    
-    gpuA <- gpuVector(Aint)
-    gpuB <- gpuVector(Bint)
-    
-    # R default
-    C <- Aint - Bint
-    
-    # generic call
-    gpuC <- gpuA - gpuB
-    
-    expect_equivalent(gpuC[], C)
-    expect_is(gpuC, "gpuVector", "following vector subtraction")
-    expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
 
 test_that("CPU gpuVector Single precision Additon", {

@@ -57,11 +57,11 @@ setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1), ctx_id=e1@.context_index)
                          gpu_Mat_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1), ctx_id=e1@.context_index)
                          gpu_Mat_axpy(-1, e2, e1)
                          },
                      `*` = gpuMatScalarMult(e1, e2),
@@ -83,20 +83,20 @@ setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpu_Mat_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpu_Mat_axpy(-1, e2, e1)
                          },
                      `*` = gpuMatScalarMult(e2, e1),
                      `/` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpuMatElemDiv(e1, e2)
                          },
                      `^` = {
-                         e1 <- gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 <- gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpuMatElemPow(e1, e2)
                      },
                      stop("undefined operation")

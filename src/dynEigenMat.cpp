@@ -114,7 +114,7 @@ dynEigenMat<T>::dynEigenMat(T scalar, int nr_in, int nc_in)
 
 template<typename T>
 viennacl::matrix<T>
-dynEigenMat<T>::device_data() {
+dynEigenMat<T>::device_data(long ctx_id) {
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr, orig_nr, orig_nc);
     Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ref = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > block(
@@ -125,7 +125,9 @@ dynEigenMat<T>::device_data() {
     const int M = block.cols();
     const int K = block.rows();
     
-    viennacl::matrix<T> vclMat(K,M);
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    viennacl::matrix<T> vclMat(K,M, ctx = ctx);
     viennacl::copy(block, vclMat);
     
     return vclMat;
