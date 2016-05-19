@@ -298,7 +298,7 @@ vclMat_axpy <- function(alpha, A, B){
     {
         if(length(B[]) != length(A[])){
 		stop("Lengths of matrices must match")
-	i}
+	}
         Z <- deepcopy(B)
     }
 

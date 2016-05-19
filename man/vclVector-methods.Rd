@@ -26,6 +26,8 @@ vclVector(data, length, type = NULL, ...)
 is NULL where type is inherited from the source data type.}
 
 \item{...}{Additional method to pass to vclVector methods}
+
+\item{ctx_id}{An integer specifying the object's context}
 }
 \value{
 A vclVector object

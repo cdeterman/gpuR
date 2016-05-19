@@ -11,6 +11,7 @@
 #' @param ncol An integer specifying the number of columns
 #' @param type A character string specifying the type of vclMatrix.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to vclMatrix methods
 #' @return A vclMatrix object
 #' @docType methods

@@ -8,8 +8,6 @@
 #' @seealso \link{detectPlatforms} \link{detectGPUs}
 #' @export
 detectCPUs <- function(platform_idx=NULL){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
     
     current_context_id <- currentContext()
     

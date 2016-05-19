@@ -11,6 +11,8 @@ Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 VignetteBuilder: knitr
 License: GPL (>= 2)
+Depends:
+    R (>= 3.0.2)
 Imports:
     Rcpp (>= 0.11.5),
     assertive,

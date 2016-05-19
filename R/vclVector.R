@@ -7,6 +7,7 @@
 #' @param length A non-negative integer specifying the desired length.
 #' @param type A character string specifying the type of vclVector.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to vclVector methods
 #' @return A vclVector object
 #' @docType methods
