@@ -29,7 +29,7 @@ class dynVCLMat {
         viennacl::matrix<T> A;
         
         dynVCLMat() { } // private default constructor
-	dynVCLMat(viennacl::matrix<T> mat, int ctx_id);
+	    dynVCLMat(viennacl::matrix<T> mat, int ctx_id);
         dynVCLMat(SEXP A_, int ctx_id);
         dynVCLMat(
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am,
@@ -51,7 +51,7 @@ class dynVCLMat {
             );
         void setMatrix(viennacl::matrix<T> mat);
         void setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat);
-	void createMatrix(int nr_in, int nc_in, int ctx_id);
+	    void createMatrix(int nr_in, int nc_in, int ctx_id);
         void setDims(int nr_in, int nc_in){
             nr = nr_in;
             nc = nc_in;
