@@ -180,12 +180,16 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     assert_is_integer(gpu_idx)
     assert_all_are_positive(gpu_idx)
     
-    if(options("gpuR.default.device.type") == "cpu"){
-        return(TRUE)
-    }else{
-        out <- gpuInfo(platform_idx, gpu_idx)$double_support
-        return(out)
-    }
+    device_type <- currentDevice()$device_type
+    
+    
+    out <- switch(device_type,
+                  "gpu" = gpuInfo(device_idx = as.integer(gpu_idx))$deviceName,
+                  "cpu" = TRUE,
+                  stop("Unrecognized device type")
+    )
+    
+    return(out)
     
 }
 

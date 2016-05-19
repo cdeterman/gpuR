@@ -7,6 +7,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
     context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
     device_index <- device$device_index
     device_type <- device$device_type
+    
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
                           "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
