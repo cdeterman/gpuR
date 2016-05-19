@@ -22,10 +22,10 @@ test_that("CPU vclVector Single Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
     
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -68,10 +68,10 @@ test_that("CPU vclVector Double Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
 
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -114,9 +114,9 @@ test_that("CPU vclVector Double Precision Matrix Element-Wise Trignometry", {
 test_that("CPU vclVector Single Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- vclVector(A, type="float")
     
@@ -138,9 +138,9 @@ test_that("CPU vclVector Single Precision Matrix Element-Wise Logs", {
 test_that("CPU vclVector Double Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- vclVector(A, type="double")
     

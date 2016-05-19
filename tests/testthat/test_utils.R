@@ -19,6 +19,7 @@ test_that("gpuInfo() accepts appropriate input", {
     expect_error(gpuInfo(0, 1))
     expect_error(gpuInfo(1, 0))
     expect_error(gpuInfo(c(2,3), 1))
+    expect_error(gpuInfo(1, detectGPUs() + 1))
     
     expect_is(gpuInfo(), "list")
 })

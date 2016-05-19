@@ -37,15 +37,16 @@ cpp_deepcopy_vclMatrix(SEXP ptrA_, int ctx_id)
 //copy an existing Xptr
 template <typename T>
 SEXP
-cpp_deepcopy_vclVector(SEXP ptrA_)
+cpp_deepcopy_vclVector(SEXP ptrA_, int ctx_id)
 {        
     Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
     viennacl::vector_range<viennacl::vector<T> > pA  = ptrA->data();
     
-    dynVCLVec<T> *vec = new dynVCLVec<T>();
-    vec->setVector(pA);
-    vec->setRange(1, pA.size());
-    vec->updateSize();
+    dynVCLVec<T> *vec = new dynVCLVec<T>(pA, ctx_id);
+//    dynVCLVec<T> *vec = new dynVCLVec<T>();
+//    vec->setVector(pA);
+//    vec->setRange(1, pA.size());
+//    vec->updateSize();
     
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
     return pVec;
@@ -461,15 +462,18 @@ cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag, int ctx_id)
 /*** vclVector deepcopy ***/
 // [[Rcpp::export]]
 SEXP
-cpp_deepcopy_vclVector(SEXP ptrA, const int type_flag)
+cpp_deepcopy_vclVector(
+    SEXP ptrA, 
+    const int type_flag,
+    int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            return cpp_deepcopy_vclVector<int>(ptrA);
+            return cpp_deepcopy_vclVector<int>(ptrA, ctx_id);
         case 6:
-            return cpp_deepcopy_vclVector<float>(ptrA);
+            return cpp_deepcopy_vclVector<float>(ptrA, ctx_id);
         case 8:
-            return cpp_deepcopy_vclVector<double>(ptrA);
+            return cpp_deepcopy_vclVector<double>(ptrA, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
     }

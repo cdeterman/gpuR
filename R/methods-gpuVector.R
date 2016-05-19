@@ -242,9 +242,9 @@ valueClass = "vector"
 setMethod('length', signature(x = "gpuVector"),
           function(x) {
               switch(typeof(x),
-                     "integer" = return(cpp_igpuVec_size(x@address)),
-                     "float" = return(cpp_fgpuVec_size(x@address)),
-                     "double" = return(cpp_dgpuVec_size(x@address))
+                     "integer" = return(cpp_gpuVector_size(x@address, 4L)),
+                     "float" = return(cpp_gpuVector_size(x@address, 6L)),
+                     "double" = return(cpp_gpuVector_size(x@address, 8L))
               )
               
           }

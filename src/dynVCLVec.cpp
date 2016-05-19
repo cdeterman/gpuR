@@ -46,6 +46,27 @@ dynVCLVec<T>::dynVCLVec(
     r = temp_r;
 }
 
+template<typename T>
+dynVCLVec<T>::dynVCLVec(
+    viennacl::vector<T> vec,
+    int ctx_id)
+{
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A.switch_memory_context(ctx);
+    A = vec;
+    
+    size = A.size();
+    begin = 1;
+    last = size;
+    ptr = &A;
+    viennacl::range temp_r(0, size);
+    r = temp_r;
+}
+
 
 template<typename T>
 dynVCLVec<T>::dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec)

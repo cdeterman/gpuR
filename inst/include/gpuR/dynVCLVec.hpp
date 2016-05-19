@@ -27,6 +27,7 @@ class dynVCLVec {
         viennacl::vector<T> A;
         
         dynVCLVec() { } // private default constructor
+        dynVCLVec(viennacl::vector<T> vec, int ctx_id);
         dynVCLVec(SEXP A_, int ctx_id);
 //        dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
 //        dynVCLVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);

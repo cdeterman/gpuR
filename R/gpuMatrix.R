@@ -42,12 +42,6 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
@@ -74,6 +68,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dgpuMatrix",
                                     address = sexpToEigenXptr(data, 
                                                               nrow(data),
@@ -118,11 +113,6 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
@@ -143,6 +133,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dgpuMatrix",
                                     address = emptyEigenXptr(nrow, ncol, 8L),
                                     .context_index = context_index,
@@ -185,11 +176,6 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               if(length(data) > 1){
                   data = switch(type,
                                 integer = stop("Cannot create integer gpuMatrix from numeric"),
@@ -203,6 +189,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -227,6 +214,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -269,11 +257,6 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               if(length(data) > 1){
                   data = switch(type,
                                 integer = {
@@ -295,6 +278,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -327,6 +311,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,

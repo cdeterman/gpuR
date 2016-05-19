@@ -31,14 +31,11 @@ int vcl_nrow(SEXP ptrA_)
 }
 
 template <typename T>
-int vcl_gpuVec_size(SEXP ptrA_)
+int cpp_vclVector_size(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
     viennacl::vector_range<viennacl::vector<T> > pA  = ptrA->data();
     return pA.size();
-    
-//    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
-//    return ptrA->size();
 }
 
 // [[Rcpp::export]]
@@ -80,19 +77,20 @@ int vcl_inrow(SEXP ptrA)
 /*** gpuVector size ***/
 
 // [[Rcpp::export]]
-int vcl_dgpuVec_size(SEXP ptrA)
+SEXP
+cpp_vclVector_size(
+    SEXP ptrA,
+    const int type_flag)
 {
-    return vcl_gpuVec_size<double>(ptrA);
-}
-
-// [[Rcpp::export]]
-int vcl_fgpuVec_size(SEXP ptrA)
-{
-    return vcl_gpuVec_size<float>(ptrA);
-}
-
-// [[Rcpp::export]]
-int vcl_igpuVec_size(SEXP ptrA)
-{
-    return vcl_gpuVec_size<int>(ptrA);
+    
+    switch(type_flag) {
+        case 4:
+            return wrap(cpp_vclVector_size<int>(ptrA));
+        case 6:
+            return wrap(cpp_vclVector_size<float>(ptrA));
+        case 8:
+            return wrap(cpp_vclVector_size<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }

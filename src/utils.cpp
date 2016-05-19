@@ -26,7 +26,7 @@ cpp_nrow(SEXP ptrA_)
 
 template <typename T>
 int 
-cpp_gpuVec_size(SEXP ptrA_)
+cpp_gpuVector_size(SEXP ptrA_)
 {
     XPtr<dynEigenVec<T> > pMat(ptrA_);
     return pMat->length();
@@ -132,24 +132,22 @@ cpp_inrow(SEXP ptrA)
 /*** gpuVector size ***/
 
 // [[Rcpp::export]]
-int 
-cpp_dgpuVec_size(SEXP ptrA)
+SEXP
+cpp_gpuVector_size(
+    SEXP ptrA,
+    const int type_flag)
 {
-    return cpp_gpuVec_size<double>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_fgpuVec_size(SEXP ptrA)
-{
-    return cpp_gpuVec_size<float>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_igpuVec_size(SEXP ptrA)
-{
-    return cpp_gpuVec_size<int>(ptrA);
+    
+    switch(type_flag) {
+        case 4:
+            return wrap(cpp_gpuVector_size<int>(ptrA));
+        case 6:
+            return wrap(cpp_gpuVector_size<float>(ptrA));
+        case 8:
+            return wrap(cpp_gpuVector_size<double>(ptrA));
+        default:
+            throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
 }
 
 // [[Rcpp::export]]

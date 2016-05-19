@@ -129,6 +129,10 @@ gpuInfo <- function(platform_idx=1L, device_idx=1L){
     assert_is_integer(device_idx)
     assert_all_are_positive(device_idx)
     
+    if(device_idx > detectGPUs(platform_idx)){
+        stop("Device index out of range on platform")
+    }
+    
     out <- cpp_gpuInfo(platform_idx, device_idx)
     return(out)
 }

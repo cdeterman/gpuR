@@ -2299,22 +2299,8 @@ template <typename T>
 void cpp_vclVector_axpy(
     SEXP alpha_, 
     SEXP ptrA_, 
-    SEXP ptrB_,
-    int device_flag)
+    SEXP ptrB_)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     const T alpha = as<T>(alpha_);
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
@@ -2322,9 +2308,6 @@ void cpp_vclVector_axpy(
     
     viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
     viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
-
-//    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrB(ptrB_);
     
     ptrB += alpha * (ptrA);
 }
@@ -2332,22 +2315,8 @@ void cpp_vclVector_axpy(
 template <typename T>
 void 
 cpp_vclVector_unary_axpy(
-    SEXP ptrA_, 
-    int device_flag)
+    SEXP ptrA_)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
     
@@ -2360,26 +2329,9 @@ cpp_vclVector_unary_axpy(
 template <typename T>
 T cpp_vclVector_inner_prod(
     SEXP ptrA_, 
-    SEXP ptrB_,
-    int device_flag)
+    SEXP ptrB_)
 {
     T out;
-    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
-//    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrB(ptrB_);
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
@@ -2396,21 +2348,8 @@ template <typename T>
 void cpp_vclVector_outer_prod(
     SEXP ptrA_, 
     SEXP ptrB_,
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
@@ -2428,22 +2367,8 @@ template <typename T>
 void cpp_vclVector_elem_prod(
     SEXP ptrA_, 
     SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -2459,23 +2384,9 @@ template <typename T>
 void 
 cpp_vclVector_scalar_prod(
     SEXP ptrC_, 
-    SEXP scalar, 
-    int device_flag)
+    SEXP scalar)
 {        
     const T alpha = as<T>(scalar);
-    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
     
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
@@ -2487,26 +2398,8 @@ template <typename T>
 void cpp_vclVector_elem_div(
     SEXP ptrA_, 
     SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
-{    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
-//    Rcpp::XPtr<viennacl::vector<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrB(ptrB_);
-//    Rcpp::XPtr<viennacl::vector<T> > ptrC(ptrC_);
-    
+    SEXP ptrC_)
+{        
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -2522,23 +2415,9 @@ template <typename T>
 void 
 cpp_vclVector_scalar_div(
     SEXP ptrC_, 
-    SEXP scalar, 
-    int device_flag)
+    SEXP scalar)
 {        
     const T alpha = as<T>(scalar);
-    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
     
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
@@ -2550,22 +2429,8 @@ template <typename T>
 void cpp_vclVector_elem_pow(
     SEXP ptrA_, 
     SEXP ptrB_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -2581,22 +2446,8 @@ template <typename T>
 void cpp_vclVector_scalar_pow(
     SEXP ptrA_, 
     SEXP scalar_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     const T scalar = as<T>(scalar_);    
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
@@ -2615,22 +2466,8 @@ void cpp_vclVector_scalar_pow(
 template <typename T>
 void cpp_vclVector_elem_sin(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2644,21 +2481,8 @@ void cpp_vclVector_elem_sin(
 template <typename T>
 void cpp_vclVector_elem_asin(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -2673,21 +2497,8 @@ void cpp_vclVector_elem_asin(
 template <typename T>
 void cpp_vclVector_elem_sinh(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
 
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
@@ -2702,22 +2513,8 @@ void cpp_vclVector_elem_sinh(
 template <typename T>
 void cpp_vclVector_elem_cos(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2731,22 +2528,8 @@ void cpp_vclVector_elem_cos(
 template <typename T>
 void cpp_vclVector_elem_acos(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2760,22 +2543,8 @@ void cpp_vclVector_elem_acos(
 template <typename T>
 void cpp_vclVector_elem_cosh(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
-{    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    SEXP ptrC_)
+{   
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2789,22 +2558,8 @@ void cpp_vclVector_elem_cosh(
 template <typename T>
 void cpp_vclVector_elem_tan(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2818,22 +2573,8 @@ void cpp_vclVector_elem_tan(
 template <typename T>
 void cpp_vclVector_elem_atan(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2847,22 +2588,8 @@ void cpp_vclVector_elem_atan(
 template <typename T>
 void cpp_vclVector_elem_tanh(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2875,22 +2602,8 @@ void cpp_vclVector_elem_tanh(
 template <typename T>
 void cpp_vclVector_elem_exp(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
-{
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    SEXP ptrC_)
+{    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2904,22 +2617,8 @@ void cpp_vclVector_elem_exp(
 template <typename T>
 void cpp_vclVector_elem_log10(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 { 
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2934,22 +2633,8 @@ template <typename T>
 void cpp_vclVector_elem_log_base(
     SEXP ptrA_, 
     SEXP ptrC_,
-    T base,
-    int device_flag)
+    T base)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2963,22 +2648,8 @@ void cpp_vclVector_elem_log_base(
 template <typename T>
 void cpp_vclVector_elem_log(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -2992,22 +2663,8 @@ template <typename T>
 void 
 cpp_vclVector_elem_abs(
     SEXP ptrA_, 
-    SEXP ptrC_,
-    int device_flag)
+    SEXP ptrC_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
@@ -3020,22 +2677,8 @@ cpp_vclVector_elem_abs(
 template <typename T>
 T
 cpp_vclVector_max(
-    SEXP ptrA_,
-    int device_flag)
+    SEXP ptrA_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     T max;
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
@@ -3049,22 +2692,8 @@ cpp_vclVector_max(
 template <typename T>
 T
 cpp_vclVector_min(
-    SEXP ptrA_,
-    int device_flag)
+    SEXP ptrA_)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     T max;
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
@@ -3083,23 +2712,7 @@ void cpp_vclMatrix_axpy(
     SEXP ptrA_, 
     SEXP ptrB_)
 {
-//    // define device type to use
-//    if(device_flag == 0){
-//        //use only GPUs
-//        long id = 0;
-//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-//        viennacl::ocl::switch_context(id);
-//    }else{
-//        // use only CPUs
-//        long id = 1;
-//        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-//        viennacl::ocl::switch_context(id);
-//    }
-    
     const T alpha = as<T>(alpha_);
-    
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrA(ptrA_);
-//    Rcpp::XPtr<viennacl::matrix<T> > ptrB(ptrB_);
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
@@ -4617,19 +4230,18 @@ void
 cpp_vclVector_axpy(
     SEXP alpha,
     SEXP ptrA, SEXP ptrB,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_axpy<int>(alpha, ptrA, ptrB, device_flag);
+            cpp_vclVector_axpy<int>(alpha, ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_axpy<float>(alpha, ptrA, ptrB, device_flag);
+            cpp_vclVector_axpy<float>(alpha, ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_axpy<double>(alpha, ptrA, ptrB, device_flag);
+            cpp_vclVector_axpy<double>(alpha, ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4640,19 +4252,18 @@ cpp_vclVector_axpy(
 void
 cpp_vclVector_unary_axpy(
     SEXP ptrA,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_unary_axpy<int>(ptrA, device_flag);
+            cpp_vclVector_unary_axpy<int>(ptrA);
             return;
         case 6:
-            cpp_vclVector_unary_axpy<float>(ptrA, device_flag);
+            cpp_vclVector_unary_axpy<float>(ptrA);
             return;
         case 8:
-            cpp_vclVector_unary_axpy<double>(ptrA, device_flag);
+            cpp_vclVector_unary_axpy<double>(ptrA);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -4664,17 +4275,16 @@ cpp_vclVector_unary_axpy(
 SEXP
 cpp_vclVector_inner_prod(
     SEXP ptrA, SEXP ptrB,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            return wrap(cpp_vclVector_inner_prod<int>(ptrA, ptrB, device_flag));
+            return wrap(cpp_vclVector_inner_prod<int>(ptrA, ptrB));
         case 6:
-            return wrap(cpp_vclVector_inner_prod<float>(ptrA, ptrB, device_flag));
+            return wrap(cpp_vclVector_inner_prod<float>(ptrA, ptrB));
         case 8:
-            return wrap(cpp_vclVector_inner_prod<double>(ptrA, ptrB, device_flag));
+            return wrap(cpp_vclVector_inner_prod<double>(ptrA, ptrB));
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
     }
@@ -4684,19 +4294,18 @@ cpp_vclVector_inner_prod(
 void
 cpp_vclVector_outer_prod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_outer_prod<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_outer_prod<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclVector_outer_prod<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_outer_prod<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclVector_outer_prod<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_outer_prod<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4707,19 +4316,18 @@ cpp_vclVector_outer_prod(
 void
 cpp_vclVector_elem_prod(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_prod<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_prod<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclVector_elem_prod<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_prod<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclVector_elem_prod<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_prod<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4731,19 +4339,18 @@ void
 cpp_vclVector_scalar_prod(
     SEXP ptrC,
     SEXP scalar,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_scalar_prod<int>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_prod<int>(ptrC, scalar);
             return;
         case 6:
-            cpp_vclVector_scalar_prod<float>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_prod<float>(ptrC, scalar);
             return;
         case 8:
-            cpp_vclVector_scalar_prod<double>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_prod<double>(ptrC, scalar);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4754,19 +4361,18 @@ cpp_vclVector_scalar_prod(
 void
 cpp_vclVector_elem_div(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_div<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_div<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclVector_elem_div<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_div<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclVector_elem_div<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_div<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4779,19 +4385,18 @@ void
 cpp_vclVector_scalar_div(
     SEXP ptrC, 
     SEXP scalar, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_scalar_div<int>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_div<int>(ptrC, scalar);
             return;
         case 6:
-            cpp_vclVector_scalar_div<float>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_div<float>(ptrC, scalar);
             return;
         case 8:
-            cpp_vclVector_scalar_div<double>(ptrC, scalar, device_flag);
+            cpp_vclVector_scalar_div<double>(ptrC, scalar);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4802,19 +4407,18 @@ cpp_vclVector_scalar_div(
 void
 cpp_vclVector_elem_pow(
     SEXP ptrA, SEXP ptrB, SEXP ptrC,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_pow<int>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_pow<int>(ptrA, ptrB, ptrC);
             return;
         case 6:
-            cpp_vclVector_elem_pow<float>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_pow<float>(ptrA, ptrB, ptrC);
             return;
         case 8:
-            cpp_vclVector_elem_pow<double>(ptrA, ptrB, ptrC, device_flag);
+            cpp_vclVector_elem_pow<double>(ptrA, ptrB, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4828,19 +4432,18 @@ cpp_vclVector_scalar_pow(
     SEXP ptrA, 
     SEXP scalar, 
     SEXP ptrC,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_scalar_pow<int>(ptrA, scalar, ptrC, device_flag);
+            cpp_vclVector_scalar_pow<int>(ptrA, scalar, ptrC);
             return;
         case 6:
-            cpp_vclVector_scalar_pow<float>(ptrA, scalar, ptrC, device_flag);
+            cpp_vclVector_scalar_pow<float>(ptrA, scalar, ptrC);
             return;
         case 8:
-            cpp_vclVector_scalar_pow<double>(ptrA, scalar, ptrC, device_flag);
+            cpp_vclVector_scalar_pow<double>(ptrA, scalar, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4851,19 +4454,18 @@ cpp_vclVector_scalar_pow(
 void
 cpp_vclVector_elem_sin(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_sin<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sin<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_sin<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sin<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_sin<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sin<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4874,19 +4476,18 @@ cpp_vclVector_elem_sin(
 void
 cpp_vclVector_elem_asin(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_asin<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_asin<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_asin<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_asin<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_asin<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_asin<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4898,19 +4499,18 @@ cpp_vclVector_elem_asin(
 void
 cpp_vclVector_elem_sinh(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_sinh<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sinh<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_sinh<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sinh<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_sinh<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_sinh<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4922,19 +4522,18 @@ cpp_vclVector_elem_sinh(
 void
 cpp_vclVector_elem_cos(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_cos<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cos<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_cos<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cos<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_cos<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cos<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4945,19 +4544,18 @@ cpp_vclVector_elem_cos(
 void
 cpp_vclVector_elem_acos(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_acos<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_acos<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_acos<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_acos<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_acos<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_acos<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4969,19 +4567,18 @@ cpp_vclVector_elem_acos(
 void
 cpp_vclVector_elem_cosh(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_cosh<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cosh<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_cosh<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cosh<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_cosh<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_cosh<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -4993,19 +4590,18 @@ cpp_vclVector_elem_cosh(
 void
 cpp_vclVector_elem_tan(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_tan<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tan<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_tan<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tan<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_tan<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tan<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5016,19 +4612,18 @@ cpp_vclVector_elem_tan(
 void
 cpp_vclVector_elem_atan(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_atan<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_atan<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_atan<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_atan<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_atan<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_atan<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5039,20 +4634,19 @@ cpp_vclVector_elem_atan(
 // [[Rcpp::export]]
 void
 cpp_vclVector_elem_tanh(
-    SEXP ptrA, SEXP ptrB, 
-    int device_flag,
+    SEXP ptrA, SEXP ptrB,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_tanh<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tanh<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_tanh<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tanh<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_tanh<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_tanh<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5064,19 +4658,18 @@ cpp_vclVector_elem_tanh(
 void
 cpp_vclVector_elem_log(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_log<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_log<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_log<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5087,19 +4680,18 @@ cpp_vclVector_elem_log(
 void
 cpp_vclVector_elem_log10(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_log10<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log10<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_log10<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log10<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_log10<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_log10<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5112,19 +4704,18 @@ void
 cpp_vclVector_elem_log_base(
     SEXP ptrA, SEXP ptrB, 
     SEXP R_base,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_log_base<int>(ptrA, ptrB, as<int>(R_base), device_flag);
+            cpp_vclVector_elem_log_base<int>(ptrA, ptrB, as<int>(R_base));
             return;
         case 6:
-            cpp_vclVector_elem_log_base<float>(ptrA, ptrB, as<float>(R_base), device_flag);
+            cpp_vclVector_elem_log_base<float>(ptrA, ptrB, as<float>(R_base));
             return;
         case 8:
-            cpp_vclVector_elem_log_base<double>(ptrA, ptrB, as<double>(R_base), device_flag);
+            cpp_vclVector_elem_log_base<double>(ptrA, ptrB, as<double>(R_base));
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5136,18 +4727,17 @@ cpp_vclVector_elem_log_base(
 void
 cpp_vclVector_elem_exp(
     SEXP ptrA, SEXP ptrB, 
-    int device_flag,
     const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_exp<int>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_exp<int>(ptrA, ptrB);
             return;
         case 6:
-            cpp_vclVector_elem_exp<float>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_exp<float>(ptrA, ptrB);
             return;
         case 8:
-            cpp_vclVector_elem_exp<double>(ptrA, ptrB, device_flag);
+            cpp_vclVector_elem_exp<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5158,19 +4748,18 @@ cpp_vclVector_elem_exp(
 void
 cpp_vclVector_elem_abs(
     SEXP ptrA, SEXP ptrC, 
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_vclVector_elem_abs<int>(ptrA, ptrC, device_flag);
+            cpp_vclVector_elem_abs<int>(ptrA, ptrC);
             return;
         case 6:
-            cpp_vclVector_elem_abs<float>(ptrA, ptrC, device_flag);
+            cpp_vclVector_elem_abs<float>(ptrA, ptrC);
             return;
         case 8:
-            cpp_vclVector_elem_abs<double>(ptrA, ptrC, device_flag);
+            cpp_vclVector_elem_abs<double>(ptrA, ptrC);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
@@ -5181,17 +4770,16 @@ cpp_vclVector_elem_abs(
 SEXP
 cpp_vclVector_max(
     SEXP ptrA,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            return wrap(cpp_vclVector_max<int>(ptrA, device_flag));
+            return wrap(cpp_vclVector_max<int>(ptrA));
         case 6:
-            return wrap(cpp_vclVector_max<float>(ptrA, device_flag));
+            return wrap(cpp_vclVector_max<float>(ptrA));
         case 8:
-            return wrap(cpp_vclVector_max<double>(ptrA, device_flag));
+            return wrap(cpp_vclVector_max<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
     }
@@ -5201,17 +4789,16 @@ cpp_vclVector_max(
 SEXP
 cpp_vclVector_min(
     SEXP ptrA,
-    int device_flag,
     const int type_flag)
 {
     
     switch(type_flag) {
         case 4:
-            return wrap(cpp_vclVector_min<int>(ptrA, device_flag));
+            return wrap(cpp_vclVector_min<int>(ptrA));
         case 6:
-            return wrap(cpp_vclVector_min<float>(ptrA, device_flag));
+            return wrap(cpp_vclVector_min<float>(ptrA));
         case 8:
-            return wrap(cpp_vclVector_min<double>(ptrA, device_flag));
+            return wrap(cpp_vclVector_min<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
     }

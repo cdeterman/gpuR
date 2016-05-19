@@ -14,11 +14,6 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
     )
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
-    
-    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-        stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-    }
 
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
@@ -34,6 +29,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
                           .device = device_name)
                   },
                   double = {
+                      assert_has_double(platform_index, device_index)
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
@@ -67,11 +63,6 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
-    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-        stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-    }
-    
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
                   float = {
@@ -89,6 +80,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
                       )
                   },
                   double = {
+                      assert_has_double(platform_index, device_index)
                       new("dvclMatrix",
                           address = 
                               cpp_scalar_vclMatrix(
@@ -125,11 +117,6 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
-    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-        stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-    }
-    
     data = switch(type,
                   integer = {
                       new("ivclMatrix", 
@@ -154,6 +141,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
                           .device = device_name)
                   },
                   double = {
+                      assert_has_double(platform_index, device_index)
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
@@ -187,11 +175,6 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
     platform_index <- currentPlatform()$platform_index
     platform_name <- platformInfo(platform_index)$platformName
     
-    if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-        stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-    }
-    
     data = switch(type,
                   integer = {
                       new("ivclMatrix", 
@@ -222,6 +205,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
                       )
                   },
                   double = {
+                      assert_has_double(platform_index, device_index)
                       new("dvclMatrix",
                           address = 
                               cpp_scalar_vclMatrix(
@@ -277,13 +261,11 @@ vclMatMult <- function(A, B){
                                        6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_gemm(A@address,
-                                        B@address,
-                                        C@address,
-                                        8L)
-               }
+               cpp_vclMatrix_gemm(A@address,
+                                  B@address,
+                                  C@address,
+                                  8L)
+               
            },
            stop("type not recognized")
     )
@@ -355,15 +337,18 @@ vclMatrix_unary_axpy <- function(A){
     switch(type,
            integer = {
                cpp_vclMatrix_unary_axpy(Z@address, 
-                                        4L)
+                                        4L,
+                                        Z@.context_index - 1)
            },
            float = {
                cpp_vclMatrix_unary_axpy(Z@address, 
-                                        6L)
+                                        6L,
+                                        Z@.context_index - 1)
            },
            double = {
                cpp_vclMatrix_unary_axpy(Z@address,
-                                        8L)
+                                        8L,
+                                        Z@.context_index - 1)
            },
            stop("type not recognized")
     )
@@ -452,13 +437,10 @@ vclMatElemMult <- function(A, B){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_prod(A@address,
-                                             B@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_prod(A@address,
+                                       B@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -482,12 +464,9 @@ vclMatScalarMult <- function(A, B){
                                               6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_scalar_prod(C@address,
-                                               B,
-                                               8L)
-               }
+               cpp_vclMatrix_scalar_prod(C@address,
+                                         B,
+                                         8L)
            },
            stop("type not recognized")
     )
@@ -518,13 +497,10 @@ vclMatElemDiv <- function(A, B){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_div(A@address,
-                                            B@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_div(A@address,
+                                      B@address,
+                                      C@address,
+                                      8L)
            },           
            stop("type not recognized")
     )
@@ -538,9 +514,6 @@ vclMatScalarDiv <- function(A, B){
     type <- typeof(A)
     
     C <- deepcopy(A)
-
-print(A@.context_index)
-print(C@.context_index)
     
     switch(type,
            integer = {
@@ -551,12 +524,9 @@ print(C@.context_index)
                                              6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_scalar_div(C@address,
-                                              B,
-                                              8L)
-               }
+               cpp_vclMatrix_scalar_div(C@address,
+                                        B,
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -587,13 +557,10 @@ vclMatElemPow <- function(A, B){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_pow(A@address,
-                                            B@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_pow(A@address,
+                                      B@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -615,16 +582,15 @@ vclMatScalarPow <- function(A, B){
            float = {cpp_vclMatrix_scalar_pow(A@address,
                                              B,
                                              C@address,
-                                             6L)
+                                             6L,
+                                             A@.context_index - 1)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_scalar_pow(A@address,
-                                              B,
-                                              C@address,
-                                              8L)
-               }
+               cpp_vclMatrix_scalar_pow(A@address,
+                                        B,
+                                        C@address,
+                                        8L,
+                                        A@.context_index - 1)
            },
            stop("type not recognized")
     )
@@ -648,12 +614,9 @@ vclMatElemSin <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_sin(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_sin(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -677,12 +640,9 @@ vclMatElemArcSin <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_asin(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_asin(A@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -706,12 +666,9 @@ vclMatElemHypSin <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_sinh(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_sinh(A@address,
+                                       C@address,
+                                       8L)
            },
            
            stop("type not recognized")
@@ -736,12 +693,9 @@ vclMatElemCos <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_cos(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_cos(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -765,12 +719,9 @@ vclMatElemArcCos <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_acos(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_acos(A@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -794,12 +745,9 @@ vclMatElemHypCos <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_cosh(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_cosh(A@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -823,12 +771,9 @@ vclMatElemTan <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_tan(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_tan(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -852,12 +797,9 @@ vclMatElemArcTan <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_atan(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_atan(A@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -881,12 +823,9 @@ vclMatElemHypTan <- function(A){
                                             6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_tanh(A@address,
-                                             C@address,
-                                             8L)
-               }
+               cpp_vclMatrix_elem_tanh(A@address,
+                                       C@address,
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -910,12 +849,9 @@ vclMatElemLog <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_log(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_log(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -940,13 +876,10 @@ vclMatElemLogBase <- function(A, base){
                                                 6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_log_base(A@address,
-                                                 C@address,
-                                                 base,
-                                                 8L)
-               }
+               cpp_vclMatrix_elem_log_base(A@address,
+                                           C@address,
+                                           base,
+                                           8L)
            },
            stop("type not recognized")
     )
@@ -970,12 +903,9 @@ vclMatElemLog10 <- function(A){
                                              6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_log10(A@address,
-                                              C@address,
-                                              8L)
-               }
+               cpp_vclMatrix_elem_log10(A@address,
+                                        C@address,
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -999,12 +929,9 @@ vclMatElemExp <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_exp(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_exp(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -1123,10 +1050,12 @@ vclMatrix_pmcc <- function(A){
            "integer" = stop("integer type not currently implemented"),
            "float" = cpp_vclMatrix_pmcc(A@address, 
                                         B@address, 
-                                        6L),
+                                        6L,
+                                        A@.context_index - 1),
            "double" = cpp_vclMatrix_pmcc(A@address, 
                                          B@address,
-                                         8L),
+                                         8L,
+                                         A@.context_index - 1),
            stop("unsupported matrix type")
     )
     
@@ -1203,12 +1132,9 @@ vclMatElemAbs <- function(A){
                                            6L)
            },
            double = {
-               if(!deviceHasDouble()){
-                   stop("Selected GPU does not support double precision")
-               }else{cpp_vclMatrix_elem_abs(A@address,
-                                            C@address,
-                                            8L)
-               }
+               cpp_vclMatrix_elem_abs(A@address,
+                                      C@address,
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -1225,15 +1151,10 @@ vclMatMax <- function(A){
                 integer = {
                     stop("integer not currently implemented")
                 },
-                float = {cpp_vclMatrix_max(A@address,
-                                           6L)
+                float = {cpp_vclMatrix_max(A@address, 6L)
                 },
                 double = {
-                    if(!deviceHasDouble()){
-                        stop("Selected GPU does not support double precision")
-                    }else{cpp_vclMatrix_max(A@address,
-                                            8L)
-                    }
+                    cpp_vclMatrix_max(A@address, 8L)
                 },
                 stop("type not recognized")
     )
@@ -1250,15 +1171,10 @@ vclMatMin <- function(A){
                 integer = {
                     stop("integer not currently implemented")
                 },
-                float = {cpp_vclMatrix_min(A@address,
-                                           6L)
+                float = {cpp_vclMatrix_min(A@address, 6L)
                 },
                 double = {
-                    if(!deviceHasDouble()){
-                        stop("Selected GPU does not support double precision")
-                    }else{cpp_vclMatrix_min(A@address,
-                                            8L)
-                    }
+                    cpp_vclMatrix_min(A@address, 8L)
                 },
                 stop("type not recognized")
     )

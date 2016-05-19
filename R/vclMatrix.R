@@ -43,11 +43,6 @@ setMethod('vclMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
@@ -68,6 +63,7 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclMatrix",
                                     address = cpp_sexp_mat_to_vclMatrix(data, 8L, context_index - 1),
                                     .context_index = context_index,
@@ -107,11 +103,6 @@ setMethod('vclMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               data = switch(type,
                             integer = {
                                 new("ivclMatrix", 
@@ -132,6 +123,7 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclMatrix",
                                     address = cpp_zero_vclMatrix(nrow, ncol, 8L, context_index - 1),
                                     .context_index = context_index,

@@ -67,6 +67,7 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclVector",
                                     address = vectorToVCL(data, 8L, context_index - 1),
                                     .context_index = context_index,
@@ -132,6 +133,7 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclVector",
                                     address = emptyVecVCL(length, 8L, context_index - 1),
                                     .context_index = context_index,

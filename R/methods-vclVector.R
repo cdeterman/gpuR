@@ -246,9 +246,9 @@ setMethod("Summary", c(x="vclVector"),
 setMethod('length', signature(x = "vclVector"),
           function(x) {
               switch(typeof(x),
-                     "integer" = return(vcl_igpuVec_size(x@address)),
-                     "float" = return(vcl_fgpuVec_size(x@address)),
-                     "double" = return(vcl_dgpuVec_size(x@address))
+                     "integer" = return(cpp_vclVector_size(x@address, 4L)),
+                     "float" = return(cpp_vclVector_size(x@address, 6L)),
+                     "double" = return(cpp_vclVector_size(x@address, 8L))
               )
               
           }
@@ -258,15 +258,38 @@ setMethod('length', signature(x = "vclVector"),
 setMethod("deepcopy", signature(object ="vclVector"),
           function(object){
               
-              out <- switch(typeof(object),
-                            "integer" = new("ivclVector",
-                                            address = cpp_deepcopy_vclVector(object@address, 4L)),
-                            "float" = new("fvclVector", 
-                                          address = cpp_deepcopy_vclVector(object@address, 6L)),
-                            "double" = new("dvclVector", 
-                                           address = cpp_deepcopy_vclVector(object@address, 8L)),
-                            stop("unrecognized type")
-              )
+              out <- 
+                  switch(typeof(object),
+                         "integer" = new("ivclVector",
+                                         address = cpp_deepcopy_vclVector(
+                                             object@address, 
+                                             4L, 
+                                             object@.context_index - 1),
+                                         .context_index = object@.context_index,
+                                         .platform_index = object@.platform_index,
+                                         .platform = object@.platform,
+                                         .device_index = object@.device_index,
+                                         .device = object@.device),
+                         "float" = new("fvclVector", 
+                                       address = cpp_deepcopy_vclVector(
+                                           object@address, 6L, 
+                                           object@.context_index - 1),
+                                       .context_index = object@.context_index,
+                                       .platform_index = object@.platform_index,
+                                       .platform = object@.platform,
+                                       .device_index = object@.device_index,
+                                       .device = object@.device),
+                         "double" = new("dvclVector", 
+                                        address = cpp_deepcopy_vclVector(
+                                            object@address, 8L, 
+                                            object@.context_index - 1),
+                                        .context_index = object@.context_index,
+                                        .platform_index = object@.platform_index,
+                                        .platform = object@.platform,
+                                        .device_index = object@.device_index,
+                                        .device = object@.device),
+                         stop("unrecognized type")
+                  )
               return(out)
           })
 
@@ -281,11 +304,23 @@ setMethod("slice",
               ptr <- switch(typeof(object),
                             "float" = {
                                 address <- cpp_vclVector_slice(object@address, start, end, 6L)
-                                new("fvclVectorSlice", address = address)
+                                new("fvclVectorSlice", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             "double" = {
                                 address <- cpp_vclVector_slice(object@address, start, end, 8L)
-                                new("dvclVectorSlice", address = address)
+                                new("dvclVectorSlice", 
+                                    address = address,
+                                    .context_index = object@.context_index,
+                                    .platform_index = object@.platform_index,
+                                    .platform = object@.platform,
+                                    .device_index = object@.device_index,
+                                    .device = object@.device)
                             },
                             stop("type not recognized")
               )
