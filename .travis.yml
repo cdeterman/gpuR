@@ -21,6 +21,7 @@ r_binary_packages:
   - BH
   - Rcpp
   - RcppEigen
+  - roxygen2
 
 r_packages:
   - assertive
