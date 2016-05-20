@@ -41,6 +41,7 @@ before_install:
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
 
 after_success:
+  - Rscript -e 'devtools::test()'
   - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls()'
 
 notifications:
