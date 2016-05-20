@@ -184,11 +184,10 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     
     device_type <- currentDevice()$device_type
     
-    
     out <- switch(device_type,
-                  "gpu" = gpuInfo(platform_index = as.integer(platform_idx),
+                  "gpu" = gpuInfo(platform_idx = as.integer(platform_idx),
                                   device_idx = as.integer(gpu_idx))$double_support,
-                  "cpu" = cpuInfo(platform_index = as.integer(platform_idx),
+                  "cpu" = cpuInfo(platform_idx = as.integer(platform_idx),
                                   device_idx = as.integer(gpu_idx))$double_support,
                   stop("Unrecognized device type")
     )
