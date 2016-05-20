@@ -116,6 +116,8 @@ detectGPUs <- function(platform_idx=NULL){
 #' @return \item{maxAllocatableMem}{Maximum amount of memory in a single 
 #' piece (bytes)}
 #' @return \item{available}{Whether the device is available}
+#' @return \item{deviceExtensions}{OpenCL device extensions available}
+#' @return \item{double_support}{Logical value if double type supported}
 #' @seealso \link{detectPlatforms} \link{detectGPUs} \link{detectCPUs} \link{cpuInfo}
 #' @author Charles Determan Jr.
 #' @rdname deviceInfo
@@ -184,8 +186,10 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     
     
     out <- switch(device_type,
-                  "gpu" = gpuInfo(device_idx = as.integer(gpu_idx))$deviceName,
-                  "cpu" = TRUE,
+                  "gpu" = gpuInfo(platform_index = as.integer(platform_idx),
+                                  device_idx = as.integer(gpu_idx))$double_support,
+                  "cpu" = cpuInfo(platform_index = as.integer(platform_idx),
+                                  device_idx = as.integer(gpu_idx))$double_support,
                   stop("Unrecognized device type")
     )
     

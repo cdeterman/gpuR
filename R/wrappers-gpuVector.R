@@ -20,11 +20,11 @@ gpuVec_axpy <- function(alpha, A, B){
     switch(type,
            integer = {
                stop("integer not currently implemented")
-               cpp_gpuVector_iaxpy(alpha, 
-                                   A@address,
-                                   Z@address, 
-                                   kernel,
-                                   device_flag)
+               # cpp_gpuVector_iaxpy(alpha, 
+               #                     A@address,
+               #                     Z@address,
+               #                     device_flag,
+               #                     kernel)
            },
            float = {cpp_gpuVector_axpy(alpha, 
                                        A@address, 
@@ -56,7 +56,6 @@ gpuVector_unary_axpy <- function(A){
            integer = {
                stop("integer not currently implemented")
                cpp_gpuVector_unary_axpy(Z@address, 
-                                        device_flag,
                                         4L)
            },
            float = {

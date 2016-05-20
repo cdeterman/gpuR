@@ -42,6 +42,10 @@ group (bytes)}
 piece (bytes)}
 
 \item{available}{Whether the device is available}
+
+\item{deviceExtensions}{OpenCL device extensions available}
+
+\item{double_support}{Logical value if double type supported}
 }
 \description{
 Get basic information about selected device (e.g. GPU)

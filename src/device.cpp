@@ -150,7 +150,7 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
     cl_uint maxWorkItemDim = working_device.max_work_item_dimensions();
     std::vector<std::size_t> maxWorkItemSizes = working_device.max_work_item_sizes();
     std::string deviceExtensions = working_device.extensions();
-
+    bool double_support = working_device.double_support();
 
     std::vector<std::string> extensionsVector;
     boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
@@ -167,7 +167,8 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
                         Named("localMem") = localMem,
                         Named("maxAllocatableMem") = maxAlocatableMem,
                         Named("available") = available_str,
-                        Named("deviceExtensions") = extensionsVector);
+                        Named("deviceExtensions") = extensionsVector,
+                        Named("double_support") = double_support);
 }
 
 //// [[Rcpp::export]]

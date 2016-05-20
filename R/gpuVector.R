@@ -38,7 +38,7 @@ setMethod('gpuVector',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              data = switch(type,
+              out = switch(type,
                             integer = {
                                 new("igpuVector", 
                                     address=sexpVecToEigenVecXptr(data, 
@@ -77,9 +77,10 @@ setMethod('gpuVector',
                                  or unimplemented data type")
               )
               
-              return(data)
+              return(out)
           },
-          valueClass = "gpuVector")
+          valueClass = "gpuVector"
+)
 
 
 #' @rdname gpuVector-methods
@@ -105,7 +106,7 @@ setMethod('gpuVector',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              data = switch(type,
+              out = switch(type,
                             integer = {
                                 new("igpuVector", 
                                     address=emptyEigenVecXptr(length, 4L),
@@ -138,6 +139,7 @@ setMethod('gpuVector',
                                  or unimplemented data type")
               )
               
-              return(data)
+              return(out)
           },
-          valueClass = "gpuVector")
+          valueClass = "gpuVector"
+)

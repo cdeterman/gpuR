@@ -42,11 +42,11 @@ gpu_Mat_axpy <- function(alpha, A, B){
     switch(type,
            integer = {
                stop("integer not currently implemented")
-               cpp_gpuMatrix_iaxpy(alpha, 
-                                   A@address,
-                                   Z@address, 
-                                   kernel,
-                                   device_flag)
+               # cpp_gpuMatrix_iaxpy(alpha, 
+               #                     A@address,
+               #                     Z@address, 
+               #                     kernel,
+               #                     device_flag)
            },
            float = {cpp_gpuMatrix_axpy(alpha, 
                                        A@address, 
