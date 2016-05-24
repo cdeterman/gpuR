@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuMatrix Correlations")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -41,6 +38,3 @@ test_that("CPU gpuMatrix Double Precision Pearson Covariance",
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double colSums not equivalent")  
 })
-
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "gpu")

@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuMatrixBlock algebra")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -667,6 +664,3 @@ test_that("CPU gpuMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dgpuXS, dgpuZS))
 })
-
-# set option back to GPU
-options(gpuR.default.device.type = "gpu")

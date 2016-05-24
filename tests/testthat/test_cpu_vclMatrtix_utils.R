@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix Utility Functions")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
@@ -151,5 +148,3 @@ test_that("vclMatrix set element access", {
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
 })
-
-options(gpuR.default.device.type = "gpu")

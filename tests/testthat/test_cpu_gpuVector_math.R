@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuVector math operations")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -257,5 +254,3 @@ test_that("CPU gpuVector Double Precision Maximum/Minimum", {
                  info="min double vector element not equivalent")  
 })
 
-
-options(gpuR.default.device.type = "gpu")

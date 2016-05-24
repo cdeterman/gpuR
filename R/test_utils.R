@@ -63,12 +63,12 @@ has_cpu_skip <- function() {
 #' if the detected GPU doesn't support double precision
 #' @export
 has_double_skip <- function() {
-    gpuCheck <- try(deviceHasDouble(), silent=TRUE)
-    if(class(gpuCheck)[1] == "try-error"){
-        testthat::skip("No GPUs available")
+    deviceCheck <- try(deviceHasDouble(), silent=TRUE)
+    if(class(deviceCheck)[1] == "try-error"){
+        testthat::skip("Default device doesn't have double precision")
     }else{
-        if (!gpuCheck) {
-            testthat::skip("GPU doesn't support double precision")
+        if (!deviceCheck) {
+            testthat::skip("Default device doesn't support double precision")
         }
     }
 }

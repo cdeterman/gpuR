@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrixBlock algebra")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -667,8 +664,4 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dvclXS, dvclZS))
 })
-
-
-# set option back to GPU
-options(gpuR.default.device.type = "gpu")
 

@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU deepcopy")
 
-# set option back to GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -234,7 +231,3 @@ test_that("CPU Check Double Precision vclMatrix deepcopy", {
     expect_false(isTRUE(all.equal(vclA[], vclB[], tolerance = .Machine$double.eps ^ 0.5)),
                  info = "double deepcopy not distinct from source")
 })
-
-# set option back to GPU
-options(gpuR.default.device.type = "gpu")
-

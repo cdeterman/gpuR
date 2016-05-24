@@ -125,7 +125,7 @@ cpp_gpu_eigen(
             cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 

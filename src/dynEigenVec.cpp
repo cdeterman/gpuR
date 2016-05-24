@@ -22,23 +22,23 @@ dynEigenVec<T>::dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic, 1> &A_)
     ptr = A.data();
 }
 
-template<typename T>
-dynEigenVec<T>::dynEigenVec(Rcpp::XPtr<dynEigenVec<T> > dynVec)
-{
-    size = dynVec->length();
-    begin = dynVec->start();
-    last = dynVec->end();
-    ptr = dynVec->getPtr();
-}
-
-template<typename T>
-dynEigenVec<T>::dynEigenVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_){
-    A = A_;
-    size = A.size();
-    begin = 1;
-    last = size;
-    ptr = A.data();
-}
+// template<typename T>
+// dynEigenVec<T>::dynEigenVec(Rcpp::XPtr<dynEigenVec<T> > dynVec)
+// {
+//     size = dynVec->length();
+//     begin = dynVec->start();
+//     last = dynVec->end();
+//     ptr = dynVec->getPtr();
+// }
+// 
+// template<typename T>
+// dynEigenVec<T>::dynEigenVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_){
+//     A = A_;
+//     size = A.size();
+//     begin = 1;
+//     last = size;
+//     ptr = A.data();
+// }
 
 template<typename T>
 dynEigenVec<T>::dynEigenVec(int size_in)
@@ -50,18 +50,18 @@ dynEigenVec<T>::dynEigenVec(int size_in)
     ptr = A.data();
 }
 
-template<typename T>
-dynEigenVec<T>::dynEigenVec(
-    Eigen::Matrix<T, Eigen::Dynamic, 1> &A_,
-    const int start,
-    const int end)
-{
-    A = A_;
-    size = A.size();
-    begin = start - 1;
-    last = end - 1;
-    ptr = A.data();
-}
+// template<typename T>
+// dynEigenVec<T>::dynEigenVec(
+//     Eigen::Matrix<T, Eigen::Dynamic, 1> &A_,
+//     const int start,
+//     const int end)
+// {
+//     A = A_;
+//     size = A.size();
+//     begin = start - 1;
+//     last = end - 1;
+//     ptr = A.data();
+// }
 
 template class dynEigenVec<int>;
 template class dynEigenVec<float>;

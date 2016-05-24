@@ -182,30 +182,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// get_gpu_slice_vec
-SEXP get_gpu_slice_vec(SEXP ptrA, const int type_flag);
-RcppExport SEXP gpuR_get_gpu_slice_vec(SEXP ptrASEXP, SEXP type_flagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    __result = Rcpp::wrap(get_gpu_slice_vec(ptrA, type_flag));
-    return __result;
-END_RCPP
-}
-// get_gpu_slice_length
-SEXP get_gpu_slice_length(SEXP ptrA, const int type_flag);
-RcppExport SEXP gpuR_get_gpu_slice_length(SEXP ptrASEXP, SEXP type_flagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    __result = Rcpp::wrap(get_gpu_slice_length(ptrA, type_flag));
-    return __result;
-END_RCPP
-}
 // GetVecElement
 SEXP GetVecElement(SEXP ptrA, const int idx, const int type_flag);
 RcppExport SEXP gpuR_GetVecElement(SEXP ptrASEXP, SEXP idxSEXP, SEXP type_flagSEXP) {
@@ -427,6 +403,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< int >::type device_type(device_typeSEXP);
     cpp_gpuMatrix_iaxpy(alpha_, ptrA_, ptrB_, sourceCode_, device_type);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuMatrix_custom_igemm
+void cpp_gpuMatrix_custom_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, int ctx_id);
+RcppExport SEXP gpuR_cpp_gpuMatrix_custom_igemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
+    cpp_gpuMatrix_custom_igemm(ptrA_, ptrB_, ptrC_, sourceCode_, ctx_id);
     return R_NilValue;
 END_RCPP
 }

@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuVector Utility Functions")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -108,6 +105,4 @@ test_that("dgpuVector set accession method successful", {
     expect_error(gpuD[101] <- 42.42, 
                  info = "no error when set outside dgpuVector size")
 })
-
-options(gpuR.default.device.type = "gpu")
 

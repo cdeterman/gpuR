@@ -68,16 +68,16 @@ dynVCLVec<T>::dynVCLVec(
 }
 
 
-template<typename T>
-dynVCLVec<T>::dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec)
-{
-    size = dynVec->length();
-    begin = dynVec->start();
-    last = dynVec->end();
-    ptr = dynVec->getPtr();
-    viennacl::range temp_r(begin-1, last);
-    r = temp_r;
-}
+// template<typename T>
+// dynVCLVec<T>::dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec)
+// {
+//     size = dynVec->length();
+//     begin = dynVec->start();
+//     last = dynVec->end();
+//     ptr = dynVec->getPtr();
+//     viennacl::range temp_r(begin-1, last);
+//     r = temp_r;
+// }
 
 template<typename T>
 void 

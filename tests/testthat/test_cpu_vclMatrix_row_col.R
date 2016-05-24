@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix Row and Column Methods")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -13,6 +10,8 @@ ORDER_Y <- 5
 # Base R objects
 A <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
 B <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
+Aint <- matrix(seq.int(ORDER_X), ORDER_X, ORDER_X)
+Bint <- matrix(seq.int(ORDER_X), ORDER_X, ORDER_X)
 
 R <- rowSums(A)
 C <- colSums(A)
@@ -235,6 +234,56 @@ test_that("CPU vclMatrix Double Precision rbind",
                  info="double scalar rbind not equivalent") 
 })
 
+test_that("CPU vclMatrix Integer Precision cbind", {
+    has_cpu_skip()
+    
+    C_bind <- cbind(Aint, Bint)
+    C_scalar <- cbind(1, Aint)
+    C_scalar2 <- cbind(Aint,1)
+    
+    gpuA <- vclMatrix(Aint, type="integer")
+    gpuB <- vclMatrix(Bint, type="integer")
+    
+    gpuC <- cbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "ivclMatrix")
+    expect_equal(gpuC[], C_bind, 
+                 info="integer cbind not equivalent")  
+    
+    gpu_scalar <- cbind(1L, gpuA)
+    gpu_scalar2 <- cbind(gpuA, 1L)
+    
+    expect_equal(gpu_scalar[], C_scalar,
+                 info="integer scalar cbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, 
+                 info="integer scalar cbind not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision rbind", {
+    has_cpu_skip()
+    
+    C_bind <- rbind(Aint, Bint)
+    C_scalar <- rbind(1, Aint)
+    C_scalar2 <- rbind(Aint,1)
+    
+    gpuA <- vclMatrix(Aint, type="integer")
+    gpuB <- vclMatrix(Bint, type="integer")
+    
+    gpuC <- rbind(gpuA, gpuB)
+    
+    expect_is(gpuC, "ivclMatrix")
+    expect_equal(gpuC[], C_bind,  
+                 info="integer rbind not equivalent")  
+    
+    gpu_scalar <- rbind(1L, gpuA)
+    gpu_scalar2 <- rbind(gpuA, 1L)
+    
+    expect_equal(gpu_scalar[], C_scalar, 
+                 info="integer scalar rbind not equivalent") 
+    expect_equal(gpu_scalar2[], C_scalar2, 
+                 info="integer scalar rbind not equivalent") 
+})
+
 # 'block' object tests
 
 test_that("CPU vclMatrix Single Precision Block Column Sums",
@@ -355,5 +404,3 @@ test_that("CPU vclMatrix Double Precision Block Row Means",
     expect_equal(gpuC[], RMS, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double rowMeans not equivalent")  
 })
-
-options(gpuR.default.device.type = "gpu")

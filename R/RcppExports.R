@@ -83,14 +83,6 @@ gpuMatBlock <- function(ptrA, rowStart, rowEnd, colStart, colEnd, type_flag) {
     .Call('gpuR_gpuMatBlock', PACKAGE = 'gpuR', ptrA, rowStart, rowEnd, colStart, colEnd, type_flag)
 }
 
-get_gpu_slice_vec <- function(ptrA, type_flag) {
-    .Call('gpuR_get_gpu_slice_vec', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-get_gpu_slice_length <- function(ptrA, type_flag) {
-    .Call('gpuR_get_gpu_slice_length', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
 GetVecElement <- function(ptrA, idx, type_flag) {
     .Call('gpuR_GetVecElement', PACKAGE = 'gpuR', ptrA, idx, type_flag)
 }
@@ -157,6 +149,10 @@ emptyEigenXptr <- function(nr, nc, type_flag) {
 
 cpp_gpuMatrix_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
     invisible(.Call('gpuR_cpp_gpuMatrix_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
+}
+
+cpp_gpuMatrix_custom_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, ctx_id))
 }
 
 cpp_gpuMatrix_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, device_type) {

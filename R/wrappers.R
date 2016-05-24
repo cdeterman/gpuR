@@ -117,11 +117,16 @@ gpu_Mat_mult <- function(A, B){
     switch(type,
            integer = {
                stop("integer not currently implemented")
+               # cpp_gpuMatrix_custom_igemm(A@address,
+               #                            B@address,
+               #                            C@address,
+               #                            kernel,
+               #                            A@.context_index - 1)
                # cpp_gpuMatrix_igemm(A@address,
-               #                     B@address, 
+               #                     B@address,
                #                     C@address,
                #                     kernel,
-               #                     device_flag)
+               #                     0L)
                #                      cpp_vienna_gpuMatrix_igemm(A@address,
                #                                                        B@address,
                #                                                        C@address)

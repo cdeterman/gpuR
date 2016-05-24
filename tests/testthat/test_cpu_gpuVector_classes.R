@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuVector classes")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 
 test_that("integer vector class present", {
@@ -99,4 +96,3 @@ test_that("dgpuVectorSlice class present", {
                  info = "source dgpuVector length has been changed")
 })
 
-options(gpuR.default.device.type = "gpu")

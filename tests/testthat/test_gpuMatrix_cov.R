@@ -20,10 +20,15 @@ test_that("gpuMatrix Single Precision Pearson Covariance",
     fgpuX <- gpuMatrix(A, type="float")
     
     gpuC <- cov(fgpuX)
+    gpuCp <- cov(fgpuX, method = "pearson")
     
     expect_is(gpuC, "fgpuMatrix")
     expect_equal(gpuC[], C, tolerance=1e-06, 
                  info="float covariance values not equivalent")  
+    expect_equal(gpuCp[], C, tolerance=1e-06, 
+                 info="float covariance values not equivalent") 
+    expect_error(cov(fgpuX, method = "unimplemented"), 
+                 info = "no error thrown for unknown method")
 })
 
 test_that("gpuMatrix Double Precision Pearson Covariance", 

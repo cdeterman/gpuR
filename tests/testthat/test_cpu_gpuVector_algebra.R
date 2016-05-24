@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuVector algebra")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -552,5 +549,3 @@ test_that("CPU gpuVector double precision outer product", {
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double vector outer product elements not equivalent")
 })
-
-options(gpuR.default.device.type = "gpu")

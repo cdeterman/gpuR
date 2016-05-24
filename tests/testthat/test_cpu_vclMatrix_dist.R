@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix Distance Computations")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -206,6 +203,4 @@ test_that("CPU vclMatrix Double Precision Pairwise Squared Euclidean Distance",
                  info="double squared euclidean pairwise distances not equivalent",
                  check.attributes=FALSE) 
 })
-
-options(gpuR.default.device.type = "gpu")
 

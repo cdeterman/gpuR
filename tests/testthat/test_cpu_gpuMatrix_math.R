@@ -1,8 +1,5 @@
 library(gpuR)
 context("CPU gpuMatrix math operations")
-
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
 options(warn=-1)
 
 # set seed
@@ -279,6 +276,4 @@ test_that("gpuMatrix Double Precision Maximum/Minimum", {
                  info="min double matrix element not equivalent")  
 })
 
-
-options(gpuR.default.device.type = "gpu")
 options(warn=0)

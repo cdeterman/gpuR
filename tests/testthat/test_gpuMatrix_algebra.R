@@ -23,14 +23,15 @@ test_that("gpuMatrix Single Precision Matrix multiplication", {
     
     fgpuA <- gpuMatrix(A, type="float")
     fgpuB <- gpuMatrix(B, type="float")
-    
-#     print(fgpuA[])
+    fgpuE <- gpuMatrix(E, type = "float")
     
     fgpuC <- fgpuA %*% fgpuB
     
     expect_is(fgpuC, "fgpuMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_error(fgpuA %*% fgpuE,
+                 info = "error not thrown for non-conformant matrices")
 })
 
 test_that("gpuMatrix Single Precision Matrix Subtraction", {
@@ -223,13 +224,17 @@ test_that("gpuMatrix Single Precision Scalar Matrix Power", {
     has_gpu_skip()
     
     C <- A^2
+    C2 <- 2^A
     
     dgpuA <- gpuMatrix(A, type="float")
     
     dgpuC <- dgpuA^2
+    dgpuC2 <- 2^dgpuA
     
     expect_is(dgpuC, "fgpuMatrix")
     expect_equal(dgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_equal(dgpuC2[,], C2, tolerance=1e-07, 
                  info="float matrix elements not equivalent") 
 })
 
@@ -302,20 +307,20 @@ test_that("gpuMatrix Single Precision transpose", {
 # Integer tests
 
 # test_that("gpuMatrix Integer Matrix multiplication", {
-#     
+# 
 #     has_gpu_skip()
-#     
+# 
 #     Cint <- Aint %*% Bint
-#     
+# 
 #     igpuA <- gpuMatrix(Aint, type="integer")
 #     igpuB <- gpuMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA %*% igpuB
-#     
-#     expect_equivalent(igpuC[,], Cint, 
-#                       info="integer matrix elements not equivalent")      
-# })
 # 
+#     igpuC <- igpuA %*% igpuB
+# 
+#     expect_equivalent(igpuC[,], Cint,
+#                       info="integer matrix elements not equivalent")
+# })
+
 # test_that("gpuMatrix Integer Matrix Subtraction", {
 #     
 #     has_gpu_skip()

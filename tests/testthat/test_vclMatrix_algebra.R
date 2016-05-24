@@ -23,12 +23,15 @@ test_that("vclMatrix Single Precision Matrix Multiplication", {
     
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    fvclE <- vclMatrix(E, type = "float")
     
     fvclC <- fvclA %*% fvclB
     
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_error(fvclA %*% fvclE, 
+                 info = "error not thrown for non-conformant matrices")
 })
 
 test_that("vclMatrix Single Precision Matrix Subtraction", {
@@ -522,6 +525,7 @@ test_that("vclMatrix Double Precision Scalar Matrix Power", {
 test_that("vclMatrix Double Precision crossprod", {
     
     has_gpu_skip()
+    has_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -548,6 +552,7 @@ test_that("vclMatrix Double Precision crossprod", {
 test_that("vclMatrix Double Precision tcrossprod", {
     
     has_gpu_skip()
+    has_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)

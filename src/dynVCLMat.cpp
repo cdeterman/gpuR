@@ -119,15 +119,15 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int ctx_id)
 }
 
 
-template<typename T>
-dynVCLMat<T>::dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat)
-{
-    nr = dynMat->nrow();
-    nc = dynMat->ncol();
-    row_r = dynMat->row_range();
-    col_r = dynMat->col_range();
-    ptr = dynMat->getPtr();
-}
+// template<typename T>
+// dynVCLMat<T>::dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat)
+// {
+//     nr = dynMat->nrow();
+//     nc = dynMat->ncol();
+//     row_r = dynMat->row_range();
+//     col_r = dynMat->col_range();
+//     ptr = dynMat->getPtr();
+// }
 
 template<typename T>
 void 
@@ -142,26 +142,26 @@ dynVCLMat<T>::setRange(
 }
 
 
-template<typename T>
-void
-dynVCLMat<T>::createMatrix(int nr_in, int nc_in, int ctx_id){
-
-    // std::cout << "creating matrix" << std::endl;
-
-    viennacl::context ctx;
-
-    // explicitly pull context for thread safe forking
-    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
-
-    // std::cout << "pulled context" << std::endl;
-    // std::cout << ctx_id << std::endl;
-
-    A = viennacl::matrix<T>(nr_in, nc_in, ctx=ctx);
-
-    // std::cout << "assigned new matrix" << std::endl;
-
-    ptr = &A;
-}
+// template<typename T>
+// void
+// dynVCLMat<T>::createMatrix(int nr_in, int nc_in, int ctx_id){
+// 
+//     // std::cout << "creating matrix" << std::endl;
+// 
+//     viennacl::context ctx;
+// 
+//     // explicitly pull context for thread safe forking
+//     ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+// 
+//     // std::cout << "pulled context" << std::endl;
+//     // std::cout << ctx_id << std::endl;
+// 
+//     A = viennacl::matrix<T>(nr_in, nc_in, ctx=ctx);
+// 
+//     // std::cout << "assigned new matrix" << std::endl;
+// 
+//     ptr = &A;
+// }
 
 template<typename T>
 void
@@ -170,12 +170,12 @@ dynVCLMat<T>::setMatrix(viennacl::matrix<T> mat){
     ptr = &A;
 }
 
-template<typename T>
-void
-dynVCLMat<T>::setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat){
-    A = mat;
-    ptr = &A;
-}
+// template<typename T>
+// void
+// dynVCLMat<T>::setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat){
+//     A = mat;
+//     ptr = &A;
+// }
 
 template<typename T>
 void 

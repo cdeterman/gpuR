@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuMatrix eigen decomposition")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -109,5 +106,3 @@ test_that("CPU gpuMatrix Symmetric Double Precision Matrix Eigen Decomposition",
 #                  tolerance=.Machine$double.eps ^ 0.5, 
 #                  info="float eigenvectors not equivalent")  
 # })
-
-options(gpuR.default.device.type = "gpu")
