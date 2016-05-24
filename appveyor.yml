@@ -37,7 +37,7 @@ before_build:
 install:
   - ps: Bootstrap
   - echo Installing OpenCL
-  - echo %OPENCL_LIB32%
+  - echo %OPENCL_LIB64%
   - echo %OPENCL_INC%
   - ps: ls
 
