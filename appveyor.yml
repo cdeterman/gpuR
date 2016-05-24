@@ -1,6 +1,9 @@
 
 shallow_clone: true
 
+platform:
+  - x64
+
 environment:
   global:
     OPENCL_LIB64: "C:/projects/AMD/2.9-1/bin/x86_64"
