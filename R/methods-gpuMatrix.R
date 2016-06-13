@@ -529,13 +529,6 @@ setMethod("tcrossprod",
 setMethod("dist", signature(x="gpuMatrix"),
           function(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
           {
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
               
               type = typeof(x)
               
@@ -582,14 +575,6 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
               if(ncol(x) != ncol(y)){
                   stop("columns in x and y are not equivalent")
               }
-              
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
               
               type = typeof(x)
               
