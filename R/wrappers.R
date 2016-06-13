@@ -41,12 +41,17 @@ gpu_Mat_axpy <- function(alpha, A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
                # cpp_gpuMatrix_iaxpy(alpha, 
                #                     A@address,
                #                     Z@address, 
                #                     kernel,
                #                     device_flag)
+               cpp_gpuMatrix_axpy(alpha, 
+                                  A@address, 
+                                  Z@address, 
+                                  4L,
+                                  A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_axpy(alpha, 
                                        A@address, 
@@ -100,36 +105,27 @@ gpu_Mat_mult <- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    #     pkg_path <- find.package("gpuR", .libPaths())
-    #     file <- file.path(pkg_path, "CL", "basic_gemm.cl")
-    
-    file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-    kernel <- readChar(file, file.info(file)$size)
-    
     type <- typeof(A)
     
     C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
-               # cpp_gpuMatrix_custom_igemm(A@address,
-               #                            B@address,
-               #                            C@address,
-               #                            kernel,
-               #                            A@.context_index - 1)
-               # cpp_gpuMatrix_igemm(A@address,
-               #                     B@address,
-               #                     C@address,
-               #                     kernel,
-               #                     0L)
-               #                      cpp_vienna_gpuMatrix_igemm(A@address,
-               #                                                        B@address,
-               #                                                        C@address)
+               # stop("integer not currently implemented")
+               
+               file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
+               
+               if(!file_test("-f", file)){
+                   stop("kernel file does not exist")
+               }
+               kernel <- readChar(file, file.info(file)$size)
+               
+               cpp_gpuMatrix_custom_igemm(A@address,
+                                          B@address,
+                                          C@address,
+                                          kernel,
+                                          sqrt(gpuInfo()$maxWorkGroupSize),
+                                          A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_gemm(A@address,
                                        B@address,
@@ -166,6 +162,11 @@ gpuMatElemMult <- function(A, B){
     switch(type,
            integer = {
                stop("integer not currently implemented")
+               # cpp_gpuMatrix_elem_prod(A@address,
+               #                         B@address,
+               #                         C@address,
+               #                         4L,
+               #                         A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_prod(A@address,
                                             B@address,

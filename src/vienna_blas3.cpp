@@ -294,6 +294,7 @@ cpp_vclMatrix_transpose(
     B = trans(A);
 }
 
+
 /*** vclMatrix Functions ***/
 
 // [[Rcpp::export]]
@@ -385,6 +386,7 @@ cpp_vclMatrix_transpose(
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
+
 
 
 
