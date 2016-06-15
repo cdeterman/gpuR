@@ -929,7 +929,12 @@ cpp_gpuMatrix_scalar_pow(
     
     viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(K,M,scalar, ctx = ctx);
     
+    // std::cout << vcl_A << std::endl;
+    // std::cout << vcl_B << std::endl;
+    
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
+    
+    // std::cout << vcl_C << std::endl;
     
     ptrC->to_host(vcl_C);
 }

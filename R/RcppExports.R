@@ -155,12 +155,12 @@ cpp_gpuMatrix_custom_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, max_loc
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size, ctx_id))
 }
 
-cpp_gpuVector_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
-    invisible(.Call('gpuR_cpp_gpuVector_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
-}
-
 cpp_gpu_two_vec <- function(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_) {
     invisible(.Call('gpuR_cpp_gpu_two_vec', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_))
+}
+
+cpp_gpuVector_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
+    invisible(.Call('gpuR_cpp_gpuVector_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
 }
 
 #' @title Detect Number of Platforms
@@ -198,34 +198,6 @@ truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
 
-vcl_dncol <- function(ptrA) {
-    .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_fncol <- function(ptrA) {
-    .Call('gpuR_vcl_fncol', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_incol <- function(ptrA) {
-    .Call('gpuR_vcl_incol', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_dnrow <- function(ptrA) {
-    .Call('gpuR_vcl_dnrow', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_fnrow <- function(ptrA) {
-    .Call('gpuR_vcl_fnrow', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_inrow <- function(ptrA) {
-    .Call('gpuR_vcl_inrow', PACKAGE = 'gpuR', ptrA)
-}
-
-cpp_vclVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
 cpp_dncol <- function(ptrA) {
     .Call('gpuR_cpp_dncol', PACKAGE = 'gpuR', ptrA)
 }
@@ -260,6 +232,34 @@ cpp_gpuMatrix_max <- function(ptrA, type_flag) {
 
 cpp_gpuMatrix_min <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+vcl_dncol <- function(ptrA) {
+    .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
+}
+
+vcl_fncol <- function(ptrA) {
+    .Call('gpuR_vcl_fncol', PACKAGE = 'gpuR', ptrA)
+}
+
+vcl_incol <- function(ptrA) {
+    .Call('gpuR_vcl_incol', PACKAGE = 'gpuR', ptrA)
+}
+
+vcl_dnrow <- function(ptrA) {
+    .Call('gpuR_vcl_dnrow', PACKAGE = 'gpuR', ptrA)
+}
+
+vcl_fnrow <- function(ptrA) {
+    .Call('gpuR_vcl_fnrow', PACKAGE = 'gpuR', ptrA)
+}
+
+vcl_inrow <- function(ptrA) {
+    .Call('gpuR_vcl_inrow', PACKAGE = 'gpuR', ptrA)
+}
+
+cpp_vclVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id) {

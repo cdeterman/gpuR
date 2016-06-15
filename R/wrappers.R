@@ -161,12 +161,12 @@ gpuMatElemMult <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
-               # cpp_gpuMatrix_elem_prod(A@address,
-               #                         B@address,
-               #                         C@address,
-               #                         4L,
-               #                         A@.context_index - 1)
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_prod(A@address,
+                                       B@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_prod(A@address,
                                             B@address,
@@ -196,7 +196,11 @@ gpuMatScalarMult <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_scalar_prod(C@address,
+                                         B,
+                                         4L,
+                                         A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_scalar_prod(C@address,
                                               B,
@@ -229,7 +233,12 @@ gpuMatElemDiv <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_div(A@address,
+                                      B@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_div(A@address,
                                            B@address,
@@ -258,7 +267,11 @@ gpuMatScalarDiv <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_scalar_div(C@address,
+                                        B,
+                                        4L,
+                                        A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_scalar_div(C@address,
                                              B,
@@ -291,7 +304,12 @@ gpuMatElemPow <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_pow(A@address,
+                                      B@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_pow(A@address,
                                            B@address,
@@ -320,7 +338,12 @@ gpuMatScalarPow <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_scalar_pow(A@address,
+                                        B,
+                                        C@address,
+                                        4L,
+                                        A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_scalar_pow(A@address,
                                              B,
@@ -349,7 +372,11 @@ gpuMatElemSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_sin(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_sin(A@address,
                                            C@address,
@@ -376,7 +403,11 @@ gpuMatElemArcSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_asin(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_asin(A@address,
                                             C@address,
@@ -403,7 +434,11 @@ gpuMatElemHypSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_sinh(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_sinh(A@address,
                                             C@address,
@@ -430,7 +465,11 @@ gpuMatElemCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_cos(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_cos(A@address,
                                            C@address,
@@ -457,7 +496,11 @@ gpuMatElemArcCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_acos(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_acos(A@address,
                                             C@address,
@@ -484,7 +527,11 @@ gpuMatElemHypCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_cosh(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_cosh(A@address,
                                             C@address,
@@ -511,7 +558,11 @@ gpuMatElemTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_tan(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_tan(A@address,
                                            C@address,
@@ -538,7 +589,11 @@ gpuMatElemArcTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_atan(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_atan(A@address,
                                             C@address,
@@ -565,7 +620,11 @@ gpuMatElemHypTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_tanh(A@address,
+                                       C@address,
+                                       4L,
+                                       A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_tanh(A@address,
                                             C@address,
@@ -592,7 +651,11 @@ gpuMatElemLog <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_log(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_log(A@address,
                                            C@address,
@@ -610,7 +673,6 @@ gpuMatElemLog <- function(A){
     return(C)
 }
 
-
 # GPU Element-Wise Log Base
 gpuMatElemLogBase <- function(A, base){
     
@@ -620,7 +682,12 @@ gpuMatElemLogBase <- function(A, base){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_log_base(A@address,
+                                           C@address,
+                                           base,
+                                           4L,
+                                           A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_log_base(A@address,
                                                 C@address,
@@ -649,7 +716,11 @@ gpuMatElemLog10 <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_log10(A@address,
+                                        C@address,
+                                        4L,
+                                        A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_log10(A@address,
                                              C@address,
@@ -676,7 +747,11 @@ gpuMatElemExp <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_exp(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_exp(A@address,
                                            C@address,
@@ -699,14 +774,16 @@ gpu_colSums <- function(A){
     
     type <- typeof(A)
     
-    if(type == "integer"){
-        stop("integer type not currently implemented")
-    }
-    
     sums <- gpuVector(length = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               # stop("integer type not currently implemented")
+               cpp_gpuMatrix_colsum(A@address, 
+                                    sums@address, 
+                                    4L,
+                                    A@.context_index - 1)
+           },
            "float" = {
                cpp_gpuMatrix_colsum(A@address, 
                                     sums@address, 
@@ -730,14 +807,17 @@ gpu_rowSums <- function(A){
     
     type <- typeof(A)
     
-    if(type == "integer"){
-        stop("integer type not currently implemented")
-    }
-    
     sums <- gpuVector(length = nrow(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               # stop("integer type not currently implemented")
+               cpp_gpuMatrix_rowsum(
+                   A@address, 
+                   sums@address,
+                   4L,
+                   A@.context_index - 1)
+           },
            "float" = {
                cpp_gpuMatrix_rowsum(
                    A@address, 
@@ -763,14 +843,16 @@ gpu_colMeans <- function(A){
     
     type <- typeof(A)
     
-    if(type == "integer"){
-        stop("integer type not currently implemented")
-    }
-    
     sums <- gpuVector(length = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               # stop("integer type not currently implemented")
+               cpp_gpuMatrix_colmean(A@address, 
+                                     sums@address, 
+                                     4L,
+                                     A@.context_index - 1)
+           },
            "float" = cpp_gpuMatrix_colmean(A@address, 
                                            sums@address, 
                                            6L,
@@ -789,14 +871,16 @@ gpu_rowMeans <- function(A){
     
     type <- typeof(A)
     
-    if(type == "integer"){
-        stop("integer type not currently implemented")
-    }
-    
     sums <- gpuVector(length = nrow(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               # stop("integer type not currently implemented")
+               cpp_gpuMatrix_rowmean(A@address, 
+                                     sums@address, 
+                                     4L,
+                                     A@.context_index - 1)
+           },
            "float" = cpp_gpuMatrix_rowmean(A@address, 
                                            sums@address, 
                                            6L,
@@ -818,7 +902,13 @@ gpu_pmcc <- function(A){
     B <- gpuMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer type not currently implemented")
+               # cpp_gpuMatrix_pmcc(A@address, 
+               #                    B@address, 
+               #                    4L,
+               #                    A@.context_index - 1)
+           },
            "float" = cpp_gpuMatrix_pmcc(A@address, 
                                         B@address, 
                                         6L,
@@ -844,7 +934,14 @@ gpu_crossprod <- function(X, Y){
     Z <- gpuMatrix(nrow = ncol(X), ncol = ncol(Y), type = type, ctx_id = X@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer type not currently implemented")
+               # cpp_gpuMatrix_crossprod(X@address, 
+               #                         Y@address, 
+               #                         Z@address,
+               #                         4L,
+               #                         X@.context_index - 1)
+           },
            "float" = {
                cpp_gpuMatrix_crossprod(X@address, 
                                        Y@address, 
@@ -877,7 +974,14 @@ gpu_tcrossprod <- function(X, Y){
     Z <- gpuMatrix(nrow = nrow(X), ncol = nrow(Y), type = type, ctx_id = X@.context_index)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer type not currently implemented")
+               # cpp_gpuMatrix_tcrossprod(X@address, 
+               #                          Y@address, 
+               #                          Z@address, 
+               #                          4L,
+               #                          X@.context_index - 1)
+           },
            "float" = {
                cpp_gpuMatrix_tcrossprod(X@address, 
                                         Y@address, 
@@ -921,14 +1025,21 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     invisible(D)
 }
 
-
 # GPU Pairwise Euclidean Distance
 gpuMatrix_peuclidean <- function(A, B, D, squareDist){
     
     type <- typeof(D)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer type not currently implemented")
+               # cpp_gpuMatrix_peucl(A@address,
+               #                     B@address,
+               #                     D@address, 
+               #                     squareDist, 
+               #                     4L,
+               #                     A@.context_index - 1)
+           },
            "float" = cpp_gpuMatrix_peucl(A@address,
                                          B@address,
                                          D@address, 
@@ -956,7 +1067,11 @@ gpuMatElemAbs <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_abs(A@address,
+                                      C@address,
+                                      4L,
+                                      A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_elem_abs(A@address,
                                            C@address,
@@ -1007,7 +1122,9 @@ gpuMatrix_t <- function(A){
     
     type <- typeof(A)
     
-    B <- gpuMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type, ctx_id = A@.context_index)
+    init = ifelse(type == "integer", 0L, 0)
+    
+    B <- gpuMatrix(init, ncol = nrow(A), nrow = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
            integer = {cpp_gpuMatrix_transpose(A@address, B@address, 4L,

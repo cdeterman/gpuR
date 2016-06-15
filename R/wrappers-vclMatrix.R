@@ -5,7 +5,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
     device <- currentDevice()
     
     context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- device$device_index
+    device_index <- as.integer(device$device_index)
     device_type <- device$device_type
     
     device_name <- switch(device_type,
@@ -54,7 +54,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
     device <- currentDevice()
     
     context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- device$device_index
+    device_index <- as.integer(device$device_index)
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -108,7 +108,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
     device <- currentDevice()
     
     context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- device$device_index
+    device_index <- as.integer(device$device_index)
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -166,7 +166,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
     device <- currentDevice()
     
     context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- device$device_index
+    device_index <- as.integer(device$device_index)
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
