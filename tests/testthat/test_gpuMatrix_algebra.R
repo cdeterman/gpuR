@@ -492,8 +492,6 @@ test_that("gpuMatrix Integer Precision Matrix Element-Wise Power", {
     Bpow <- matrix(2, ncol = 3, nrow = 3)
     C <- Apow ^ Bpow
 
-    # C <- apply(C, 2, as.integer)
-
     fgpuA <- gpuMatrix(Apow, type="integer")
     fgpuB <- gpuMatrix(Bpow, type="integer")
 
@@ -574,17 +572,17 @@ test_that("gpuMatrix Integer Precision Scalar Matrix Power", {
 # })
 
 # test_that("gpuMatrix Integer Precision transpose", {
-#     
+# 
 #     has_gpu_skip()
-#     
+# 
 #     At <- t(Aint)
-#     
+# 
 #     fgpuA <- gpuMatrix(Aint, type="integer")
 #     fgpuAt <- t(fgpuA)
-#     
+# 
 #     expect_is(fgpuAt, "igpuMatrix")
 #     expect_equal(fgpuAt[,], At,
-#                  info="transposed integer matrix elements not equivalent") 
+#                  info="transposed integer matrix elements not equivalent")
 # })
 
 # Double Precision tests
