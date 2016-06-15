@@ -1,5 +1,24 @@
 #' @import assertive
 
+
+#' @title Check device type
+#' @description Check what type a device is given platform and device indices
+#' @param platform_idx An integer value indicating which platform to query.
+#' @param device_idx An integer value indicating which device to query.
+#' @return A character string indicating the device type
+#' @export
+deviceType <- function(platform_idx = 1L, device_idx = 1L)
+{
+    assert_is_integer(platform_idx)
+    assert_all_are_positive(platform_idx)
+    assert_is_integer(device_idx)
+    assert_all_are_positive(device_idx)
+    
+    out <- cpp_deviceType(platform_idx, device_idx)
+    
+    return(out)
+}
+
 #' @title Detect Available OpenCL enabled CPUs
 #' @description Find out how many CPUs available
 #' @param platform_idx An integer value indicating which platform to query.

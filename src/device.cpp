@@ -17,6 +17,49 @@
 //using namespace cl;
 using namespace Rcpp;
 
+
+// [[Rcpp::export]]
+SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_)
+{
+    std::string device_type;
+    
+    // subtract one for zero indexing
+    unsigned int plat_idx = as<unsigned int>(platform_idx_) - 1;
+    unsigned int gpu_idx = as<unsigned int>(gpu_idx_) - 1;  
+    
+    // Get available platforms
+    typedef std::vector< viennacl::ocl::platform > platforms_type;
+    platforms_type platforms = viennacl::ocl::get_platforms();
+    
+    if(platforms.size() == 0){
+        stop("No platforms found. Check OpenCL installation!");
+    }
+    
+    if (plat_idx + 1 > platforms.size()){
+        stop("platform index greater than number of platforms.");
+    }
+    
+    // Get device
+    viennacl::ocl::device working_device;
+    working_device = platforms[plat_idx].devices()[gpu_idx];
+    
+    switch(working_device.type()){
+        case 2: 
+            device_type = "cpu";
+            break;
+        case 4: 
+            device_type = "gpu";
+            break;
+        case 8: 
+            device_type = "accelerator";
+            break;
+        default: throw Rcpp::exception("unrecognized device detected");
+        }
+    
+    return(wrap(device_type));
+}
+
+
 // [[Rcpp::export]]
 SEXP cpp_detectGPUs(SEXP platform_idx)
 {    

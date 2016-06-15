@@ -32,6 +32,10 @@ cpp_setContext <- function(id) {
     invisible(.Call('gpuR_cpp_setContext', PACKAGE = 'gpuR', id))
 }
 
+cpp_deviceType <- function(platform_idx_, gpu_idx_) {
+    .Call('gpuR_cpp_deviceType', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
+}
+
 cpp_detectGPUs <- function(platform_idx) {
     .Call('gpuR_cpp_detectGPUs', PACKAGE = 'gpuR', platform_idx)
 }

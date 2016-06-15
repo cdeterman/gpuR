@@ -120,11 +120,18 @@ gpu_Mat_mult <- function(A, B){
                }
                kernel <- readChar(file, file.info(file)$size)
                
+               maxWorkGroupSize <- 
+                   switch(deviceType(C@.platform_index, C@.device_index),
+                          "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                          "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                          stop("unrecognized device type")
+                   )
+               
                cpp_gpuMatrix_custom_igemm(A@address,
                                           B@address,
                                           C@address,
                                           kernel,
-                                          sqrt(gpuInfo()$maxWorkGroupSize),
+                                          sqrt(maxWorkGroupSize),
                                           A@.context_index - 1)
            },
            float = {cpp_gpuMatrix_gemm(A@address,

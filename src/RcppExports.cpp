@@ -46,6 +46,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_deviceType
+SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_);
+RcppExport SEXP gpuR_cpp_deviceType(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
+    __result = Rcpp::wrap(cpp_deviceType(platform_idx_, gpu_idx_));
+    return __result;
+END_RCPP
+}
 // cpp_detectGPUs
 SEXP cpp_detectGPUs(SEXP platform_idx);
 RcppExport SEXP gpuR_cpp_detectGPUs(SEXP platform_idxSEXP) {
