@@ -230,14 +230,6 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
 # vclMatrix GEMM
 vclMatMult <- function(A, B){
     
-#     pkg_path <- find.package("gpuR", .libPaths())
-#     file <- file.path(pkg_path, "CL", "basic_gemm.cl")
-#     
-#     if(!file_test("-f", file)){
-#         stop("kernel file does not exist")
-#     }
-#     kernel <- readChar(file, file.info(file)$size)
-    
     type <- typeof(A)
     
     assert_are_identical(A@.context_index, B@.context_index)
@@ -246,15 +238,21 @@ vclMatMult <- function(A, B){
     
     switch(type,
            integer = {
-               stop("OpenCL integer GEMM not currently
-                    supported for viennacl matrices")
-                #cpp_vclMatrix_igemm(A@address,
-                #                   B@address, 
-                #                   C@address,
-                #                   kernel)
-               #                      cpp_vclMatrix_igemm(A@address,
-               #                                                        B@address,
-               #                                                        C@address)
+               # stop("OpenCL integer GEMM not currently
+               #      supported for viennacl matrices")
+               
+               file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
+               
+               if(!file_test("-f", file)){
+                   stop("kernel file does not exist")
+               }
+               kernel <- readChar(file, file.info(file)$size)
+               
+               cpp_vclMatrix_custom_igemm(A@address,
+                                          B@address,
+                                          C@address,
+                                          kernel,
+                                          sqrt(gpuInfo()$maxWorkGroupSize))
            },
            float = {cpp_vclMatrix_gemm(A@address,
                                        B@address,
@@ -284,14 +282,6 @@ vclMat_axpy <- function(alpha, A, B){
     nrB = nrow(B)
     ncB = ncol(B)
     
-#     pkg_path <- find.package("gpuR", .libPaths())
-#     file <- file.path(pkg_path, "CL", "basic_axpy.cl")
-#     
-#     if(!file_test("-f", file)){
-#         stop("kernel file does not exist")
-#     }
-#     kernel <- readChar(file, file.info(file)$size)
-    
     type <- typeof(A)
     
     Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
@@ -305,12 +295,12 @@ vclMat_axpy <- function(alpha, A, B){
 
     switch(type,
            integer = {
-               stop("OpenCL integer GEMM not currently
-                    supported for viennacl matrices")
-               #cpp_vclMatrix_iaxpy(alpha, 
-                #                          A@address,
-                #                          Z@address, 
-                #                          kernel)
+               # stop("OpenCL integer GEMM not currently
+               #      supported for viennacl matrices")
+               cpp_vclMatrix_axpy(alpha, 
+                                  A@address, 
+                                  Z@address,
+                                  4L)
            },
            float = {cpp_vclMatrix_axpy(alpha, 
                                        A@address, 
@@ -430,7 +420,10 @@ vclMatElemMult <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_prod(A@address,
+                                       B@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_prod(A@address,
                                             B@address,
@@ -458,7 +451,9 @@ vclMatScalarMult <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_scalar_prod(C@address,
+                                         B,
+                                         4L)
            },
            float = {cpp_vclMatrix_scalar_prod(C@address,
                                               B,
@@ -490,7 +485,10 @@ vclMatElemDiv <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_div(A@address,
+                                      B@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_div(A@address,
                                            B@address,
@@ -518,7 +516,9 @@ vclMatScalarDiv <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_scalar_div(C@address,
+                                        B,
+                                        4L)
            },
            float = {cpp_vclMatrix_scalar_div(C@address,
                                              B,
@@ -550,7 +550,10 @@ vclMatElemPow <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_pow(A@address,
+                                      B@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_pow(A@address,
                                            B@address,
@@ -578,7 +581,11 @@ vclMatScalarPow <- function(A, B){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_scalar_pow(A@address,
+                                        B,
+                                        C@address,
+                                        4L,
+                                        A@.context_index - 1)
            },
            float = {cpp_vclMatrix_scalar_pow(A@address,
                                              B,
@@ -608,7 +615,9 @@ vclMatElemSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_sin(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_sin(A@address,
                                            C@address,
@@ -634,7 +643,9 @@ vclMatElemArcSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_asin(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_asin(A@address,
                                             C@address,
@@ -660,7 +671,9 @@ vclMatElemHypSin <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_sinh(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_sinh(A@address,
                                             C@address,
@@ -687,7 +700,9 @@ vclMatElemCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_cos(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_cos(A@address,
                                            C@address,
@@ -713,7 +728,9 @@ vclMatElemArcCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_acos(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_acos(A@address,
                                             C@address,
@@ -739,7 +756,9 @@ vclMatElemHypCos <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_cosh(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_cosh(A@address,
                                             C@address,
@@ -765,7 +784,9 @@ vclMatElemTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_tan(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_tan(A@address,
                                            C@address,
@@ -791,7 +812,9 @@ vclMatElemArcTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_atan(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_atan(A@address,
                                             C@address,
@@ -817,7 +840,9 @@ vclMatElemHypTan <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_tanh(A@address,
+                                       C@address,
+                                       4L)
            },
            float = {cpp_vclMatrix_elem_tanh(A@address,
                                             C@address,
@@ -843,7 +868,9 @@ vclMatElemLog <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_log(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_log(A@address,
                                            C@address,
@@ -869,7 +896,10 @@ vclMatElemLogBase <- function(A, base){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_log_base(A@address,
+                                           C@address,
+                                           base,
+                                           4L)
            },
            float = {cpp_vclMatrix_elem_log_base(A@address,
                                                 C@address,
@@ -897,7 +927,9 @@ vclMatElemLog10 <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_log10(A@address,
+                                        C@address,
+                                        4L)
            },
            float = {cpp_vclMatrix_elem_log10(A@address,
                                              C@address,
@@ -923,7 +955,9 @@ vclMatElemExp <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_exp(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_exp(A@address,
                                            C@address,
@@ -1126,7 +1160,9 @@ vclMatElemAbs <- function(A){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               cpp_vclMatrix_elem_abs(A@address,
+                                      C@address,
+                                      4L)
            },
            float = {cpp_vclMatrix_elem_abs(A@address,
                                            C@address,
@@ -1150,7 +1186,7 @@ vclMatMax <- function(A){
     
     C <- switch(type,
                 integer = {
-                    stop("integer not currently implemented")
+                    cpp_vclMatrix_max(A@address, 4L)
                 },
                 float = {cpp_vclMatrix_max(A@address, 6L)
                 },
@@ -1170,7 +1206,7 @@ vclMatMin <- function(A){
     
     C <- switch(type,
                 integer = {
-                    stop("integer not currently implemented")
+                    cpp_vclMatrix_min(A@address, 4L)
                 },
                 float = {cpp_vclMatrix_min(A@address, 6L)
                 },

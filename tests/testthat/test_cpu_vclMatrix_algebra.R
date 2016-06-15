@@ -296,6 +296,227 @@ test_that("CPU vclMatrix Single Precision transpose", {
                  info="transposed float matrix elements not equivalent") 
 })
 
+
+# Integer tests
+
+test_that("CPU vclMatrix Integer Matrix multiplication", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint %*% Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA %*% igpuB
+    
+    expect_equivalent(igpuC[,], Cint,
+                      info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint - Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA - igpuB
+    
+    expect_is(igpuC, "ivclMatrix")
+    expect_equal(igpuC[,], Cint,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- Aint - 1L
+    C2 <- 1L - Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- fgpuA - 1L
+    fgpuC2 <- 1L - fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C, 
+                 info="integer matrix elements not equivalent") 
+    expect_is(fgpuC2, "ivclMatrix")
+    expect_equal(fgpuC2[,], C2,
+                 info="intger matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Unary Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- -Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- -fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Matrix Addition", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint + Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA + igpuB
+    
+    expect_is(igpuC, "ivclMatrix")
+    expect_equal(igpuC[,], Cint,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Addition", {
+    
+    has_cpu_skip()
+    
+    C <- Aint + 1L
+    C2 <- 1L + Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- fgpuA + 1L
+    fgpuC2 <- 1L + fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(fgpuC2, "ivclMatrix")
+    expect_equal(fgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- Aint * Bint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    fgpuB <- vclMatrix(Bint, type="integer")
+    
+    fgpuC <- fgpuA * fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C, 
+                 info="integer matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- Aint * 2L
+    C2 <- 2L * Aint
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA * 2L
+    dgpuC2 <- 2L * dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(dgpuC2, "ivclMatrix")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Division", {
+    
+    has_cpu_skip()
+    
+    C <- Aint / Bint
+    C <- apply(C, 2, as.integer)
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    fgpuB <- vclMatrix(Bint, type="integer")
+    
+    fgpuC <- fgpuA / fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Division", {
+    
+    has_cpu_skip()
+    
+    C <- Aint/2L
+    C2 <- 2L/Aint
+    
+    C <- apply(C, 2, as.integer)
+    C2 <- apply(C2, 2, as.integer)
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA/2L
+    dgpuC2 <- 2L/dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(dgpuC2, "ivclMatrix")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Power", {
+    
+    has_cpu_skip()
+    
+    Apow <- matrix(seq.int(9), ncol=3, nrow=3)
+    Bpow <- matrix(2, ncol = 3, nrow = 3)
+    C <- Apow ^ Bpow
+    
+    fgpuA <- vclMatrix(Apow, type="integer")
+    fgpuB <- vclMatrix(Bpow, type="integer")
+    
+    fgpuC <- fgpuA ^ fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Power", {
+    
+    has_cpu_skip()
+    
+    C <- Aint^2L
+    C2 <- 2L^Aint
+    
+    C <- apply(C, 2, as.integer)
+    C2 <- apply(C2, 2, as.integer)
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA^2L
+    dgpuC2 <- 2L^dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent")
+})
+
 # Double Precision Tests
 
 test_that("CPU vclMatrix Double Precision Matrix multiplication", {
@@ -590,50 +811,3 @@ test_that("CPU vclMatrix Double Precision transpose", {
     expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps^0.5, 
                  info="transposed double matrix elements not equivalent") 
 })
-
-# test_that("CPU vclMatrix Integer Matrix multiplication successful", {
-#     
-#     has_cpu_skip()
-#     
-#     Cint <- Aint %*% Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA %*% igpuB
-#     
-#     expect_equivalent(igpuC[,], Cint, 
-#                       info="float matrix elements not equivalent")      
-# })
-# 
-# test_that("CPU vclMatrix Integer Matrix Subtraction successful", {
-#     
-#     has_cpu_skip()
-#     
-#     Cint <- Aint - Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA - igpuB
-#     
-#     expect_is(igpuC, "ivclMatrix")
-#     expect_equal(igpuC[,], Cint, 
-#                  info="integer matrix elements not equivalent")  
-# })
-# 
-# test_that("CPU vclMatrix Integer Matrix Addition successful", {
-#     
-#     has_cpu_skip()
-#     
-#     Cint <- Aint + Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA + igpuB
-#     
-#     expect_is(igpuC, "ivclMatrix")
-#     expect_equal(igpuC[,], Cint,
-#                  info="integer matrix elements not equivalent")  
-# })

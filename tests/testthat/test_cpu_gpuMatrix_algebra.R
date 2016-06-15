@@ -306,7 +306,7 @@ test_that("CPU gpuMatrix Single Precision transpose", {
 
 # Integer tests
 
-test_that("gpuMatrix Integer Matrix multiplication", {
+test_that("CPU gpuMatrix Integer Matrix multiplication", {
     
     has_cpu_skip()
     
@@ -321,7 +321,7 @@ test_that("gpuMatrix Integer Matrix multiplication", {
                       info="integer matrix elements not equivalent")
 })
 
-test_that("gpuMatrix Integer Matrix Subtraction", {
+test_that("CPU gpuMatrix Integer Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -337,7 +337,7 @@ test_that("gpuMatrix Integer Matrix Subtraction", {
                  info="integer matrix elements not equivalent")
 })
 
-test_that("gpuMatrix Integer Precision Scalar Matrix Subtraction", {
+test_that("CPU gpuMatrix Integer Precision Scalar Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -357,7 +357,7 @@ test_that("gpuMatrix Integer Precision Scalar Matrix Subtraction", {
                  info="intger matrix elements not equivalent") 
 })
 
-test_that("gpuMatrix Integer Precision Unary Scalar Matrix Subtraction", {
+test_that("CPU gpuMatrix Integer Precision Unary Scalar Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -372,7 +372,7 @@ test_that("gpuMatrix Integer Precision Unary Scalar Matrix Subtraction", {
                  info="integer matrix elements not equivalent") 
 })
 
-test_that("gpuMatrix Integer Matrix Addition", {
+test_that("CPU gpuMatrix Integer Matrix Addition", {
     
     has_cpu_skip()
     
@@ -388,7 +388,7 @@ test_that("gpuMatrix Integer Matrix Addition", {
                  info="integer matrix elements not equivalent")
 })
 
-test_that("gpuMatrix Integer Precision Scalar Matrix Addition", {
+test_that("CPU gpuMatrix Integer Precision Scalar Matrix Addition", {
     
     has_cpu_skip()
     
@@ -408,7 +408,7 @@ test_that("gpuMatrix Integer Precision Scalar Matrix Addition", {
                  info="integer matrix elements not equivalent") 
 })
 
-test_that("gpuMatrix Integer Precision Matrix Element-Wise Multiplication", {
+test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Multiplication", {
     
     has_cpu_skip()
     
@@ -424,7 +424,7 @@ test_that("gpuMatrix Integer Precision Matrix Element-Wise Multiplication", {
                  info="integer matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Integer Precision Scalar Matrix Multiplication", {
+test_that("CPU gpuMatrix Integer Precision Scalar Matrix Multiplication", {
     
     has_cpu_skip()
     
@@ -444,7 +444,7 @@ test_that("gpuMatrix Integer Precision Scalar Matrix Multiplication", {
                  info="integer matrix elements not equivalent") 
 })
 
-test_that("gpuMatrix Integer Precision Matrix Element-Wise Division", {
+test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Division", {
     
     has_cpu_skip()
     
@@ -461,7 +461,7 @@ test_that("gpuMatrix Integer Precision Matrix Element-Wise Division", {
                  info="integer matrix elements not equivalent")  
 })
 
-test_that("gpuMatrix Integer Precision Scalar Matrix Division", {
+test_that("CPU gpuMatrix Integer Precision Scalar Matrix Division", {
     
     has_cpu_skip()
     
@@ -484,7 +484,7 @@ test_that("gpuMatrix Integer Precision Scalar Matrix Division", {
                  info="integer matrix elements not equivalent") 
 })
 
-test_that("gpuMatrix Integer Precision Matrix Element-Wise Power", {
+test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
     
@@ -502,7 +502,7 @@ test_that("gpuMatrix Integer Precision Matrix Element-Wise Power", {
                  info="integer matrix elements not equivalent")
 })
 
-test_that("gpuMatrix Integer Precision Scalar Matrix Power", {
+test_that("CPU gpuMatrix Integer Precision Scalar Matrix Power", {
     
     has_cpu_skip()
     

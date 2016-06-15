@@ -155,6 +155,10 @@ cpp_gpuMatrix_custom_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, max_loc
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size, ctx_id))
 }
 
+cpp_vclMatrix_custom_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size) {
+    invisible(.Call('gpuR_cpp_vclMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size))
+}
+
 cpp_gpu_two_vec <- function(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_) {
     invisible(.Call('gpuR_cpp_gpu_two_vec', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_))
 }
