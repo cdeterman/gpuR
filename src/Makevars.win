@@ -1,8 +1,3 @@
 CXX_STD=CXX11
 PKG_CXXFLAGS=-I../inst/include -I"$(OPENCL_INC)"
-
-ifeq "$(R_ARCH)" "/x64"
-    PKG_LIBS=-L"$(OPENCL_LIB64)" -lOpenCL
-else
-    PKG_LIBS=-L"$(OPENCL_LIB32)" -lOpenCL
-endif
+PKG_LIBS=-L"$(OPENCL_LIB)" -lOpenCL
