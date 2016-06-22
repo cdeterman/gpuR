@@ -2,6 +2,9 @@
 # configure for package gpuR
 # Charles E. Determan Jr.
 #
+# Note - this assumes that when installing from environmental variables
+# that the user wants the 64-bit install
+
 
 FLAGS="PKG_CPPFLAGS=-I../inst/include"
 
@@ -14,18 +17,31 @@ case `uname` in
             # custom paths
             echo "Using OPENCL_LIB = " $OPENCL_LIB
             LIBS="PKG_LIBS=-L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
+            
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory"
+                OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
+            
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
+            
         elif [ ! -z "$CUDA_HOME" ]; then
             # CUDA SDK
             OPENCL_INC=$CUDA_HOME/include
+            FLAGS="${FLAGS} -I'${CUDA_HOME}/include'"
             LIBS="PKG_LIBS=-L$CUDA_HOME/lib64 -framework OpenCL -Wl,-rpath,$CUDA_HOME/lib64"
         elif [ ! -z "$AMDAPPSDKROOT" ]; then
             # AMD SDK
             OPENCL_INC=$AMDAPPSDKROOT/include
+            FLAGS="${FLAGS} -I'${AMDAPPSDKROOT}/include'"
             LIBS="PKG_LIBS=-L$AMDAPPSDKROOT/lib/x86_64 -framework OpenCL -Wl,-rpath,$AMDAPPSDKROOT/lib/x86_64"
         elif [ ! -z "$INTELOCLSDKROOT" ]; then
             # Intel SDK
             echo "using INTELOCLSDKROOT"
             OPENCL_INC=$INTELOCLSDKROOT/include
+            FLAGS="${FLAGS} -I'${INTELOCLSDKROOT}/include'"
             LIBS="PKG_LIBS=-L$INTELOCLSDKROOT/lib/x64 -framework -Wl,-rpath,$INTELOCLSDKROOT/lib/x64"
         else
             echo "OPENCL_LIB not set, trying default lib location"
@@ -61,21 +77,35 @@ case `uname` in
             # custom paths
             echo "Using OPENCL_LIB =" $OPENCL_LIB
             LIBS="PKG_LIBS=-L$OPENCL_LIB -lOpenCL -Wl,-rpath,$OPENCL_LIB"
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory"
+                OPENCL_INC="-lOpenCL"
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
+            
         elif [ ! -z "$CUDA_HOME" ]; then
             # CUDA SDK
             echo "using CUDA_HOME"
             OPENCL_INC=$CUDA_HOME/include
             LIBS="PKG_LIBS=-L$CUDA_HOME/lib64 -lOpenCL -Wl,-rpath,$CUDA_HOME/lib64"
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
+            
         elif [ ! -z "$AMDAPPSDKROOT" ]; then
             # AMD SDK
             echo "using AMDAPPSDKROOT"
             OPENCL_INC=$AMDAPPSDKROOT/include
             LIBS="PKG_LIBS=-L$AMDAPPSDKROOT/lib/x86_64 -lOpenCL -Wl,-rpath,$AMDAPPSDKROOT/lib/x86_64"
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
+            
         elif [ ! -z "$INTELOCLSDKROOT" ]; then
             # Intel SDK
             echo "using INTELOCLSDKROOT"
             OPENCL_INC=$INTELOCLSDKROOT/include
             LIBS="PKG_LIBS=-L$INTELOCLSDKROOT/lib/x64 -lOpenCL -Wl,-rpath,$INTELOCLSDKROOT/lib/x64"
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
+            
         else
             echo "OPENCL_LIB not set, trying default lib location"
             LIBS="PKG_LIBS=-lOpenCL"
@@ -88,6 +118,7 @@ case `uname` in
             else
                 echo "Using OPENCL_INC = " $OPENCL_INC
             fi
+            FLAGS="${FLAGS} -I'${OPENCL_INC}'"
         fi
     
         if test -e "$OPENCL_INC/CL/cl2.hpp"; then

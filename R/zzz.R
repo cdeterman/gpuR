@@ -7,9 +7,11 @@
 .onAttach <- function(libname, pkgname) {
     # Initialize all possible contexts
     if (!identical(Sys.getenv("APPVEYOR"), "True") && !identical(Sys.getenv("TRAVIS"), "true")) {
-        # initialize contexts and return default device
-        default_device <- initContexts()
-        packageStartupMessage(paste0("gpuR ", packageVersion('gpuR'), "\nDefault device: ", default_device))
+        # initialize contexts
+        # default_device <- initContexts()
+        initContexts()
+        # packageStartupMessage(paste0("gpuR ", packageVersion('gpuR'), "\nDefault device: ", default_device))
+        packageStartupMessage(paste0("gpuR ", packageVersion('gpuR')))
     }
 }
 

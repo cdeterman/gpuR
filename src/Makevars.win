@@ -1,3 +1,0 @@
-CXX_STD=CXX11
-PKG_CXXFLAGS=-I../inst/include -I"$(OPENCL_INC)"
-PKG_LIBS=-L"$(OPENCL_LIB)" -lOpenCL

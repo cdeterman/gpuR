@@ -1,1 +1,2 @@
+rm -f src/Makevars.win
 rm -f src/*.o

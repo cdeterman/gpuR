@@ -3,7 +3,7 @@ shallow_clone: true
 
 environment:
   global:
-    OPENCL_LIB32: "C:/projects/AMD/2.9-1/bin/x86"
+    OPENCL_LIB: "C:/projects/AMD/2.9-1/bin/x86"
     OPENCL_INC: "C:/projects/AMD/2.9-1/include"
     R_CHECK_ARGS: "--no-multiarch --no-build-vignettes --no-manual --no-tests"
 

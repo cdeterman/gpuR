@@ -18,7 +18,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-SEXP initContexts(){
+void initContexts(){
     
     // declarations
     int id = 0;
@@ -61,8 +61,8 @@ SEXP initContexts(){
     
     viennacl::ocl::switch_context(0);
     
-//    std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
-    return wrap(viennacl::ocl::current_context().current_device().name());
+    // std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+    // return wrap(viennacl::ocl::current_context().current_device().name());
 }
 
 
