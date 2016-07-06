@@ -5,9 +5,9 @@
 \alias{gpuInfo}
 \title{Device Information}
 \usage{
-gpuInfo(platform_idx = 1L, device_idx = 1L)
+gpuInfo(platform_idx = NULL, device_idx = NULL)
 
-cpuInfo(platform_idx = 1L, device_idx = 1L)
+cpuInfo(platform_idx = NULL, device_idx = NULL)
 }
 \arguments{
 \item{platform_idx}{An integer value indicating which platform to query.}

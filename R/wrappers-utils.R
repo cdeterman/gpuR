@@ -142,14 +142,31 @@ detectGPUs <- function(platform_idx=NULL){
 #' @rdname deviceInfo
 #' @aliases gpuInfo
 #' @export
-gpuInfo <- function(platform_idx=1L, device_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    assert_is_integer(device_idx)
-    assert_all_are_positive(device_idx)
+gpuInfo <- function(platform_idx=NULL, device_idx=NULL){
     
-    if(device_idx > detectGPUs(platform_idx)){
-        stop("Device index out of range on platform")
+    if(detectGPUs(platform_idx) == 0){
+        stop("No CPUs found on platform")
+    }
+    
+    if(!is.null(platform_idx) && !is.null(device_idx)){
+        assert_is_integer(platform_idx)
+        assert_all_are_positive(platform_idx)
+        assert_is_integer(device_idx)
+        assert_all_are_positive(device_idx)
+        
+        if(device_idx > detectGPUs(platform_idx)){
+            stop("Device index out of range on platform")
+        }
+        
+    }else{
+        contexts <- listContexts()
+        idx <- which(contexts$device_type == 'gpu')
+        if(length(idx) == 0){
+            stop("No GPUs found in intialized contexts")
+        }else{
+            platform_idx <- contexts$platform_index[idx[1]]
+            device_idx <- contexts$device_index[idx[1]]
+        }
     }
     
     out <- cpp_gpuInfo(platform_idx, device_idx)
@@ -159,11 +176,32 @@ gpuInfo <- function(platform_idx=1L, device_idx=1L){
 #' @rdname deviceInfo
 #' @aliases cpuInfo
 #' @export
-cpuInfo <- function(platform_idx=1L, device_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    assert_is_integer(device_idx)
-    assert_all_are_positive(device_idx)
+cpuInfo <- function(platform_idx=NULL, device_idx=NULL){
+    
+    if(detectCPUs(platform_idx) == 0){
+        stop("No CPUs found on platform")
+    }
+    
+    if(!is.null(platform_idx) && !is.null(device_idx)){
+        assert_is_integer(platform_idx)
+        assert_all_are_positive(platform_idx)
+        assert_is_integer(device_idx)
+        assert_all_are_positive(device_idx)
+        
+        if(device_idx > detectCPUs(platform_idx)){
+            stop("Device index out of range on platform")
+        }
+        
+    }else{
+        contexts <- listContexts()
+        idx <- which(contexts$device_type == 'cpu')
+        if(length(idx) == 0){
+            stop("No CPUs found in intialized contexts")
+        }else{
+            platform_idx <- contexts$platform_index[idx[1]]
+            device_idx <- contexts$device_index[idx[1]]
+        }
+    }
     
     out <- cpp_cpuInfo(platform_idx, device_idx)
     return(out)

@@ -181,6 +181,10 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
     viennacl::ocl::device working_device;
     working_device = platforms[plat_idx].devices()[cpu_idx];
     
+    if(working_device.type() != CL_DEVICE_TYPE_CPU){
+        stop("device is not a CPU");
+    }
+    
     std::string deviceName = working_device.name();
     std::string deviceVendor = working_device.vendor();
     cl_uint numCores = working_device.max_compute_units();
