@@ -164,8 +164,8 @@ gpuInfo <- function(platform_idx=NULL, device_idx=NULL){
         if(length(idx) == 0){
             stop("No GPUs found in intialized contexts")
         }else{
-            platform_idx <- contexts$platform_index[idx[1]]
-            device_idx <- contexts$device_index[idx[1]]
+            platform_idx <- contexts$platform_index[idx[1]] + 1L
+            device_idx <- contexts$device_index[idx[1]] + 1L
         }
     }
     
