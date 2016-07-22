@@ -1242,5 +1242,3 @@ vclMatrix_t <- function(A){
     
     return(B)
 }
-
-

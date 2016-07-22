@@ -15,7 +15,6 @@
 #' @return A gpuMatrix object
 #' @docType methods
 #' @rdname gpuMatrix-methods
-#' @aliases %*%-gpuR-method
 #' @author Charles Determan Jr.
 #' @export
 setGeneric("gpuMatrix", function(data = NA, nrow=NA, ncol=NA, type=NULL, ...){

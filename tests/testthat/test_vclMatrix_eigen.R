@@ -59,11 +59,11 @@ test_that("vclMatrix Symmetric Double Precision Matrix Eigen Decomposition",
     
     expect_is(E, "list")
     expect_equal(E$values[][ord], V, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="float eigenvalues not equivalent")  
+                 info="double eigenvalues not equivalent")  
     
     # need abs as some signs are opposite (not important with eigenvectors)
     expect_equal(abs(E$vectors[][,ord]), abs(Q), tolerance=.Machine$double.eps ^ 0.5, 
-                 info="float eigenvectors not equivalent")  
+                 info="double eigenvectors not equivalent")  
     
     # make sure X not overwritten
     expect_equal(fgpuX[], X, tolerance=.Machine$double.eps ^ 0.5, 

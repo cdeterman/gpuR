@@ -51,6 +51,14 @@ dynEigenVec<T>::dynEigenVec(int size_in)
 }
 
 // template<typename T>
+// void
+// dynEigenVec<T>::to_host(viennacl::vector<T> &vclMat) {
+//     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+//     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
+//     viennacl::copy(vclMat, A);
+// }
+
+// template<typename T>
 // dynEigenVec<T>::dynEigenVec(
 //     Eigen::Matrix<T, Eigen::Dynamic, 1> &A_,
 //     const int start,

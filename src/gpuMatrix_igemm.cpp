@@ -60,42 +60,42 @@ cpp_gpuMatrix_custom_igemm(
 }
 
 //[[Rcpp::export]]
-void 
+void
 cpp_vclMatrix_custom_igemm(
     SEXP ptrA_, SEXP ptrB_, SEXP ptrC_,
     SEXP sourceCode_,
     int max_local_size)
 {
     std::string my_kernel = as<std::string>(sourceCode_);
-    
+
     Rcpp::XPtr<dynVCLMat<int> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<int> > ptrB(ptrB_);
     Rcpp::XPtr<dynVCLMat<int> > ptrC(ptrC_);
-    
+
     viennacl::matrix_range<viennacl::matrix<int> > vcl_A  = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<int> > vcl_B  = ptrB->data();
     viennacl::matrix_range<viennacl::matrix<int> > vcl_C  = ptrC->data();
-    
+
     int M = vcl_A.size1();
     // int N = vcl_B.size1();
     int P = vcl_B.size2();
     int M_internal = vcl_C.internal_size2();
     int P_internal = vcl_C.internal_size1();
-    
+
     // add kernel to program
     viennacl::ocl::program & my_prog = viennacl::ocl::current_context().add_program(my_kernel, "my_kernel");
-    
+
     // get compiled kernel function
     viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("iMatMult");
-    
+
     // set global work sizes
     my_kernel_mul.global_work_size(0, M_internal);
     my_kernel_mul.global_work_size(1, P_internal);
-    
+
     // set local work sizes
     my_kernel_mul.local_work_size(0, max_local_size);
     my_kernel_mul.local_work_size(1, max_local_size);
-    
+
     // execute kernel
     viennacl::ocl::enqueue(my_kernel_mul(M, M_internal, P, P_internal, vcl_A, vcl_B, vcl_C));
 }

@@ -41,10 +41,8 @@ class dynVCLVec {
         int end() { return last; }
         void setRange(int start, int end);
         void updateSize();
-        void setVector(viennacl::vector_range<viennacl::vector<T> > vec){
-            A = vec;
-            ptr = &A;
-        }
+        void setVector(viennacl::vector_range<viennacl::vector<T> > vec);
+        void setVector(viennacl::vector<T> vec);
         void setPtr(viennacl::vector<T>* ptr_);
         viennacl::vector_range<viennacl::vector<T> > data();
         viennacl::vector<T> vector() {

@@ -107,6 +107,13 @@ dynVCLVec<T>::updateSize(){
     size = last - begin;
 }
 
+template<typename T>
+void
+dynVCLVec<T>::setVector(viennacl::vector<T> vec){
+    A = vec;
+    ptr = &A;
+}
+
 template class dynVCLVec<int>;
 template class dynVCLVec<float>;
 template class dynVCLVec<double>;
