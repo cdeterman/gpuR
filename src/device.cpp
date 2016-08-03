@@ -1,6 +1,5 @@
 
 #include "gpuR/windows_check.hpp"
-#include <boost/algorithm/string.hpp>
 //#include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
@@ -97,6 +96,16 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     return(wrap(device_count));
 }
 
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::stringstream ss(s);
+    std::string item;
+    std::vector<std::string> tokens;
+    while (getline(ss, item, delim)) {
+        tokens.push_back(item);
+    }
+    return tokens;
+}
+
 
 // [[Rcpp::export]]
 List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
@@ -138,7 +147,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
 
 
     std::vector<std::string> extensionsVector;
-    boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
+    extensionsVector = split(deviceExtensions, ' ');
     std::string available_str = (available == 1) ? "yes" : "no";
     
     return List::create(Named("deviceName") = deviceName,
@@ -200,7 +209,7 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
     bool double_support = working_device.double_support();
 
     std::vector<std::string> extensionsVector;
-    boost::split(extensionsVector, deviceExtensions, boost::is_any_of(" "));
+    extensionsVector = split(deviceExtensions, ' ');
     std::string available_str = (available == 1) ? "yes" : "no";
     
     return List::create(Named("deviceName") = deviceName,
