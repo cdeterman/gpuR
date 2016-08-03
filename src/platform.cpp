@@ -1,7 +1,6 @@
 
 #include "gpuR/windows_check.hpp"
-#include <boost/algorithm/string.hpp>
-
+#include "gpuR/utils.hpp"
 #include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
@@ -109,7 +108,7 @@ List cpp_platformInfo(SEXP platform_idx_)
     std::string platformExtensions = plat.getInfo<CL_PLATFORM_EXTENSIONS>();
     
     std::vector<std::string> extensionsVector;
-    boost::split(extensionsVector, platformExtensions, boost::is_any_of(" "));
+    extensionsVector = split(platformExtensions, ' ');
 
     return List::create(Named("platformName") = platformName,
                         Named("platformVendor") = platformVendor,

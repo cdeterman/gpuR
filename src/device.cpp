@@ -1,5 +1,6 @@
 
 #include "gpuR/windows_check.hpp"
+#include "gpuR/utils.hpp"
 //#include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
@@ -94,16 +95,6 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     }    
     
     return(wrap(device_count));
-}
-
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::stringstream ss(s);
-    std::string item;
-    std::vector<std::string> tokens;
-    while (getline(ss, item, delim)) {
-        tokens.push_back(item);
-    }
-    return tokens;
 }
 
 
