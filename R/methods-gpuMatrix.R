@@ -230,6 +230,18 @@ setMethod('ncol', signature(x="gpuMatrix"),
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
 
+#' @title gpuMatrix/vclMatrix length method
+#' @description Retrieve number of elements in object
+#' @param x A gpuMatrix/vclMatrix object
+#' @return A numeric value
+#' @docType methods
+#' @rdname length-methods
+#' @author Charles Determan Jr.
+#' @aliases length-gpuMatrix
+#' @export
+setMethod('length', signature(x="gpuMatrix"),
+          function(x) return(nrow(x) * ncol(x)))
+
 #' @title Extract gpuR object elements
 #' @description Operators to extract or replace elements
 #' @param x A gpuR object
@@ -268,13 +280,45 @@ setMethod("[",
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", drop="missing"),
-          function(x, i, j, drop) {
-              switch(typeof(x),
-                     "integer" = return(GetMatRow(x@address, i, 4L)),
-                     "float" = return(GetMatRow(x@address, i, 6L)),
-                     "double" = return(GetMatRow(x@address, i, 8L)),
-                     stop("type not recognized")
+          function(x, i, j, ..., drop) {
+              
+              if(tail(i, 1) > length(x)){
+                  stop("Index out of bounds")
+              }
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
+              
+              if(nargs() == 3){
+                  return(GetMatRow(x@address, i, type))
+              }else{
+                  
+                  output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
+                  
+                  nr <- nrow(x)
+                  col_idx <- 1
+                  for(elem in seq_along(i)){
+                      if(i[elem] > nr){
+                          tmp <- ceiling(i[elem]/nr)
+                          if(tmp != col_idx){
+                              col_idx <- tmp
+                          }
+                          
+                          row_idx <- i[elem] - (nr * (col_idx - 1))
+                          
+                      }else{
+                          row_idx <- i[elem]
+                      }
+                      
+                      output[elem] <- GetMatElement(x@address, row_idx, col_idx, type)
+                  }
+                  
+                  return(output)
+              }
           })
 
 #' @rdname extract-methods

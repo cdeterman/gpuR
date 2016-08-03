@@ -18,7 +18,6 @@ r_check_args: --no-build-vignettes --no-manual
 
 r_binary_packages:
   - devtools
-  - BH
   - Rcpp
   - RcppEigen
   - roxygen2

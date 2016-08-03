@@ -38,16 +38,54 @@ setMethod("[",
 #' @export
 setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "missing", drop="missing"),
-          function(x, i, j, drop) {
+          function(x, i, j, ..., drop) {
               
-              Rmat <- switch(typeof(x),
-                     "integer" = vclGetRow(x@address, i, 4L, x@.context_index - 1),
-                     "float" = vclGetRow(x@address, i, 6L, x@.context_index - 1),
-                     "double" = vclGetRow(x@address, i, 8L, x@.context_index - 1),
-                     stop("unsupported matrix type")
+              if(tail(i, 1) > length(x)){
+                  stop("Index out of bounds")
+              }
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
               
-	      return(Rmat)
+              if(nargs() == 3){
+                  return(vclGetRow(x@address, i, type))
+              }else{
+                  
+                  output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
+                  
+                  nc <- ncol(x)
+                  row_idx <- 1
+                  for(elem in seq_along(i)){
+                      if(i[elem] > nc){
+                          tmp <- ceiling(i[elem]/nc)
+                          if(tmp != row_idx){
+                              row_idx <- tmp
+                          }
+                          
+                          col_idx <- i[elem] - (nc * (row_idx - 1))
+                          
+                      }else{
+                          col_idx <- i[elem]
+                      }
+                      
+                      output[elem] <- vclGetElement(x@address, row_idx, col_idx, type)
+                  }
+                  
+                  return(output)
+              }
+              
+              # Rmat <- switch(typeof(x),
+              #        "integer" = vclGetRow(x@address, i, 4L, x@.context_index - 1),
+              #        "float" = vclGetRow(x@address, i, 6L, x@.context_index - 1),
+              #        "double" = vclGetRow(x@address, i, 8L, x@.context_index - 1),
+              #        stop("unsupported matrix type")
+              # )
+              
+	      # return(Rmat)
 
           })
 
@@ -383,6 +421,16 @@ setMethod('ncol', signature(x="vclMatrix"),
 setMethod("dim", signature(x="vclMatrix"),
           function(x) {
               return(c(nrow(x), ncol(x)))
+          }
+)
+
+
+#' @rdname length-methods
+#' @aliases length-vclMatrix
+#' @export
+setMethod("length", signature(x="vclMatrix"),
+          function(x) {
+              return(nrow(x) *ncol(x))
           }
 )
 
