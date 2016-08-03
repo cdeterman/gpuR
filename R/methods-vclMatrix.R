@@ -52,7 +52,7 @@ setMethod("[",
               )
               
               if(nargs() == 3){
-                  return(vclGetRow(x@address, i, type))
+                  return(vclGetRow(x@address, i, type, x@.context_index - 1))
               }else{
                   
                   output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))

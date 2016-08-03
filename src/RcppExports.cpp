@@ -2411,18 +2411,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// cpp_vclMatrix_qr
-void cpp_vclMatrix_qr(SEXP ptrA, int type_flag, int ctx_id);
-RcppExport SEXP gpuR_cpp_vclMatrix_qr(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
-    cpp_vclMatrix_qr(ptrA, type_flag, ctx_id);
-    return R_NilValue;
-END_RCPP
-}
 // cpp_gpuMatrix_pmcc
 void cpp_gpuMatrix_pmcc(SEXP ptrA, SEXP ptrB, const int type_flag, int ctx_id);
 RcppExport SEXP gpuR_cpp_gpuMatrix_pmcc(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {

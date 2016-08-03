@@ -790,10 +790,6 @@ cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, ctx_id))
 }
 
-cpp_vclMatrix_qr <- function(ptrA, type_flag, ctx_id) {
-    invisible(.Call('gpuR_cpp_vclMatrix_qr', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id))
-}
-
 cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
