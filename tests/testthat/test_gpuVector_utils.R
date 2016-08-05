@@ -115,3 +115,29 @@ test_that("dgpuVector set accession method successful", {
     expect_error(gpuD[101] <- 42.42, 
                  info = "no error when set outside dgpuVector size")
 })
+
+test_that("gpuVector as.vector method", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpu <- gpuVector(D)
+    fgpu <- gpuVector(D, type="float")
+    igpu <- gpuVector(A)
+    
+    expect_equal(as.vector(dgpu), D,
+                      info = "double as.vector not equal")
+    expect_equal(as.vector(fgpu), D,
+                      info = "float as.vector not equal",
+                      tolerance = 1e-07)
+    expect_equal(as.vector(dgpu), D,
+                      info = "integer as.vector not equal")
+    
+    
+    expect_is(as.vector(dgpu), 'numeric',
+              info = "double as.vector not producing 'vector' class")
+    expect_is(as.vector(fgpu), 'numeric',
+              info = "float as.vector not producing 'vector' class")
+    expect_is(as.vector(igpu), 'integer',
+              info = "integer as.vector not producing 'vector' class")
+})

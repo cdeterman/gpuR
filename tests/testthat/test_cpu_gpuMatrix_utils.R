@@ -157,3 +157,28 @@ test_that("gpuMatrix confirm print doesn't error", {
     
     expect_that(print(dgpu), prints_text("Source: gpuR Matrix"))
 })
+
+test_that("gpuMatrix as.matrix method", {
+    
+    has_cpu_skip()
+    
+    dgpu <- gpuMatrix(D)
+    fgpu <- gpuMatrix(D, type="float")
+    igpu <- gpuMatrix(A)
+    
+    expect_equal(as.matrix(dgpu), D,
+                      info = "double as.matrix not equal")
+    expect_equal(as.matrix(fgpu), D,
+                      info = "float as.matrix not equal",
+                      tolerance = 1e-07)
+    expect_equal(as.matrix(dgpu), D,
+                      info = "integer as.matrix not equal")
+    
+    
+    expect_is(as.matrix(dgpu), 'matrix',
+              info = "double as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(fgpu), 'matrix',
+              info = "float as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(igpu), 'matrix',
+              info = "integer as.matrix not producing 'matrix' class")
+})

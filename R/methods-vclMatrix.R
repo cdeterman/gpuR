@@ -1,4 +1,10 @@
 
+#' @export
+as.matrix.vclMatrix <- function(x){
+    out <- x[]
+    return(out)
+} 
+
 #' @rdname extract-methods
 #' @export
 setMethod("[",

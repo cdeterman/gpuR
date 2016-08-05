@@ -1,6 +1,14 @@
 #' @import methods
 #' @importFrom utils file_test
 
+
+#' @export
+as.matrix.gpuMatrix <- function(x){
+    out <- x[]
+    return(out)
+} 
+
+
 #' @title Matrix Multiplication
 #' @description Multiply two gpuR objects, if they are conformable.  If both
 #' are vectors of the same length, it will return the inner product (as a matrix).

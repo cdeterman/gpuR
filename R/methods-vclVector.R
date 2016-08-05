@@ -1,4 +1,12 @@
 
+
+#' @export
+as.vector.vclVector <- function(x, mode = "any"){
+    out <- x[]
+    return(out)
+}
+
+
 #' @rdname extract-methods
 #' @export
 setMethod("[",

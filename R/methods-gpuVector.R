@@ -1,4 +1,11 @@
 
+#' @export
+as.vector.gpuVector <- function(x, mode = "any"){
+    out <- x[]
+    return(out)
+}
+
+
 #' @rdname as.gpuVector-methods
 #' @aliases as.gpuVector,vector
 setMethod('as.gpuVector', 

@@ -156,3 +156,30 @@ test_that("vclMatrix set element access", {
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
 })
+
+test_that("vclMatrix as.matrix method", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpu <- vclMatrix(D)
+    fgpu <- vclMatrix(D, type="float")
+    igpu <- vclMatrix(A)
+    
+    expect_equal(as.matrix(dgpu), D,
+                      info = "double as.matrix not equal")
+    expect_equal(as.matrix(fgpu), D,
+                      info = "float as.matrix not equal",
+                      tolerance = 1e-07)
+    expect_equal(as.matrix(dgpu), D,
+                      info = "integer as.matrix not equal")
+    
+    
+    expect_is(as.matrix(dgpu), 'matrix',
+              info = "double as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(fgpu), 'matrix',
+              info = "float as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(igpu), 'matrix',
+              info = "integer as.matrix not producing 'matrix' class")
+})
+

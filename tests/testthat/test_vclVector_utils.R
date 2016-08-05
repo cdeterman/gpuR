@@ -117,3 +117,28 @@ test_that("dvclVector set accession method successful", {
                  info = "no error when set outside dvclVector size")
 })
 
+test_that("vclVector as.vector method", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpu <- vclVector(D)
+    fgpu <- vclVector(D, type="float")
+    igpu <- vclVector(A)
+    
+    expect_equal(as.vector(dgpu), D,
+                      info = "double as.vector not equivalent")
+    expect_equal(as.vector(fgpu), D,
+                      info = "float as.vector not equivalent",
+                      tolerance = 1e-07)
+    expect_equal(as.vector(dgpu), D,
+                      info = "integer as.vector not equivalent")
+    
+    
+    expect_is(as.vector(dgpu), 'numeric',
+              info = "double as.vector not producing 'vector' class")
+    expect_is(as.vector(fgpu), 'numeric',
+              info = "float as.vector not producing 'vector' class")
+    expect_is(as.vector(igpu), 'integer',
+              info = "integer as.vector not producing 'vector' class")
+})
