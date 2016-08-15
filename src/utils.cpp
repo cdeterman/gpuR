@@ -87,47 +87,6 @@ cpp_gpuMatrix_min(SEXP ptrA_)
 //    }
 //}
 
-// [[Rcpp::export]]
-int 
-cpp_dncol(SEXP ptrA)
-{
-    return cpp_ncol<double>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_fncol(SEXP ptrA)
-{
-    return cpp_ncol<float>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_incol(SEXP ptrA)
-{
-    return cpp_ncol<int>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_dnrow(SEXP ptrA)
-{
-    return cpp_nrow<double>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_fnrow(SEXP ptrA)
-{
-    return cpp_nrow<float>(ptrA);
-}
-
-// [[Rcpp::export]]
-int 
-cpp_inrow(SEXP ptrA)
-{
-    return cpp_nrow<int>(ptrA);
-}
 
 /*** gpuVector size ***/
 
@@ -187,4 +146,43 @@ cpp_gpuMatrix_min(
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuMatrix_nrow(
+    SEXP ptrA, 
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return wrap(cpp_nrow<int>(ptrA));
+    case 6:
+        return wrap(cpp_nrow<float>(ptrA));
+    case 8:
+        return wrap(cpp_nrow<double>(ptrA));
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+cpp_gpuMatrix_ncol(
+    SEXP ptrA, 
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return wrap(cpp_ncol<int>(ptrA));
+    case 6:
+        return wrap(cpp_ncol<float>(ptrA));
+    case 8:
+        return wrap(cpp_ncol<double>(ptrA));
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
 

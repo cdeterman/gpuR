@@ -18,7 +18,6 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 void initContexts(){
-    
     // declarations
     int id = 0;
     
