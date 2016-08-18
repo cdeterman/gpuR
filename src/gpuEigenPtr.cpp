@@ -6,7 +6,6 @@
 
 using namespace Rcpp;
 
-
 //copy an existing gpuMatrix
 template <typename T>
 SEXP
@@ -147,6 +146,8 @@ SetVecElement(const SEXP data, const int idx, SEXP value)
 
 
 /*** gpuMatrix deepcopy ***/
+
+//' @export
 // [[Rcpp::export]]
 SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)
@@ -478,6 +479,7 @@ SEXP initScalarEigenXptr(T A, int nr, int nc)
     return pMat;
 }
 
+//' @export
 // [[Rcpp::export]]
 SEXP
 sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
@@ -495,6 +497,7 @@ sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
 }
 
 
+//' @export
 // [[Rcpp::export]]
 SEXP
 initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag)
@@ -513,20 +516,21 @@ initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag
 
 /*** matrix imports ***/
 
+//' @export
 // [[Rcpp::export]]
 SEXP
-sexpToEigenXptr(SEXP ptrA, 
+getRmatEigenAddress(SEXP ptrA, 
     const int nr,
     const int nc, 
     const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return sexpToEigenXptr<int>(ptrA, nr, nc);
+            return getRmatEigenAddress<int>(ptrA, nr, nc);
         case 6:
-            return sexpToEigenXptr<float>(ptrA, nr, nc);
+            return getRmatEigenAddress<float>(ptrA, nr, nc);
         case 8:
-            return sexpToEigenXptr<double>(ptrA, nr, nc);
+            return getRmatEigenAddress<double>(ptrA, nr, nc);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -629,7 +633,7 @@ emptyEigenVecXptr(const int size, const int type_flag)
 
 /*** Empty matrix initializers ***/
 
-
+//' @export
 // [[Rcpp::export]]
 SEXP
 emptyEigenXptr(const int nr, const int nc, const int type_flag)

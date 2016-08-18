@@ -63,6 +63,7 @@ cpp_detectCPUs <- function(platform_idx) {
     .Call('gpuR_cpp_detectCPUs', PACKAGE = 'gpuR', platform_idx)
 }
 
+#' @export
 cpp_deepcopy_gpuMatrix <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_deepcopy_gpuMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }
@@ -123,16 +124,19 @@ sexpVecToEigenVecXptr <- function(ptrA, size, type_flag) {
     .Call('gpuR_sexpVecToEigenVecXptr', PACKAGE = 'gpuR', ptrA, size, type_flag)
 }
 
+#' @export
 sexpVecToEigenXptr <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_sexpVecToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
+#' @export
 initScalarEigenXptr <- function(scalar, nr, nc, type_flag) {
     .Call('gpuR_initScalarEigenXptr', PACKAGE = 'gpuR', scalar, nr, nc, type_flag)
 }
 
-sexpToEigenXptr <- function(ptrA, nr, nc, type_flag) {
-    .Call('gpuR_sexpToEigenXptr', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
+#' @export
+getRmatEigenAddress <- function(ptrA, nr, nc, type_flag) {
+    .Call('gpuR_getRmatEigenAddress', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
 EigenVecXPtrToMapEigenVec <- function(ptrA, type_flag) {
@@ -147,6 +151,7 @@ emptyEigenVecXptr <- function(size, type_flag) {
     .Call('gpuR_emptyEigenVecXptr', PACKAGE = 'gpuR', size, type_flag)
 }
 
+#' @export
 emptyEigenXptr <- function(nr, nc, type_flag) {
     .Call('gpuR_emptyEigenXptr', PACKAGE = 'gpuR', nr, nc, type_flag)
 }
@@ -163,12 +168,12 @@ cpp_vclMatrix_custom_igemm <- function(ptrA_, ptrB_, ptrC_, sourceCode_, max_loc
     invisible(.Call('gpuR_cpp_vclMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size))
 }
 
-cpp_gpu_two_vec <- function(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_) {
-    invisible(.Call('gpuR_cpp_gpu_two_vec', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_))
-}
-
 cpp_gpuVector_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
     invisible(.Call('gpuR_cpp_gpuVector_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
+}
+
+cpp_gpu_two_vec <- function(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_) {
+    invisible(.Call('gpuR_cpp_gpu_two_vec', PACKAGE = 'gpuR', ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_))
 }
 
 #' @title Detect Number of Platforms
@@ -206,26 +211,6 @@ truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
 
-cpp_gpuVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_max <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_min <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
 vcl_dncol <- function(ptrA) {
     .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
 }
@@ -252,6 +237,26 @@ vcl_inrow <- function(ptrA) {
 
 cpp_vclVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_max <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_min <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id) {

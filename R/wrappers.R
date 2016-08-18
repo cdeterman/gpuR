@@ -35,7 +35,7 @@ gpu_Mat_axpy <- function(alpha, A, B){
     Z <- gpuMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
     if(!missing(B))
     {
-        if(length(B[]) != length(A[])) stop("Lengths of matrices must match")
+        if(length(B) != length(A)) stop("Lengths of matrices must match")
         Z <- deepcopy(B)
     }
     

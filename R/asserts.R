@@ -1,5 +1,5 @@
 
-
+#' @export
 assert_has_double <- 
     function(plat_idx, device_idx,
              severity = getOption("assertive.severity", "stop"))
