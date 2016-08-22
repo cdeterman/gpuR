@@ -13,7 +13,8 @@ VignetteBuilder: knitr
 License: GPL (>= 2)
 Depends:
     R (>= 3.0.2),
-    methods
+    methods,
+    utils
 Imports:
     Rcpp (>= 0.11.5),
     assertive
