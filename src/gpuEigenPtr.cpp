@@ -479,7 +479,6 @@ SEXP initScalarEigenXptr(T A, int nr, int nc)
     return pMat;
 }
 
-//' @export
 // [[Rcpp::export]]
 SEXP
 sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
@@ -497,7 +496,6 @@ sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
 }
 
 
-//' @export
 // [[Rcpp::export]]
 SEXP
 initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag)
@@ -516,7 +514,6 @@ initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag
 
 /*** matrix imports ***/
 
-//' @export
 // [[Rcpp::export]]
 SEXP
 getRmatEigenAddress(SEXP ptrA, 
@@ -633,7 +630,6 @@ emptyEigenVecXptr(const int size, const int type_flag)
 
 /*** Empty matrix initializers ***/
 
-//' @export
 // [[Rcpp::export]]
 SEXP
 emptyEigenXptr(const int nr, const int nc, const int type_flag)
