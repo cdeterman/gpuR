@@ -50,7 +50,7 @@ void initContexts(){
 //            viennacl::ocl::current_context().switch_device(gpu_idx);
             viennacl::ocl::setup_context(id, devices[gpu_idx]);
 //            viennacl::ocl::get_context(id).switch_device(gpu_idx);
-//            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+           std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
             
             // increment context
             id++;
