@@ -137,6 +137,10 @@ test_that("vclMatrix set element access", {
     A[1,3] <- int
     D[1,3] <- float
     
+    D[c(6,10)] <- 0
+    gpuD[c(6,10)] <- 0
+    gpuF[c(6,10)] <- 0
+    
     expect_equivalent(gpuD[1,3], float,
                       info = "updated dvclMatrix element not equivalent")
     expect_equivalent(gpuD[], D,
@@ -155,6 +159,8 @@ test_that("vclMatrix set element access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
+    expect_equivalent(gpuD[c(6,10)], D[c(6,10)],
+                      info = "double non-contiguous subset not equivalent")
 })
 
 test_that("vclMatrix as.matrix method", {

@@ -63,19 +63,19 @@ setMethod("[",
                   
                   output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
                   
-                  nc <- ncol(x)
-                  row_idx <- 1
+                  nr <- nrow(x)
+                  col_idx <- 1
                   for(elem in seq_along(i)){
-                      if(i[elem] > nc){
-                          tmp <- ceiling(i[elem]/nc)
-                          if(tmp != row_idx){
-                              row_idx <- tmp
+                      if(i[elem] > nr){
+                          tmp <- ceiling(i[elem]/nr)
+                          if(tmp != col_idx){
+                              col_idx <- tmp
                           }
                           
-                          col_idx <- i[elem] - (nc * (row_idx - 1))
+                          row_idx <- i[elem] - (nr * (col_idx - 1))
                           
                       }else{
-                          col_idx <- i[elem]
+                          row_idx <- i[elem]
                       }
                       
                       output[elem] <- vclGetElement(x@address, row_idx, col_idx, type)
@@ -161,24 +161,73 @@ setMethod("[<-",
 #' @export
 setMethod("[<-",
           signature(x = "vclMatrix", i = "numeric", j = "missing", value = "numeric"),
-          function(x, i, j, value) {
+          function(x, i, j, ..., value) {
               
-	      if(length(value) != ncol(x)){
-                  stop("number of items to replace is not a multiple of replacement length")
-              }
+              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
               
-              if(i > nrow(x)){
-                  stop("row index exceeds number of rows")
-              }
-              
-              switch(typeof(x),
-                     "float" = vclSetRow(x@address, i, value, 6L),
-                     "double" = vclSetRow(x@address, i, value, 8L),
-                     stop("unsupported matrix type")
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
               
-              return(x)
-          })
+              # print(nargs())
+              
+              if(nargs() == 4){
+                  if(length(value) != ncol(x)){
+                      stop("number of items to replace is not a multiple of replacement length")
+                  }
+                  
+                  vclSetRow(x@address, i, value, type)
+                  
+              }else{
+                  if(length(value) != length(i)){
+                      if(length(value) == 1){
+                          value <- rep(value, length(i))
+                      }else{
+                          stop("number of items to replace is not a multiple of replacement length")
+                      }
+                  }
+                  
+                  nr <- nrow(x)
+                  col_idx <- 1
+                  for(elem in seq_along(i)){
+                      if(i[elem] > nr){
+                          tmp <- ceiling(i[elem]/nr)
+                          if(tmp != col_idx){
+                              col_idx <- tmp
+                          }
+                          
+                          row_idx <- i[elem] - (nr * (col_idx - 1))
+                          
+                      }else{
+                          row_idx <- i[elem]
+                      }
+                      
+                      # print(row_idx)
+                      # print(col_idx)
+                      
+                      vclSetElement(x@address, row_idx, col_idx, value[elem], type)
+                  }
+              }
+              
+# 	      if(length(value) != ncol(x)){
+# 	          stop("number of items to replace is not a multiple of replacement length")
+# 	      }
+#               
+#           if(i > nrow(x)){
+#               stop("row index exceeds number of rows")
+#           }
+#           
+#           switch(typeof(x),
+#                  "float" = vclSetRow(x@address, i, value, 6L),
+#                  "double" = vclSetRow(x@address, i, value, 8L),
+#                  stop("unsupported matrix type")
+#           )
+          
+          return(x)
+      })
 
 #' @rdname extract-methods
 #' @export

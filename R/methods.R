@@ -345,18 +345,55 @@ setMethod("[",
 #' @export
 setMethod("[<-",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", value="numeric"),
-          function(x, i, j, value) {
-              if(length(value) != ncol(x)){
-                  stop("number of items to replace is not a multiple of replacement length")
-              }
+          function(x, i, j, ..., value) {
               
               assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
               
-              switch(typeof(x),
-                     "float" = SetMatRow(x@address, i, value, 6L),
-                     "double" = SetMatRow(x@address, i, value, 8L),
-                     stop("type not recognized")
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
+              
+              if(nargs() == 4){
+                  if(length(value) != ncol(x)){
+                      stop("number of items to replace is not a multiple of replacement length")
+                  }
+                  
+                  SetMatRow(x@address, i, value, type)
+                  
+              }else{
+                  if(length(value) != length(i)){
+                      if(length(value) == 1){
+                          value <- rep(value, length(i))
+                      }else{
+                          stop("number of items to replace is not a multiple of replacement length")
+                      }
+                  }
+                  
+                  
+                  output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
+                  
+                  nr <- nrow(x)
+                  col_idx <- 1
+                  for(elem in seq_along(i)){
+                      if(i[elem] > nr){
+                          tmp <- ceiling(i[elem]/nr)
+                          if(tmp != col_idx){
+                              col_idx <- tmp
+                          }
+                          
+                          row_idx <- i[elem] - (nr * (col_idx - 1))
+                          
+                      }else{
+                          row_idx <- i[elem]
+                      }
+                      
+                      SetMatElement(x@address, row_idx, col_idx, value[elem], type)
+                  }
+              }
+              
               return(x)
           })
 
