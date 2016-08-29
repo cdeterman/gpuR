@@ -25,6 +25,8 @@ void initContexts(){
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     platforms_type platforms = viennacl::ocl::get_platforms();
     
+    std::cout << "Number of platforms: " << platforms.size() << std::endl;
+    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
     
         std::vector< viennacl::ocl::device > devices;
