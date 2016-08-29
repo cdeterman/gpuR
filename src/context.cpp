@@ -31,33 +31,39 @@ void initContexts(){
         devices = platforms[plat_idx].devices();
     
         for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
+            
+            std::cout << "gpu index: " << gpu_idx << std::endl;
                     
             // Select the platform
             viennacl::ocl::switch_context(id);
             viennacl::ocl::set_context_platform_index(id, plat_idx);
-        
-            // Get available devices
-//            std::vector<viennacl::ocl::device> const & devices = viennacl::ocl::platform().devices();
             
-//            std::cout << devices[gpu_idx].name() << std::endl;
+            // Get available devices
+            //            std::vector<viennacl::ocl::device> const & devices = viennacl::ocl::platform().devices();
+            
+            //            std::cout << devices[gpu_idx].name() << std::endl;
             
             // take the n-th available device from 'devices'
-//            std::vector< viennacl::ocl::device > my_devices;
-//            my_devices.push_back(devices[gpu_idx]);
+            //            std::vector< viennacl::ocl::device > my_devices;
+            //            my_devices.push_back(devices[gpu_idx]);
             
             // Select device
-//            viennacl::ocl::setup_context(id, my_devices);
-//            viennacl::ocl::current_context().switch_device(gpu_idx);
+            //            viennacl::ocl::setup_context(id, my_devices);
+            //            viennacl::ocl::current_context().switch_device(gpu_idx);
             viennacl::ocl::setup_context(id, devices[gpu_idx]);
-//            viennacl::ocl::get_context(id).switch_device(gpu_idx);
-           std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+            //            viennacl::ocl::get_context(id).switch_device(gpu_idx);
+            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
             
             // increment context
             id++;
         }
     }
     
+    std::cout << "checked all devices" << std::endl;
+    
     viennacl::ocl::switch_context(0);
+    
+    std::cout << "completed initialization" << std::endl;
     
     // std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
     // return wrap(viennacl::ocl::current_context().current_device().name());
