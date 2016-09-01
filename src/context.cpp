@@ -1,6 +1,6 @@
 
 #include "gpuR/windows_check.hpp"
-#include "gpuR/cl_helpers.hpp"
+// #include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -13,7 +13,7 @@
 
 #include <Rcpp.h>
 
-using namespace cl;
+// using namespace cl;
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -28,17 +28,11 @@ void initContexts(){
     std::cout << "Number of platforms: " << platforms.size() << std::endl;
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
+        
+        std::cout << "platform: " << platforms[plat_idx].info() << std::endl;
     
         std::vector< viennacl::ocl::device > devices;
         devices = platforms[plat_idx].devices();
-        
-        // Discover number of platforms
-        std::vector<cl::Platform> platforms;
-        getPlatforms(platforms); // cl_helpers.hpp
-        
-        Platform plat = platforms[plat_idx];
-        
-        std::cout << "platform: " << plat.getInfo<CL_PLATFORM_NAME>() << std::endl;
     
         for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
             
