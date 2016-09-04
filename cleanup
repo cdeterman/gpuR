@@ -1,2 +1,6 @@
 rm -f src/Makevars
 rm -f src/*.o
+rm -f src/*.so
+rm -f src/*.dylib
+rm -f src/loader/*.o
+rm -f src/loader/*.a
