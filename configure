@@ -3,87 +3,94 @@
 # Charles E. Determan Jr.
 #
 
-FLAGS="PKG_CPPFLAGS=-I../inst/include"
+CPPFLAGS="PKG_CPPFLAGS=-I../inst/include"
+CXXFLAGS="PKG_CXXFLAGS="
+LIBS="PKG_LIBS="
+BUILD_LIB="BUILD_LIB="
 
 # check OS
 case `uname` in
     Darwin* )
         echo "Darwin OS"
+
+        CXXFLAGS="${CXXFLAGS} -framework OpenCL"
+
         if ${OPENCL_LIB+"false"}; then
             echo "OPENCL_LIB not set, trying default lib location"
-            LIBS="PKG_LIBS=-framework OpenCL"
+            LIBS="${LIBS} -framework OpenCL"
         else
             echo "Using OPENCL_LIB = " $OPENCL_LIB
-            LIBS="PKG_LIBS=-L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
+            LIBS="${LIBS} -L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
         fi
-        
+
         echo "Checking OpenCL C++ API"
-        
+
         if ${OPENCL_INC+"false"}; then
             echo "OPENCL_INC not set, using default include directory"
             OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
         else
             echo "Using OPENCL_INC = " $OPENCL_INC
         fi
-        
+
         if test -e "$OPENCL_INC/cl2.hpp"; then
-            FLAGS="${FLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
+            CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
             echo "cl2.hpp header exists"
         else
             if test -e "$OPENCL_INC/cl.hpp"; then
-                FLAGS="${FLAGS} -I$OPENCL_INC"
+                CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC"
                 echo "cl.hpp header exists"
-            else
-                echo "Error: No OpenCL C++ API found; try setting OPENCL_INC"
-                exit 1
             fi
         fi
         ;;
     Linux* )
         echo "Linux OS"
-    
+
         echo "Checking for OpenCL library path"
         if ${OPENCL_LIB+"false"}; then
-            echo "OPENCL_LIB not set, trying default lib location"
-            LIBS="PKG_LIBS=-lOpenCL"
+            echo "OPENCL_LIB not set; will be compiled from source"
+            LIBS="${LIBS} -L./loader -lOpenCL -pthread"
+            BUILD_LIB="BUILD_LIB=loader/libOpenCL.a"
         else
             echo "Using OPENCL_LIB =" $OPENCL_LIB
-            LIBS="PKG_LIBS=-L$OPENCL_LIB -lOpenCL -Wl,-rpath,$OPENCL_LIB"
+            LIBS="${LIBS} -L$OPENCL_LIB -lOpenCL -Wl,-rpath,$OPENCL_LIB"
         fi
-        
+
         echo "Checking OpenCL C++ API"
-        
         if ${OPENCL_INC+"false"}; then
             echo "OPENCL_INC not set, using default include directory /usr/include"
             OPENCL_INC=/usr/include/
         else
             echo "Using OPENCL_INC = " $OPENCL_INC
         fi
-    
+
         if test -e "$OPENCL_INC/CL/cl2.hpp"; then
-            FLAGS="${FLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
+            CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
             echo "cl2.hpp header exists"
         else
             if test -e "$OPENCL_INC/CL/cl.hpp"; then
-                FLAGS="${FLAGS} -I$OPENCL_INC"
+                CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC"
                 echo "cl.hpp header exists"
             else
-                echo "Error: No OpenCL C++ API found; try installing opencl-headers or setting OPENCL_INC"
-                exit 1
+                CPPFLAGS="${CPPFLAGS} -I. -pthread"
+                echo "No OpenCL C++ API found; will use the headers contained in the package"
             fi
         fi
         ;;
-    Solaris*) 
-        echo "SOLARIS currently not supported" 
+    Solaris*)
+        echo "SOLARIS currently not supported"
     ;;
-    *)        
-        echo "unknown: `uname`" 
+    *)
+        echo "unknown: `uname`"
         ;;
 esac
 
-echo "CXX_STD=CXX11" > src/Makevars
-echo "${FLAGS}" >> src/Makevars
+echo 'CXX_STD=CXX11' > src/Makevars
+echo "${CPPFLAGS}" >> src/Makevars
+echo "${CXXFLAGS}" >> src/Makevars
 echo "${LIBS}" >> src/Makevars
-
-
-
+echo "${BUILD_LIB}" >> src/Makevars
+echo -e '\n$(SHLIB): $(BUILD_LIB)\n' >> src/Makevars
+echo 'loader/libOpenCL.a:' >> src/Makevars
+echo -e '\tcd loader && $(MAKE) libOpenCL.a \\' >> src/Makevars
+echo -e '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\' >> src/Makevars
+echo -e '\tICD_OS=icd_linux' >> src/Makevars
