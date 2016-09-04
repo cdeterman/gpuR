@@ -1,8 +1,19 @@
-CXX_STD=CXX11
-PKG_CXXFLAGS=-I../inst/include -I"$(OPENCL_INC)"
+CXX_STD = CXX11
+PKG_CPPFLAGS = -I. -I../inst/include
+PKG_LIBS = -L./loader -lOpenCL
 
-ifeq "$(R_ARCH)" "/x64"
-    PKG_LIBS=-L"$(OPENCL_LIB64)" -lOpenCL
-else
-    PKG_LIBS=-L"$(OPENCL_LIB32)" -lOpenCL
-endif
+.PHONY: clean
+
+$(SHLIB): loader/libOpenCL.a
+
+loader/libOpenCL.a:
+	cd loader && $(MAKE) libOpenCL.a \
+	CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \
+	ICD_OS=icd_windows
+
+clean:
+	$(RM) *.o
+	$(RM) *.dll
+	$(RM) *.so
+	$(RM) *.dylib
+	cd loader && $(MAKE) clean
