@@ -17,21 +17,21 @@ case `uname` in
         echo "Darwin OS"
 
         CXXFLAGS="${CXXFLAGS} -framework OpenCL"
-        
+
         if [ ! -z "$OPENCL_LIB" ]; then
             # custom paths
             echo "Using OPENCL_LIB = " $OPENCL_LIB
             LIBS="PKG_LIBS=-L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
-            
+
             if ${OPENCL_INC+"false"}; then
                 echo "OPENCL_INC not set, using default include directory"
                 OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
             else
                 echo "Using OPENCL_INC = " $OPENCL_INC
             fi
-            
+
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
-            
+
         elif [ ! -z "$CUDA_HOME" ]; then
             # CUDA SDK
             OPENCL_INC=$CUDA_HOME/include
@@ -51,9 +51,9 @@ case `uname` in
         else
             echo "OPENCL_LIB not set, trying default lib location"
             LIBS="PKG_LIBS=-framework OpenCL"
-            
+
             echo "Checking OpenCL C++ API"
-            
+
             if ${OPENCL_INC+"false"}; then
                 echo "OPENCL_INC not set, using default include directory"
                 OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
@@ -74,7 +74,7 @@ case `uname` in
         ;;
     Linux* )
         echo "Linux OS"
-    
+
         if [ ! -z "$OPENCL_LIB" ]; then
             # custom paths
             echo "Using OPENCL_LIB =" $OPENCL_LIB
@@ -86,35 +86,35 @@ case `uname` in
                 echo "Using OPENCL_INC = " $OPENCL_INC
             fi
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
-            
+
         elif [ ! -z "$CUDA_HOME" ]; then
             # CUDA SDK
             echo "using CUDA_HOME"
             OPENCL_INC=$CUDA_HOME/include
             LIBS="PKG_LIBS=-L$CUDA_HOME/lib64 -lOpenCL -Wl,-rpath,$CUDA_HOME/lib64"
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
-            
+
         elif [ ! -z "$AMDAPPSDKROOT" ]; then
             # AMD SDK
             echo "using AMDAPPSDKROOT"
             OPENCL_INC=$AMDAPPSDKROOT/include
             LIBS="PKG_LIBS=-L$AMDAPPSDKROOT/lib/x86_64 -lOpenCL -Wl,-rpath,$AMDAPPSDKROOT/lib/x86_64"
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
-            
+
         elif [ ! -z "$INTELOCLSDKROOT" ]; then
             # Intel SDK
             echo "using INTELOCLSDKROOT"
             OPENCL_INC=$INTELOCLSDKROOT/include
             LIBS="PKG_LIBS=-L$INTELOCLSDKROOT/lib/x64 -lOpenCL -Wl,-rpath,$INTELOCLSDKROOT/lib/x64"
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
-            
+
         else
             echo "OPENCL_LIB not set, will be compiled from source"
             LIBS="PKG_LIBS=-L./loader -lOpenCL -pthread"
             BUILD_LIB="BUILD_LIB=loader/libOpenCL.a"
-            
+
             echo "Checking OpenCL C++ API"
-            
+
             if ${OPENCL_INC+"false"}; then
                 echo "OPENCL_INC not set, using default include directory /usr/include"
                 OPENCL_INC=/usr/include/
@@ -154,3 +154,7 @@ echo 'loader/libOpenCL.a:' >> src/Makevars
 echo -e '\tcd loader && $(MAKE) libOpenCL.a \\' >> src/Makevars
 echo -e '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\' >> src/Makevars
 echo -e '\tICD_OS=icd_linux' >> src/Makevars
+
+echo -e "\n*** for debugging ***"
+cat src/Makevars
+echo "*********************"
