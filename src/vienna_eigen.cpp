@@ -27,20 +27,9 @@ void cpp_gpu_eigen(
     SEXP &Qm,
     SEXP &eigenvalues,
     bool symmetric,
-    int device_flag)
+    int ctx_id)
 {    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     Rcpp::XPtr<dynEigenVec<T> > ptreigenvalues(eigenvalues);
     
@@ -55,9 +44,9 @@ void cpp_gpu_eigen(
     
     const int K = ptrA->nrow();
     
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_Q = ptrQ->device_data();
-    viennacl::vector<T> vcl_eigenvalues(K);
+    viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
+    viennacl::matrix<T> vcl_Q = ptrQ->device_data(ctx_id);
+    viennacl::vector<T> vcl_eigenvalues(K, ctx = ctx);
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
@@ -76,29 +65,12 @@ void cpp_vcl_eigen(
     SEXP &Qm,
     SEXP &eigenvalues,
     bool symmetric,
-    int device_flag)
-{    
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
+    int ctx_id)
+{        
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
     Rcpp::XPtr<dynVCLMat<T> > ptrQ(Qm);
-    
-//    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
-//    viennacl::matrix<T> vcl_A = static_cast<viennacl::matrix<T> >(A);
-    
-//    viennacl::matrix_range<viennacl::matrix<T> > vcl_Q = ptrQ->data();
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
     // want copy of A to prevent overwriting original matrix
     viennacl::matrix<T> vcl_A = ptrA->matrix();
@@ -139,21 +111,21 @@ cpp_gpu_eigen(
     SEXP Qm,
     SEXP eigenvalues,
     const bool symmetric,
-    const int type_flag, 
-    int device_flag)
+    const int type_flag,
+    int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 6:
-            cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 8:
-            cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -164,18 +136,18 @@ cpp_vcl_eigen(
     SEXP Qm,
     SEXP eigenvalues,
     const bool symmetric,
-    const int type_flag, 
-    int device_flag)
+    const int type_flag,
+    int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 6:
-            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         case 8:
-            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric, device_flag);
+            cpp_vcl_eigen<double>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");

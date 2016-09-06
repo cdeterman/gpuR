@@ -15,13 +15,14 @@
 \usage{
 vclMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
-\S4method{vclMatrix}{matrix}(data, type = NULL)
+\S4method{vclMatrix}{matrix}(data, type = NULL, ctx_id = NULL)
 
-\S4method{vclMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL)
+\S4method{vclMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL,
+  ctx_id = NULL)
 
-\S4method{vclMatrix}{numeric}(data, nrow, ncol, type = NULL)
+\S4method{vclMatrix}{numeric}(data, nrow, ncol, type = NULL, ctx_id = NULL)
 
-\S4method{vclMatrix}{integer}(data, nrow, ncol, type = NULL)
+\S4method{vclMatrix}{integer}(data, nrow, ncol, type = NULL, ctx_id = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 
@@ -35,6 +36,8 @@ vclMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 is NULL where type is inherited from the source data type.}
 
 \item{...}{Additional method to pass to vclMatrix methods}
+
+\item{ctx_id}{An integer specifying the object's context}
 }
 \value{
 A vclMatrix object

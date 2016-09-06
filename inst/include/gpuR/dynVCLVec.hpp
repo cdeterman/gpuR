@@ -27,10 +27,11 @@ class dynVCLVec {
         viennacl::vector<T> A;
         
         dynVCLVec() { } // private default constructor
-        dynVCLVec(SEXP A_, int device_flag);
+        dynVCLVec(viennacl::vector<T> vec, int ctx_id);
+        dynVCLVec(SEXP A_, int ctx_id);
 //        dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
 //        dynVCLVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);
-        dynVCLVec(int size_in, int device_flag);
+        dynVCLVec(int size_in, int ctx_id);
 //        dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
         dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec);
         
@@ -40,10 +41,8 @@ class dynVCLVec {
         int end() { return last; }
         void setRange(int start, int end);
         void updateSize();
-        void setVector(viennacl::vector_range<viennacl::vector<T> > vec){
-            A = vec;
-            ptr = &A;
-        }
+        void setVector(viennacl::vector_range<viennacl::vector<T> > vec);
+        void setVector(viennacl::vector<T> vec);
         void setPtr(viennacl::vector<T>* ptr_);
         viennacl::vector_range<viennacl::vector<T> > data();
         viennacl::vector<T> vector() {

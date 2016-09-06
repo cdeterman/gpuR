@@ -7,6 +7,7 @@
 #' @param length A non-negative integer specifying the desired length.
 #' @param type A character string specifying the type of vclVector.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to vclVector methods
 #' @return A vclVector object
 #' @docType methods
@@ -21,7 +22,7 @@ setGeneric("vclVector", function(data, length, type=NULL, ...){
 #' @aliases vclVector,vector
 setMethod('vclVector', 
           signature(data = 'vector', length = 'missing'),
-          function(data, length, type=NULL){
+          function(data, length, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
               if (!missing(length)) {
@@ -29,12 +30,10 @@ setMethod('vclVector',
                           in data")
               }
               
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
-              
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -52,7 +51,7 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=vectorToVCL(data, 4L, device_flag),
+                                    address=vectorToVCL(data, 4L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -61,7 +60,7 @@ setMethod('vclVector',
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=vectorToVCL(data, 6L, device_flag),
+                                    address=vectorToVCL(data, 6L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -69,8 +68,9 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclVector",
-                                    address = vectorToVCL(data, 8L, device_flag),
+                                    address = vectorToVCL(data, 8L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -90,18 +90,16 @@ setMethod('vclVector',
 #' @aliases vclVector,missing
 setMethod('vclVector', 
           signature(data = 'missing'),
-          function(data, length, type=NULL){
+          function(data, length, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
-              device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
-              
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -119,7 +117,7 @@ setMethod('vclVector',
               data = switch(type,
                             integer = {
                                 new("ivclVector", 
-                                    address=emptyVecVCL(length, 4L, device_flag),
+                                    address=emptyVecVCL(length, 4L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -128,7 +126,7 @@ setMethod('vclVector',
                             },
                             float = {
                                 new("fvclVector", 
-                                    address=emptyVecVCL(length, 6L, device_flag),
+                                    address=emptyVecVCL(length, 6L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -136,8 +134,9 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dvclVector",
-                                    address = emptyVecVCL(length, 8L, device_flag),
+                                    address = emptyVecVCL(length, 8L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -150,4 +149,5 @@ setMethod('vclVector',
               
               return(data)
           },
-          valueClass = "vclVector")
+          valueClass = "vclVector"
+)

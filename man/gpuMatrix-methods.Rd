@@ -2,7 +2,6 @@
 % Please edit documentation in R/gpuMatrix.R
 \docType{methods}
 \name{gpuMatrix}
-\alias{\%*\%-gpuR-method}
 \alias{gpuMatrix}
 \alias{gpuMatrix,integer}
 \alias{gpuMatrix,integer-method}
@@ -16,13 +15,14 @@
 \usage{
 gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
-\S4method{gpuMatrix}{matrix}(data, type = NULL)
+\S4method{gpuMatrix}{matrix}(data, type = NULL, ctx_id = NULL)
 
-\S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL)
+\S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL,
+  ctx_id = NULL)
 
-\S4method{gpuMatrix}{numeric}(data, nrow, ncol, type = NULL)
+\S4method{gpuMatrix}{numeric}(data, nrow, ncol, type = NULL, ctx_id = NULL)
 
-\S4method{gpuMatrix}{integer}(data, nrow, ncol, type = NULL)
+\S4method{gpuMatrix}{integer}(data, nrow, ncol, type = NULL, ctx_id = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 
@@ -36,6 +36,8 @@ gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 is NULL where type is inherited from the source data type.}
 
 \item{...}{Additional method to pass to gpuMatrix methods}
+
+\item{ctx_id}{An integer specifying the object's context}
 }
 \value{
 A gpuMatrix object

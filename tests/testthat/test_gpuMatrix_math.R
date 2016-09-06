@@ -20,10 +20,10 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
     has_gpu_skip()
     
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -67,10 +67,10 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
     has_gpu_skip()
     
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -113,9 +113,9 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- gpuMatrix(A, type="float")
     
@@ -138,9 +138,9 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- gpuMatrix(A, type="double")
     

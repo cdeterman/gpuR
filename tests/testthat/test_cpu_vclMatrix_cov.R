@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix Correlations")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -23,10 +20,15 @@ test_that("CPU vclMatrix Single Precision Pearson Covariance",
     fgpuX <- vclMatrix(A, type="float")
     
     gpuC <- cov(fgpuX)
+    gpuCp <- cov(fgpuX, method = "pearson")
     
     expect_is(gpuC, "fvclMatrix")
     expect_equal(gpuC[], C, tolerance=1e-06, 
                  info="float covariance values not equivalent")  
+    expect_equal(gpuCp[], C, tolerance=1e-06, 
+                 info="float covariance values not equivalent")  
+    expect_error(cov(fgpuX, method = "unimplemented"), 
+                 info = "no error thrown for unknown method")
 })
 
 test_that("CPU vclMatrix Double Precision Pearson Covariance", 
@@ -42,5 +44,3 @@ test_that("CPU vclMatrix Double Precision Pearson Covariance",
                  info="double colSums not equivalent")  
 })
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "gpu")

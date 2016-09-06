@@ -4,6 +4,12 @@
 
 #include <RcppEigen.h>
 
+
+// ViennaCL headers
+// #include "viennacl/vector_def.hpp"
+#include "viennacl/vector.hpp"
+#include "viennacl/vector_proxy.hpp"
+
 template <class T> 
 class dynEigenVec {
     private:
@@ -48,6 +54,7 @@ class dynEigenVec {
 //            Eigen::Matrix<T, Eigen::Dynamic, 1>& vec = A;
             return vec;
         }
+        // void to_host(viennacl::vector<T> &vclMat);
         
 };
 

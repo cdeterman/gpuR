@@ -11,9 +11,10 @@
 \usage{
 gpuVector(data, length, type = NULL, ...)
 
-\S4method{gpuVector}{vector,missing}(data, type = NULL)
+\S4method{gpuVector}{vector,missing}(data, type = NULL, ctx_id = NULL)
 
-\S4method{gpuVector}{missingOrNULL,ANY}(data, length, type = NULL)
+\S4method{gpuVector}{missingOrNULL,ANY}(data, length, type = NULL,
+  ctx_id = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 
@@ -25,6 +26,8 @@ gpuVector(data, length, type = NULL, ...)
 is NULL where type is inherited from the source data type.}
 
 \item{...}{Additional method to pass to gpuVector methods}
+
+\item{ctx_id}{An integer specifying the object's context}
 }
 \value{
 A gpuVector object

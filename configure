@@ -2,6 +2,9 @@
 # configure for package gpuR
 # Charles E. Determan Jr.
 #
+# Note - this assumes that when installing from environmental variables
+# that the user wants the 64-bit install
+
 
 CPPFLAGS="PKG_CPPFLAGS=-I../inst/include"
 CXXFLAGS="PKG_CXXFLAGS="
@@ -14,22 +17,49 @@ case `uname` in
         echo "Darwin OS"
 
         CXXFLAGS="${CXXFLAGS} -framework OpenCL"
-
-        if ${OPENCL_LIB+"false"}; then
-            echo "OPENCL_LIB not set, trying default lib location"
-            LIBS="${LIBS} -framework OpenCL"
-        else
+        
+        if [ ! -z "$OPENCL_LIB" ]; then
+            # custom paths
             echo "Using OPENCL_LIB = " $OPENCL_LIB
-            LIBS="${LIBS} -L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
-        fi
-
-        echo "Checking OpenCL C++ API"
-
-        if ${OPENCL_INC+"false"}; then
-            echo "OPENCL_INC not set, using default include directory"
-            OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
+            LIBS="PKG_LIBS=-L$OPENCL_LIB -framework OpenCL -Wl,-rpath,$OPENCL_LIB"
+            
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory"
+                OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
+            
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
+        elif [ ! -z "$CUDA_HOME" ]; then
+            # CUDA SDK
+            OPENCL_INC=$CUDA_HOME/include
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            LIBS="PKG_LIBS=-L$CUDA_HOME/lib64 -framework OpenCL -Wl,-rpath,$CUDA_HOME/lib64"
+        elif [ ! -z "$AMDAPPSDKROOT" ]; then
+            # AMD SDK
+            OPENCL_INC=$AMDAPPSDKROOT/include
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            LIBS="PKG_LIBS=-L$AMDAPPSDKROOT/lib/x86_64 -framework OpenCL -Wl,-rpath,$AMDAPPSDKROOT/lib/x86_64"
+        elif [ ! -z "$INTELOCLSDKROOT" ]; then
+            # Intel SDK
+            echo "using INTELOCLSDKROOT"
+            OPENCL_INC=$INTELOCLSDKROOT/include
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            LIBS="PKG_LIBS=-L$INTELOCLSDKROOT/lib/x64 -framework -Wl,-rpath,$INTELOCLSDKROOT/lib/x64"
         else
-            echo "Using OPENCL_INC = " $OPENCL_INC
+            echo "OPENCL_LIB not set, trying default lib location"
+            LIBS="PKG_LIBS=-framework OpenCL"
+            
+            echo "Checking OpenCL C++ API"
+            
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory"
+                OPENCL_INC=/System/Library/Frameworks/OpenCL.framework/Headers/
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
         fi
 
         if test -e "$OPENCL_INC/cl2.hpp"; then
@@ -44,35 +74,65 @@ case `uname` in
         ;;
     Linux* )
         echo "Linux OS"
-
-        echo "Checking for OpenCL library path"
-        if ${OPENCL_LIB+"false"}; then
-            echo "OPENCL_LIB not set; will be compiled from source"
-            LIBS="${LIBS} -L./loader -lOpenCL -pthread"
-            BUILD_LIB="BUILD_LIB=loader/libOpenCL.a"
-        else
+    
+        if [ ! -z "$OPENCL_LIB" ]; then
+            # custom paths
             echo "Using OPENCL_LIB =" $OPENCL_LIB
-            LIBS="${LIBS} -L$OPENCL_LIB -lOpenCL -Wl,-rpath,$OPENCL_LIB"
-        fi
-
-        echo "Checking OpenCL C++ API"
-        if ${OPENCL_INC+"false"}; then
-            echo "OPENCL_INC not set, using default include directory /usr/include"
-            OPENCL_INC=/usr/include/
+            LIBS="PKG_LIBS=-L$OPENCL_LIB -lOpenCL -Wl,-rpath,$OPENCL_LIB"
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory /usr/include"
+                OPENCL_INC=/usr/include
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
+        elif [ ! -z "$CUDA_HOME" ]; then
+            # CUDA SDK
+            echo "using CUDA_HOME"
+            OPENCL_INC=$CUDA_HOME/include
+            LIBS="PKG_LIBS=-L$CUDA_HOME/lib64 -lOpenCL -Wl,-rpath,$CUDA_HOME/lib64"
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
+        elif [ ! -z "$AMDAPPSDKROOT" ]; then
+            # AMD SDK
+            echo "using AMDAPPSDKROOT"
+            OPENCL_INC=$AMDAPPSDKROOT/include
+            LIBS="PKG_LIBS=-L$AMDAPPSDKROOT/lib/x86_64 -lOpenCL -Wl,-rpath,$AMDAPPSDKROOT/lib/x86_64"
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
+        elif [ ! -z "$INTELOCLSDKROOT" ]; then
+            # Intel SDK
+            echo "using INTELOCLSDKROOT"
+            OPENCL_INC=$INTELOCLSDKROOT/include
+            LIBS="PKG_LIBS=-L$INTELOCLSDKROOT/lib/x64 -lOpenCL -Wl,-rpath,$INTELOCLSDKROOT/lib/x64"
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
         else
-            echo "Using OPENCL_INC = " $OPENCL_INC
+            echo "OPENCL_LIB not set, will be compiled from source"
+            LIBS="PKG_LIBS=-L./loader -lOpenCL -pthread"
+            BUILD_LIB="BUILD_LIB=loader/libOpenCL.a"
+            
+            echo "Checking OpenCL C++ API"
+            
+            if ${OPENCL_INC+"false"}; then
+                echo "OPENCL_INC not set, using default include directory /usr/include"
+                OPENCL_INC=/usr/include/
+            else
+                echo "Using OPENCL_INC = " $OPENCL_INC
+            fi
+            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
         fi
 
         if test -e "$OPENCL_INC/CL/cl2.hpp"; then
-            CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC -DHAVE_CL_CL2_HPP"
+            CPPFLAGS="${CPPFLAGS} -DHAVE_CL_CL2_HPP"
             echo "cl2.hpp header exists"
         else
             if test -e "$OPENCL_INC/CL/cl.hpp"; then
-                CPPFLAGS="${CPPFLAGS} -I$OPENCL_INC"
                 echo "cl.hpp header exists"
             else
+                echo "No OpenCL C++ API found, will use the headers contained in the package"
                 CPPFLAGS="${CPPFLAGS} -I. -pthread"
-                echo "No OpenCL C++ API found; will use the headers contained in the package"
             fi
         fi
         ;;

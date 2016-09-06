@@ -37,14 +37,6 @@ setOldClass("eigen")
 setMethod("eigen", signature(x="gpuMatrix"),
           function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
           {
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
-              
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
               }
@@ -63,8 +55,8 @@ setMethod("eigen", signature(x="gpuMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              Q <- gpuMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
-              V <- gpuVector(length=as.integer(nrow(x)), type=type)
+              Q <- gpuMatrix(nrow=nrow(x), ncol=ncol(x), type=type, ctx_id = x@.context_index)
+              V <- gpuVector(length=as.integer(nrow(x)), type=type, ctx_id = x@.context_index)
               
               
               switch(type,
@@ -73,13 +65,13 @@ setMethod("eigen", signature(x="gpuMatrix"),
                                              V@address,
                                              symmetric,
                                              6L,
-                                             device_flag),
+                                             x@.context_index - 1),
                      "double" = cpp_gpu_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
                                               8L,
-                                              device_flag),
+                                              x@.context_index - 1),
                      stop("type not currently supported")
                      )
               
@@ -103,14 +95,6 @@ setMethod("eigen", signature(x="vclMatrix"),
                   stop("vclMatrixBlock not currently supported")
               }
               
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
-              
               if( missing(symmetric) | is.null(symmetric) | !symmetric){
                   stop("Non-symmetric matrices not currently supported")
               }
@@ -129,8 +113,8 @@ setMethod("eigen", signature(x="vclMatrix"),
                   stop("Integer type not currently supported")
               }
               
-              Q <- vclMatrix(nrow=nrow(x), ncol=ncol(x), type=type)
-              V <- vclVector(length=as.integer(nrow(x)), type=type)
+              Q <- vclMatrix(nrow=nrow(x), ncol=ncol(x), type=type, ctx_id = x@.context_index)
+              V <- vclVector(length=as.integer(nrow(x)), type=type, ctx_id = x@.context_index)
               
               # possible a way to have only values calculated on GPU?
               
@@ -140,13 +124,13 @@ setMethod("eigen", signature(x="vclMatrix"),
                                              V@address,
                                              symmetric,
                                              6L,
-                                             device_flag),
+					     x@.context_index),
                      "double" = cpp_vcl_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
                                               8L,
-                                              device_flag),
+					      x@.context_index),
                      stop("type not currently supported")
               )
               
@@ -155,7 +139,9 @@ setMethod("eigen", signature(x="vclMatrix"),
               }else{
                   out <- list(values = V, vectors = Q)
               }
+              
               return(out)
           },
           valueClass = "list"
 )
+

@@ -6,7 +6,6 @@
 
 using namespace Rcpp;
 
-
 //copy an existing gpuMatrix
 template <typename T>
 SEXP
@@ -111,23 +110,23 @@ cpp_rbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
 }
 
 
-template <typename T>
-Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
-get_gpu_slice_vec(const SEXP ptrA)
-{
-    XPtr<dynEigenVec<T> > pVec(ptrA);
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = pVec->data();
-    return A;
-}
-
-template <typename T>
-SEXP
-get_gpu_slice_length(const SEXP ptrA)
-{
-    XPtr<dynEigenVec<T> > pVec(ptrA);
-    int A = pVec->length();
-    return wrap(A);
-}
+// template <typename T>
+// Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >
+// get_gpu_slice_vec(const SEXP ptrA)
+// {
+//     XPtr<dynEigenVec<T> > pVec(ptrA);
+//     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = pVec->data();
+//     return A;
+// }
+// 
+// template <typename T>
+// SEXP
+// get_gpu_slice_length(const SEXP ptrA)
+// {
+//     XPtr<dynEigenVec<T> > pVec(ptrA);
+//     int A = pVec->length();
+//     return wrap(A);
+// }
 
 template <typename T>
 T
@@ -147,6 +146,8 @@ SetVecElement(const SEXP data, const int idx, SEXP value)
 
 
 /*** gpuMatrix deepcopy ***/
+
+//' @export
 // [[Rcpp::export]]
 SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)
@@ -254,38 +255,38 @@ gpuMatBlock(
 }
 
 
-// [[Rcpp::export]]
-SEXP
-get_gpu_slice_vec(SEXP ptrA, const int type_flag)
-{    
-    switch(type_flag) {
-        case 4:
-            return wrap(get_gpu_slice_vec<int>(ptrA));
-        case 6:
-            return wrap(get_gpu_slice_vec<float>(ptrA));
-        case 8:
-            return wrap(get_gpu_slice_vec<double>(ptrA));
-        default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-SEXP
-get_gpu_slice_length(SEXP ptrA, const int type_flag)
-{    
-    switch(type_flag) {
-        case 4:
-            return get_gpu_slice_length<int>(ptrA);
-        case 6:
-            return get_gpu_slice_length<float>(ptrA);
-        case 8:
-            return get_gpu_slice_length<double>(ptrA);
-        default:
-            throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
-    }
-}
+// // [[Rcpp::export]]
+// SEXP
+// get_gpu_slice_vec(SEXP ptrA, const int type_flag)
+// {    
+//     switch(type_flag) {
+//         case 4:
+//             return wrap(get_gpu_slice_vec<int>(ptrA));
+//         case 6:
+//             return wrap(get_gpu_slice_vec<float>(ptrA));
+//         case 8:
+//             return wrap(get_gpu_slice_vec<double>(ptrA));
+//         default:
+//             throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+//     }
+// }
+// 
+// 
+// // [[Rcpp::export]]
+// SEXP
+// get_gpu_slice_length(SEXP ptrA, const int type_flag)
+// {    
+//     switch(type_flag) {
+//         case 4:
+//             return get_gpu_slice_length<int>(ptrA);
+//         case 6:
+//             return get_gpu_slice_length<float>(ptrA);
+//         case 8:
+//             return get_gpu_slice_length<double>(ptrA);
+//         default:
+//             throw Rcpp::exception("unknown type detected for gpuVectorSlice object!");
+//     }
+// }
 
 /*** Get/Set Vector Elements ***/
 
@@ -515,18 +516,18 @@ initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag
 
 // [[Rcpp::export]]
 SEXP
-sexpToEigenXptr(SEXP ptrA, 
+getRmatEigenAddress(SEXP ptrA, 
     const int nr,
     const int nc, 
     const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return sexpToEigenXptr<int>(ptrA, nr, nc);
+            return getRmatEigenAddress<int>(ptrA, nr, nc);
         case 6:
-            return sexpToEigenXptr<float>(ptrA, nr, nc);
+            return getRmatEigenAddress<float>(ptrA, nr, nc);
         case 8:
-            return sexpToEigenXptr<double>(ptrA, nr, nc);
+            return getRmatEigenAddress<double>(ptrA, nr, nc);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -628,7 +629,6 @@ emptyEigenVecXptr(const int size, const int type_flag)
 
 
 /*** Empty matrix initializers ***/
-
 
 // [[Rcpp::export]]
 SEXP

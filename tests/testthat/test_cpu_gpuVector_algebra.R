@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU gpuVector algebra")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -15,6 +12,47 @@ Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
 E <- rnorm(ORDER-1)
+
+# Integer Tests
+
+# test_that("CPU gpuVector integer addition", {
+#     
+#     has_cpu_skip()
+#     
+#     gpuA <- gpuVector(Aint)
+#     gpuB <- gpuVector(Bint)
+#     
+#     # R default
+#     C <- Aint + Bint
+#     
+#     # manual call
+#     #gpuC <- gpu_vec_add(A, B)
+#     
+#     # generic call
+#     gpuC <- gpuA + gpuB
+#     
+#     expect_equivalent(gpuC[], C)
+#     expect_is(gpuC, "gpuVector", "inherits from gpuVector")
+#     expect_is(gpuC, "igpuVector", "is a igpuVector object")
+# })
+# 
+# test_that("CPU gpuVector integer subtraction", {
+#     
+#     has_cpu_skip()
+#     
+#     gpuA <- gpuVector(Aint)
+#     gpuB <- gpuVector(Bint)
+#     
+#     # R default
+#     C <- Aint - Bint
+#     
+#     # generic call
+#     gpuC <- gpuA - gpuB
+#     
+#     expect_equivalent(gpuC[], C)
+#     expect_is(gpuC, "gpuVector", "following vector subtraction")
+#     expect_is(gpuC, "igpuVector", "following vector subtraction")
+# })
 
 # Single Precision Tests
 
@@ -28,45 +66,6 @@ test_that("CPU gpuVector comparison operator", {
                 info = "vector/gpuVector== operator not working correctly")
     expect_true(all(gpuA == A), 
                 info = "gpuVector/vector == operator not working correctly")
-})
-
-test_that("CPU gpuVector integer addition", {
-    
-    has_cpu_skip()
-    
-    gpuA <- gpuVector(Aint)
-    gpuB <- gpuVector(Bint)
-    
-    # R default
-    C <- Aint + Bint
-    
-    # manual call
-    #gpuC <- gpu_vec_add(A, B)
-    
-    # generic call
-    gpuC <- gpuA + gpuB
-    
-    expect_equivalent(gpuC[], C)
-    expect_is(gpuC, "gpuVector", "inherits from gpuVector")
-    expect_is(gpuC, "igpuVector", "is a igpuVector object")
-})
-
-test_that("CPU gpuVector integer subtraction", {
-    
-    has_cpu_skip()
-    
-    gpuA <- gpuVector(Aint)
-    gpuB <- gpuVector(Bint)
-    
-    # R default
-    C <- Aint - Bint
-    
-    # generic call
-    gpuC <- gpuA - gpuB
-    
-    expect_equivalent(gpuC[], C)
-    expect_is(gpuC, "gpuVector", "following vector subtraction")
-    expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
 
 test_that("CPU gpuVector Single precision Additon", {
@@ -550,5 +549,3 @@ test_that("CPU gpuVector double precision outer product", {
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double vector outer product elements not equivalent")
 })
-
-options(gpuR.default.device.type = "gpu")

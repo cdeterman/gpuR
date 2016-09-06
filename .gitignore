@@ -6,3 +6,4 @@
 *.so
 *.dll
 src/Makevars
+.httr-oauth

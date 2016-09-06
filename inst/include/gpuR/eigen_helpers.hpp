@@ -12,7 +12,7 @@ using namespace Rcpp;
 // convert SEXP Matrix to Eigen matrix
 template <typename T>
 SEXP 
-sexpToEigenXptr(SEXP A, const int nr, const int nc)
+getRmatEigenAddress(SEXP A, const int nr, const int nc)
 {    
 //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(nr, nc);
 //    *eigen_mat = as<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A);

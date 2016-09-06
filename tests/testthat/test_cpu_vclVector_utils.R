@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclVector Utility Functions")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -117,4 +114,29 @@ test_that("dvclVector set accession method successful", {
 })
 
 
-options(gpuR.default.device.type = "gpu")
+test_that("vclVector as.vector method", {
+    
+    has_cpu_skip()
+    
+    dgpu <- vclVector(D)
+    fgpu <- vclVector(D, type="float")
+    igpu <- vclVector(A)
+    
+    expect_equal(as.vector(dgpu), D,
+                      info = "double as.vector not equal")
+    expect_equal(as.vector(fgpu), D,
+                      info = "float as.vector not equal",
+                      tolerance = 1e-07)
+    expect_equal(as.vector(dgpu), D,
+                      info = "integer as.vector not equal")
+    
+    
+    expect_is(as.vector(dgpu), 'numeric',
+              info = "double as.vector not producing 'vector' class")
+    expect_is(as.vector(fgpu), 'numeric',
+              info = "float as.vector not producing 'vector' class")
+    expect_is(as.vector(igpu), 'integer',
+              info = "integer as.vector not producing 'vector' class")
+})
+
+

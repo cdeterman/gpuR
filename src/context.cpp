@@ -1,7 +1,6 @@
 
 #include "gpuR/windows_check.hpp"
-#include <boost/algorithm/string.hpp>
-//#include "gpuR/cl_helpers.hpp"
+// #include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -14,13 +13,11 @@
 
 #include <Rcpp.h>
 
-//using namespace cl;
+// using namespace cl;
 using namespace Rcpp;
 
-
 // [[Rcpp::export]]
-SEXP initContexts(){
-    
+void initContexts(){
     // declarations
     int id = 0;
     
@@ -28,39 +25,82 @@ SEXP initContexts(){
     typedef std::vector< viennacl::ocl::platform > platforms_type;
     platforms_type platforms = viennacl::ocl::get_platforms();
     
-    for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
+    std::cout << "Number of platforms: " << platforms.size() << std::endl;
     
-        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+    for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
+        
+        std::cout << "platform: " << platforms[plat_idx].info() << std::endl;
+    
+        std::vector< viennacl::ocl::device > devices;
+        devices = platforms[plat_idx].devices();
+    
+        for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
+            
+            std::cout << "gpu index: " << gpu_idx << std::endl;
                     
             // Select the platform
             viennacl::ocl::switch_context(id);
             viennacl::ocl::set_context_platform_index(id, plat_idx);
-        
-            // Get available devices
-//            std::vector<viennacl::ocl::device> const & devices = viennacl::ocl::platform().devices();
             
-//            std::cout << devices[gpu_idx].name() << std::endl;
+            // Get available devices
+            //            std::vector<viennacl::ocl::device> const & devices = viennacl::ocl::platform().devices();
+            
+            //            std::cout << devices[gpu_idx].name() << std::endl;
             
             // take the n-th available device from 'devices'
-//            std::vector< viennacl::ocl::device > my_devices;
-//            my_devices.push_back(devices[gpu_idx]);
+            //            std::vector< viennacl::ocl::device > my_devices;
+            //            my_devices.push_back(devices[gpu_idx]);
             
             // Select device
-//            viennacl::ocl::setup_context(id, my_devices);
-//            viennacl::ocl::current_context().switch_device(gpu_idx);
-            viennacl::ocl::get_context(id).switch_device(gpu_idx);
-//            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+            //            viennacl::ocl::setup_context(id, my_devices);
+            //            viennacl::ocl::current_context().switch_device(gpu_idx);
+            viennacl::ocl::setup_context(id, devices[gpu_idx]);
+            //            viennacl::ocl::get_context(id).switch_device(gpu_idx);
+            std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
             
             // increment context
             id++;
         }
     }
     
+    std::cout << "checked all devices" << std::endl;
+    
     viennacl::ocl::switch_context(0);
     
-//    std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
-    return wrap(viennacl::ocl::current_context().current_device().name());
+    std::cout << "completed initialization" << std::endl;
+    
+    // std::cout << viennacl::ocl::current_context().current_device().name() << std::endl;
+    // return wrap(viennacl::ocl::current_context().current_device().name());
 }
+
+
+////'@export
+//// [[Rcpp::export]]
+//void debugContexts(){
+//    
+//    typedef std::vector< viennacl::ocl::platform > platforms_type;
+//    
+//    // get platforms
+//    platforms_type platforms = viennacl::ocl::get_platforms();  
+//    
+//    std::vector< viennacl::ocl::device > devices;
+//    devices = platforms[0].devices();
+//    
+//    //devices = viennacl::ocl::current_context().devices();
+//    
+//    Rcout << "devices found on default platform" << std::endl;
+//    Rcout << devices.size() << std::endl;
+//    
+//    for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
+//        viennacl::ocl::device gpu = devices[gpu_idx];
+//        
+//        Rcout << "device index" << std::endl;
+//        Rcout << gpu_idx << std::endl;
+//        
+//        Rcout << "device name" << std::endl;
+//        Rcout << gpu.name() << std::endl;
+//    }
+//}
 
 
 //' @title Available OpenCL Contexts
@@ -88,6 +128,9 @@ listContexts()
     // get platforms
     platforms_type platforms = viennacl::ocl::get_platforms();  
     
+//    Rcout << "number of platforms found" << std::endl;
+//    Rcout << platforms.size() << std::endl;
+    
     // count number of contexts initialized
     // for each platform    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
@@ -98,7 +141,8 @@ listContexts()
 //        }
     }
     
-//    std::cout << num_contexts << std::endl;
+//    Rcout << "number of total contexts to create" << std::endl;
+//    Rcout << num_contexts << std::endl;
     
     Rcpp::IntegerVector context_index(num_contexts);
     Rcpp::CharacterVector platform_name(num_contexts);
@@ -110,8 +154,17 @@ listContexts()
     
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
         
-        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
+        std::vector< viennacl::ocl::device > devices;
+        devices = platforms[plat_idx].devices();
         
+        for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
+        
+//            Rcout << "context id" << std::endl;
+//            Rcout << id << std::endl;
+            
+//            Rcout << "current platform index" << std::endl;
+//            Rcout << plat_idx << std::endl;
+            
             // Select the platform
             viennacl::ocl::switch_context(id);
             
@@ -119,14 +172,24 @@ listContexts()
             platform_index[id] = plat_idx;
             platform_name[id] = platforms[plat_idx].info();
             
-            viennacl::ocl::set_context_platform_index(id, plat_idx);
-            
-            // Select device
-            viennacl::ocl::get_context(id).switch_device(gpu_idx);
+//            viennacl::ocl::set_context_platform_index(id, plat_idx);
+//            
+////            Rcout << "set platform successfully" << std::endl;
+//            
+//            // Select device
+//            viennacl::ocl::setup_context(id, devices[gpu_idx]);
+//            
+////            Rcout << "switched device successfully" << std::endl;
             
             // Get device info
             device_index[id] = gpu_idx;
             device_name[id] = viennacl::ocl::current_device().name();
+            
+//            Rcout << "current device index" << std::endl;
+//            Rcout << device_index[id] << std::endl;
+            
+//            Rcout << "current device name" << std::endl;
+//            Rcout << device_name[id] << std::endl;
             
             switch(viennacl::ocl::current_device().type()){
                 case 2: 
@@ -171,14 +234,9 @@ int currentContext()
 }
 
 
-//' @title Set Context
-//' @description Change the current context used by default
-//' @param id Integer identifying which context to set
-//' @seealso \link{listContexts}
-//' @export
 // [[Rcpp::export]]
 void
-setContext(int id)
+cpp_setContext(int id)
 {
     if(id <= 0){
         stop("Index cannot be 0 or less");

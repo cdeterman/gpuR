@@ -10,11 +10,11 @@
 #' @param ncol An integer specifying the number of columns
 #' @param type A character string specifying the type of gpuMatrix.  Default
 #' is NULL where type is inherited from the source data type.
+#' @param ctx_id An integer specifying the object's context
 #' @param ... Additional method to pass to gpuMatrix methods
 #' @return A gpuMatrix object
 #' @docType methods
 #' @rdname gpuMatrix-methods
-#' @aliases %*%-gpuR-method
 #' @author Charles Determan Jr.
 #' @export
 setGeneric("gpuMatrix", function(data = NA, nrow=NA, ncol=NA, type=NULL, ...){
@@ -25,14 +25,14 @@ setGeneric("gpuMatrix", function(data = NA, nrow=NA, ncol=NA, type=NULL, ...){
 #' @aliases gpuMatrix,matrix
 setMethod('gpuMatrix', 
           signature(data = 'matrix'),
-          function(data, type=NULL){
+          function(data, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
               
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -42,16 +42,10 @@ setMethod('gpuMatrix',
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
               
-              
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
-              
               data = switch(type,
                             integer = {
                                 new("igpuMatrix", 
-                                    address=sexpToEigenXptr(data, 
+                                    address=getRmatEigenAddress(data, 
                                                             nrow(data),
                                                             ncol(data), 
                                                             4L),
@@ -63,7 +57,7 @@ setMethod('gpuMatrix',
                             },
                             float = {
                                 new("fgpuMatrix", 
-                                    address=sexpToEigenXptr(data, 
+                                    address=getRmatEigenAddress(data, 
                                                             nrow(data),
                                                             ncol(data), 
                                                             6L),
@@ -74,8 +68,9 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dgpuMatrix",
-                                    address = sexpToEigenXptr(data, 
+                                    address = getRmatEigenAddress(data, 
                                                               nrow(data),
                                                               ncol(data), 
                                                               8L),
@@ -98,7 +93,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,missing
 setMethod('gpuMatrix', 
           signature(data = 'missing'),
-          function(data, nrow=NA, ncol=NA, type=NULL){
+          function(data, nrow=NA, ncol=NA, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
               
@@ -107,8 +102,8 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -117,11 +112,6 @@ setMethod('gpuMatrix',
               )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
-              
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
               
               data = switch(type,
                             integer = {
@@ -143,6 +133,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
+                                assert_has_double(platform_index, device_index)
                                 new("dgpuMatrix",
                                     address = emptyEigenXptr(nrow, ncol, 8L),
                                     .context_index = context_index,
@@ -165,7 +156,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,numeric
 setMethod('gpuMatrix', 
           signature(data = 'numeric'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- "double"
                             
@@ -174,8 +165,8 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -184,11 +175,6 @@ setMethod('gpuMatrix',
               )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
-              
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
               
               if(length(data) > 1){
                   data = switch(type,
@@ -203,6 +189,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -227,6 +214,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -249,7 +237,7 @@ setMethod('gpuMatrix',
 #' @aliases gpuMatrix,integer
 setMethod('gpuMatrix', 
           signature(data = 'integer'),
-          function(data, nrow, ncol, type=NULL){
+          function(data, nrow, ncol, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- "integer"
               
@@ -258,8 +246,8 @@ setMethod('gpuMatrix',
               
               device <- currentDevice()
               
-              context_index <- currentContext()
-              device_index <- device$device_index
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- as.integer(device$device_index)
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
@@ -268,11 +256,6 @@ setMethod('gpuMatrix',
               )
               platform_index <- currentPlatform()$platform_index
               platform_name <- platformInfo(platform_index)$platformName
-              
-              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
-                  stop("Double precision not supported for current device. 
-                       Try setting 'type = 'float'' or change device if multiple available.")
-              }
               
               if(length(data) > 1){
                   data = switch(type,
@@ -295,6 +278,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,
@@ -327,6 +311,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
+                                    assert_has_double(platform_index, device_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L),
                                         .context_index = context_index,

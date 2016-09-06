@@ -4,10 +4,11 @@
 \alias{detectGPUs}
 \title{Detect Available GPUs}
 \usage{
-detectGPUs(platform_idx = 1L)
+detectGPUs(platform_idx = NULL)
 }
 \arguments{
-\item{platform_idx}{An integer value indicating which platform to query.}
+\item{platform_idx}{An integer value indicating which platform to query.
+If NULL it will iterate over all platforms and sum results}
 }
 \value{
 An integer representing the number of available GPUs

@@ -35,6 +35,8 @@ test_that("gpuMatrix element access", {
                  info = "float element subset not equivalent ")
     expect_equivalent(igpu[1,2], A[1,2],
                       info = "integer element subset not equivalent")
+    expect_equivalent(dgpu[c(3,5)], D[c(3,5)],
+                      info = "double non-contiguous subset not equivalent")
 })
 
 test_that("gpuMatrix set column access", {
@@ -137,6 +139,10 @@ test_that("gpuMatrix set element access", {
     A[1,3] <- int
     D[1,3] <- float
     
+    D[c(6,10)] <- 0
+    gpuD[c(6,10)] <- 0
+    gpuF[c(6,10)] <- 0
+    
     expect_equivalent(gpuD[1,3], float,
                       info = "updated dgpuMatrix element not equivalent")
     expect_equivalent(gpuD[], D,
@@ -155,6 +161,8 @@ test_that("gpuMatrix set element access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[1,3] <- rnorm(12),
                  info = "no error when assigned vector to element")
+    expect_equivalent(gpuD[c(6,10)], D[c(6,10)],
+                      info = "double non-contiguous subset not equivalent")
 })
 
 test_that("gpuMatrix confirm print doesn't error", {
@@ -164,4 +172,30 @@ test_that("gpuMatrix confirm print doesn't error", {
     dgpu <- gpuMatrix(D, type="float")
 
     expect_that(print(dgpu), prints_text("Source: gpuR Matrix"))
+})
+
+test_that("gpuMatrix as.matrix method", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    dgpu <- gpuMatrix(D)
+    fgpu <- gpuMatrix(D, type="float")
+    igpu <- gpuMatrix(A)
+    
+    expect_equal(as.matrix(dgpu), D,
+                      info = "double as.matrix not equal")
+    expect_equal(as.matrix(fgpu), D,
+                      info = "float as.matrix not equal",
+                      tolerance = 1e-07)
+    expect_equal(as.matrix(dgpu), D,
+                      info = "integer as.matrix not equal")
+    
+    
+    expect_is(as.matrix(dgpu), 'matrix',
+              info = "double as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(fgpu), 'matrix',
+              info = "float as.matrix not producing 'matrix' class")
+    expect_is(as.matrix(igpu), 'matrix',
+              info = "integer as.matrix not producing 'matrix' class")
 })

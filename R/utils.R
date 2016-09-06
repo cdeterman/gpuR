@@ -12,3 +12,51 @@ dim_desc <- function(x) {
 
 
 
+#'@export
+str.gpuMatrix <- function(object, vec.len = strOptions()$vec.len, 
+                          digits.d = strOptions()$digits.d)
+{
+    d <- dim(object)
+    type <- typeof(object)
+    
+    prefix <- switch(type,
+                     "double" = "num",
+                     "float" = "flt",
+                     "integer" = "int")
+    
+    end <- round(vec.len * 1.25)
+    
+    elems <- round(object[1:end], digits.d)
+    
+    rows <- paste(1, d[1], sep=":")
+    cols <- paste(1, d[2], sep=":")
+    
+    ss <- paste0(" ", prefix, paste0(" [", rows, ", ", cols, "] "), paste0(elems, collapse = " "), " ", "...", sep = "")
+    cat(ss)
+    invisible()
+}
+
+
+#'@export
+str.vclMatrix <- function(object, vec.len = strOptions()$vec.len, 
+                          digits.d = strOptions()$digits.d)
+{
+    d <- dim(object)
+    type <- typeof(object)
+    
+    prefix <- switch(type,
+                     "double" = "num",
+                     "float" = "flt",
+                     "integer" = "int")
+    
+    end <- round(vec.len * 1.25)
+    
+    elems <- round(object[1:end], digits.d)
+    
+    rows <- paste(1, d[1], sep=":")
+    cols <- paste(1, d[2], sep=":")
+    
+    ss <- paste0(" ", prefix, paste0(" [", rows, ", ", cols, "] "), paste0(elems, collapse = " "), " ", "...", sep = "")
+    cat(ss)
+    invisible()
+}

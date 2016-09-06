@@ -25,6 +25,22 @@ has_gpu_skip <- function() {
     }
 }
 
+# check if multiple GPUs can be found
+#' @title Skip test in less than 2 GPUs
+#' @description Function to skip testthat tests
+#' if less than 2 valid GPU's are detected
+#' @export
+has_multiple_gpu_skip <- function() {
+    gpuCheck <- try(detectGPUs(), silent=TRUE)
+    if(class(gpuCheck)[1] == "try-error"){
+        testthat::skip("No GPUs available")
+    }else{
+        if (gpuCheck < 2) {
+            testthat::skip("Only one GPU available")
+        }
+    }
+}
+
 # check if any CPUs can be found
 #' @title Skip test for CPUs
 #' @description Function to skip testthat tests
@@ -47,12 +63,43 @@ has_cpu_skip <- function() {
 #' if the detected GPU doesn't support double precision
 #' @export
 has_double_skip <- function() {
-    gpuCheck <- try(deviceHasDouble(), silent=TRUE)
-    if(class(gpuCheck)[1] == "try-error"){
-        testthat::skip("No GPUs available")
+    deviceCheck <- try(deviceHasDouble(), silent=TRUE)
+    if(class(deviceCheck)[1] == "try-error"){
+        testthat::skip("Default device doesn't have double precision")
     }else{
-        if (!gpuCheck) {
-            testthat::skip("GPU doesn't support double precision")
+        if (!deviceCheck) {
+            testthat::skip("Default device doesn't support double precision")
         }
+    }
+}
+
+# check if multiple GPUs supports double precision
+#' @title Skip test for multiple GPUs with double precision
+#' @description Function to skip testthat tests
+#' if their aren't multiple detected GPU with double precision
+#' @export
+has_multiple_double_skip <- function() {
+    
+    contexts <- listContexts()
+    gpus_with_double = 0
+    
+    for(i in seq(nrow(contexts))){
+        gpuCheck <- try(
+            deviceHasDouble(contexts$platform_index[i] + 1L, 
+                            contexts$device_index[i] + 1L)
+            , silent=TRUE)
+        if(class(gpuCheck)[1] == "try-error"){
+            next
+        }else{
+            if (!gpuCheck) {
+                # This device doesn't support double precision
+            }else{
+                gpus_with_double = gpus_with_double + 1
+            }
+        }
+    }
+    
+    if(gpus_with_double < 2){
+        testthat::skip("Less than 2 GPUs with double precision")
     }
 }

@@ -5,9 +5,9 @@
 \alias{gpuInfo}
 \title{Device Information}
 \usage{
-gpuInfo(platform_idx = 1L, device_idx = 1L)
+gpuInfo(platform_idx = NULL, device_idx = NULL)
 
-cpuInfo(platform_idx = 1L, device_idx = 1L)
+cpuInfo(platform_idx = NULL, device_idx = NULL)
 }
 \arguments{
 \item{platform_idx}{An integer value indicating which platform to query.}
@@ -42,6 +42,10 @@ group (bytes)}
 piece (bytes)}
 
 \item{available}{Whether the device is available}
+
+\item{deviceExtensions}{OpenCL device extensions available}
+
+\item{double_support}{Logical value if double type supported}
 }
 \description{
 Get basic information about selected device (e.g. GPU)

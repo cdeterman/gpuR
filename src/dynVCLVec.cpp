@@ -4,27 +4,20 @@
 #include "gpuR/dynVCLVec.hpp"
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(SEXP A_, int device_flag)
+dynVCLVec<T>::dynVCLVec(
+    SEXP A_,
+    int ctx_id)
 {
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
     
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
-    
     int K = Am.size();
+    viennacl::context ctx;
     
-    A = viennacl::vector<T>(K);    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A = viennacl::vector<T>(K, ctx);    
     viennacl::copy(Am, A); 
     
     size = K;
@@ -36,22 +29,16 @@ dynVCLVec<T>::dynVCLVec(SEXP A_, int device_flag)
 }
 
 template<typename T>
-dynVCLVec<T>::dynVCLVec(int size_in, int device_flag)
+dynVCLVec<T>::dynVCLVec(
+    int size_in,
+    int ctx_id)
 {
-    // define device type to use
-    if(device_flag == 0){
-        //use only GPUs
-        long id = 0;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::gpu_tag());
-        viennacl::ocl::switch_context(id);
-    }else{
-        // use only CPUs
-        long id = 1;
-        viennacl::ocl::set_context_device_type(id, viennacl::ocl::cpu_tag());
-        viennacl::ocl::switch_context(id);
-    }
+    viennacl::context ctx;
     
-    A = viennacl::zero_vector<T>(size_in);
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+
+    A = viennacl::zero_vector<T>(size_in, ctx);
     begin = 1;
     last = size_in;
     ptr = &A;
@@ -59,17 +46,38 @@ dynVCLVec<T>::dynVCLVec(int size_in, int device_flag)
     r = temp_r;
 }
 
-
 template<typename T>
-dynVCLVec<T>::dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec)
+dynVCLVec<T>::dynVCLVec(
+    viennacl::vector<T> vec,
+    int ctx_id)
 {
-    size = dynVec->length();
-    begin = dynVec->start();
-    last = dynVec->end();
-    ptr = dynVec->getPtr();
-    viennacl::range temp_r(begin-1, last);
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    A.switch_memory_context(ctx);
+    A = vec;
+    
+    size = A.size();
+    begin = 1;
+    last = size;
+    ptr = &A;
+    viennacl::range temp_r(0, size);
     r = temp_r;
 }
+
+
+// template<typename T>
+// dynVCLVec<T>::dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec)
+// {
+//     size = dynVec->length();
+//     begin = dynVec->start();
+//     last = dynVec->end();
+//     ptr = dynVec->getPtr();
+//     viennacl::range temp_r(begin-1, last);
+//     r = temp_r;
+// }
 
 template<typename T>
 void 
@@ -97,6 +105,13 @@ template<typename T>
 void 
 dynVCLVec<T>::updateSize(){
     size = last - begin;
+}
+
+template<typename T>
+void
+dynVCLVec<T>::setVector(viennacl::vector<T> vec){
+    A = vec;
+    ptr = &A;
 }
 
 template class dynVCLVec<int>;

@@ -7,9 +7,6 @@ set.seed(123)
 # ignore warnings (logs and arc trigs)
 options(warn=-1)
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 ORDER <- 4
 
 # Base R objects
@@ -22,10 +19,10 @@ test_that("CPU vclMatrix Single Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
     
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -68,10 +65,10 @@ test_that("CPU vclMatrix Double Precision Matrix Element-Wise Trignometry", {
     has_cpu_skip()
     
     Sin <- sin(A)
-    Asin <- asin(A)
+    Asin <- suppressWarnings(asin(A))
     Hsin <- sinh(A)
     Cos <- cos(A)
-    Acos <- acos(A)
+    Acos <- suppressWarnings(acos(A))
     Hcos <- cosh(A)
     Tan <- tan(A) 
     Atan <- atan(A)
@@ -114,9 +111,9 @@ test_that("CPU vclMatrix Double Precision Matrix Element-Wise Trignometry", {
 test_that("CPU vclMatrix Single Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- vclMatrix(A, type="float")
     
@@ -138,9 +135,9 @@ test_that("CPU vclMatrix Single Precision Matrix Element-Wise Logs", {
 test_that("CPU vclMatrix Double Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
     
-    R_log <- log(A)
-    R_log10 <- log10(A)
-    R_log2 <- log(A, base=2)
+    R_log <- suppressWarnings(log(A))
+    R_log10 <- suppressWarnings(log10(A))
+    R_log2 <- suppressWarnings(log(A, base=2))
     
     fgpuA <- vclMatrix(A, type="double")
     
@@ -257,6 +254,3 @@ test_that("CPU vclMatrix Double Precision Maximum/Minimum", {
     expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double matrix element not equivalent")  
 })
-
-# set option back to GPU
-options(gpuR.default.device.type = "gpu")

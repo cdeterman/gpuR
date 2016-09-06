@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix classes")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 set.seed(123)
 A <- matrix(seq.int(100), nrow=5)
 D <- matrix(rnorm(100), nrow=5)
@@ -152,5 +149,3 @@ test_that("CPU vclMatrix double scalar initializers", {
                       info = "scalar double dimensions not equivalent")
     expect_is(vclA, "dvclMatrix")
 })
-
-options(gpuR.default.device.type = "gpu")

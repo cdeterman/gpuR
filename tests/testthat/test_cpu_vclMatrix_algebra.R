@@ -1,9 +1,6 @@
 library(gpuR)
 context("CPU vclMatrix algebra")
 
-# set option to use CPU instead of GPU
-options(gpuR.default.device.type = "cpu")
-
 # set seed
 set.seed(123)
 
@@ -16,38 +13,29 @@ A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
 
+# Single Precision Tests
 
-test_that("CPU vclMatrix Single Precision Matrix multiplication successful", {
+test_that("CPU vclMatrix Single Precision Matrix Multiplication", {
+    
     has_cpu_skip()
     
     C <- A %*% B
     
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
+    fvclE <- vclMatrix(E, type="float")
     
     fvclC <- fvclA %*% fvclB
     
     expect_is(fvclC, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+    expect_error(fvclA %*% fvclE, 
+                 info = "error not thrown for non-conformant matrices")
 })
 
-test_that("CPU vclMatrix Double Precision Matrix multiplication successful", {
-    has_cpu_skip()
+test_that("CPU vclMatrix Single Precision Matrix Subtraction", {
     
-    C <- A %*% B
-    
-    dvclA <- vclMatrix(A, type="double")
-    dvclB <- vclMatrix(B, type="double")
-    
-    dvclC <- dvclA %*% dvclB
-    
-    expect_is(dvclC, "dvclMatrix")
-    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
-})
-
-test_that("CPU vclMatrix Single Precision Matrix Subtraction successful", {
     has_cpu_skip()
     
     C <- A - B
@@ -62,7 +50,43 @@ test_that("CPU vclMatrix Single Precision Matrix Subtraction successful", {
                  info="float matrix elements not equivalent")  
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Addition successful", {
+test_that("CPU vclMatrix Single Precision Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- A - 1
+    C2 <- 1 - A
+    
+    fvclA <- vclMatrix(A, type="float")
+    
+    fvclC <- fvclA - 1    
+    fvclC2 <- 1 - fvclA
+    
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_is(fvclC2, "fvclMatrix")
+    expect_equal(fvclC2[,], C2, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Single Precision Unary Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- -A
+    
+    fvclA <- vclMatrix(A, type="float")
+    
+    fvclC <- -fvclA
+    
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Single Precision Matrix Addition", {
+    
     has_cpu_skip()
     
     C <- A + B
@@ -77,37 +101,137 @@ test_that("CPU vclMatrix Single Precision Matrix Addition successful", {
                  info="float matrix elements not equivalent")  
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Subtraction successful", {
+test_that("CPU vclMatrix Single Precision Scalar Matrix Addition", {
+    
     has_cpu_skip()
     
-    C <- A - B
+    C <- A + 1
+    C2 <- 1 + A
     
-    dvclA <- vclMatrix(A, type="double")
-    dvclB <- vclMatrix(B, type="double")
+    fvclA <- vclMatrix(A, type="float")
     
-    dvclC <- dvclA - dvclB
+    fvclC <- fvclA + 1
+    fvclC2 <- 1 + fvclA
     
-    expect_is(dvclC, "dvclMatrix")
-    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_is(fvclC2, "fvclMatrix")
+    expect_equal(fvclC2[,], C2, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
 })
 
-test_that("CPU vclMatrix Double Precision Matrix Addition successful", {
+test_that("CPU vclMatrix Single Precision Matrix Element-Wise Multiplication", {
+    
     has_cpu_skip()
     
-    C <- A + B
+    C <- A * B
     
-    dvclA <- vclMatrix(A, type="double")
-    dvclB <- vclMatrix(B, type="double")
+    fvclA <- vclMatrix(A, type="float")
+    fvclB <- vclMatrix(B, type="float")
+    fvclE <- vclMatrix(E, type="float")
     
-    dvclC <- dvclA + dvclB
+    fvclC <- fvclA * fvclB
     
-    expect_is(dvclC, "dvclMatrix")
-    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_error(fvclA * fvclE)
 })
 
-test_that("CPU vclMatrix Single Precision crossprod successful", {
+test_that("CPU vclMatrix Single Precision Scalar Matrix Multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- A * 2
+    C2 <- 2 * A
+    
+    dvclA <- vclMatrix(A, type="float")
+    
+    dvclC <- dvclA * 2
+    dvclC2 <- 2 * dvclA
+    
+    expect_is(dvclC, "fvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_is(dvclC2, "fvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Single Precision Matrix Element-Wise Division", {
+    
+    has_cpu_skip()
+    
+    C <- A / B
+    
+    fvclA <- vclMatrix(A, type="float")
+    fvclB <- vclMatrix(B, type="float")
+    fvclE <- vclMatrix(E, type="float")
+    
+    fvclC <- fvclA / fvclB
+    
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_error(fvclA * fvclE)
+})
+
+test_that("CPU vclMatrix Single Precision Scalar Matrix Division", {
+    
+    has_cpu_skip()
+    
+    C <- A/2
+    C2 <- 2/A
+    
+    dvclA <- vclMatrix(A, type="float")
+    
+    dvclC <- dvclA/2
+    dvclC2 <- 2/dvclA
+    
+    expect_is(dvclC, "fvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+    expect_is(dvclC2, "fvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Single Precision Matrix Element-Wise Power", {
+    
+    has_cpu_skip()
+    
+    C <- A ^ B
+    
+    fvclA <- vclMatrix(A, type="float")
+    fvclB <- vclMatrix(B, type="float")
+    fvclE <- vclMatrix(E, type="float")
+    
+    fvclC <- fvclA ^ fvclB
+    
+    expect_is(fvclC, "fvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_error(fvclA ^ fvclE)
+})
+
+test_that("CPU vclMatrix Single Precision Scalar Matrix Power", {
+    
+    has_cpu_skip()
+    
+    C <- A^2
+    
+    dvclA <- vclMatrix(A, type="float")
+    
+    dvclC <- dvclA^2
+    
+    expect_is(dvclC, "fvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Single Precision crossprod", {
+    
     has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=2)
@@ -132,32 +256,8 @@ test_that("CPU vclMatrix Single Precision crossprod successful", {
     expect_error(crossprod(fvclX, fvclZ))
 })
 
-test_that("CPU vclMatrix Double Precision crossprod successful", {
-    has_cpu_skip()
+test_that("CPU vclMatrix Single Precision tcrossprod", {
     
-    X <- matrix(rnorm(10), nrow=2)
-    Y <- matrix(rnorm(10), nrow=2)
-    Z <- matrix(rnorm(10), nrow=5)
-    
-    C <- crossprod(X,Y)
-    Cs <- crossprod(X)
-    
-    fvclX <- vclMatrix(X, type="double")
-    fvclY <- vclMatrix(Y, type="double")
-    fvclZ <- vclMatrix(Z, type="double")
-    
-    fvclC <- crossprod(fvclX, fvclY)
-    fvclCs <- crossprod(fvclX)
-    
-    expect_is(fvclC, "dvclMatrix")
-    expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
-    expect_equal(fvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent") 
-    expect_error(crossprod(fvclX, fvclZ))
-})
-
-test_that("CPU vclMatrix Single Precision tcrossprod successful", {
     has_cpu_skip()
     
     X <- matrix(rnorm(10), nrow=5)
@@ -182,8 +282,498 @@ test_that("CPU vclMatrix Single Precision tcrossprod successful", {
     expect_error(tcrossprod(fvclX, fvclZ))
 })
 
-test_that("CPU vclMatrix Double Precision tcrossprod successful", {
+test_that("CPU vclMatrix Single Precision transpose", {
+    
     has_cpu_skip()
+    
+    At <- t(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuAt <- t(fgpuA)
+    
+    expect_is(fgpuAt, "fvclMatrix")
+    expect_equal(fgpuAt[,], At, tolerance=1e-07, 
+                 info="transposed float matrix elements not equivalent") 
+})
+
+
+# Integer tests
+
+test_that("CPU vclMatrix Integer Matrix multiplication", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint %*% Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA %*% igpuB
+    
+    expect_equivalent(igpuC[,], Cint,
+                      info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint - Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA - igpuB
+    
+    expect_is(igpuC, "ivclMatrix")
+    expect_equal(igpuC[,], Cint,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- Aint - 1L
+    C2 <- 1L - Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- fgpuA - 1L
+    fgpuC2 <- 1L - fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C, 
+                 info="integer matrix elements not equivalent") 
+    expect_is(fgpuC2, "ivclMatrix")
+    expect_equal(fgpuC2[,], C2,
+                 info="intger matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Unary Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    
+    C <- -Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- -fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Matrix Addition", {
+    
+    has_cpu_skip()
+    
+    Cint <- Aint + Bint
+    
+    igpuA <- vclMatrix(Aint, type="integer")
+    igpuB <- vclMatrix(Bint, type="integer")
+    
+    igpuC <- igpuA + igpuB
+    
+    expect_is(igpuC, "ivclMatrix")
+    expect_equal(igpuC[,], Cint,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Addition", {
+    
+    has_cpu_skip()
+    
+    C <- Aint + 1L
+    C2 <- 1L + Aint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    
+    fgpuC <- fgpuA + 1L
+    fgpuC2 <- 1L + fgpuA
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(fgpuC2, "ivclMatrix")
+    expect_equal(fgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- Aint * Bint
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    fgpuB <- vclMatrix(Bint, type="integer")
+    
+    fgpuC <- fgpuA * fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C, 
+                 info="integer matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- Aint * 2L
+    C2 <- 2L * Aint
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA * 2L
+    dgpuC2 <- 2L * dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(dgpuC2, "ivclMatrix")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Division", {
+    
+    has_cpu_skip()
+    
+    C <- Aint / Bint
+    C <- apply(C, 2, as.integer)
+    
+    fgpuA <- vclMatrix(Aint, type="integer")
+    fgpuB <- vclMatrix(Bint, type="integer")
+    
+    fgpuC <- fgpuA / fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Division", {
+    
+    has_cpu_skip()
+    
+    C <- Aint/2L
+    C2 <- 2L/Aint
+    
+    C <- apply(C, 2, as.integer)
+    C2 <- apply(C2, 2, as.integer)
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA/2L
+    dgpuC2 <- 2L/dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent") 
+    expect_is(dgpuC2, "ivclMatrix")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Power", {
+    
+    has_cpu_skip()
+    
+    Apow <- matrix(seq.int(9), ncol=3, nrow=3)
+    Bpow <- matrix(2, ncol = 3, nrow = 3)
+    C <- Apow ^ Bpow
+    
+    fgpuA <- vclMatrix(Apow, type="integer")
+    fgpuB <- vclMatrix(Bpow, type="integer")
+    
+    fgpuC <- fgpuA ^ fgpuB
+    
+    expect_is(fgpuC, "ivclMatrix")
+    expect_equal(fgpuC[,], C,
+                 info="integer matrix elements not equivalent")
+})
+
+test_that("CPU vclMatrix Integer Precision Scalar Matrix Power", {
+    
+    has_cpu_skip()
+    
+    C <- Aint^2L
+    C2 <- 2L^Aint
+    
+    C <- apply(C, 2, as.integer)
+    C2 <- apply(C2, 2, as.integer)
+    
+    dgpuA <- vclMatrix(Aint, type="integer")
+    
+    dgpuC <- dgpuA^2L
+    dgpuC2 <- 2L^dgpuA
+    
+    expect_is(dgpuC, "ivclMatrix")
+    expect_equal(dgpuC[,], C,
+                 info="integer matrix elements not equivalent")
+    expect_equal(dgpuC2[,], C2,
+                 info="integer matrix elements not equivalent")
+})
+
+# Double Precision Tests
+
+test_that("CPU vclMatrix Double Precision Matrix multiplication", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A %*% B
+    
+    dvclA <- vclMatrix(A, type="double")
+    dvclB <- vclMatrix(B, type="double")
+    
+    dvclC <- dvclA %*% dvclB
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Double Precision Matrix Subtraction", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A - B
+    
+    dvclA <- vclMatrix(A, type="double")
+    dvclB <- vclMatrix(B, type="double")
+    
+    dvclC <- dvclA - dvclB
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Double Precision Matrix Addition", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A + B
+    
+    dvclA <- vclMatrix(A, type="double")
+    dvclB <- vclMatrix(B, type="double")
+    
+    dvclC <- dvclA + dvclB
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Double Precision Scalar Matrix Addition", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A + 1
+    C2 <- 1 + A
+    
+    dvclA <- vclMatrix(A, type="double")
+    
+    dvclC <- dvclA + 1
+    dvclC2 <- 1 + dvclA
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_is(dvclC2, "dvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision Scalar Matrix Subtraction", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A - 1
+    C2 <- 1 - A
+    
+    dvclA <- vclMatrix(A, type="double")
+    
+    dvclC <- dvclA - 1
+    dvclC2 <- 1 - dvclA
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_is(dvclC2, "dvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision Unary Matrix Subtraction", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- -A
+    
+    fvclA <- vclMatrix(A, type="double")
+    
+    fvclC <- -fvclA
+    
+    expect_is(fvclC, "dvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision Matrix Element-Wise Multiplication", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A * B
+    
+    dvclA <- vclMatrix(A, type="double")
+    dvclB <- vclMatrix(B, type="double")
+    dvclE <- vclMatrix(E, type="double")
+    
+    dvclC <- dvclA * dvclB
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_error(dvclA * dvclE)
+})
+
+test_that("CPU vclMatrix Double Precision Scalar Matrix Multiplication", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A * 2
+    C2 <- 2 * A
+    
+    dvclA <- vclMatrix(A, type="double")
+    
+    dvclC <- dvclA * 2
+    dvclC2 <- 2 * dvclA
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_is(dvclC2, "dvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision Matrix Element-Wise Division", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A / B
+    
+    dvclA <- vclMatrix(A, type="double")
+    dvclB <- vclMatrix(B, type="double")
+    dvclE <- vclMatrix(E, type="double")
+    
+    dvclC <- dvclA / dvclB
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_error(dvclA * dvclE)
+})
+
+test_that("CPU vclMatrix Double Precision Scalar Matrix Division", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A/2
+    C2 <- 2/A
+    
+    dvclA <- vclMatrix(A, type="double")
+    
+    dvclC <- dvclA/2
+    dvclC2 <- 2/dvclA
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_is(dvclC2, "dvclMatrix")
+    expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision Matrix Element-Wise Power", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A ^ B
+    
+    fvclA <- vclMatrix(A, type="double")
+    fvclB <- vclMatrix(B, type="double")
+    fvclE <- vclMatrix(E, type="double")
+    
+    fvclC <- fvclA ^ fvclB
+    
+    expect_is(fvclC, "dvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_error(fvclA ^ fvclE)
+})
+
+test_that("CPU vclMatrix Double Precision Scalar Matrix Power", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    C <- A^2
+    
+    dvclA <- vclMatrix(A, type="double")
+    
+    dvclC <- dvclA^2
+    
+    expect_is(dvclC, "dvclMatrix")
+    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+})
+
+test_that("CPU vclMatrix Double Precision crossprod", {
+    
+    has_cpu_skip()
+    has_double_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- matrix(rnorm(10), nrow=2)
+    Z <- matrix(rnorm(10), nrow=5)
+    
+    C <- crossprod(X,Y)
+    Cs <- crossprod(X)
+    
+    fvclX <- vclMatrix(X, type="double")
+    fvclY <- vclMatrix(Y, type="double")
+    fvclZ <- vclMatrix(Z, type="double")
+    
+    fvclC <- crossprod(fvclX, fvclY)
+    fvclCs <- crossprod(fvclX)
+    
+    expect_is(fvclC, "dvclMatrix")
+    expect_equal(fvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_equal(fvclCs[,], Cs, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent") 
+    expect_error(crossprod(fvclX, fvclZ))
+})
+
+test_that("CPU vclMatrix Double Precision tcrossprod", {
+    
+    has_cpu_skip()
+    has_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -207,91 +797,10 @@ test_that("CPU vclMatrix Double Precision tcrossprod successful", {
     expect_error(tcrossprod(fvclX, fvclZ))
 })
 
-test_that("CPU vclMatrix Single Precision Matrix Element-Wise Multiplication", {
-    has_cpu_skip()
-    
-    C <- A * B
-    
-    fvclA <- vclMatrix(A, type="float")
-    fvclB <- vclMatrix(B, type="float")
-    fvclE <- vclMatrix(E, type="float")
-    
-    fvclC <- fvclA * fvclB
-    
-    expect_is(fvclC, "fvclMatrix")
-    expect_equal(fvclC[,], C, tolerance=1e-07, 
-                 info="float matrix elements not equivalent")  
-    expect_error(fvclA * fvclE)
-})
-
-test_that("CPU vclMatrix Single Precision Matrix Element-Wise Division", {
-    has_cpu_skip()
-    
-    C <- A / B
-    
-    fvclA <- vclMatrix(A, type="float")
-    fvclB <- vclMatrix(B, type="float")
-    fvclE <- vclMatrix(E, type="float")
-    
-    fvclC <- fvclA / fvclB
-    
-    expect_is(fvclC, "fvclMatrix")
-    expect_equal(fvclC[,], C, tolerance=1e-07, 
-                 info="float matrix elements not equivalent")  
-    expect_error(fvclA * fvclE)
-})
-
-test_that("CPU vclMatrix Double Precision Matrix Element-Wise Multiplication", {
-    has_cpu_skip()
-    
-    C <- A * B
-    
-    dvclA <- vclMatrix(A, type="double")
-    dvclB <- vclMatrix(B, type="double")
-    dvclE <- vclMatrix(E, type="double")
-    
-    dvclC <- dvclA * dvclB
-    
-    expect_is(dvclC, "dvclMatrix")
-    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
-    expect_error(dvclA * dvclE)
-})
-
-test_that("CPU vclMatrix Double Precision Matrix Element-Wise Division", {
-    has_cpu_skip()
-    
-    C <- A / B
-    
-    dvclA <- vclMatrix(A, type="double")
-    dvclB <- vclMatrix(B, type="double")
-    dvclE <- vclMatrix(E, type="double")
-    
-    dvclC <- dvclA / dvclB
-    
-    expect_is(dvclC, "dvclMatrix")
-    expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="double matrix elements not equivalent")  
-    expect_error(dvclA * dvclE)
-})
-
-test_that("CPU vclMatrix Single Precision transpose", {
-    
-    has_cpu_skip()
-    
-    At <- t(A)
-    
-    fgpuA <- vclMatrix(A, type="float")
-    fgpuAt <- t(fgpuA)
-    
-    expect_is(fgpuAt, "fvclMatrix")
-    expect_equal(fgpuAt[,], At, tolerance=1e-07, 
-                 info="transposed float matrix elements not equivalent") 
-})
-
 test_that("CPU vclMatrix Double Precision transpose", {
     
     has_cpu_skip()
+    has_double_skip()
     
     At <- t(A)
     
@@ -302,53 +811,3 @@ test_that("CPU vclMatrix Double Precision transpose", {
     expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps^0.5, 
                  info="transposed double matrix elements not equivalent") 
 })
-
-
-# test_that("CPU vclMatrix Integer Matrix multiplication successful", {
-#     
-#     has_gpu_skip()
-#     
-#     Cint <- Aint %*% Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA %*% igpuB
-#     
-#     expect_equivalent(igpuC[,], Cint, 
-#                       info="float matrix elements not equivalent")      
-# })
-# 
-# test_that("CPU vclMatrix Integer Matrix Subtraction successful", {
-#     
-#     has_gpu_skip()
-#     
-#     Cint <- Aint - Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA - igpuB
-#     
-#     expect_is(igpuC, "ivclMatrix")
-#     expect_equal(igpuC[,], Cint, 
-#                  info="integer matrix elements not equivalent")  
-# })
-# 
-# test_that("CPU vclMatrix Integer Matrix Addition successful", {
-#     
-#     has_gpu_skip()
-#     
-#     Cint <- Aint + Bint
-#     
-#     igpuA <- vclMatrix(Aint, type="integer")
-#     igpuB <- vclMatrix(Bint, type="integer")
-#     
-#     igpuC <- igpuA + igpuB
-#     
-#     expect_is(igpuC, "ivclMatrix")
-#     expect_equal(igpuC[,], Cint,
-#                  info="integer matrix elements not equivalent")  
-# })
-
-options(gpuR.default.device.type = "gpu")

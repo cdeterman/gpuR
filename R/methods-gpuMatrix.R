@@ -1,6 +1,14 @@
 #' @import methods
 #' @importFrom utils file_test
 
+
+#' @export
+as.matrix.gpuMatrix <- function(x){
+    out <- x[]
+    return(out)
+} 
+
+
 #' @title Matrix Multiplication
 #' @description Multiply two gpuR objects, if they are conformable.  If both
 #' are vectors of the same length, it will return the inner product (as a matrix).
@@ -57,11 +65,11 @@ setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1), ctx_id=e1@.context_index)
                          gpu_Mat_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1))
+                         e2 <- gpuMatrix(matrix(e2, ncol=ncol(e1), nrow=nrow(e1)), type=typeof(e1), ctx_id=e1@.context_index)
                          gpu_Mat_axpy(-1, e2, e1)
                          },
                      `*` = gpuMatScalarMult(e1, e2),
@@ -83,20 +91,20 @@ setMethod("Arith", c(e1="numeric", e2="gpuMatrix"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpu_Mat_axpy(1, e1, e2)
                          },
                      `-` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpu_Mat_axpy(-1, e2, e1)
                          },
                      `*` = gpuMatScalarMult(e2, e1),
                      `/` = {
-                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 = gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpuMatElemDiv(e1, e2)
                          },
                      `^` = {
-                         e1 <- gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2))
+                         e1 <- gpuMatrix(matrix(e1, ncol=ncol(e2), nrow=nrow(e2)), type=typeof(e2), ctx_id=e2@.context_index)
                          gpuMatElemPow(e1, e2)
                      },
                      stop("undefined operation")
@@ -230,6 +238,18 @@ setMethod('ncol', signature(x="gpuMatrix"),
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
 
+#' @title gpuMatrix/vclMatrix length method
+#' @description Retrieve number of elements in object
+#' @param x A gpuMatrix/vclMatrix object
+#' @return A numeric value
+#' @docType methods
+#' @rdname length-methods
+#' @author Charles Determan Jr.
+#' @aliases length-gpuMatrix
+#' @export
+setMethod('length', signature(x="gpuMatrix"),
+          function(x) return(nrow(x) * ncol(x)))
+
 #' @title Extract gpuR object elements
 #' @description Operators to extract or replace elements
 #' @param x A gpuR object
@@ -268,13 +288,45 @@ setMethod("[",
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", drop="missing"),
-          function(x, i, j, drop) {
-              switch(typeof(x),
-                     "integer" = return(GetMatRow(x@address, i, 4L)),
-                     "float" = return(GetMatRow(x@address, i, 6L)),
-                     "double" = return(GetMatRow(x@address, i, 8L)),
-                     stop("type not recognized")
+          function(x, i, j, ..., drop) {
+              
+              if(tail(i, 1) > length(x)){
+                  stop("Index out of bounds")
+              }
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
+              
+              if(nargs() == 3){
+                  return(GetMatRow(x@address, i, type))
+              }else{
+                  
+                  output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
+                  
+                  nr <- nrow(x)
+                  col_idx <- 1
+                  for(elem in seq_along(i)){
+                      if(i[elem] > nr){
+                          tmp <- ceiling(i[elem]/nr)
+                          if(tmp != col_idx){
+                              col_idx <- tmp
+                          }
+                          
+                          row_idx <- i[elem] - (nr * (col_idx - 1))
+                          
+                      }else{
+                          row_idx <- i[elem]
+                      }
+                      
+                      output[elem] <- GetMatElement(x@address, row_idx, col_idx, type)
+                  }
+                  
+                  return(output)
+              }
           })
 
 #' @rdname extract-methods
@@ -529,13 +581,6 @@ setMethod("tcrossprod",
 setMethod("dist", signature(x="gpuMatrix"),
           function(x, method = "euclidean", diag = FALSE, upper = FALSE, p = 2)
           {
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
               
               type = typeof(x)
               
@@ -582,14 +627,6 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
               if(ncol(x) != ncol(y)){
                   stop("columns in x and y are not equivalent")
               }
-              
-              device_flag <- 
-                  switch(options("gpuR.default.device.type")$gpuR.default.device.type,
-                         "cpu" = 1, 
-                         "gpu" = 0,
-                         stop("unrecognized default device option"
-                         )
-                  )
               
               type = typeof(x)
               
