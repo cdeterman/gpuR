@@ -1,8 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
-src/*.o
-src/*.so
-src/*.dll
+*.o
+*.a
+*.so
+*.dll
 src/Makevars
 .httr-oauth

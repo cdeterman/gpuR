@@ -1,2 +1,4 @@
-rm -f src/Makevars.win
 rm -f src/*.o
+rm -f src/*.dll
+rm -f src/loader/*.o
+rm -f src/loader/*.a

@@ -1,0 +1,19 @@
+CXX_STD = CXX11
+PKG_CPPFLAGS = -I. -I../inst/include
+PKG_LIBS = -L./loader -lOpenCL
+
+.PHONY: clean
+
+$(SHLIB): loader/libOpenCL.a
+
+loader/libOpenCL.a:
+	cd loader && $(MAKE) libOpenCL.a \
+	CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \
+	ICD_OS=icd_windows
+
+clean:
+	$(RM) *.o
+	$(RM) *.dll
+	$(RM) *.so
+	$(RM) *.dylib
+	cd loader && $(MAKE) clean
