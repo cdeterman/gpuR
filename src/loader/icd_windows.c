@@ -36,6 +36,7 @@
  */
 
 #define _WIN32_WINNT 0x0600
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 
 #include "icd.h"
 #include <stdio.h>
