@@ -149,12 +149,13 @@ echo "${CPPFLAGS}" >> src/Makevars
 echo "${CXXFLAGS}" >> src/Makevars
 echo "${LIBS}" >> src/Makevars
 echo "${BUILD_LIB}" >> src/Makevars
-echo -e '\n$(SHLIB): $(BUILD_LIB)\n' >> src/Makevars
-echo 'loader/libOpenCL.a:' >> src/Makevars
-echo -e '\tcd loader && $(MAKE) libOpenCL.a \\' >> src/Makevars
-echo -e '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\' >> src/Makevars
-echo -e '\tICD_OS=icd_linux' >> src/Makevars
+printf '\n$(SHLIB): $(BUILD_LIB)\n\n' >> src/Makevars
+printf 'loader/libOpenCL.a:\n' >> src/Makevars
+printf '\tcd loader && $(MAKE) libOpenCL.a \\\n' >> src/Makevars
+printf '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\\n' >> src/Makevars
+printf '\tICD_OS=icd_linux\n' >> src/Makevars
 
-echo -e "\n*** for debugging ***"
+echo ""
+echo "*********** Generated Makevars file ***********"
 cat src/Makevars
-echo "*********************"
+echo "***********************************************"
