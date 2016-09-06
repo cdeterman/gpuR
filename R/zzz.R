@@ -9,7 +9,7 @@
     if (!identical(Sys.getenv("APPVEYOR"), "True") && !identical(Sys.getenv("TRAVIS"), "true")) {
         # initialize contexts
         # default_device <- initContexts()
-        initContexts()
+        # initContexts()
         print("context initialization successful")
         # packageStartupMessage(paste0("gpuR ", packageVersion('gpuR'), "\nDefault device: ", default_device))
         packageStartupMessage(paste0("gpuR ", packageVersion('gpuR')))
