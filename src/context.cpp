@@ -141,6 +141,9 @@ listContexts()
 //        }
     }
     
+    // need to multiply by number of platforms too
+    num_contexts *= platforms.size();
+    
 //    Rcout << "number of total contexts to create" << std::endl;
 //    Rcout << num_contexts << std::endl;
     
