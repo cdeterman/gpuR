@@ -142,7 +142,7 @@ listContexts()
     }
     
     // need to multiply by number of platforms too
-    num_contexts *= platforms.size();
+    // num_contexts *= platforms.size();
     
 //    Rcout << "number of total contexts to create" << std::endl;
 //    Rcout << num_contexts << std::endl;
@@ -170,6 +170,7 @@ listContexts()
             
             // Select the platform
             viennacl::ocl::switch_context(id);
+            viennacl::ocl::set_context_platform_index(id, plat_idx);
             
             context_index[id] = id + 1;
             platform_index[id] = plat_idx;
