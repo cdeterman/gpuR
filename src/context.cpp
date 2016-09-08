@@ -170,7 +170,7 @@ listContexts()
             
             // Select the platform
             viennacl::ocl::switch_context(id);
-            viennacl::ocl::set_context_platform_index(id, plat_idx);
+            // viennacl::ocl::set_context_platform_index(id, plat_idx);
             
             context_index[id] = id + 1;
             platform_index[id] = plat_idx;
@@ -187,7 +187,8 @@ listContexts()
             
             // Get device info
             device_index[id] = gpu_idx;
-            device_name[id] = viennacl::ocl::current_device().name();
+            device_name[id] = platforms[plat_idx].devices()[gpu_idx].name();
+            // device_name[id] = viennacl::ocl::current_device().name();
             
 //            Rcout << "current device index" << std::endl;
 //            Rcout << device_index[id] << std::endl;
