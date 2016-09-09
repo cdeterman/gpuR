@@ -117,26 +117,14 @@
 
 \item{drop}{missing}
 
-\item{value}{data of similar type to be added to gpuMatrix object}
-
-\item{x}{A gpuR object}
-
-\item{i}{indices specifying rows}
-
-\item{j}{indices specifying columns}
-
-\item{drop}{missing}
+\item{...}{additional arguments to pass}
 
 \item{value}{data of similar type to be added to gpuMatrix object}
 }
 \description{
 Operators to extract or replace elements
-
-Operators to extract or replace elements
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

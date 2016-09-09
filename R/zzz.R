@@ -1,3 +1,5 @@
+#' @importFrom utils strOptions packageVersion tail
+
 .onLoad <- function(libname, pkgname) {
     options(gpuR.print.warning=TRUE)
     options(gpuR.default.type = "double")

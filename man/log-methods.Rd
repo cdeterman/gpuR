@@ -25,25 +25,11 @@
 \item{base}{A positive number (complex not currently supported by OpenCL):
 the base with respect to which logarithms are computed.  Defaults to the
 natural log.}
-
-\item{x}{A gpuR object}
-
-\item{base}{A positive number (complex not currently supported by OpenCL):
-the base with respect to which logarithms are computed.  Defaults to the
-natural log.}
 }
 \value{
 A gpuR object of the same class as \code{x}
-
-A gpuR object of the same class as \code{x}
 }
 \description{
-\code{log} computes logarithms, by default natural logarithms 
-and \code{log10} computes common (i.e. base 10) logarithms.  The general form
-\code{log(x, base)} computes logarithms with base \code{base}.
-
-\code{exp} computes the exponential function.
-
 \code{log} computes logarithms, by default natural logarithms 
 and \code{log10} computes common (i.e. base 10) logarithms.  The general form
 \code{log(x, base)} computes logarithms with base \code{base}.

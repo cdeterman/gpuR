@@ -22,21 +22,12 @@
 \item{x}{A gpuR object}
 
 \item{y}{A gpuR object}
-
-\item{x}{A gpuR object}
-
-\item{y}{A gpuR object}
 }
 \description{
 Multiply two gpuR objects, if they are conformable.  If both
 are vectors of the same length, it will return the inner product (as a matrix).
-
-Multiply two gpuR objects, if they are conformable.  If both
-are vectors of the same length, it will return the inner product (as a matrix).
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

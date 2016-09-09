@@ -2,6 +2,7 @@
 % Please edit documentation in R/methods-gpuMatrix.R, R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{cov,gpuMatrix,missing,missing,missing-method}
+\alias{cov,gpuMatrix}
 \alias{cov,gpuMatrix,missing,missing,character-method}
 \alias{cov,gpuMatrix,missing,missing,missing-method}
 \alias{cov,vclMatrix,missing,missing,character-method}
@@ -34,28 +35,14 @@
 \item{use}{Not used}
 
 \item{method}{Character string indicating with covariance to be computed.}
-
-\item{x}{A gpuR object}
-
-\item{y}{Not used}
-
-\item{use}{Not used}
-
-\item{method}{Character string indicating with covariance to be computed.}
 }
 \value{
-A gpuMatrix/vclMatrix containing the symmetric covariance values.
-
 A gpuMatrix/vclMatrix containing the symmetric covariance values.
 }
 \description{
 Compute covariance values
-
-Compute covariance values
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

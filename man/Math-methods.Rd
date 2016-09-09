@@ -21,17 +21,11 @@
 }
 \arguments{
 \item{x}{A gpuR object}
-
-\item{x}{A gpuR object}
 }
 \value{
 A gpuR object
-
-A gpuR object
 }
 \description{
-Methods for the base Math methods \link[methods]{S4groupGeneric}
-
 Methods for the base Math methods \link[methods]{S4groupGeneric}
 }
 \details{
@@ -40,16 +34,8 @@ Currently implemented methods include:
  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
  "log10", "exp", "abs"}
  }
-
-Currently implemented methods include:
-\itemize{
- \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
- "log10", "exp", "abs"}
- }
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

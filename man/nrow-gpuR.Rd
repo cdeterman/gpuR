@@ -22,24 +22,15 @@
 }
 \arguments{
 \item{x}{A gpuMatrix/vclMatrix object}
-
-\item{x}{A gpuMatrix/vclMatrix object}
 }
 \value{
-An integer of length 1
-
 An integer of length 1
 }
 \description{
 \code{nrow} and \code{ncol} return the number of rows or columns
 present in \code{x} respectively.
-
-\code{nrow} and \code{ncol} return the number of rows or columns
-present in \code{x} respectively.
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

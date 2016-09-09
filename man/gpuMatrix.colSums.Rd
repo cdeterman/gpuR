@@ -31,26 +31,14 @@
 \item{na.rm}{Not currently used}
 
 \item{dims}{Not currently used}
-
-\item{x}{A gpuMatrix object}
-
-\item{na.rm}{Not currently used}
-
-\item{dims}{Not currently used}
 }
 \value{
-A gpuVector object
-
 A gpuVector object
 }
 \description{
 Row and column sums and of gpuMatrix objects
-
-Row and column sums and of gpuMatrix objects
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

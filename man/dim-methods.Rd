@@ -16,22 +16,14 @@
 }
 \arguments{
 \item{x}{A gpuMatrix/vclMatrix object}
-
-\item{x}{A gpuMatrix/vclMatrix object}
 }
 \value{
-A length 2 vector of the number of rows and columns respectively.
-
 A length 2 vector of the number of rows and columns respectively.
 }
 \description{
 Retrieve dimension of object
-
-Retrieve dimension of object
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

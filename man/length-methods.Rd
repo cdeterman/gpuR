@@ -8,7 +8,7 @@
 \alias{length,vclVector-method}
 \alias{length-gpuMatrix}
 \alias{length-vclMatrix}
-\title{gpuMatrix/vclMatrix length method}
+\title{Length method for gpuR objects}
 \usage{
 \S4method{length}{gpuMatrix}(x)
 
@@ -22,28 +22,14 @@
 }
 \arguments{
 \item{x}{A gpuMatrix/vclMatrix object}
-
-\item{x}{A gpuVector/vclVector object}
-
-\item{x}{A gpuMatrix/vclMatrix object}
 }
 \value{
-A numeric value
-
-A numeric value
-
 A numeric value
 }
 \description{
 Retrieve number of elements in object
-
-Get the length of a gpuR vector object
-
-Retrieve number of elements in object
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

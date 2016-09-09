@@ -29,14 +29,8 @@
 \item{x}{A gpuMatrix}
 
 \item{y}{A gpuMatrix}
-
-\item{x}{A gpuMatrix}
-
-\item{y}{A gpuMatrix}
 }
 \value{
-A gpuMatrix
-
 A gpuMatrix
 }
 \description{
@@ -44,15 +38,8 @@ Return the matrix cross-product of two conformable
 matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
 or x %*% t(t) (tcrossprod) but faster as no data transfer between
 device and host is required.
-
-Return the matrix cross-product of two conformable
-matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
-or x %*% t(t) (tcrossprod) but faster as no data transfer between
-device and host is required.
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

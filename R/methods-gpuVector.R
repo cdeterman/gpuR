@@ -240,10 +240,6 @@ valueClass = "vector"
 
 # setOldClass("length")
 
-#' @title Length of gpuVector
-#' @description Get the length of a gpuR vector object
-#' @param x A gpuVector/vclVector object
-#' @return A numeric value
 #' @rdname length-methods
 #' @export
 setMethod('length', signature(x = "gpuVector"),

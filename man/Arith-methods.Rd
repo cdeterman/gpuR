@@ -69,24 +69,14 @@
 \item{e1}{A gpuR object}
 
 \item{e2}{A gpuR object}
-
-\item{e1}{A gpuR object}
-
-\item{e2}{A gpuR object}
 }
 \value{
-A gpuR object
-
 A gpuR object
 }
 \description{
 Methods for the base Arith methods \link[methods]{S4groupGeneric}
-
-Methods for the base Arith methods \link[methods]{S4groupGeneric}
 }
 \author{
-Charles Determan Jr.
-
 Charles Determan Jr.
 }
 

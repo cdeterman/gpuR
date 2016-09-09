@@ -14,7 +14,7 @@ dim_desc <- function(x) {
 
 #'@export
 str.gpuMatrix <- function(object, vec.len = strOptions()$vec.len, 
-                          digits.d = strOptions()$digits.d)
+                          digits.d = strOptions()$digits.d, ...)
 {
     d <- dim(object)
     type <- typeof(object)
@@ -39,7 +39,7 @@ str.gpuMatrix <- function(object, vec.len = strOptions()$vec.len,
 
 #'@export
 str.vclMatrix <- function(object, vec.len = strOptions()$vec.len, 
-                          digits.d = strOptions()$digits.d)
+                          digits.d = strOptions()$digits.d, ...)
 {
     d <- dim(object)
     type <- typeof(object)

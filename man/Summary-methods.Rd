@@ -26,22 +26,11 @@
 
 \item{na.rm}{a logical indicating whether missing values should be removed (
 not currently used)}
-
-\item{x}{A gpuR object}
-
-\item{...}{Additional arguments passed to method (not currently used)}
-
-\item{na.rm}{a logical indicating whether missing values should be removed (
-not currently used)}
 }
 \value{
 For \code{min} or \code{max}, a length-one vector
-
-For \code{min} or \code{max}, a length-one vector
 }
 \description{
-Methods for the base Summary methods \link[methods]{S4groupGeneric}
-
 Methods for the base Summary methods \link[methods]{S4groupGeneric}
 }
 

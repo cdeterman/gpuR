@@ -2,21 +2,10 @@
 #' @importFrom utils file_test
 
 
-#' @export
-as.matrix.gpuMatrix <- function(x){
-    out <- x[]
-    return(out)
-} 
-
 
 #' @title Matrix Multiplication
-#' @description Multiply two gpuR objects, if they are conformable.  If both
-#' are vectors of the same length, it will return the inner product (as a matrix).
-#' @param x A gpuR object
-#' @param y A gpuR object
 #' @docType methods
 #' @rdname grapes-times-grapes-methods
-#' @author Charles Determan Jr.
 #' @export
 setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           function(x,y)
@@ -30,14 +19,9 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
 )
 
 #' @title Arith methods
-#' @description Methods for the base Arith methods \link[methods]{S4groupGeneric}
-#' @param e1 A gpuR object
-#' @param e2 A gpuR object
-#' @return A gpuR object
 #' @docType methods
 #' @rdname Arith-methods
 #' @aliases Arith-gpuR-method
-#' @author Charles Determan Jr.
 #' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
           function(e1, e2)
@@ -128,18 +112,9 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
 )
 
 #' @title gpuR Math methods
-#' @description Methods for the base Math methods \link[methods]{S4groupGeneric}
-#' @param x A gpuR object
-#' @return A gpuR object
-#' @details Currently implemented methods include:
-#' \itemize{
-#'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
-#'  "log10", "exp", "abs"}
-#'  }
 #' @docType methods
 #' @rdname Math-methods
 #' @aliases Math-gpuR-method
-#' @author Charles Determan Jr.
 #' @export
 setMethod("Math", c(x="gpuMatrix"),
           function(x)
@@ -165,16 +140,6 @@ valueClass = "gpuMatrix"
 )
 
 #' @title gpuR Logarithms and Exponentials
-#' @description \code{log} computes logarithms, by default natural logarithms 
-#' and \code{log10} computes common (i.e. base 10) logarithms.  The general form
-#' \code{log(x, base)} computes logarithms with base \code{base}.
-#' 
-#' \code{exp} computes the exponential function.
-#' @param x A gpuR object
-#' @param base A positive number (complex not currently supported by OpenCL):
-#' the base with respect to which logarithms are computed.  Defaults to the
-#' natural log.
-#' @return A gpuR object of the same class as \code{x}
 #' @docType methods
 #' @rdname log-methods
 #' @aliases log-gpuR-method
@@ -195,13 +160,8 @@ setMethod("log", c(x="gpuMatrix"),
 
 
 #' @title The Number of Rows/Columns of a gpuR matrix
-#' @description \code{nrow} and \code{ncol} return the number of rows or columns
-#' present in \code{x} respectively.
-#' @param x A gpuMatrix/vclMatrix object
-#' @return An integer of length 1
 #' @docType methods
 #' @rdname nrow-gpuR
-#' @author Charles Determan Jr.
 #' @export
 setMethod('nrow', signature(x="gpuMatrix"), 
           function(x) {
@@ -227,39 +187,25 @@ setMethod('ncol', signature(x="gpuMatrix"),
 
 
 #' @title gpuMatrix/vclMatrix dim method
-#' @description Retrieve dimension of object
-#' @param x A gpuMatrix/vclMatrix object
-#' @return A length 2 vector of the number of rows and columns respectively.
 #' @docType methods
 #' @rdname dim-methods
-#' @author Charles Determan Jr.
 #' @aliases dim-gpuMatrix
 #' @export
 setMethod('dim', signature(x="gpuMatrix"),
           function(x) return(c(nrow(x), ncol(x))))
 
-#' @title gpuMatrix/vclMatrix length method
-#' @description Retrieve number of elements in object
-#' @param x A gpuMatrix/vclMatrix object
-#' @return A numeric value
+#' @title Length method for gpuR objects
 #' @docType methods
 #' @rdname length-methods
-#' @author Charles Determan Jr.
 #' @aliases length-gpuMatrix
 #' @export
 setMethod('length', signature(x="gpuMatrix"),
           function(x) return(nrow(x) * ncol(x)))
 
 #' @title Extract gpuR object elements
-#' @description Operators to extract or replace elements
-#' @param x A gpuR object
-#' @param i indices specifying rows
-#' @param j indices specifying columns
-#' @param drop missing
-#' @param value data of similar type to be added to gpuMatrix object
+#' @param ... additional arguments to pass
 #' @docType methods
 #' @rdname extract-methods
-#' @author Charles Determan Jr.
 #' @export
 setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "missing", drop = "missing"),
@@ -452,12 +398,6 @@ setMethod("[<-",
           })
 
 #' @title Row and Column Sums and Means of gpuMatrix
-#' @description Row and column sums and of gpuMatrix objects
-#' @param x A gpuMatrix object
-#' @param na.rm Not currently used
-#' @param dims Not currently used
-#' @return A gpuVector object
-#' @author Charles Determan Jr.
 #' @docType methods
 #' @rdname gpuMatrix.colSums
 #' @aliases colSums,gpuMatrix
@@ -499,15 +439,9 @@ setMethod("rowMeans",
 
 
 #' @title Covariance (gpuR)
-#' @description Compute covariance values
-#' @param x A gpuR object
-#' @param y Not used
-#' @param use Not used
-#' @param method Character string indicating with covariance to be computed.
-#' @return A gpuMatrix/vclMatrix containing the symmetric covariance values.
-#' @author Charles Determan Jr.
 #' @docType methods
 #' @rdname cov-methods
+#' @aliases cov,gpuMatrix
 #' @export
 setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "missing"),
@@ -531,14 +465,6 @@ setMethod("cov",
 
 
 #' @title gpuMatrix Crossproduct
-#' @description Return the matrix cross-product of two conformable
-#' matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
-#' or x %*% t(t) (tcrossprod) but faster as no data transfer between
-#' device and host is required.
-#' @param x A gpuMatrix
-#' @param y A gpuMatrix
-#' @return A gpuMatrix
-#' @author Charles Determan Jr.
 #' @docType methods
 #' @rdname gpuMatrix-crossprod
 #' @aliases crossprod,gpuMatrix
@@ -995,12 +921,6 @@ setMethod("rbind2",
 
 
 #' @title gpuR Summary methods
-#' @description Methods for the base Summary methods \link[methods]{S4groupGeneric}
-#' @param x A gpuR object
-#' @param ... Additional arguments passed to method (not currently used)
-#' @param na.rm a logical indicating whether missing values should be removed (
-#' not currently used)
-#' @return For \code{min} or \code{max}, a length-one vector
 #' @docType methods
 #' @rdname Summary-methods
 #' @aliases Summary-gpuR-method
