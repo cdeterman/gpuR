@@ -1230,7 +1230,7 @@ vclMatMin <- function(A){
 vclMatrix_t <- function(A){
     
     type <- typeof(A)
-
+    
     B <- vclMatrix(0, ncol = nrow(A), nrow = ncol(A), type = type, ctx_id=A@.context_index)
 
     switch(type,
@@ -1242,3 +1242,38 @@ vclMatrix_t <- function(A){
     
     return(B)
 }
+
+
+vclMatrix_get_diag <- function(x){
+    
+    type <- typeof(x)
+    
+    # initialize vector to fill with diagonals
+    y <- vclVector(length = nrow(x), type = type, ctx_id = x@.context_index)
+    
+    switch(type,
+           integer = {cpp_vclMatrix_get_diag(x@address, y@address, 4L)},
+           float = {cpp_vclMatrix_get_diag(x@address, y@address, 6L)},
+           double = {cpp_vclMatrix_get_diag(x@address, y@address, 8L)},
+           stop("type not recognized")
+    )
+    
+    return(y)
+}
+
+
+vclMat_vclVec_set_diag <- function(x, value){
+    
+    type <- typeof(x)
+    
+    switch(type,
+           integer = {cpp_vclMat_vclVec_set_diag(x@address, value@address, 4L)},
+           float = {cpp_vclMat_vclVec_set_diag(x@address, value@address, 6L)},
+           double = {cpp_vclMat_vclVec_set_diag(x@address, value@address, 8L)},
+           stop("type not recognized")
+    )
+    
+    return(invisible(x))
+}
+
+

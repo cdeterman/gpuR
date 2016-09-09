@@ -63,7 +63,6 @@ cpp_detectCPUs <- function(platform_idx) {
     .Call('gpuR_cpp_detectCPUs', PACKAGE = 'gpuR', platform_idx)
 }
 
-#' @export
 cpp_deepcopy_gpuMatrix <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_deepcopy_gpuMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }
@@ -253,6 +252,18 @@ vcl_inrow <- function(ptrA) {
 
 cpp_vclVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_identity_vclMatrix <- function(ptrA, type_flag) {
+    invisible(.Call('gpuR_cpp_identity_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag))
+}
+
+cpp_vclMatrix_get_diag <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_get_diag', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+}
+
+cpp_vclMat_vclVec_set_diag <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMat_vclVec_set_diag', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id) {
@@ -765,6 +776,10 @@ cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclMatrix_transpose <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+}
+
+cpp_vclMatrix_solve <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_solve', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {

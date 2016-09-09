@@ -1,6 +1,13 @@
 
+
 #' @export
-as.matrix.vclMatrix <- function(x){
+as.matrix.gpuMatrix <- function(x, ...){
+    out <- x[]
+    return(out)
+} 
+
+#' @export
+as.matrix.vclMatrix <- function(x, ...){
     out <- x[]
     return(out)
 } 
@@ -1064,3 +1071,52 @@ setMethod("t", c(x = "vclMatrix"),
               return(vclMatrix_t(x))
           }
 )
+
+
+
+#' @export
+setMethod("diag", c(x = "vclMatrix"),
+          function(x){
+              # get diagonal elements
+              return(vclMatrix_get_diag(x))
+          }
+)
+
+#' @export
+setMethod("diag<-", c(x = "vclMatrix", value = "vclVector"),
+          function(x, value){
+              
+              if(nrow(x) != length(value)){
+                  stop("replacement diagnonal has wrong length")
+              }
+              
+              # get diagonal elements
+              vclMat_vclVec_set_diag(x, value)
+              
+              return(invisible(x))
+          }
+)
+
+
+#' @export
+identity_matrix <- function(x, type = NULL){
+    
+    assert_is_a_number(x)
+    
+    if(is.null(type)){
+        type <- getOption("gpuR.default.type")
+    }
+    
+    iMat <- vclMatrix(nrow = x, ncol = x, type = type)
+    
+    switch(type,
+           "integer" = cpp_identity_vclMatrix(iMat@address, 4L),
+           "float" = cpp_identity_vclMatrix(iMat@address, 6L),
+           "double" = cpp_identity_vclMatrix(iMat@address, 8L)
+    )
+    
+    return(iMat)
+}
+
+
+

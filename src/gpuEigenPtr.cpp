@@ -147,7 +147,6 @@ SetVecElement(const SEXP data, const int idx, SEXP value)
 
 /*** gpuMatrix deepcopy ***/
 
-//' @export
 // [[Rcpp::export]]
 SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)

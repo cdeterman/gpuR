@@ -20,6 +20,7 @@
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/prod.hpp"
+#include "viennacl/linalg/lu.hpp"
 
 using namespace Rcpp;
 
@@ -294,6 +295,25 @@ cpp_vclMatrix_transpose(
     B = trans(A);
 }
 
+template <typename T>
+void cpp_vclMatrix_solve(
+        SEXP ptrA_,
+        SEXP ptrB_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    
+    // viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+    viennacl::matrix<T> *vcl_A = ptrA->getPtr();
+    viennacl::matrix<T> *vcl_B = ptrB->getPtr();
+    
+    // viennacl::matrix<T> vcl_A = ptrA->matrix();
+    // viennacl::matrix<T> vcl_B = viennacl::identity_matrix<T>(vcl_A->size1());
+    
+    // solution of a full system right into the load vector vcl_rhs:
+    viennacl::linalg::lu_factorize(*vcl_A);
+    viennacl::linalg::lu_substitute(*vcl_A, *vcl_B);
+}
 
 /*** vclMatrix Functions ***/
 
@@ -388,5 +408,27 @@ cpp_vclMatrix_transpose(
 }
 
 
+// [[Rcpp::export]]
+void
+    cpp_vclMatrix_solve(
+        SEXP ptrA,
+        SEXP ptrB,
+        int type_flag)
+    {
+        
+        switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_solve<int>(ptrA, ptrB);
+            return;
+        case 6:
+            cpp_vclMatrix_solve<float>(ptrA, ptrB);
+            return;
+        case 8:
+            cpp_vclMatrix_solve<double>(ptrA, ptrB);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+        }
+    }
 
 

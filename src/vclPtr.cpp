@@ -14,6 +14,53 @@ using Eigen::VectorXi;
 using namespace Rcpp;
 
 
+// create identity matrix
+template <typename T>
+void
+cpp_identity_vclMatrix(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA = ptrA->data();
+    
+    // should be square so doesn't matter which dim
+    pA = viennacl::identity_matrix<T>(pA.size1());
+}
+
+
+// get diagonal of vclMatrix
+template <typename T>
+void
+cpp_vclMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > pA = ptrA->data();
+    viennacl::vector_range<viennacl::vector<T> > pB = ptrB->data();
+    
+    pB = viennacl::diag(pA);
+}
+
+
+// set diagonal with vclVector
+template <typename T>
+void
+cpp_vclMat_vclVec_set_diag(SEXP ptrA_, SEXP ptrB_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+    viennacl::vector_range<viennacl::vector<T> > vcl_B = ptrB->data();
+    
+    viennacl::vector_base<T> diag_A(vcl_A.handle(), std::min(vcl_A.size1(), vcl_A.size2()), 0, vcl_A.internal_size2() + 1);
+    
+    diag_A = vcl_B;
+    
+    // vcl_B = viennacl::diag(pA);
+}
+
+
 //copy an existing Xptr
 template <typename T>
 SEXP
@@ -439,6 +486,69 @@ vclGetElement(SEXP &data, const int &nr, const int &nc)
 //    viennacl::matrix<T> &A = *pA;
     value = A(nr-1, nc-1);
     return(value);
+}
+
+
+// vclMatrix identity matrix
+// [[Rcpp::export]]
+void
+cpp_identity_vclMatrix(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            cpp_identity_vclMatrix<int>(ptrA);
+            return;
+        case 6:
+            cpp_identity_vclMatrix<float>(ptrA);
+            return;
+        case 8:
+            cpp_identity_vclMatrix<double>(ptrA);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+
+/*** vclMatrix diag ***/
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            cpp_vclMatrix_get_diag<int>(ptrA, ptrB);
+            return;
+        case 6:
+            cpp_vclMatrix_get_diag<float>(ptrA, ptrB);
+            return;
+        case 8:
+            cpp_vclMatrix_get_diag<double>(ptrA, ptrB);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+
+// vclMatrix set diag with vclVector
+// [[Rcpp::export]]
+void
+cpp_vclMat_vclVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            cpp_vclMat_vclVec_set_diag<int>(ptrA, ptrB);
+            return;
+        case 6:
+            cpp_vclMat_vclVec_set_diag<float>(ptrA, ptrB);
+            return;
+        case 8:
+            cpp_vclMat_vclVec_set_diag<double>(ptrA, ptrB);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
 }
 
 

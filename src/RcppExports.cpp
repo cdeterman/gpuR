@@ -682,6 +682,41 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// cpp_identity_vclMatrix
+void cpp_identity_vclMatrix(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_identity_vclMatrix(SEXP ptrASEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_identity_vclMatrix(ptrA, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_get_diag
+void cpp_vclMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_get_diag(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_vclMatrix_get_diag(ptrA, ptrB, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMat_vclVec_set_diag
+void cpp_vclMat_vclVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMat_vclVec_set_diag(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_vclMat_vclVec_set_diag(ptrA, ptrB, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_deepcopy_vclMatrix
 SEXP cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag, int ctx_id);
 RcppExport SEXP gpuR_cpp_deepcopy_vclMatrix(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
@@ -2336,6 +2371,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
     Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
     cpp_vclMatrix_transpose(ptrA, ptrB, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_solve
+void cpp_vclMatrix_solve(SEXP ptrA, SEXP ptrB, int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_solve(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
+    cpp_vclMatrix_solve(ptrA, ptrB, type_flag);
     return R_NilValue;
 END_RCPP
 }
