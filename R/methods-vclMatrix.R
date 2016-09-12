@@ -1,16 +1,11 @@
 
 
 #' @export
-as.matrix.gpuMatrix <- function(x, ...){
-    out <- x[]
-    return(out)
-} 
-
-#' @export
 as.matrix.vclMatrix <- function(x, ...){
     out <- x[]
     return(out)
 } 
+
 
 #' @rdname extract-methods
 #' @export
@@ -1073,7 +1068,17 @@ setMethod("t", c(x = "vclMatrix"),
 )
 
 
-
+#' @title gpuR Matrix Diagonals
+#' @description Extract or replace the diagonal of a matrix
+#' @param x A gpuR matrix object
+#' @param value A vector object (gpuR)
+#' @return A gpuR vector object of the matrix diagonal of \code{x}.  The 
+#' replacement form returns nothing as it replaces the diagonal of \code{x}.
+#' @note If an identity matrix is desired, please see \link{identity_matrix}.
+#' @author Charles Determan Jr.
+#' @seealso \link{identity_matrix}
+#' @rdname diag-methods
+#' @aliases diag,vclMatrix
 #' @export
 setMethod("diag", c(x = "vclMatrix"),
           function(x){
@@ -1082,6 +1087,8 @@ setMethod("diag", c(x = "vclMatrix"),
           }
 )
 
+#' @rdname diag-methods
+#' @aliases diag<-,vclMatrix,vclVector
 #' @export
 setMethod("diag<-", c(x = "vclMatrix", value = "vclVector"),
           function(x, value){
@@ -1098,6 +1105,17 @@ setMethod("diag<-", c(x = "vclMatrix", value = "vclVector"),
 )
 
 
+#' @title Identity Matrix on Device
+#' @description Creates an identity matrix directly on the current device
+#' (e.g. GPU)
+#' @param x A numeric value indicating the order of the identity matrix
+#' @param type A character string specifying the type of gpuMatrix.  Default
+#' is derived from \code{getOption("gpuR.default.type")}.
+#' @note This function was only created for \code{vclMatrix} objects as
+#' the copy from CPU to \code{gpuMatrix} is trivial using the base
+#' \link[base]{diag} function.
+#' @return A \code{vclMatrix} object
+#' @author Charles Determan Jr.
 #' @export
 identity_matrix <- function(x, type = NULL){
     

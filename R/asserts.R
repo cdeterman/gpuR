@@ -1,4 +1,14 @@
 
+#' @title Does device have 'double' support?
+#' @description Function to query if device (identified by index) supports
+#' double precision
+#' @param plat_idx An integer indicating which platform to query
+#' @param device_idx An integer indicating which device to query
+#' @param severity How severe should the consequences of the assertion be?
+#' @return Returns nothing but throws an error if device does not support
+#' double precision
+#' @seealso \link{deviceHasDouble}
+#' @author Charles Determan Jr.
 #' @export
 assert_has_double <- 
     function(plat_idx, device_idx,

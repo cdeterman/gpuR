@@ -1,5 +1,4 @@
 
-
 #' @export
 as.vector.vclVector <- function(x, mode = "any"){
     out <- x[]

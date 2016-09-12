@@ -12,10 +12,10 @@
         # initialize contexts
         # default_device <- initContexts()
         initContexts()
-        print("context initialization successful")
+        # print("context initialization successful")
         # packageStartupMessage(paste0("gpuR ", packageVersion('gpuR'), "\nDefault device: ", default_device))
         packageStartupMessage(paste0("gpuR ", packageVersion('gpuR')))
-        print("startup message not problem")
+        # print("startup message not problem")
     }
 }
 

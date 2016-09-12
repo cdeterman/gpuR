@@ -3,7 +3,7 @@
 
 
 #' @export
-as.matrix.gpuMatrix <- function(x){
+as.matrix.gpuMatrix <- function(x, ...){
     out <- x[]
     return(out)
 } 
@@ -257,6 +257,7 @@ setMethod('length', signature(x="gpuMatrix"),
 #' @param j indices specifying columns
 #' @param drop missing
 #' @param value data of similar type to be added to gpuMatrix object
+#' @param ... Additional arguments
 #' @docType methods
 #' @rdname extract-methods
 #' @author Charles Determan Jr.
