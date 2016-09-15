@@ -64,9 +64,6 @@ svd.vclMatrix <-
 svd.gpuMatrix <- 
           function(x, nu, nv, LINPACK){
               
-              print(ncol(x))
-              print(nrow(x))
-              
               if(ncol(x) != nrow(x)){
                   stop("non-square matrix not currently supported for 'svd'")
               }
