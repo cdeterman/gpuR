@@ -2,6 +2,8 @@
 % Please edit documentation in R/solve.R
 \docType{methods}
 \name{solve,vclMatrix,vclMatrix-method}
+\alias{solve,gpuMatrix,gpuMatrix-method}
+\alias{solve,gpuMatrix,missing-method}
 \alias{solve,vclMatrix,missing-method}
 \alias{solve,vclMatrix,vclMatrix-method}
 \title{Solve a System of Equations for gpuR objects}
@@ -9,6 +11,10 @@
 \S4method{solve}{vclMatrix,vclMatrix}(a, b, ...)
 
 \S4method{solve}{vclMatrix,missing}(a, b, ...)
+
+\S4method{solve}{gpuMatrix,gpuMatrix}(a, b, ...)
+
+\S4method{solve}{gpuMatrix,missing}(a, b, ...)
 }
 \arguments{
 \item{a}{A gpuR object}

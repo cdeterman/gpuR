@@ -187,7 +187,8 @@ cpp_vclMatrix_block(
 {
     XPtr<dynVCLMat<T> > pA(ptrA);
     dynVCLMat<T> *mat = new dynVCLMat<T>();
-    mat->setPtr(pA->getPtr());
+    // mat->setPtr(pA->getPtr());
+    mat->setSharedPtr(pA->sharedPtr());
     mat->setRange(rowStart, rowEnd, colStart, colEnd);
     mat->setDims(pA->nrow(), pA->ncol());
     

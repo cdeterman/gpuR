@@ -62,7 +62,7 @@ gpuMatBlock(
 {
     XPtr<dynEigenMat<T> > pA(ptrA);
     dynEigenMat<T> *mat = new dynEigenMat<T>();
-    mat->setPtr(pA->getPtr());
+    mat->setHostPtr(pA->getHostPtr());
     mat->setRange(rowStart, rowEnd, colStart, colEnd);
     mat->setSourceDim(pA->nrow(), pA->ncol());
     mat->updateDim();

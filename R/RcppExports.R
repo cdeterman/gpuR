@@ -194,6 +194,10 @@ cpp_platformInfo <- function(platform_idx_) {
     .Call('gpuR_cpp_platformInfo', PACKAGE = 'gpuR', platform_idx_)
 }
 
+cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_solve', PACKAGE = 'gpuR', ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id))
+}
+
 truncIntgpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncIntgpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
@@ -776,10 +780,6 @@ cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclMatrix_transpose <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_transpose', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
-}
-
-cpp_vclMatrix_solve <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_solve', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {

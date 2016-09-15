@@ -8,9 +8,12 @@ ORDER <- 10
 
 # Base R objects
 X <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
+Y <- matrix(rnorm(ORDER), nrow = ORDER)
 nsqA <- matrix(rnorm(20), nrow = 4)
+nY <- matrix(rnorm(ORDER - 1), nrow = ORDER - 1)
 
 rinv <- solve(X)
+ninv <- solve(X,Y)
 
 test_that("CPU vclMatrix Single Precision Matrix Square Matrix Inversion",
           {
@@ -57,6 +60,27 @@ test_that("CPU vclMatrix Single Precision Matrix second matrix inversion",
           })
 
 
+test_that("CPU vclMatrix Single Precision Matrix non-identity solve",
+          {
+              
+              has_cpu_skip()
+              
+              fgpuX <- vclMatrix(X, type="float")
+              iMat <- vclMatrix(Y, type = "float")
+              nMat <- vclMatrix(nY, type = "float")
+              
+              ginv <- solve(fgpuX, iMat)
+              
+              expect_is(ginv, "fvclMatrix")
+              
+              expect_equal(ginv[], ninv, tolerance=1e-05,
+                           info="float matrix inverses not equivalent")
+              expect_error(solve(fgpuA, nMat),
+                           info = "matrices must be compatible, 
+                           should return an error")
+          })
+
+
 test_that("CPU vclMatrix Double Precision Matrix Square Matrix Inversion", 
           {
               
@@ -97,5 +121,26 @@ test_that("CPU vclMatrix Double Precision Matrix second matrix inversion",
                            info="double matrix inverses not equivalent") 
               expect_error(solve(fgpuA), "non-square matrix not currently supported for 'solve'",
                            info = "solve shouldn't accept non-square matrices")
+          })
+
+
+test_that("CPU vclMatrix Double Precision Matrix non-identity solve",
+          {
+              
+              has_cpu_skip()
+              
+              fgpuX <- vclMatrix(X, type="double")
+              iMat <- vclMatrix(Y, type = "double")
+              nMat <- vclMatrix(nY, type = "double")
+              
+              ginv <- solve(fgpuX, iMat)
+              
+              expect_is(ginv, "dvclMatrix")
+              
+              expect_equal(ginv[], ninv, tolerance=.Machine$double.eps^0.5,
+                           info="double matrix inverses not equivalent")
+              expect_error(solve(fgpuA, nMat),
+                           info = "matrices must be compatible, 
+                           should return an error")
           })
 

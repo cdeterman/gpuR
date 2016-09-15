@@ -1,5 +1,5 @@
 library(gpuR)
-context("vclMatrix solve")
+context("gpuMatrix solve")
 
 # set seed
 set.seed(123)
@@ -15,63 +15,71 @@ nY <- matrix(rnorm(ORDER - 1), nrow = ORDER - 1)
 rinv <- solve(X)
 ninv <- solve(X,Y)
 
-test_that("vclMatrix Single Precision Matrix Square Matrix Inversion",
+test_that("gpuMatrix Single Precision Matrix Square Matrix Inversion",
           {
-              
+
               has_gpu_skip()
-              
-              fgpuX <- vclMatrix(X, type="float")
-              fgpuA <- vclMatrix(nsqA, type = "float")
-              
+
+              fgpuX <- gpuMatrix(X, type="float")
+              fgpuA <- gpuMatrix(nsqA, type = "float")
+
               ginv <- solve(fgpuX)
-              
+
+              # print("completed")
+
               expect_is(ginv, "fvclMatrix")
-              
+
+              # print("R matrix")
+              # print(rinv)
+              # print("gpu matrix")
+              # print(ginv[])
+
               # make sure X not overwritten
               expect_equal(fgpuX[], X, tolerance = 1e-05,
                            info = "input matrix was overwritten")
-              expect_equal(ginv[], rinv, tolerance=1e-05, 
-                           info="float matrix inverses not equivalent") 
+              expect_equal(ginv[], rinv, tolerance=1e-05,
+                           info="float matrix inverses not equivalent")
               expect_error(solve(fgpuA), "non-square matrix not currently supported for 'solve'",
                            info = "solve shouldn't accept non-square matrices")
           })
 
 
-test_that("vclMatrix Single Precision Matrix second matrix inversion",
+test_that("gpuMatrix Single Precision Matrix second matrix inversion",
           {
-              
+
               has_gpu_skip()
-              
-              fgpuX <- vclMatrix(X, type="float")
-              fgpuA <- vclMatrix(nsqA, type = "float")
-              iMat <- identity_matrix(nrow(fgpuX), type = "float")
-              
+
+              fgpuX <- gpuMatrix(X, type="float")
+              fgpuA <- gpuMatrix(nsqA, type = "float")
+              # iMat <- identity_matrix(nrow(fgpuX), type = "float")
+              iMat <- gpuMatrix(diag(nrow(X)), type = "float")
+
               ginv <- solve(fgpuX, iMat)
-              
-              expect_is(ginv, "fvclMatrix")
-              
+
+              expect_is(ginv, "fgpuMatrix")
+
               # make sure X not overwritten
               expect_equal(fgpuX[], X, tolerance = 1e-05,
                            info = "input matrix was overwritten")
-              expect_equal(ginv[], rinv, tolerance=1e-05, 
-                           info="float matrix inverses not equivalent") 
+              expect_equal(ginv[], rinv, tolerance=1e-05,
+                           info="float matrix inverses not equivalent")
               expect_error(solve(fgpuA), "non-square matrix not currently supported for 'solve'",
                            info = "solve shouldn't accept non-square matrices")
           })
 
 
-test_that("vclMatrix Single Precision Matrix non-identity solve",
+test_that("gpuMatrix Single Precision Matrix non-identity solve",
           {
               
               has_gpu_skip()
               
-              fgpuX <- vclMatrix(X, type="float")
-              iMat <- vclMatrix(Y, type = "float")
-              nMat <- vclMatrix(nY, type = "float")
+              fgpuX <- gpuMatrix(X, type="float")
+              iMat <- gpuMatrix(Y, type = "float")
+              nMat <- gpuMatrix(nY, type = "float")
               
               ginv <- solve(fgpuX, iMat)
               
-              expect_is(ginv, "fvclMatrix")
+              expect_is(ginv, "fgpuMatrix")
               
               expect_equal(ginv[], ninv, tolerance=1e-05,
                            info="float matrix inverses not equivalent")
@@ -81,64 +89,64 @@ test_that("vclMatrix Single Precision Matrix non-identity solve",
           })
 
 
-test_that("vclMatrix Double Precision Matrix Square Matrix Inversion", 
+test_that("gpuMatrix Double Precision Matrix Square Matrix Inversion",
           {
-              
+
               has_gpu_skip()
               has_double_skip()
-              
-              fgpuX <- vclMatrix(X, type="double")
-              fgpuA <- vclMatrix(nsqA, type = "double")
-              
+
+              fgpuX <- gpuMatrix(X, type="double")
+              fgpuA <- gpuMatrix(nsqA, type = "double")
+
               ginv <- solve(fgpuX)
-              
+
               expect_is(ginv, "dvclMatrix")
-              
+
               expect_equal(fgpuX[], X, tolerance = .Machine$double.eps ^ 0.5,
                            info = "input matrix was overwritten")
-              expect_equal(ginv[], rinv, tolerance=.Machine$double.eps ^ 0.5, 
-                           info="double matrix inverses not equivalent") 
+              expect_equal(ginv[], rinv, tolerance=.Machine$double.eps ^ 0.5,
+                           info="double matrix inverses not equivalent")
               expect_error(solve(fgpuA), "non-square matrix not currently supported for 'solve'",
                            info = "solve shouldn't accept non-square matrices")
           })
 
 
-test_that("vclMatrix Double Precision Matrix second matrix inversion", 
+test_that("gpuMatrix Double Precision Matrix second matrix inversion",
           {
-              
+
               has_gpu_skip()
               has_double_skip()
-              
-              fgpuX <- vclMatrix(X, type="double")
-              fgpuA <- vclMatrix(nsqA, type = "double")
-              iMat <- identity_matrix(nrow(fgpuX), type = "double")
-              
+
+              fgpuX <- gpuMatrix(X, type="double")
+              fgpuA <- gpuMatrix(nsqA, type = "double")
+              iMat <- gpuMatrix(diag(nrow(X)), type = "double")
+
               ginv <- solve(fgpuX, iMat)
-              
-              expect_is(ginv, "dvclMatrix")
-              
+
+              expect_is(ginv, "dgpuMatrix")
+
               expect_equal(fgpuX[], X, tolerance = .Machine$double.eps ^ 0.5,
                            info = "input matrix was overwritten")
-              expect_equal(ginv[], rinv, tolerance=.Machine$double.eps ^ 0.5, 
-                           info="double matrix inverses not equivalent") 
+              expect_equal(ginv[], rinv, tolerance=.Machine$double.eps ^ 0.5,
+                           info="double matrix inverses not equivalent")
               expect_error(solve(fgpuA), "non-square matrix not currently supported for 'solve'",
                            info = "solve shouldn't accept non-square matrices")
           })
 
 
-test_that("vclMatrix Double Precision Matrix non-identity solve",
+test_that("gpuMatrix Double Precision Matrix non-identity solve",
           {
               
               has_gpu_skip()
               has_double_skip()
               
-              fgpuX <- vclMatrix(X, type="double")
-              iMat <- vclMatrix(Y, type = "double")
-              nMat <- vclMatrix(nY, type = "double")
+              fgpuX <- gpuMatrix(X, type="double")
+              iMat <- gpuMatrix(Y, type = "double")
+              nMat <- gpuMatrix(nY, type = "double")
               
               ginv <- solve(fgpuX, iMat)
               
-              expect_is(ginv, "dvclMatrix")
+              expect_is(ginv, "dgpuMatrix")
               
               expect_equal(ginv[], ninv, tolerance=.Machine$double.eps^0.5,
                            info="double matrix inverses not equivalent")

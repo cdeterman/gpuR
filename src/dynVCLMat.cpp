@@ -20,6 +20,8 @@ dynVCLMat<T>::dynVCLMat(viennacl::matrix<T> mat, int ctx_id){
     nr = A.size1();
     nc = A.size2();
     ptr = &A;
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
     viennacl::range temp_rr(0, nr);
     viennacl::range temp_cr(0, nc);
     row_r = temp_rr;
@@ -47,6 +49,9 @@ dynVCLMat<T>::dynVCLMat(SEXP A_, int ctx_id)
     nr = K;
     nc = M;
     ptr = &A;
+    
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
     viennacl::range temp_rr(0, nr);
     viennacl::range temp_cr(0, nc);
     row_r = temp_rr;
@@ -72,6 +77,8 @@ dynVCLMat<T>::dynVCLMat(
     nr = nr_in;
     nc = nc_in;
     ptr = &A;
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
     viennacl::range temp_rr(0, nr);
     viennacl::range temp_cr(0, nc);
     row_r = temp_rr;
@@ -92,6 +99,8 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, int ctx_id)
     nr = nr_in;
     nc = nc_in;
     ptr = &A;
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
     viennacl::range temp_rr(0, nr);
     viennacl::range temp_cr(0, nc);
     row_r = temp_rr;
@@ -112,6 +121,8 @@ dynVCLMat<T>::dynVCLMat(int nr_in, int nc_in, T scalar, int ctx_id)
     nr = nr_in;
     nc = nc_in;
     ptr = &A;
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
     viennacl::range temp_rr(0, nr);
     viennacl::range temp_cr(0, nc);
     row_r = temp_rr;
@@ -168,6 +179,8 @@ void
 dynVCLMat<T>::setMatrix(viennacl::matrix<T> mat){
     A = mat;
     ptr = &A;
+    shptr = std::make_shared<viennacl::matrix<T> >(A);
+    // shptr.reset(ptr);
 }
 
 // template<typename T>
@@ -181,13 +194,33 @@ template<typename T>
 void 
 dynVCLMat<T>::setPtr(viennacl::matrix<T>* ptr_){
     ptr = ptr_;
+    shptr = std::make_shared<viennacl::matrix<T> >(*ptr);
+    // shptr.reset(ptr_);
+}
+
+template<typename T>
+void
+dynVCLMat<T>::setSharedPtr(std::shared_ptr<viennacl::matrix<T> > shptr_){
+    shptr = shptr_;
 }
 
 template<typename T>
 viennacl::matrix_range<viennacl::matrix<T> >
 dynVCLMat<T>::data() { 
-    viennacl::matrix_range<viennacl::matrix<T> > m_sub(*ptr, row_r, col_r);
+    viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), row_r, col_r);
     return m_sub;
+}
+
+template<typename T>
+viennacl::matrix<T>* 
+dynVCLMat<T>::getPtr() { 
+    return shptr.get(); 
+}
+
+template<typename T>
+std::shared_ptr<viennacl::matrix<T> >
+dynVCLMat<T>::sharedPtr() {
+    return shptr;
 }
 
 template class dynVCLMat<int>;

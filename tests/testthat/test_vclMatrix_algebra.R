@@ -56,7 +56,6 @@ test_that("vclMatrix Single Precision Scalar Matrix Subtraction", {
     
     C <- A - 1
     C2 <- 1 - A
-    
     fvclA <- vclMatrix(A, type="float")
     
     fvclC <- fvclA - 1    
@@ -75,7 +74,6 @@ test_that("vclMatrix Single Precision Unary Scalar Matrix Subtraction", {
     has_gpu_skip()
     
     C <- -A
-    
     fvclA <- vclMatrix(A, type="float")
     
     fvclC <- -fvclA
@@ -90,7 +88,6 @@ test_that("vclMatrix Single Precision Matrix Addition", {
     has_gpu_skip()
     
     C <- A + B
-    
     fvclA <- vclMatrix(A, type="float")
     fvclB <- vclMatrix(B, type="float")
     

@@ -17,6 +17,8 @@
 
 #include <RcppEigen.h>
 
+#include <memory>
+
 template <class T> 
 class dynVCLMat {
     private:
@@ -24,6 +26,8 @@ class dynVCLMat {
         viennacl::range row_r;
         viennacl::range col_r;
         viennacl::matrix<T> *ptr;
+        std::shared_ptr<viennacl::matrix<T> > shptr;
+        // = std::make_shared<viennacl::matrix<T> >();
     
     public:
         viennacl::matrix<T> A;
@@ -39,7 +43,9 @@ class dynVCLMat {
         dynVCLMat(int nr_in, int nc_in, T scalar, int ctx_id);
         dynVCLMat(Rcpp::XPtr<dynVCLMat<T> > dynMat);
         
-        viennacl::matrix<T>* getPtr() { return ptr; }
+        viennacl::matrix<T>* getPtr();
+        std::shared_ptr<viennacl::matrix<T> > sharedPtr();
+        
         int nrow() { return nr; }
         int ncol() { return nc; }
         viennacl::range row_range() { return row_r; }
@@ -56,7 +62,10 @@ class dynVCLMat {
             nr = nr_in;
             nc = nc_in;
         }
+        
         void setPtr(viennacl::matrix<T>* ptr_);
+        void setSharedPtr(std::shared_ptr<viennacl::matrix<T> > ptr_);
+        
         viennacl::matrix_range<viennacl::matrix<T> > data();
         viennacl::matrix<T> matrix() {
             return A;
