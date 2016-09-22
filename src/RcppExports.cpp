@@ -6,6 +6,22 @@
 
 using namespace Rcpp;
 
+// cpp_vclMatrix_custom_chol
+void cpp_vclMatrix_custom_chol(SEXP ptrB, const bool BisVCL, const int upper, SEXP sourceCode, const int max_local_size, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_vclMatrix_custom_chol(SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP upperSEXP, SEXP sourceCodeSEXP, SEXP max_local_sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
+    Rcpp::traits::input_parameter< const int >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_vclMatrix_custom_chol(ptrB, BisVCL, upper, sourceCode, max_local_size, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
 // initContexts
 void initContexts();
 RcppExport SEXP gpuR_initContexts() {
