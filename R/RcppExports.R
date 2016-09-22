@@ -155,10 +155,6 @@ emptyEigenXptr <- function(nr, nc, type_flag) {
     .Call('gpuR_emptyEigenXptr', PACKAGE = 'gpuR', nr, nc, type_flag)
 }
 
-cpp_gpuMatrix_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
-    invisible(.Call('gpuR_cpp_gpuMatrix_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
-}
-
 cpp_gpuMatrix_custom_igemm <- function(ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id))
 }
