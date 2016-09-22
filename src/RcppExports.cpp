@@ -451,20 +451,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// cpp_gpu_two_vec
-void cpp_gpu_two_vec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, SEXP kernel_function_);
-RcppExport SEXP gpuR_cpp_gpu_two_vec(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP kernel_function_SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type kernel_function_(kernel_function_SEXP);
-    cpp_gpu_two_vec(ptrA_, ptrB_, ptrC_, sourceCode_, kernel_function_);
-    return R_NilValue;
-END_RCPP
-}
 // cpp_gpuVector_iaxpy
 void cpp_gpuVector_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_, SEXP sourceCode_, int device_type);
 RcppExport SEXP gpuR_cpp_gpuVector_iaxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP sourceCode_SEXP, SEXP device_typeSEXP) {
