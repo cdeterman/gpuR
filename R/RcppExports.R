@@ -159,10 +159,6 @@ cpp_gpuMatrix_custom_igemm <- function(ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisV
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id))
 }
 
-cpp_gpuVector_iaxpy <- function(alpha_, ptrA_, ptrB_, sourceCode_, device_type) {
-    invisible(.Call('gpuR_cpp_gpuVector_iaxpy', PACKAGE = 'gpuR', alpha_, ptrA_, ptrB_, sourceCode_, device_type))
-}
-
 #' @title Detect Number of Platforms
 #' @description Find out how many OpenCL enabled platforms are available.
 #' @return An integer value representing the number of platforms available.

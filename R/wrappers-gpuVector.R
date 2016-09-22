@@ -5,26 +5,18 @@ gpuVec_axpy <- function(alpha, A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    pkg_path <- find.package("gpuR", .libPaths())
-    file <- file.path(pkg_path, "CL", "basic_axpy.cl")
-    
-    if(!file_test("-f", file)){
-        stop("kernel file does not exist")
-    }
-    kernel <- readChar(file, file.info(file)$size)
-    
     type <- typeof(A)
     
     Z <- deepcopy(B)
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
-               # cpp_gpuVector_iaxpy(alpha, 
-               #                     A@address,
-               #                     Z@address,
-               #                     device_flag,
-               #                     kernel)
+               # stop("integer not currently implemented")
+               cpp_gpuVector_axpy(alpha,
+                                   A@address,
+                                   Z@address,
+                                   4L,
+                                   A@.context_index - 1)
            },
            float = {cpp_gpuVector_axpy(alpha, 
                                        A@address, 

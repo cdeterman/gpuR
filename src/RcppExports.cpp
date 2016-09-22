@@ -437,20 +437,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// cpp_gpuVector_iaxpy
-void cpp_gpuVector_iaxpy(SEXP alpha_, SEXP ptrA_, SEXP ptrB_, SEXP sourceCode_, int device_type);
-RcppExport SEXP gpuR_cpp_gpuVector_iaxpy(SEXP alpha_SEXP, SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP sourceCode_SEXP, SEXP device_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type alpha_(alpha_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
-    Rcpp::traits::input_parameter< int >::type device_type(device_typeSEXP);
-    cpp_gpuVector_iaxpy(alpha_, ptrA_, ptrB_, sourceCode_, device_type);
-    return R_NilValue;
-END_RCPP
-}
 // detectPlatforms
 SEXP detectPlatforms();
 RcppExport SEXP gpuR_detectPlatforms() {

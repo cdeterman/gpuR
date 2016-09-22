@@ -20,44 +20,44 @@ test_that("gpuVector comparison operator", {
                 info = "gpuVector/vector == operator not working correctly")
 })
 
-# test_that("gpuVector integer additon", {
-#     
-#     has_gpu_skip()
-#     
-#     gpuA <- gpuVector(Aint)
-#     gpuB <- gpuVector(Bint)
-#     
-#     # R default
-#     C <- Aint + Bint
-#     
-#     # manual call
-#     #gpuC <- gpu_vec_add(A, B)
-#     
-#     # generic call
-#     gpuC <- gpuA + gpuB
-# 
-#     expect_equivalent(gpuC[], C)
-#     expect_is(gpuC, "gpuVector", "inherits from gpuVector")
-#     expect_is(gpuC, "igpuVector", "is a igpuVector object")
-# })
-# 
-# test_that("gpuVector integer subtraction", {
-#     
-#     has_gpu_skip()
-#     
-#     gpuA <- gpuVector(Aint)
-#     gpuB <- gpuVector(Bint)
-#     
-#     # R default
-#     C <- Aint - Bint
-#     
-#     # generic call
-#     gpuC <- gpuA - gpuB
-#     
-#     expect_equivalent(gpuC[], C)
-#     expect_is(gpuC, "gpuVector", "following vector subtraction")
-#     expect_is(gpuC, "igpuVector", "following vector subtraction")
-# })
+test_that("gpuVector integer additon", {
+
+    has_gpu_skip()
+
+    gpuA <- gpuVector(Aint)
+    gpuB <- gpuVector(Bint)
+
+    # R default
+    C <- Aint + Bint
+
+    # manual call
+    #gpuC <- gpu_vec_add(A, B)
+
+    # generic call
+    gpuC <- gpuA + gpuB
+
+    expect_equivalent(gpuC[], C)
+    expect_is(gpuC, "gpuVector", "inherits from gpuVector")
+    expect_is(gpuC, "igpuVector", "is a igpuVector object")
+})
+
+test_that("gpuVector integer subtraction", {
+
+    has_gpu_skip()
+
+    gpuA <- gpuVector(Aint)
+    gpuB <- gpuVector(Bint)
+
+    # R default
+    C <- Aint - Bint
+
+    # generic call
+    gpuC <- gpuA - gpuB
+
+    expect_equivalent(gpuC[], C)
+    expect_is(gpuC, "gpuVector", "following vector subtraction")
+    expect_is(gpuC, "igpuVector", "following vector subtraction")
+})
 
 # Single Precision Tests
 
