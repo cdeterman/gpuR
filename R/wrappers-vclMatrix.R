@@ -255,11 +255,15 @@ vclMatMult <- function(A, B){
                           stop("unrecognized device type")
                    )
                
-               cpp_vclMatrix_custom_igemm(A@address,
+               cpp_gpuMatrix_custom_igemm(A@address,
+                                          TRUE,
                                           B@address,
+                                          TRUE,
                                           C@address,
+                                          TRUE,
                                           kernel,
-                                          sqrt(maxWorkGroupSize))
+                                          sqrt(maxWorkGroupSize),
+                                          C@.context_index - 1)
            },
            float = {cpp_vclMatrix_gemm(A@address,
                                        B@address,

@@ -434,31 +434,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_gpuMatrix_custom_igemm
-void cpp_gpuMatrix_custom_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, int max_local_size, int ctx_id);
-RcppExport SEXP gpuR_cpp_gpuMatrix_custom_igemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP max_local_sizeSEXP, SEXP ctx_idSEXP) {
+void cpp_gpuMatrix_custom_igemm(SEXP ptrA_, const bool AisVCL, SEXP ptrB_, const bool BisVCL, SEXP ptrC_, const bool CisVCL, SEXP sourceCode_, const int max_local_size, const int ctx_id);
+RcppExport SEXP gpuR_cpp_gpuMatrix_custom_igemm(SEXP ptrA_SEXP, SEXP AisVCLSEXP, SEXP ptrB_SEXP, SEXP BisVCLSEXP, SEXP ptrC_SEXP, SEXP CisVCLSEXP, SEXP sourceCode_SEXP, SEXP max_local_sizeSEXP, SEXP ctx_idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
+    Rcpp::traits::input_parameter< const bool >::type CisVCL(CisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
-    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
-    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
-    cpp_gpuMatrix_custom_igemm(ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size, ctx_id);
-    return R_NilValue;
-END_RCPP
-}
-// cpp_vclMatrix_custom_igemm
-void cpp_vclMatrix_custom_igemm(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, SEXP sourceCode_, int max_local_size);
-RcppExport SEXP gpuR_cpp_vclMatrix_custom_igemm(SEXP ptrA_SEXP, SEXP ptrB_SEXP, SEXP ptrC_SEXP, SEXP sourceCode_SEXP, SEXP max_local_sizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA_(ptrA_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrB_(ptrB_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrC_(ptrC_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
-    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
-    cpp_vclMatrix_custom_igemm(ptrA_, ptrB_, ptrC_, sourceCode_, max_local_size);
+    Rcpp::traits::input_parameter< const int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_gpuMatrix_custom_igemm(ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id);
     return R_NilValue;
 END_RCPP
 }

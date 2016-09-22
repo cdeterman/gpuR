@@ -128,8 +128,11 @@ gpu_Mat_mult <- function(A, B){
                    )
                
                cpp_gpuMatrix_custom_igemm(A@address,
+                                          FALSE,
                                           B@address,
+                                          FALSE,
                                           C@address,
+                                          FALSE,
                                           kernel,
                                           sqrt(maxWorkGroupSize),
                                           A@.context_index - 1)
