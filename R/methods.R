@@ -6,7 +6,7 @@
 as.matrix.gpuMatrix <- function(x, ...){
     out <- x[]
     return(out)
-} 
+}
 
 
 #' @title Matrix Multiplication
@@ -133,7 +133,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
 #' @return A gpuR object
 #' @details Currently implemented methods include:
 #' \itemize{
-#'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
+#'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh",
 #'  "log10", "exp", "abs"}
 #'  }
 #' @docType methods
@@ -165,10 +165,10 @@ setMethod("Math", c(x="gpuMatrix"),
 )
 
 #' @title gpuR Logarithms and Exponentials
-#' @description \code{log} computes logarithms, by default natural logarithms 
+#' @description \code{log} computes logarithms, by default natural logarithms
 #' and \code{log10} computes common (i.e. base 10) logarithms.  The general form
 #' \code{log(x, base)} computes logarithms with base \code{base}.
-#' 
+#'
 #' \code{exp} computes the exponential function.
 #' @param x A gpuR object
 #' @param base A positive number (complex not currently supported by OpenCL):
@@ -183,7 +183,7 @@ setMethod("log", c(x="gpuMatrix"),
           function(x, base=NULL)
           {
               if(is.null(base)){
-                  gpuMatElemLog(x) 
+                  gpuMatElemLog(x)
               }else{
                   assert_is_numeric(base)
                   gpuMatElemLogBase(x, base)
@@ -203,7 +203,7 @@ setMethod("log", c(x="gpuMatrix"),
 #' @rdname nrow-gpuR
 #' @author Charles Determan Jr.
 #' @export
-setMethod('nrow', signature(x="gpuMatrix"), 
+setMethod('nrow', signature(x="gpuMatrix"),
           function(x) {
               switch(typeof(x),
                      "integer" = return(cpp_gpuMatrix_nrow(x@address, 4L)),
@@ -348,8 +348,6 @@ setMethod("[<-",
           signature(x = "gpuMatrix", i = "numeric", j = "missing", value="numeric"),
           function(x, i, j, ..., value) {
               
-              assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
-              
               type <- switch(typeof(x),
                              "integer" = 4L,
                              "float" = 6L,
@@ -358,6 +356,8 @@ setMethod("[<-",
               )
               
               if(nargs() == 4){
+                  assert_all_are_in_closed_range(i, lower = 1, upper = nrow(x))
+                  
                   if(length(value) != ncol(x)){
                       stop("number of items to replace is not a multiple of replacement length")
                   }
@@ -630,14 +630,14 @@ setMethod("dist", signature(x="gpuMatrix"),
               
               switch(method,
                      "euclidean" = gpuMatrix_euclidean(
-                         x, 
+                         x,
                          D,
                          diag,
                          upper,
                          p,
                          FALSE),
                      "sqEuclidean" = gpuMatrix_euclidean(
-                         x, 
+                         x,
                          D,
                          diag,
                          upper,
@@ -676,12 +676,12 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
               
               switch(method,
                      "euclidean" = gpuMatrix_peuclidean(
-                         x, 
+                         x,
                          y,
                          D,
                          FALSE),
                      "sqEuclidean" = gpuMatrix_peuclidean(
-                         x, 
+                         x,
                          y,
                          D,
                          TRUE),
@@ -704,21 +704,21 @@ setMethod("deepcopy", signature(object ="gpuMatrix"),
           function(object){
               
               out <- switch(typeof(object),
-                            "integer" = new("igpuMatrix",
+                            "integer" = new(class(object)[1],
                                             address = cpp_deepcopy_gpuMatrix(object@address, 4L),
                                             .context_index = object@.context_index,
                                             .platform_index = object@.platform_index,
                                             .platform = object@.platform,
                                             .device_index = object@.device_index,
                                             .device = object@.device),
-                            "float" = new("fgpuMatrix", 
+                            "float" = new(class(object)[1],
                                           address = cpp_deepcopy_gpuMatrix(object@address, 6L),
                                           .context_index = object@.context_index,
                                           .platform_index = object@.platform_index,
                                           .platform = object@.platform,
                                           .device_index = object@.device_index,
                                           .device = object@.device),
-                            "double" = new("dgpuMatrix", 
+                            "double" = new(class(object)[1],
                                            address = cpp_deepcopy_gpuMatrix(object@address, 8L),
                                            .context_index = object@.context_index,
                                            .platform_index = object@.platform_index,
@@ -733,7 +733,7 @@ setMethod("deepcopy", signature(object ="gpuMatrix"),
 
 #' @rdname gpuR-block
 setMethod("block",
-          signature(object = "gpuMatrix", 
+          signature(object = "gpuMatrix",
                     rowStart = "integer", rowEnd = "integer",
                     colStart = "integer", colEnd = "integer"),
           function(object, rowStart, rowEnd, colStart, colEnd){
@@ -745,7 +745,7 @@ setMethod("block",
               ptr <- switch(typeof(object),
                             "float" = {
                                 address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 6L)
-                                new("fgpuMatrixBlock", 
+                                new("fgpuMatrixBlock",
                                     address = address,
                                     .context_index = object@.context_index,
                                     .platform_index = object@.platform_index,
@@ -755,7 +755,7 @@ setMethod("block",
                             },
                             "double" = {
                                 address <- gpuMatBlock(object@address, rowStart, rowEnd, colStart, colEnd, 8L)
-                                new("dgpuMatrixBlock", 
+                                new("dgpuMatrixBlock",
                                     address = address,
                                     .context_index = object@.context_index,
                                     .platform_index = object@.platform_index,
@@ -781,7 +781,7 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -791,7 +791,7 @@ setMethod("cbind2",
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -801,7 +801,7 @@ setMethod("cbind2",
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -824,7 +824,7 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -834,7 +834,7 @@ setMethod("cbind2",
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -844,7 +844,7 @@ setMethod("cbind2",
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -867,7 +867,7 @@ setMethod("cbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -877,7 +877,7 @@ setMethod("cbind2",
                             },
                             "float" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -887,7 +887,7 @@ setMethod("cbind2",
                             },
                             "double" = {
                                 address <- cpp_cbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -911,7 +911,7 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -921,7 +921,7 @@ setMethod("rbind2",
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -931,7 +931,7 @@ setMethod("rbind2",
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -954,7 +954,7 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -964,7 +964,7 @@ setMethod("rbind2",
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -974,7 +974,7 @@ setMethod("rbind2",
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -997,7 +997,7 @@ setMethod("rbind2",
               ptr <- switch(typeof(x),
                             "integer" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 4L)
-                                new("igpuMatrix", 
+                                new("igpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -1007,7 +1007,7 @@ setMethod("rbind2",
                             },
                             "float" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 6L)
-                                new("fgpuMatrix", 
+                                new("fgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -1017,7 +1017,7 @@ setMethod("rbind2",
                             },
                             "double" = {
                                 address <- cpp_rbind_gpuMatrix(x@address, y@address, 8L)
-                                new("dgpuMatrix", 
+                                new("dgpuMatrix",
                                     address = address,
                                     .context_index = x@.context_index,
                                     .platform_index = x@.platform_index,
@@ -1045,7 +1045,7 @@ setMethod("rbind2",
 #' @export
 setMethod("Summary", c(x="gpuMatrix"),
           function(x, ..., na.rm)
-          {              
+          {
               op = .Generic
               result <- switch(op,
                                `max` = gpuMatrix_max(x),

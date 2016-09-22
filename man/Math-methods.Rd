@@ -30,7 +30,7 @@ Methods for the base Math methods \link[methods]{S4groupGeneric}
 \details{
 Currently implemented methods include:
 \itemize{
- \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", 
+ \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh",
  "log10", "exp", "abs"}
  }
 }

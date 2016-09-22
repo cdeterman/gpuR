@@ -29,7 +29,7 @@ natural log.}
 A gpuR object of the same class as \code{x}
 }
 \description{
-\code{log} computes logarithms, by default natural logarithms 
+\code{log} computes logarithms, by default natural logarithms
 and \code{log10} computes common (i.e. base 10) logarithms.  The general form
 \code{log(x, base)} computes logarithms with base \code{base}.
 
