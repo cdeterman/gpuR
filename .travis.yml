@@ -43,7 +43,7 @@ before_install:
 
 after_success:
   - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
-  - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls()'
+  - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls(exclusions = "src/loader/*")'
 
 notifications:
   email:
