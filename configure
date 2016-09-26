@@ -51,7 +51,8 @@ case `uname` in
         else
             echo "OPENCL_LIB not set, trying default lib location"
             LIBS="PKG_LIBS=-framework OpenCL"
-
+            BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
+            
             echo "Checking OpenCL C++ API"
 
             if ${OPENCL_INC+"false"}; then
@@ -111,7 +112,7 @@ case `uname` in
         else
             echo "OPENCL_LIB not set, will be compiled from source"
             LIBS="PKG_LIBS=-L./loader -lOpenCL -pthread"
-            BUILD_LIB="BUILD_LIB=loader/libOpenCL.a"
+            BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
 
             echo "Checking OpenCL C++ API"
 
@@ -150,8 +151,8 @@ echo "${CXXFLAGS}" >> src/Makevars
 echo "${LIBS}" >> src/Makevars
 echo "${BUILD_LIB}" >> src/Makevars
 printf '\n$(SHLIB): $(BUILD_LIB)\n\n' >> src/Makevars
-printf 'loader/libOpenCL.a:\n' >> src/Makevars
-printf '\tcd loader && $(MAKE) libOpenCL.a \\\n' >> src/Makevars
+printf '../inst/include/loader/libOpenCL.a:\n' >> src/Makevars
+printf '\tcd ../inst/include/loader/ && $(MAKE) libOpenCL.a \\\n' >> src/Makevars
 printf '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\\n' >> src/Makevars
 printf '\tICD_OS=icd_linux\n' >> src/Makevars
 
