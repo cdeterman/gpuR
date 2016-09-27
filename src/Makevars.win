@@ -1,18 +1,22 @@
 CXX_STD = CXX11
 PKG_CPPFLAGS = -I. -I../inst/include
-PKG_LIBS = -L../inst/include/loader -lOpenCL
+
+ifeq "$(WIN)" "64"
+	PKG_LIBS = -L../inst/include/loader/x64 -lOpenCL
+else
+	PKG_LIBS = -L../inst/include/loader/i386 -lOpenCL
+endif
 
 .PHONY: clean
 
-$(SHLIB): ../inst/include/loader/libOpenCL.a
+$(SHLIB): ../inst/include/loader$(R_ARCH)/libOpenCL.a
 
-loader/libOpenCL.a:
-	cd ../inst/include/loader/ && $(MAKE) libOpenCL.a \
+../inst/include/loader$(R_ARCH)/libOpenCL.a:
+	cd ../inst/include/loader && $(MAKE) .$(R_ARCH)/libOpenCL.a \
 	CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \
 	ICD_OS=icd_windows
 
 clean:
-	$(RM) *.o
 	$(RM) *.dll
 	$(RM) *.so
 	$(RM) *.dylib

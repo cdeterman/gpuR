@@ -2,19 +2,19 @@ CPPFLAGS = -I../
 
 .PHONY: clean
 
-libOpenCL.a: icd.o icd_dispatch.o $(ICD_OS).o
-	-$(RM) $@
+.$(R_ARCH)/libOpenCL.a: .$(R_ARCH)/icd.o .$(R_ARCH)/icd_dispatch.o .$(R_ARCH)/$(ICD_OS).o
+	$(RM) $@
 	$(AR) rcs $@ $^
 
-icd.o: icd.c
+.$(R_ARCH)/icd.o: icd.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-icd_dispatch.o: icd_dispatch.c
+    
+.$(R_ARCH)/icd_dispatch.o: icd_dispatch.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-$(ICD_OS).o: $(ICD_OS).c
+    
+.$(R_ARCH)/$(ICD_OS).o: $(ICD_OS).c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) *.o
-	$(RM) *.a
+	$(RM) .$(R_ARCH)/*.o
+	$(RM) .$(R_ARCH)/*.a
