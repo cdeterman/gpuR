@@ -36,10 +36,10 @@ cpp_vclMatrix_custom_chol(
     
     vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
-    int M = vcl_B->size1();
+    unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();
     // int P = vcl_B.size2();
-    int M_internal = vcl_B->internal_size2();
+    unsigned int M_internal = vcl_B->internal_size2();
     // int P_internal = vcl_B.internal_size1();
     // viennacl::ocl::curr
     
