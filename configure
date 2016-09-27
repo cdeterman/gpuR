@@ -51,7 +51,7 @@ case `uname` in
         else
             echo "OPENCL_LIB not set, trying default lib location"
             LIBS="PKG_LIBS=-framework OpenCL"
-            BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
+            #BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
             
             echo "Checking OpenCL C++ API"
 
@@ -111,7 +111,7 @@ case `uname` in
 
         else
             echo "OPENCL_LIB not set, will be compiled from source"
-            LIBS="PKG_LIBS=-L./loader -lOpenCL -pthread"
+            LIBS="PKG_LIBS=-L../inst/include/loader -lOpenCL -pthread"
             BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
 
             echo "Checking OpenCL C++ API"
