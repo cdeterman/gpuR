@@ -5,6 +5,7 @@ environment:
   global:
     OPENCL_LIB: "C:/projects/AMD/2.9-1/bin/x86"
     OPENCL_INC: "C:/projects/AMD/2.9-1/include"
+    R_BUILD_ARGS: "--no-manual --keep-empty-dirs"
     R_CHECK_ARGS: "--no-multiarch --no-build-vignettes --no-manual --no-tests"
 
 # $ErrActionPreference = "Stop" when we tighten this up.
@@ -46,8 +47,8 @@ test_script:
 on_failure:
   - travis-tool.sh dump_logs
   
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
