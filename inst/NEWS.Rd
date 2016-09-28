@@ -13,10 +13,10 @@
             \item Added str method for matrix objects
             \item Added length method for matrix objects
             \item Added solve method for square vclMatrix objects
+            \item Added QR-decompsition, SVD, Cholesky for square gpuMatrix/vclMatrix objects
         }
         \item Features in Progress:
         \itemize{
-            \item Additional matrix functions (QR-decompsition, SVD, Cholesky, solve)
             \item 'device type' checks (i.e. deal with CPU & GPU objects), perhaps detect type from object?
             \item Parallel GPU functionality
             \item Add diag and diag<- method for matix objects

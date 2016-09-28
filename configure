@@ -11,6 +11,13 @@ CXXFLAGS="PKG_CXXFLAGS="
 LIBS="PKG_LIBS="
 BUILD_LIB="BUILD_LIB="
 
+if [ ! -z "OPENCL_FLAGS" ]; then
+    echo "OPENCL_FLAGS not set, using default -DCL_USE_DEPRECATED_OPENCL_1_2_APIS"
+    CXXFLAGS="${CXXFLAGS} -DCL_USE_DEPRECATED_OPENCL_1_2_APIS"
+else
+    echo "Using OPENCL_FLAGS = " $OPENCL_FLAGS
+fi
+
 # check OS
 case `uname` in
     Darwin* )

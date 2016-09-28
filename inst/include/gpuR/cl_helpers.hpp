@@ -15,7 +15,7 @@
         #include <OpenCL/cl2.hpp>
     #else
         #define __CL_ENABLE_EXCEPTIONS
-        #define CL_USE_DEPRECATED_OPENCL_1_1_APIS    
+        //#define CL_USE_DEPRECATED_OPENCL_1_1_APIS    
         #include <OpenCL/cl.hpp>
     #endif
 
@@ -25,7 +25,7 @@
         #include <CL/cl2.hpp>
     #else
         #define __CL_ENABLE_EXCEPTIONS
-        #define CL_USE_DEPRECATED_OPENCL_1_1_APIS        
+        // #define CL_USE_DEPRECATED_OPENCL_1_1_APIS        
         #include <CL/cl.hpp>
     #endif
 #endif
