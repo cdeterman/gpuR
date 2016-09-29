@@ -62,9 +62,6 @@ cpp_gpuMatrix_solve(
 {
 
     switch(type_flag) {
-        case 4:
-            cpp_gpuMatrix_solve<int>(ptrA, ptrB, AisVCL, BisVCL, ctx_id);
-            return;
         case 6:
             cpp_gpuMatrix_solve<float>(ptrA, ptrB, AisVCL, BisVCL, ctx_id);
             return;

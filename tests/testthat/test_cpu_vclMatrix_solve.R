@@ -12,6 +12,8 @@ Y <- matrix(rnorm(ORDER), nrow = ORDER)
 nsqA <- matrix(rnorm(20), nrow = 4)
 nY <- matrix(rnorm(ORDER - 1), nrow = ORDER - 1)
 
+iX <- matrix(sample(seq.int(16), 16), 4)
+
 rinv <- solve(X)
 ninv <- solve(X,Y)
 
@@ -144,3 +146,16 @@ test_that("CPU vclMatrix Double Precision Matrix non-identity solve",
                            should return an error")
           })
 
+test_that("CPU vclMatrix Integer Inversion not supported",
+          {
+              
+              has_gpu_skip()
+              
+              fgpuX <- vclMatrix(X, type="integer")
+              iMat <- vclMatrix(diag(nrow(X)), type = "float")
+              
+              expect_error(solve(fgpuX), "Integer solve not implemented",
+                           info = "solve shouldn't accept integer matrices")
+              expect_error(solve(fgpuX, iMat), "Integer solve not implemented",
+                           info = "solve shouldn't accept integer matrices")
+          })

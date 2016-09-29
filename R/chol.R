@@ -23,6 +23,11 @@
 #' @export
 chol.vclMatrix <- function(x, ...){
     
+    d <- dim(x)
+    if(d[1] != d[2]){
+        stop("'x' must be a square matrix")
+    }
+    
     type <- typeof(x)
     
     myargs <- as.list(sys.call())
@@ -100,6 +105,11 @@ chol.vclMatrix <- function(x, ...){
 #' @rdname chol-methods
 #' @export
 chol.gpuMatrix <- function(x, ...){
+    
+    d <- dim(x)
+    if(d[1] != d[2]){
+        stop("'x' must be a square matrix")
+    }
     
     type <- typeof(x)
     

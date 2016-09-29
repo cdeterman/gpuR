@@ -37,12 +37,7 @@ setMethod("solve",
               
               switch(type,
                      integer = {
-                         cpp_gpuMatrix_solve(in_mat@address, 
-                                             out_mat@address, 
-                                             TRUE,
-                                             TRUE,
-                                             4L, 
-                                             in_mat@.context_index - 1)
+                         stop("Integer solve not implemented")
                      },
                      float = {
                          cpp_gpuMatrix_solve(in_mat@address, 
@@ -89,12 +84,7 @@ setMethod("solve",
               
               switch(type,
                      integer = {
-                         cpp_gpuMatrix_solve(in_mat@address, 
-                                             out_mat@address, 
-                                             TRUE,
-                                             TRUE,
-                                             4L, 
-                                             in_mat@.context_index - 1)
+                         stop("Integer solve not implemented")
                      },
                      float = {
                          cpp_gpuMatrix_solve(in_mat@address, 
@@ -149,13 +139,8 @@ setMethod("solve",
               
               switch(type,
                      integer = {
-                         cpp_gpuMatrix_solve(in_mat@address, 
-                                             out_mat@address, 
-                                             FALSE,
-                                             FALSE,
-                                             4L, 
-                                             in_mat@.context_index - 1)
-                         },
+                         stop("Integer solve not implemented")
+                     },
                      float = {
                          cpp_gpuMatrix_solve(in_mat@address, 
                                              out_mat@address, 
@@ -163,7 +148,7 @@ setMethod("solve",
                                              FALSE,
                                              6L, 
                                              in_mat@.context_index - 1)
-                         },
+                     },
                      double = {
                          cpp_gpuMatrix_solve(in_mat@address, 
                                              out_mat@address, 
@@ -171,7 +156,7 @@ setMethod("solve",
                                              FALSE,
                                              8L, 
                                              in_mat@.context_index - 1)
-                         },
+                     },
                      stop("type not recognized")
               )
               
@@ -201,12 +186,7 @@ setMethod("solve",
               
               switch(type,
                      integer = {
-                         cpp_gpuMatrix_solve(in_mat@address, 
-                                             out_mat@address, 
-                                             FALSE,
-                                             TRUE,
-                                             4L, 
-                                             in_mat@.context_index - 1)
+                         stop("Integer solve not implemented")
                      },
                      float = {
                          cpp_gpuMatrix_solve(in_mat@address, 
