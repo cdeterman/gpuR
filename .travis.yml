@@ -25,10 +25,10 @@ r_binary_packages:
 
 r_packages:
   - assertive
-  - covr
 
 r_github_packages:
   - cdeterman/RViennaCL
+  - Enchufa2/covr
   
 before_install:
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
