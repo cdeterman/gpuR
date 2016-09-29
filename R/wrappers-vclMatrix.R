@@ -1116,7 +1116,14 @@ vclMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     type <- typeof(D)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer method not currently implemented")
+               # cpp_vclMatrix_eucl(A@address, 
+               #                    D@address, 
+               #                    squareDist, 
+               #                    4L,
+               #                    A@.context_index - 1)
+               },
            "float" = cpp_vclMatrix_eucl(A@address, 
                                         D@address, 
                                         squareDist, 
@@ -1143,7 +1150,15 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
     type <- typeof(D)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer method not currently implemented")
+               # cpp_vclMatrix_peucl(A@address,
+               #                     B@address,
+               #                     D@address, 
+               #                     squareDist, 
+               #                     4L,
+               #                     A@.context_index - 1)
+               },
            "float" = cpp_vclMatrix_peucl(A@address,
                                          B@address,
                                         D@address, 

@@ -1008,7 +1008,15 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
     type <- typeof(D)
     
     switch(type,
-           "integer" = stop("integer type not currently implemented"),
+           "integer" = {
+               stop("integer method not currently implemented")
+               
+               # cpp_gpuMatrix_eucl(A@address, 
+               #                    D@address, 
+               #                    squareDist,
+               #                    4L,
+               #                    A@.context_index - 1)
+               },
            "float" = cpp_gpuMatrix_eucl(A@address, 
                                         D@address, 
                                         squareDist,
@@ -1032,11 +1040,11 @@ gpuMatrix_peuclidean <- function(A, B, D, squareDist){
     
     switch(type,
            "integer" = {
-               stop("integer type not currently implemented")
+               stop("integer method not currently implemented")
                # cpp_gpuMatrix_peucl(A@address,
                #                     B@address,
-               #                     D@address, 
-               #                     squareDist, 
+               #                     D@address,
+               #                     squareDist,
                #                     4L,
                #                     A@.context_index - 1)
            },

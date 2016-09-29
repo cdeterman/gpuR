@@ -645,9 +645,9 @@ setMethod("dist", signature(x="vclMatrix"),
               
               type = typeof(x)
               
-              if( type == "integer"){
-                  stop("Integer type not currently supported")
-              }
+              # if( type == "integer"){
+              #     stop("Integer type not currently supported")
+              # }
               
               D <- vclMatrix(nrow=nrow(x), ncol=nrow(x), type=type, ctx_id=x@.context_index)
 
@@ -691,9 +691,9 @@ setMethod("distance", signature(x = "vclMatrix", y = "vclMatrix"),
               
               type = typeof(x)
               
-              if( type == "integer"){
-                  stop("Integer type not currently supported")
-              }
+              # if( type == "integer"){
+              #     stop("Integer type not currently supported")
+              # }
               
               assert_are_identical(x@.context_index, y@.context_index)
               
@@ -1061,6 +1061,7 @@ setMethod("rbind2",
               return(ptr)
           })
 
+#' @export
 setMethod("t", c(x = "vclMatrix"),
           function(x){
               return(vclMatrix_t(x))

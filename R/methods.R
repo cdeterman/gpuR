@@ -622,9 +622,9 @@ setMethod("dist", signature(x="gpuMatrix"),
               
               type = typeof(x)
               
-              if( type == "integer"){
-                  stop("Integer type not currently supported")
-              }
+              # if( type == "integer"){
+              #     stop("Integer type not currently supported")
+              # }
               
               D <- gpuMatrix(nrow=nrow(x), ncol=nrow(x), type=type)
               
@@ -668,9 +668,9 @@ setMethod("distance", signature(x = "gpuMatrix", y = "gpuMatrix"),
               
               type = typeof(x)
               
-              if( type == "integer"){
-                  stop("Integer type not currently supported")
-              }
+              # if( type == "integer"){
+              #     stop("Integer type not currently supported")
+              # }
               
               D <- gpuMatrix(nrow=nrow(x), ncol=nrow(y), type=type)
               
@@ -1056,7 +1056,7 @@ setMethod("Summary", c(x="gpuMatrix"),
           }
 )
 
-
+#' @export
 setMethod("t", c(x = "gpuMatrix"),
           function(x){
               return(gpuMatrix_t(x))
