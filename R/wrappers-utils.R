@@ -204,6 +204,11 @@ cpuInfo <- function(platform_idx=NULL, device_idx=NULL){
     }
     
     out <- cpp_cpuInfo(platform_idx, device_idx)
+    
+    if(Sys.info()["sysname"]=='Darwin'){
+        out$maxWorkGroupSize <- 1
+    }
+    
     return(out)
 }
 
