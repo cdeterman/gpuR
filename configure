@@ -23,8 +23,6 @@ case `uname` in
     Darwin* )
         echo "Darwin OS"
 
-        CXXFLAGS="${CXXFLAGS} -framework OpenCL"
-
         if [ ! -z "$OPENCL_LIB" ]; then
             # custom paths
             echo "Using OPENCL_LIB = " $OPENCL_LIB
