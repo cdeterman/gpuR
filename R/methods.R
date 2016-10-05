@@ -277,11 +277,23 @@ setMethod("[",
 setMethod("[",
           signature(x = "gpuMatrix", i = "missing", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
-              switch(typeof(x),
-                     "integer" = return(GetMatCol(x@address, j, 4L)),
-                     "float" = return(GetMatCol(x@address, j, 6L)),
-                     "double" = return(GetMatCol(x@address, j, 8L))
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
+              
+              if(length(j) > 1){
+                  out <- matrix(nrow = nrow(x), ncol = length(j))
+                  for(c in seq_along(j)){
+                      out[,c] <- GetMatCol(x@address, j[c], type)
+                  }
+                  return(out)
+              }else{
+                  return(GetMatCol(x@address, j, type))
+              }
           })
 
 
@@ -303,7 +315,16 @@ setMethod("[",
               )
               
               if(nargs() == 3){
-                  return(GetMatRow(x@address, i, type))
+                  if(length(i) > 1){
+                      out <- matrix(nrow = length(i), ncol = ncol(x))
+                      
+                      for(r in seq_along(i)){
+                          out[r,] <- GetMatRow(x@address, i[r], type)
+                      }
+                      return(out)
+                  }else{
+                      return(GetMatRow(x@address, i, type))    
+                  }
               }else{
                   
                   output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
@@ -335,11 +356,29 @@ setMethod("[",
 setMethod("[",
           signature(x = "gpuMatrix", i = "numeric", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
-              switch(typeof(x),
-                     "integer" = return(GetMatElement(x@address, i, j, 4L)),
-                     "float" = return(GetMatElement(x@address, i, j, 6L)),
-                     "double" = return(GetMatElement(x@address, i, j, 8L))
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
+              
+              if(length(i) > 1 || length(j) > 1){
+                  
+                  out <- matrix(nrow = length(i), ncol=length(j))
+                  for(r in seq_along(i)){
+                      for(c in seq_along(j)){
+                          out[r,c] <- GetMatElement(x@address, i[r], j[c], type)   
+                      }
+                  }
+                  
+                  return(out)
+                  
+              }else{
+                  return(GetMatElement(x@address, i, j, type))
+              }
+              
           })
 
 #' @rdname extract-methods

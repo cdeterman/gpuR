@@ -35,6 +35,13 @@ test_that("gpuMatrix element access", {
                       info = "integer element subset not equivalent")
     expect_equivalent(dgpu[c(3,5)], D[c(3,5)],
                       info = "double non-contiguous subset not equivalent")
+    
+    expect_equivalent(igpu[1:4,1:4], A[1:4,1:4],
+                      info = "row & column subsets of igpuMatrix not equivalent")
+    expect_equal(fgpu[1:4,1:4], D[1:4,1:4], tolerance = 1e-07,
+                 info = "row & column subsets of fgpuMatrix not equivalent")
+    expect_equivalent(dgpu[1:4,1:4], D[1:4,1:4],
+                      info = "row & column subsets of dgpuMatrix not equivalent")
 })
 
 test_that("gpuMatrix set column access", {
@@ -73,6 +80,13 @@ test_that("gpuMatrix set column access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[,1] <- rnorm(12),
                  info = "no error when vector larger than number of rows")
+    
+    expect_equivalent(gpuA[,1:4], A[,1:4],
+                      info = "column subsets of igpuMatrix not equivalent")
+    expect_equivalent(gpuD[,1:4], D[,1:4],
+                      info = "column subsets of fgpuMatrix not equivalent")
+    expect_equal(gpuF[,1:4], D[,1:4], tolerance = 1e-07,
+                 info = "column subsets of dgpuMatrix not equivalent")
 })
 
 test_that("gpuMatrix set row access", {
@@ -111,6 +125,13 @@ test_that("gpuMatrix set row access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[1,] <- rnorm(12),
                  info = "no error when vector larger than number of rows")
+    
+    expect_equivalent(gpuA[1:4,], A[1:4,],
+                      info = "row subsets of igpuMatrix not equivalent")
+    expect_equivalent(gpuD[1:4,], D[1:4,], 
+                      info = "row subsets of fgpuMatrix not equivalent")
+    expect_equal(gpuF[1:4,], D[1:4,], tolerance = 1e-07,
+                 info = "row subsets of dgpuMatrix not equivalent")
 })
 
 test_that("gpuMatrix set element access", {

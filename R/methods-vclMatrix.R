@@ -30,15 +30,26 @@ setMethod("[",
           signature(x = "vclMatrix", i = "missing", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               
-              Rmat <- switch(typeof(x),
-                     "integer" = vclGetCol(x@address, j, 4L, x@.context_index - 1),
-                     "float" = vclGetCol(x@address, j, 6L, x@.context_index - 1),
-                     "double" = vclGetCol(x@address, j, 8L, x@.context_index - 1),
-                     stop("unsupported matrix type")
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
               
-	      return(Rmat)
-
+              if(length(j) > 1){
+                  
+                  out <- matrix(nrow= nrow(x), ncol = length(j))
+                  
+                  for(c in seq_along(j)){
+                    out[,c] <- vclGetCol(x@address, j[c], type, x@.context_index - 1)    
+                  }
+                  
+                  return(out)
+                  
+              }else{
+                  return(vclGetCol(x@address, j, type, x@.context_index - 1))
+              }
           })
 
 
@@ -60,7 +71,19 @@ setMethod("[",
               )
               
               if(nargs() == 3){
-                  return(vclGetRow(x@address, i, type, x@.context_index - 1))
+                  if(length(i) > 1){
+                      out <- matrix(nrow = length(i), ncol = ncol(x))
+                      
+                      for(r in seq_along(i)){
+                          out[r,] <- vclGetRow(x@address, i[r], type, x@.context_index - 1)
+                      }
+                      
+                      return(out)
+                      
+                  }else{
+                      return(vclGetRow(x@address, i, type, x@.context_index - 1))    
+                  }
+                  
               }else{
                   
                   output <- vector(ifelse(type == 4L, "integer", "numeric"), length(i))
@@ -103,15 +126,26 @@ setMethod("[",
           signature(x = "vclMatrix", i = "numeric", j = "numeric", drop="missing"),
           function(x, i, j, drop) {
               
-              Rmat <- switch(typeof(x),
-                     "integer" = vclGetElement(x@address, i, j, 4L),
-                     "float" = vclGetElement(x@address, i, j, 6L),
-                     "double" = vclGetElement(x@address, i, j, 8L),
-                     stop("unsupported matrix type")
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L,
+                             stop("type not recognized")
               )
               
-	      return(Rmat)
-
+              if(length(i) > 1 || length(j) > 1){
+                  out <- matrix(nrow = length(i), ncol = length(j))
+                  
+                  for(r in seq_along(i)){
+                      for(c in seq_along(j)){
+                          out[r,c] <- vclGetElement(x@address, i[r], j[c], type)
+                      }
+                  }
+                  
+                  return(out)
+              }else{
+                  return(vclGetElement(x@address, i, j, type))
+              }
           })
 
 #' @rdname extract-methods

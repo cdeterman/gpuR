@@ -35,6 +35,13 @@ test_that("vclMatrix get element access", {
                  info = "float element subset not equivalent ")
     expect_equivalent(igpu[1,2], A[1,2],
                       info = "integer element subset not equivalent")
+    
+    expect_equivalent(igpu[1:4,1:4], A[1:4,1:4],
+                      info = "row & column subsets of ivclMatrix not equivalent")
+    expect_equal(fgpu[1:4,1:4], D[1:4,1:4], tolerance = 1e-07,
+                 info = "row & column subsets of fvclMatrix not equivalent")
+    expect_equivalent(dgpu[1:4,1:4], D[1:4,1:4],
+                      info = "row & column subsets of dvclMatrix not equivalent")
 })
 
 test_that("vclMatrix set column access", {
@@ -75,6 +82,13 @@ test_that("vclMatrix set column access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[,1] <- rnorm(12),
                  info = "no error when vector larger than number of rows")
+    
+    expect_equivalent(gpuA[,1:4], A[,1:4],
+                      info = "column subsets of ivclMatrix not equivalent")
+    expect_equivalent(gpuD[,1:4], D[,1:4],
+                      info = "column subsets of fvclMatrix not equivalent")
+    expect_equal(gpuF[,1:4], D[,1:4], tolerance = 1e-07,
+                 info = "column subsets of dvclMatrix not equivalent")
 })
 
 test_that("vclMatrix set row access", {
@@ -115,6 +129,13 @@ test_that("vclMatrix set row access", {
                  info = "no error when index greater than dims")
     expect_error(gpuD[1,] <- rnorm(12),
                  info = "no error when vector larger than number of rows")
+    
+    expect_equivalent(gpuA[1:4,], A[1:4,],
+                      info = "row subsets of ivclMatrix not equivalent")
+    expect_equivalent(gpuD[1:4,], D[1:4,], 
+                      info = "row subsets of fvclMatrix not equivalent")
+    expect_equal(gpuF[1:4,], D[1:4,], tolerance = 1e-07,
+                 info = "row subsets of dvclMatrix not equivalent")
 })
 
 test_that("vclMatrix set element access", {
