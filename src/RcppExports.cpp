@@ -468,6 +468,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_vclMatrix_set_row_order
+void cpp_vclMatrix_set_row_order(SEXP ptrA, SEXP ptrB, const bool AisVCL, const bool BisVCL, Eigen::VectorXi indices, SEXP sourceCode, const int max_local_size, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_vclMatrix_set_row_order(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP AisVCLSEXP, SEXP BisVCLSEXP, SEXP indicesSEXP, SEXP sourceCodeSEXP, SEXP max_local_sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXi >::type indices(indicesSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_vclMatrix_set_row_order(ptrA, ptrB, AisVCL, BisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuMatrix_solve
 void cpp_gpuMatrix_solve(SEXP ptrA, SEXP ptrB, bool AisVCL, bool BisVCL, const int type_flag, const int ctx_id);
 RcppExport SEXP gpuR_cpp_gpuMatrix_solve(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP AisVCLSEXP, SEXP BisVCLSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {

@@ -182,6 +182,10 @@ cpp_platformInfo <- function(platform_idx_) {
     .Call('gpuR_cpp_platformInfo', PACKAGE = 'gpuR', platform_idx_)
 }
 
+cpp_vclMatrix_set_row_order <- function(ptrA, ptrB, AisVCL, BisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_set_row_order', PACKAGE = 'gpuR', ptrA, ptrB, AisVCL, BisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id))
+}
+
 cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_solve', PACKAGE = 'gpuR', ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id))
 }
