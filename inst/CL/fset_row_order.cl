@@ -1,5 +1,5 @@
 __kernel void set_row_order(
-    __global const float *A, __global float *B, __global const *indices,
+    __global const float *A, __global float *B, __global const int *indices,
     const int Mdim, const int Pdim, const int MdimPad) {
     
     // Get the index of the elements to be processed
@@ -9,8 +9,12 @@ __kernel void set_row_order(
     // Do the operation
     if((globalRow <= Mdim) && (globalCol <= Pdim)){
     
-        printf("index = %i\n", indices[globalRow]);
-        printf("globalRow = %i\n", globalRow);
+        //printf("index = %i\n", indices[globalRow]);
+        //printf("globalRow = %i\n", globalRow);
+        
+        //if(globalRow == 0 && globalCol == 0){
+        //    prinf("new index")
+        //}
         
         B[globalRow * MdimPad + globalCol] = A[indices[globalRow] * MdimPad + globalCol];
     }

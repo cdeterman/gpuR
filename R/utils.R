@@ -88,7 +88,7 @@ permute <- function(X, MARGIN = 1, order){
                                 Y@address, 
                                 TRUE,
                                 TRUE,
-                                order,
+                                order - 1,
                                 kernel,
                                 sqrt(maxWorkGroupSize),
                                 6L,
