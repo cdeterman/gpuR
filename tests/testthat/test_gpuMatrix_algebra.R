@@ -818,6 +818,7 @@ test_that("gpuMatrix Double Precision Scalar Matrix Power", {
 test_that("gpuMatrix Double Precision crossprod", {
     
     has_gpu_skip()
+    has_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)
@@ -844,6 +845,7 @@ test_that("gpuMatrix Double Precision crossprod", {
 test_that("gpuMatrix Double Precision tcrossprod", {
     
     has_gpu_skip()
+    has_double_skip()
     
     X <- matrix(rnorm(10), nrow=2)
     Y <- matrix(rnorm(10), nrow=2)

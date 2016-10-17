@@ -64,6 +64,7 @@ test_that("gpuVector Single Precision Element-Wise Trignometry", {
 test_that("gpuVector Double Precision Element-Wise Trignometry", {
     
     has_gpu_skip()
+    has_double_skip()
     
     Sin <- sin(A)
     Asin <- suppressWarnings(asin(A))

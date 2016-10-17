@@ -65,6 +65,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Trignometry", {
 test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
     
     has_gpu_skip()
+    has_double_skip()
     
     Sin <- sin(A)
     Asin <- suppressWarnings(asin(A))
@@ -137,6 +138,7 @@ test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
 test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
+    has_double_skip()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))

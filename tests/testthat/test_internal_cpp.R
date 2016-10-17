@@ -11,15 +11,15 @@ mat_out <- matrix(0, ORDER, ORDER)
 vec <- rnorm(ORDER)
 vec_out <- rep(0, ORDER)
 
-gpuA <- gpuMatrix(mat)
-gpuC <- gpuMatrix(mat_out)
-vclA <- vclMatrix(mat)
-vclC <- vclMatrix(mat_out)
+gpuA <- gpuMatrix(mat, type = "float")
+gpuC <- gpuMatrix(mat_out, type = "float")
+vclA <- vclMatrix(mat, type = "float")
+vclC <- vclMatrix(mat_out, type = "float")
 
-gpuV <- gpuVector(vec)
-gpuVc <- gpuVector(vec_out)
-vclV <- vclVector(vec)
-vclVc <- vclVector(vec_out)
+gpuV <- gpuVector(vec, type = "float")
+gpuVc <- gpuVector(vec_out, type = "float")
+vclV <- vclVector(vec, type = "float")
+vclVc <- vclVector(vec_out, type = "float")
 
 
 test_that("Check gpuMatrix errors thrown when non-implemented type passed", {
