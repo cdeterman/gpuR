@@ -5,8 +5,9 @@ set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
 
+cnames <- paste0("V", seq(10))
 
-test_that("vclMatrix get element access", {
+test_that("CPU vclMatrix get element access", {
     has_cpu_skip()
     
     dgpu <- vclMatrix(D)
@@ -42,7 +43,7 @@ test_that("vclMatrix get element access", {
                       info = "row & column subsets of dvclMatrix not equivalent")
 })
 
-test_that("vclMatrix set column access", {
+test_that("CPU vclMatrix set column access", {
     has_cpu_skip()
     
     gpuA <- vclMatrix(A)
@@ -87,7 +88,7 @@ test_that("vclMatrix set column access", {
                  info = "column subsets of dvclMatrix not equivalent")
 })
 
-test_that("vclMatrix set row access", {
+test_that("CPU vclMatrix set row access", {
     has_cpu_skip()
     
     gpuA <- vclMatrix(A)
@@ -132,7 +133,7 @@ test_that("vclMatrix set row access", {
                  info = "row subsets of dvclMatrix not equivalent")
 })
 
-test_that("vclMatrix set element access", {
+test_that("CPU vclMatrix set element access", {
     has_cpu_skip()
     
     gpuA <- vclMatrix(A)
@@ -176,7 +177,7 @@ test_that("vclMatrix set element access", {
                       info = "double non-contiguous subset not equivalent")
 })
 
-test_that("vclMatrix as.matrix method", {
+test_that("CPU vclMatrix as.matrix method", {
     
     has_cpu_skip()
     
@@ -199,4 +200,37 @@ test_that("vclMatrix as.matrix method", {
               info = "float as.matrix not producing 'matrix' class")
     expect_is(as.matrix(igpu), 'matrix',
               info = "integer as.matrix not producing 'matrix' class")
+})
+
+test_that("CPU vclMatrix colnames methods", {
+    
+    has_cpu_skip()
+    
+    fgpu <- vclMatrix(D, type="float")
+    igpu <- vclMatrix(A)
+    
+    expect_null(colnames(fgpu), 
+                info = "float colnames should return NULL before assignment")
+    expect_null(colnames(igpu), 
+                info = "integer colnames should return NULL before assignment")
+    
+    colnames(fgpu) <- cnames
+    colnames(igpu) <- cnames
+    
+    expect_equal(colnames(fgpu), cnames,
+                 info = "float colnames don't reflect assigned names")
+    expect_equal(colnames(igpu), cnames,
+                 info = "integer colnames don't reflect assigned names")
+    
+    # Double tests
+    
+    dgpu <- vclMatrix(D)
+    
+    expect_null(colnames(dgpu), 
+                info = "double colnames should return NULL before assignment")
+    
+    colnames(dgpu) <- cnames
+    
+    expect_equal(colnames(dgpu), cnames,
+                 info = "double colnames don't reflect assigned names")
 })

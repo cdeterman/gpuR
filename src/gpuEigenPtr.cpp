@@ -6,6 +6,27 @@
 
 using namespace Rcpp;
 
+template <typename T>
+void
+setCols(SEXP ptrA_, StringVector names){
+    
+    Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    ptrA->setColumnNames(names);
+    
+    return;
+}
+
+template <typename T>
+StringVector
+getCols(SEXP ptrA_){
+    
+    Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    StringVector cnames = ptrA->getColumnNames();
+    
+    return cnames;
+}
+
+
 //copy an existing gpuMatrix
 template <typename T>
 SEXP
@@ -642,5 +663,42 @@ emptyEigenXptr(const int nr, const int nc, const int type_flag)
             return emptyEigenXptr<double>(nr, nc);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+setCols(SEXP ptrA, StringVector names, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        setCols<int>(ptrA, names);
+        return;
+    case 6:
+        setCols<float>(ptrA, names);
+        return;
+    case 8:
+        setCols<double>(ptrA, names);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+StringVector
+getCols(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        return getCols<int>(ptrA);
+    case 6:
+        return getCols<float>(ptrA);
+    case 8:
+        return getCols<double>(ptrA);
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }

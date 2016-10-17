@@ -13,6 +13,21 @@ using Eigen::VectorXi;
 
 using namespace Rcpp;
 
+template <typename T>
+void
+setVCLcols(SEXP ptrA_, CharacterVector names){
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    ptrA->setColumnNames(names);
+    return;
+}
+
+template <typename T>
+StringVector
+getVCLcols(SEXP ptrA_){
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    StringVector cnames = ptrA->getColumnNames();
+    return cnames;
+}
 
 // create identity matrix
 template <typename T>
@@ -981,6 +996,42 @@ emptyVecVCL(
             return emptyVecVCL<double>(length, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+setVCLcols(SEXP ptrA, CharacterVector names, const int type_flag)
+{
+    switch(type_flag) {
+        case 4:
+            setVCLcols<int>(ptrA, names);
+            return;
+        case 6:
+            setVCLcols<float>(ptrA, names);
+            return;
+        case 8:
+            setVCLcols<double>(ptrA, names);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+StringVector
+getVCLcols(SEXP ptrA, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        return getVCLcols<int>(ptrA);
+    case 6:
+        return getVCLcols<float>(ptrA);
+    case 8:
+        return getVCLcols<double>(ptrA);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 

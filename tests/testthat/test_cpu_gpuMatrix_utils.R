@@ -5,8 +5,9 @@ set.seed(123)
 A <- matrix(sample(seq.int(100), 100), 10)
 D <- matrix(sample(rnorm(100), 100), 10)
 
+cnames <- paste0("V", seq(10))
 
-test_that("gpuMatrix element access", {
+test_that("CPU gpuMatrix element access", {
     has_cpu_skip()
     
     dgpu <- gpuMatrix(D)
@@ -44,7 +45,7 @@ test_that("gpuMatrix element access", {
                       info = "row & column subsets of dgpuMatrix not equivalent")
 })
 
-test_that("gpuMatrix set column access", {
+test_that("CPU gpuMatrix set column access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
@@ -89,7 +90,7 @@ test_that("gpuMatrix set column access", {
                  info = "column subsets of dgpuMatrix not equivalent")
 })
 
-test_that("gpuMatrix set row access", {
+test_that("CPU gpuMatrix set row access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
@@ -134,7 +135,7 @@ test_that("gpuMatrix set row access", {
                  info = "row subsets of dgpuMatrix not equivalent")
 })
 
-test_that("gpuMatrix set element access", {
+test_that("CPU gpuMatrix set element access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
@@ -178,7 +179,7 @@ test_that("gpuMatrix set element access", {
                       info = "double non-contiguous subset not equivalent")
 })
 
-test_that("gpuMatrix confirm print doesn't error", {
+test_that("CPU gpuMatrix confirm print doesn't error", {
     
     has_cpu_skip()
     
@@ -187,7 +188,7 @@ test_that("gpuMatrix confirm print doesn't error", {
     expect_that(print(dgpu), prints_text("Source: gpuR Matrix"))
 })
 
-test_that("gpuMatrix as.matrix method", {
+test_that("CPU gpuMatrix as.matrix method", {
     
     has_cpu_skip()
     
@@ -210,4 +211,37 @@ test_that("gpuMatrix as.matrix method", {
               info = "float as.matrix not producing 'matrix' class")
     expect_is(as.matrix(igpu), 'matrix',
               info = "integer as.matrix not producing 'matrix' class")
+})
+
+test_that("CPU gpuMatrix colnames methods", {
+    
+    has_cpu_skip()
+    
+    fgpu <- gpuMatrix(D, type="float")
+    igpu <- gpuMatrix(A)
+    
+    expect_null(colnames(fgpu), 
+                info = "float colnames should return NULL before assignment")
+    expect_null(colnames(igpu), 
+                info = "integer colnames should return NULL before assignment")
+    
+    colnames(fgpu) <- cnames
+    colnames(igpu) <- cnames
+    
+    expect_equal(colnames(fgpu), cnames,
+                 info = "float colnames don't reflect assigned names")
+    expect_equal(colnames(igpu), cnames,
+                 info = "integer colnames don't reflect assigned names")
+    
+    # Double tests
+    
+    dgpu <- gpuMatrix(D)
+    
+    expect_null(colnames(dgpu), 
+                info = "double colnames should return NULL before assignment")
+    
+    colnames(dgpu) <- cnames
+    
+    expect_equal(colnames(dgpu), cnames,
+                 info = "double colnames don't reflect assigned names")
 })

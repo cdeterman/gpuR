@@ -99,3 +99,88 @@ permute <- function(X, MARGIN = 1, order){
     return(Y)
     
 }
+
+
+
+#' @export
+colnames <- function(x, ...) UseMethod("colnames")
+
+#' @export
+colnames.default <- base::colnames
+
+#' @export
+colnames.gpuMatrix <- function(x, ...)
+{
+    type <- switch(typeof(x),
+                   "integer" = 4L,
+                   "float" = 6L,
+                   "double" = 8L
+    )
+
+    cnames <- getCols(x@address, type)
+    
+    if(length(cnames) == 0){
+        cnames <- NULL
+    }
+
+    return(cnames)
+}
+
+
+#' @export
+setMethod("colnames<-",
+          signature = "gpuMatrix",
+          function(x, value)
+          {
+
+              assert_is_character(value)
+
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L
+              )
+
+              setCols(x@address, value, type)
+
+              return(invisible(x))
+          })
+
+
+#' @export
+colnames.vclMatrix <- function(x, ...)
+{
+    type <- switch(typeof(x),
+                   "integer" = 4L,
+                   "float" = 6L,
+                   "double" = 8L
+    )
+    
+    cnames <- getVCLCols(x@address, type)
+    
+    if(length(cnames) == 0){
+        cnames <- NULL
+    }
+    
+    return(cnames)
+}
+
+
+#' @export
+setMethod("colnames<-",
+          signature = "vclMatrix",
+          function(x, value)
+          {
+              
+              assert_is_character(value)
+              
+              type <- switch(typeof(x),
+                             "integer" = 4L,
+                             "float" = 6L,
+                             "double" = 8L
+              )
+              
+              setVCLCols(x@address, value, type)
+              
+              return(invisible(x))
+          })

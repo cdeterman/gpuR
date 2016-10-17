@@ -20,6 +20,7 @@ template <class T>
 class dynEigenMat {
     private:
         int nr, orig_nr, nc, orig_nc, r_start, r_end, c_start, c_end;
+        Rcpp::StringVector _colNames, _rowNames;
         // T* ptr;
         // Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>* raw_ptr;
         std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptr;
@@ -124,6 +125,13 @@ class dynEigenMat {
         void setSourceDim(const int rows, const int cols){
             orig_nr = rows;
             orig_nc = cols;
+        };
+        
+        void setColumnNames(Rcpp::StringVector names){
+            _colNames = names;
+        };
+        Rcpp::StringVector getColumnNames(){
+            return _colNames;
         };
         
         // setting matrix explicitly

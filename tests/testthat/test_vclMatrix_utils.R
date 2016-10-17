@@ -5,6 +5,7 @@ set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
 
+cnames <- paste0("V", seq(10))
 
 test_that("vclMatrix get element access", {
     
@@ -210,3 +211,36 @@ test_that("vclMatrix as.matrix method", {
               info = "integer as.matrix not producing 'matrix' class")
 })
 
+test_that("vclMatrix colnames methods", {
+    
+    has_gpu_skip()
+    
+    fgpu <- vclMatrix(D, type="float")
+    igpu <- vclMatrix(A)
+    
+    expect_null(colnames(fgpu), 
+                info = "float colnames should return NULL before assignment")
+    expect_null(colnames(igpu), 
+                info = "integer colnames should return NULL before assignment")
+    
+    colnames(fgpu) <- cnames
+    colnames(igpu) <- cnames
+    
+    expect_equal(colnames(fgpu), cnames,
+                 info = "float colnames don't reflect assigned names")
+    expect_equal(colnames(igpu), cnames,
+                 info = "integer colnames don't reflect assigned names")
+    
+    # Double tests
+    has_double_skip()
+    
+    dgpu <- vclMatrix(D)
+    
+    expect_null(colnames(dgpu), 
+                info = "double colnames should return NULL before assignment")
+    
+    colnames(dgpu) <- cnames
+    
+    expect_equal(colnames(dgpu), cnames,
+                 info = "double colnames don't reflect assigned names")
+})

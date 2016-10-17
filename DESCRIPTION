@@ -11,18 +11,18 @@ Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 VignetteBuilder: knitr
 License: GPL (>= 2)
-Depends: 
+Depends:
     R (>= 3.0.2),
     methods,
     utils
-Imports: 
+Imports:
     Rcpp (>= 0.11.5),
     assertive
 LinkingTo: Rcpp,
     RcppEigen,
     RViennaCL (>= 1.7.1.3)
 NeedsCompilation: yes
-Suggests: 
+Suggests:
     testthat,
     knitr
 URL: http://github.com/cdeterman/gpuR

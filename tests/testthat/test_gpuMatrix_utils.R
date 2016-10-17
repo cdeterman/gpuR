@@ -5,6 +5,8 @@ set.seed(123)
 A <- matrix(sample(seq.int(100), 100), 10)
 D <- matrix(sample(rnorm(100), 100), 10)
 
+cnames <- paste0("V", seq(10))
+
 
 test_that("gpuMatrix element access", {
     
@@ -221,4 +223,38 @@ test_that("gpuMatrix as.matrix method", {
               info = "float as.matrix not producing 'matrix' class")
     expect_is(as.matrix(igpu), 'matrix',
               info = "integer as.matrix not producing 'matrix' class")
+})
+
+test_that("gpuMatrix colnames methods", {
+    
+    has_gpu_skip()
+    
+    fgpu <- gpuMatrix(D, type="float")
+    igpu <- gpuMatrix(A)
+    
+    expect_null(colnames(fgpu), 
+                info = "float colnames should return NULL before assignment")
+    expect_null(colnames(igpu), 
+                info = "integer colnames should return NULL before assignment")
+    
+    colnames(fgpu) <- cnames
+    colnames(igpu) <- cnames
+    
+    expect_equal(colnames(fgpu), cnames,
+                 info = "float colnames don't reflect assigned names")
+    expect_equal(colnames(igpu), cnames,
+                 info = "integer colnames don't reflect assigned names")
+    
+    # Double tests
+    has_double_skip()
+    
+    dgpu <- gpuMatrix(D)
+    
+    expect_null(colnames(dgpu), 
+                info = "double colnames should return NULL before assignment")
+    
+    colnames(dgpu) <- cnames
+    
+    expect_equal(colnames(dgpu), cnames,
+                 info = "double colnames don't reflect assigned names")
 })
