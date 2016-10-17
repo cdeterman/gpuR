@@ -5,24 +5,24 @@ Description: Provides GPU enabled functions for R objects in a simple and
     approachable manner.  New gpu* and vcl* classes have been provided to
     wrap typical R objects (e.g. vector, matrix), in both host and device
     spaces, to mirror typical R syntax without the need to know OpenCL.
-Version: 1.1.4
-Date: 2016-04-05
+Version: 1.1.5
+Date: 2016-10-17
 Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 VignetteBuilder: knitr
 License: GPL (>= 2)
-Depends: 
+Depends:
     R (>= 3.0.2),
     methods,
     utils
-Imports: 
+Imports:
     Rcpp (>= 0.11.5),
     assertive
 LinkingTo: Rcpp,
     RcppEigen,
     RViennaCL (>= 1.7.1.3)
 NeedsCompilation: yes
-Suggests: 
+Suggests:
     testthat,
     knitr
 URL: http://github.com/cdeterman/gpuR

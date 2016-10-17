@@ -7,6 +7,7 @@
 // #include "gpuR/dynEigenMat.hpp"
 // #include "gpuR/dynVCLMat.hpp"
 // #include "gpuR/cl_helpers.hpp"
+#include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
 
 // using namespace cl;
@@ -19,7 +20,7 @@ cpp_vclMatrix_custom_chol(
     const bool BisVCL,
     const int upper,
     SEXP sourceCode_,
-    const int max_local_size,
+    int max_local_size,
     const int ctx_id)
 {
     std::string my_kernel = as<std::string>(sourceCode_);
@@ -50,6 +51,16 @@ cpp_vclMatrix_custom_chol(
     viennacl::ocl::kernel & update_kk = my_prog.get_kernel("update_kk");
     viennacl::ocl::kernel & update_k = my_prog.get_kernel("update_k");
     viennacl::ocl::kernel & update_block = my_prog.get_kernel("update_block");
+    
+    cl_device_id raw_device = ctx.current_device().id();
+    cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "update_block").handle().get();
+    size_t preferred_work_group_size_multiple;
+    
+    cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                          CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                          sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+    
+    max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     
     // set global work sizes
     update_kk.global_work_size(0, 1);
@@ -87,7 +98,7 @@ cpp_vclMatrix_custom_chol(
     const bool BisVCL,
     const int upper,
     SEXP sourceCode,
-    const int max_local_size,
+    int max_local_size,
     const int type_flag,
     const int ctx_id)
 {
