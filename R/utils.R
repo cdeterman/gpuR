@@ -60,3 +60,42 @@ str.vclMatrix <- function(object, vec.len = strOptions()$vec.len,
     cat(ss)
     invisible()
 }
+
+
+#'@export
+permute <- function(X, MARGIN = 1, order){
+    file <- system.file("CL", "fset_row_order.cl", package = "gpuR")
+    
+    if(!file_test("-f", file)){
+        stop("kernel file does not exist")
+    }
+    kernel <- readChar(file, file.info(file)$size)
+    
+    maxWorkGroupSize <- 
+        switch(deviceType(X@.platform_index, X@.device_index),
+               "gpu" = gpuInfo(X@.platform_index, X@.device_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(X@.platform_index, X@.device_index)$maxWorkGroupSize,
+               stop("unrecognized device type")
+        )
+    
+    type <- typeof(X)
+    
+    Y <- vclMatrix(nrow = nrow(X), ncol = ncol(X), type = type, ctx_id = X@.context_index)
+    
+    # print(Y[])
+    
+    cpp_vclMatrix_set_row_order(X@address, 
+                                Y@address, 
+                                TRUE,
+                                TRUE,
+                                order - 1,
+                                kernel,
+                                sqrt(maxWorkGroupSize),
+                                6L,
+                                X@.context_index - 1)
+    
+    # print(Y[])
+    
+    return(Y)
+    
+}

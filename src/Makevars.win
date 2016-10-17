@@ -1,5 +1,5 @@
 CXX_STD = CXX11
-PKG_CPPFLAGS = -I. -I../inst/include
+PKG_CPPFLAGS = -I. -I../inst/include -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
 
 ifeq "$(WIN)" "64"
 	PKG_LIBS = -L../inst/include/loader/x64 -lOpenCL
