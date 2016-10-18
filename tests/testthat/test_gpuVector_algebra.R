@@ -236,7 +236,7 @@ test_that("gpuVector Single Precision Vector Element-Wise Power", {
     fvclC <- fvclA ^ fvclB
     
     expect_is(fvclC, "fgpuVector")
-    expect_equal(fvclC[,], C, tolerance=1e-07, 
+    expect_equal(fvclC[,], C, tolerance=1e-06, 
                  info="float vcl vector elements not equivalent")  
     expect_error(fvclA * fvclE)
 })

@@ -156,7 +156,7 @@ colnames.vclMatrix <- function(x, ...)
                    "double" = 8L
     )
     
-    cnames <- getVCLCols(x@address, type)
+    cnames <- getVCLcols(x@address, type)
     
     if(length(cnames) == 0){
         cnames <- NULL
@@ -180,7 +180,7 @@ setMethod("colnames<-",
                              "double" = 8L
               )
               
-              setVCLCols(x@address, value, type)
+              setVCLcols(x@address, value, type)
               
               return(invisible(x))
           })
