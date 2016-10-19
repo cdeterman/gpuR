@@ -42,20 +42,22 @@ SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_)
     // Get device
     viennacl::ocl::device working_device;
     working_device = platforms[plat_idx].devices()[gpu_idx];
-    
-    switch(working_device.type()){
-        case 2: 
-            device_type = "cpu";
-            break;
-        case 4: 
-            device_type = "gpu";
-            break;
-        case 8: 
-            device_type = "accelerator";
-            break;
-        default: throw Rcpp::exception("unrecognized device detected");
-        }
-    
+
+    cl_device_type check = working_device.type(); 
+
+    if(check & CL_DEVICE_TYPE_CPU){
+	device_type = "cpu";
+    }else if(check & CL_DEVICE_TYPE_GPU){
+	device_type = "gpu";
+    }else if(check & CL_DEVICE_TYPE_ACCELERATOR){
+	device_type = "accelerator";
+    }else{
+	Rcpp::Rcout << "device found: " << std::endl;
+	Rcpp::Rcout << check << std::endl;
+	throw Rcpp::exception("unrecognized device detected");
+
+    }
+   
     return(wrap(device_type));
 }
 
@@ -77,7 +79,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
             
             devices = platforms[plat_idx].devices();
             for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
-                if(devices[device_idx].type() == CL_DEVICE_TYPE_GPU){
+                if(devices[device_idx].type() & CL_DEVICE_TYPE_GPU){
                     device_count++;
                 }
             }
@@ -88,7 +90,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
         
         devices = platforms[plat_idx].devices();
         for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
-            if(devices[device_idx].type() == CL_DEVICE_TYPE_GPU){
+            if(devices[device_idx].type() & CL_DEVICE_TYPE_GPU){
                 device_count++;
             }
         }
@@ -181,7 +183,9 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
     viennacl::ocl::device working_device;
     working_device = platforms[plat_idx].devices()[cpu_idx];
     
-    if(working_device.type() != CL_DEVICE_TYPE_CPU){
+    if(working_device.type() & CL_DEVICE_TYPE_CPU){
+	// do nothing
+    }else{
         stop("device is not a CPU");
     }
     
@@ -318,18 +322,20 @@ SEXP currentDevice()
 {
     std::string device_type;
     
-    switch(viennacl::ocl::current_device().type()){
-                case 2: 
-                    device_type = "cpu";
-                    break;
-                case 4: 
-                    device_type = "gpu";
-                    break;
-                case 8: 
-                    device_type = "accelerator";
-                    break;
-                default: throw Rcpp::exception("unrecognized device detected");
-            }
+    cl_device_type check = viennacl::ocl::current_device().type(); 
+
+    if(check & CL_DEVICE_TYPE_CPU){
+	device_type = "cpu";
+    }else if(check & CL_DEVICE_TYPE_GPU){
+	device_type = "gpu";
+    }else if(check & CL_DEVICE_TYPE_ACCELERATOR){
+	device_type = "accelerator";
+    }else{
+	Rcpp::Rcout << "device found: " << std::endl;
+	Rcpp::Rcout << check << std::endl;
+	throw Rcpp::exception("unrecognized device detected");
+
+    }
             
     return List::create(Named("device") = wrap(viennacl::ocl::current_context().current_device().name()),
                         Named("device_index") = wrap(viennacl::ocl::current_context().current_device_id() + 1),
@@ -391,7 +397,7 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
             
             devices = platforms[plat_idx].devices();
             for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
-                if(devices[device_idx].type() == CL_DEVICE_TYPE_CPU){
+                if(devices[device_idx].type() & CL_DEVICE_TYPE_CPU){
                     device_count++;
                 }
             }
@@ -402,7 +408,7 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
         
         devices = platforms[plat_idx].devices();
         for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
-            if(devices[device_idx].type() == CL_DEVICE_TYPE_CPU){
+            if(devices[device_idx].type() & CL_DEVICE_TYPE_CPU){
                 device_count++;
             }
         }
