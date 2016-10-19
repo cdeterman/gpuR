@@ -19,12 +19,47 @@ class dynEigenVec {
     public:
         Eigen::Matrix<T, Eigen::Dynamic, 1> A;
         dynEigenVec() { } // private default constructor
-        dynEigenVec(SEXP A_);
-        dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
-        dynEigenVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);
-        dynEigenVec(int size_in);
-        dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
-        dynEigenVec(Rcpp::XPtr<dynEigenVec<T> > dynVec);
+        dynEigenVec(SEXP A_){
+            A = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
+            size = A.size();
+            begin = 1;
+            last = size;
+            ptr = A.data();
+        }
+        dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_){
+            A = A_;
+            size = A.size();
+            begin = 1;
+            last = size;
+            ptr = A.data();
+        };
+        // dynEigenVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_){
+        //     A = A_;
+        //     size = A.size();
+        //     begin = 1;
+        //     last = size;
+        //     ptr = A.data();
+        // }
+        dynEigenVec(int size_in){
+            A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(size_in);
+            size = size_in;
+            begin = 1;
+            last = size;
+            ptr = A.data();
+        }
+        // dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end){
+        //     A = A_;
+        //     size = A.size();
+        //     begin = start - 1;
+        //     last = end - 1;
+        //     ptr = A.data();
+        // }
+        // dynEigenVec(Rcpp::XPtr<dynEigenVec<T> > dynVec){
+        //     size = dynVec->length();
+        //     begin = dynVec->start();
+        //     last = dynVec->end();
+        //     ptr = dynVec->getPtr();
+        // }
         
         T* getPtr() { return A.data(); }
         int length() { return size; }
@@ -54,7 +89,11 @@ class dynEigenVec {
 //            Eigen::Matrix<T, Eigen::Dynamic, 1>& vec = A;
             return vec;
         }
-        // void to_host(viennacl::vector<T> &vclMat);
+        // void to_host(viennacl::vector<T> &vclMat){
+        //     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+        //     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
+        //     viennacl::copy(vclMat, A);
+        // }
         
 };
 
