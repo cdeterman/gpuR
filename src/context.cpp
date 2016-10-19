@@ -82,6 +82,7 @@ void initContexts(){
 //}
 
 
+
 //' @title Available OpenCL Contexts
 //' @description Provide a data.frame of available OpenCL contexts and
 //' associated information.
@@ -97,6 +98,7 @@ void initContexts(){
 DataFrame 
 listContexts()
 {
+
     // declarations
     int id = 0;
     int num_contexts = 0;
@@ -131,7 +133,6 @@ listContexts()
     Rcpp::CharacterVector device_name(num_contexts);
     Rcpp::IntegerVector   device_index(num_contexts);
     Rcpp::CharacterVector device_type(num_contexts);
-    
     
     for(unsigned int plat_idx = 0; plat_idx < platforms.size(); plat_idx++) {
         
@@ -170,23 +171,22 @@ listContexts()
 //            Rcout << "current device name" << std::endl;
 //            Rcout << device_name[id] << std::endl;
             
-            switch(devices[gpu_idx].type()){
-                case 2: 
-                    device_type[id] = "cpu";
-                    break;
-                case 4: 
-                    device_type[id] = "gpu";
-                    break;
-                case 8: 
-                    device_type[id] = "accelerator";
-                    break;
-                default:
-                    Rcpp::Rcout << "device found: " << std::endl;
-                    Rcpp::Rcout << devices[gpu_idx].type() << std::endl;
-                    throw Rcpp::exception("unrecognized device detected");
-            }
-        
-            // increment context
+
+	    cl_device_type check = devices[gpu_idx].type(); 
+	    if(check & CL_DEVICE_TYPE_CPU){
+		device_type[id] = "cpu";
+	    }else if(check & CL_DEVICE_TYPE_GPU){
+		device_type[id] = "gpu";
+	    }else if(check & CL_DEVICE_TYPE_ACCELERATOR){
+		device_type[id] = "accelerator";
+	    }else{
+		Rcpp::Rcout << "device found: " << std::endl;
+		Rcpp::Rcout << check << std::endl;
+		throw Rcpp::exception("unrecognized device detected");
+ 
+	    }
+
+	    // increment context
             id++;
         }
     }
