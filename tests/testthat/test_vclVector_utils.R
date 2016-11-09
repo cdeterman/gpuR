@@ -5,6 +5,7 @@ set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
 D <- rnorm(ORDER)
+D2 <- rnorm(ORDER)
 
 test_that("integer vclVector length method successful", {
     
@@ -141,4 +142,47 @@ test_that("vclVector as.vector method", {
               info = "float as.vector not producing 'vector' class")
     expect_is(as.vector(igpu), 'integer',
               info = "integer as.vector not producing 'vector' class")
+})
+
+
+test_that("vclVector set vector access", {
+    
+    has_gpu_skip()
+    
+    gpuF <- vclVector(D, type = "float")
+    gpuF[] <- D2
+    
+    expect_equal(gpuF[], D2, tolerance=1e-07,
+                 info = "updated fvclVector not equivalent to assigned base vector")
+    
+    has_double_skip()
+    
+    gpuA <- vclVector(D)
+    gpuA[] <- D2
+    
+    expect_equivalent(gpuA[], D2,
+                      info = "updated dvclVector not equivalent to assigned base vector")
+})
+
+test_that("vclVector set vclVector access", {
+    
+    has_gpu_skip()
+    
+    gpuF <- vclVector(D, type = "float")
+    gpuDF <- vclVector(D2, type = "float")
+    
+    gpuF[] <- gpuDF
+    
+    expect_equal(gpuF[], gpuDF[], tolerance=1e-07,
+                 info = "updated fvclVector not equivalent to assigned base vclVector")
+    
+    has_double_skip()
+    
+    gpuA <- vclVector(D)
+    gpuD <- vclVector(D2)
+    
+    gpuA[] <- gpuD
+    
+    expect_equivalent(gpuA[], gpuD[], 
+                      info = "updated dvclVector not equivalent to assigned vclVector")
 })

@@ -210,26 +210,6 @@ truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
 
-cpp_gpuVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_max <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_min <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
 vcl_dncol <- function(ptrA) {
     .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
 }
@@ -256,6 +236,26 @@ vcl_inrow <- function(ptrA) {
 
 cpp_vclVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_max <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_min <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_identity_vclMatrix <- function(ptrA, type_flag) {
@@ -340,6 +340,14 @@ vclVecGetElement <- function(ptrA, idx, type_flag) {
 
 vclVecSetElement <- function(ptrA, idx, newdata, type_flag) {
     invisible(.Call('gpuR_vclVecSetElement', PACKAGE = 'gpuR', ptrA, idx, newdata, type_flag))
+}
+
+vclSetVector <- function(ptrA, newdata, type_flag, ctx_id) {
+    invisible(.Call('gpuR_vclSetVector', PACKAGE = 'gpuR', ptrA, newdata, type_flag, ctx_id))
+}
+
+vclSetVCLVector <- function(ptrA, newdata, type_flag) {
+    invisible(.Call('gpuR_vclSetVCLVector', PACKAGE = 'gpuR', ptrA, newdata, type_flag))
 }
 
 vectorToVCL <- function(ptrA, type_flag, ctx_id) {

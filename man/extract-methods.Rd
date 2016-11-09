@@ -30,6 +30,8 @@
 \alias{[<-,vclMatrix,missing,numeric,numeric-method}
 \alias{[<-,vclMatrix,numeric,missing,numeric-method}
 \alias{[<-,vclMatrix,numeric,numeric,numeric-method}
+\alias{[<-,vclVector,missing,missing,numeric-method}
+\alias{[<-,vclVector,missing,missing,vclVector-method}
 \alias{[<-,vclVector,numeric,missing,numeric-method}
 \title{Extract gpuR object elements}
 \usage{
@@ -68,6 +70,10 @@
 \S4method{[}{vclVector,numeric,missing,numeric}(x, i, j) <- value
 
 \S4method{[}{ivclVector,numeric,missing,integer}(x, i, j) <- value
+
+\S4method{[}{vclVector,missing,missing,numeric}(x, i, j) <- value
+
+\S4method{[}{vclVector,missing,missing,vclVector}(x, i, j) <- value
 
 \S4method{[}{gpuMatrix,missing,missing,missing}(x, i, j, drop)
 

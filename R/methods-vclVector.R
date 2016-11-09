@@ -39,7 +39,7 @@ setMethod("[",
 setMethod("[<-",
           signature(x = "vclVector", i = "numeric", j = "missing", value="numeric"),
           function(x, i, j, value) {
-              if(length(value) != 1){
+              if(length(value) > 1){
                   stop("number of items to replace is not a multiple of replacement length")
               }
               
@@ -50,6 +50,8 @@ setMethod("[<-",
                      "double" = vclVecSetElement(x@address, i, value, 8L),
                      stop("type not recognized")
               )
+              
+              
               return(x)
           })
 
@@ -70,6 +72,43 @@ setMethod("[<-",
               )
               return(x)
           })
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "missing", j = "missing", value="numeric"),
+          function(x, i, j, value) {
+              if(length(value) > length(x)){
+                  stop("number of items to replace is not a multiple of replacement length")
+              }
+              
+              switch(typeof(x),
+                     "integer" = vclSetVector(x@address, value, 4L, x@.context_index - 1),
+                     "float" = vclSetVector(x@address, value, 6L, x@.context_index - 1),
+                     "double" = vclSetVector(x@address, value, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "missing", j = "missing", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLVector(x@address, value@address, 4L),
+                     "float" = vclSetVCLVector(x@address, value@address, 6L),
+                     "double" = vclSetVCLVector(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
 
 #' @rdname grapes-times-grapes-methods
 #' @export

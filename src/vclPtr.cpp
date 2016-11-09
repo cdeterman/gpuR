@@ -13,6 +13,49 @@ using Eigen::VectorXi;
 
 using namespace Rcpp;
 
+// template <typename T>
+// void
+// vclMatTovclVec(SEXP ptrA_, List ptrList){
+//     
+//     Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+//     
+//     int start = 0;
+//     int end;
+//     
+//     // loop through each matrix in list
+//     for(List::iterator it = ptrList.begin(); it != ptrList.end(); ++it){
+//         
+//         Rcpp::S4 element(Rcpp::as<SEXP>(*it));
+//         SEXP address = element.slot("address");
+//         
+//         // Rcpp::XPtr<dynVCLMat<T> > ptrM(*it->slot("address"));
+//         
+//         Rcpp::XPtr<dynVCLMat<T> > ptrM(address);
+//             
+//         int nr = ptrM->nrow();
+//         end = nr;
+//         
+//         // loop through each row in matrix
+//         for(int i = 0; i < end; i++){
+//             
+//             // define range to update
+//             viennacl::range r(start, end);
+//             
+//             // point to range elements
+//             viennacl::vector_range<viennacl::vector<T> > tmp_r = ptrA->range(r);
+//             
+//             // get matrix row
+//             // assign vector elements with matrix row
+//             tmp_r = ptrM->row(i);
+//             
+//             // update indices
+//             start += nr;
+//             end += nr;
+//         }
+//     }
+// }
+
+
 template <typename T>
 void
 setVCLcols(SEXP ptrA_, CharacterVector names){
@@ -373,6 +416,38 @@ vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
 //    Rcpp::XPtr<viennacl::vector<T> > pA(data);
 //    viennacl::vector<T> &A = *pA;
 //    A(idx-1) = as<T>(newdata);
+}
+
+// update viennacl matrix with R vector
+template <typename T>
+void
+vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    viennacl::vector_range<viennacl::vector<T> > A  = pMat->data();
+    
+    // move new data to device
+    dynVCLVec<T> *mat = new dynVCLVec<T>(newdata, ctx_id);
+    
+    // access new data on device
+    viennacl::vector_range<viennacl::vector<T> > A_new = mat->data();
+    
+    // assign existing matrix with new data
+    A = A_new;
+}
+
+// update viennacl matrix with another viennacl vector
+template <typename T>
+void
+vclSetVCLVector(SEXP data, SEXP newdata)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    Rcpp::XPtr<dynVCLVec<T> > pMatNew(newdata);
+    viennacl::vector_range<viennacl::vector<T> > A  = pMat->data();
+    viennacl::vector_range<viennacl::vector<T> > A_new  = pMatNew->data();
+    
+    // assign existing matrix with new data
+    A = A_new;
 }
 
 /*** vclMatrix setting elements ***/
@@ -917,6 +992,45 @@ vclVecSetElement(SEXP ptrA, const int idx, SEXP newdata, const int type_flag)
     }
 }
 
+// [[Rcpp::export]]
+void
+vclSetVector(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetVector<int>(ptrA, newdata, ctx_id);
+        return;
+    case 6:
+        vclSetVector<float>(ptrA, newdata, ctx_id);
+        return;
+    case 8:
+        vclSetVector<double>(ptrA, newdata, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+vclSetVCLVector(SEXP ptrA, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetVCLVector<int>(ptrA, newdata);
+        return;
+    case 6:
+        vclSetVCLVector<float>(ptrA, newdata);
+        return;
+    case 8:
+        vclSetVCLVector<double>(ptrA, newdata);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
 /*** vector imports ***/
 
 // [[Rcpp::export]]
@@ -1035,3 +1149,22 @@ getVCLcols(SEXP ptrA, const int type_flag)
     }
 }
 
+
+// // [[Rcpp::export]]
+// void
+// vclMatTovclVec(SEXP ptrA, List ptrList, const int type_flag)
+// {
+//     switch(type_flag) {
+//     case 4:
+//         vclMatTovclVec<int>(ptrA, ptrList);
+//         return;
+//     case 6:
+//         vclMatTovclVec<int>(ptrA, ptrList);
+//         return;
+//     case 8:
+//         vclMatTovclVec<int>(ptrA, ptrList);
+//         return;
+//     default:
+//         throw Rcpp::exception("unknown type detected for vclMatrix object");
+//     }
+// }
