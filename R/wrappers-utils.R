@@ -145,7 +145,7 @@ detectGPUs <- function(platform_idx=NULL){
 gpuInfo <- function(platform_idx=NULL, device_idx=NULL){
     
     if(detectGPUs(platform_idx) == 0){
-        stop("No CPUs found on platform")
+        stop("No GPUs found on platform")
     }
     
     if(!is.null(platform_idx) && !is.null(device_idx)){
@@ -244,7 +244,7 @@ deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
     assert_is_integer(gpu_idx)
     assert_all_are_positive(gpu_idx)
     
-    device_type <- currentDevice()$device_type
+    device_type <- deviceType(platform_idx, gpu_idx)
     
     out <- switch(device_type,
                   "gpu" = gpuInfo(platform_idx = as.integer(platform_idx),
