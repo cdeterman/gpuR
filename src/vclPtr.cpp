@@ -515,6 +515,38 @@ vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
     A(nr-1, nc-1) = as<T>(newdata);
 }
 
+// update viennacl matrix with R matrix
+template <typename T>
+void
+vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+    
+    // move new data to device
+    dynVCLMat<T> *mat = new dynVCLMat<T>(newdata, ctx_id);
+    
+    // access new data on device
+    viennacl::matrix_range<viennacl::matrix<T> > A_new = mat->data();
+    
+    // assign existing matrix with new data
+    A = A_new;
+}
+
+// update viennacl matrix with another viennacl matrix
+template <typename T>
+void
+vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
+    viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+    viennacl::matrix_range<viennacl::matrix<T> > A_new  = pMatNew->data();
+    
+    // assign existing matrix with new data
+    A = A_new;
+}
+
 /*** vclMatrix get elements ***/
 
 // Get viennacl column elements
@@ -902,6 +934,44 @@ vclSetElement(SEXP ptrA, const int nr, const int nc, SEXP newdata, const int typ
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclSetMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetMatrix<int>(ptrA, newdata, ctx_id);
+        return;
+    case 6:
+        vclSetMatrix<float>(ptrA, newdata, ctx_id);
+        return;
+    case 8:
+        vclSetMatrix<double>(ptrA, newdata, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetVCLMatrix<int>(ptrA, newdata, ctx_id);
+        return;
+    case 6:
+        vclSetVCLMatrix<float>(ptrA, newdata, ctx_id);
+        return;
+    case 8:
+        vclSetVCLMatrix<double>(ptrA, newdata, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 

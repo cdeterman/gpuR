@@ -315,8 +315,8 @@ setMethod("[<-",
               
               assert_all_are_in_closed_range(i, lower = 1, upper=nrow(x))
               assert_all_are_in_closed_range(j, lower = 1, upper=ncol(x))
-	      assert_is_scalar(value)
-
+              assert_is_scalar(value)
+              
               switch(typeof(x),
                      "integer" = vclSetElement(x@address, i, j, value, 4L),
                      stop("unsupported matrix type")
@@ -324,7 +324,44 @@ setMethod("[<-",
               
               return(x)
           })
- 
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "matrix"),
+          function(x, i, j, value) {
+              
+              assert_is_matrix(value)
+              
+              switch(typeof(x),
+                     "integer" = vclSetMatrix(x@address, value, 4L, x@.context_index - 1),
+                     "float" = vclSetMatrix(x@address, value, 6L, x@.context_index - 1),
+                     "double" = vclSetMatrix(x@address, value, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLMatrix(x@address, value@address, 4L, x@.context_index - 1),
+                     "float" = vclSetVCLMatrix(x@address, value@address, 6L, x@.context_index - 1),
+                     "double" = vclSetVCLMatrix(x@address, value@address, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
 #' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
