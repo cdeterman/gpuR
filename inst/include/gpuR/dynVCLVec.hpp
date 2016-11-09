@@ -116,7 +116,11 @@ class dynVCLVec {
         viennacl::vector<T> vector() {
             return A;
         }
-        
+        viennacl::vector_range<viennacl::vector<T> > range(viennacl::range in_range){
+            viennacl::vector_range<viennacl::vector<T> > v_sub(*ptr, r);
+            viennacl::vector_range<viennacl::vector<T> > v_out(v_sub, in_range);
+            return v_out;
+        }
 };
 
 #endif
