@@ -231,6 +231,14 @@ class dynVCLMat {
             return A;
         }
         
+        viennacl::vector<T> row(int row_id) {
+            // always refer to the block
+            viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), row_r, col_r);
+            
+            // return the desired row
+            return viennacl::row(m_sub, row_id);
+        }
+        
 };
 
 #endif
