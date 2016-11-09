@@ -4,6 +4,7 @@ context("vclMatrix Utility Functions")
 set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
+D2 <- matrix(rnorm(100), 10)
 
 cnames <- paste0("V", seq(10))
 
@@ -243,4 +244,47 @@ test_that("vclMatrix colnames methods", {
     
     expect_equal(colnames(dgpu), cnames,
                  info = "double colnames don't reflect assigned names")
+})
+
+
+test_that("vclMatrix set matrix access", {
+    
+    has_gpu_skip()
+    
+    gpuF <- vclMatrix(D, type = "float")
+    gpuF[] <- D2
+    
+    expect_equal(gpuF[], D2, tolerance=1e-07,
+                 info = "updated fvclMatrix not equivalent to assigned base matrix")
+    
+    has_double_skip()
+    
+    gpuA <- vclMatrix(D)
+    gpuA[] <- D2
+    
+    expect_equivalent(gpuA[], D2,
+                      info = "updated dvclMatrix not equivalent to assigned base matrix")
+})
+
+test_that("vclMatrix set vclMatrix access", {
+    
+    has_gpu_skip()
+    
+    gpuF <- vclMatrix(D, type = "float")
+    gpuDF <- vclMatrix(D2, type = "float")
+    
+    gpuF[] <- gpuDF
+    
+    expect_equal(gpuF[], gpuDF[], tolerance=1e-07,
+                 info = "updated fvclMatrix not equivalent to assigned base vclMatrix")
+    
+    has_double_skip()
+    
+    gpuA <- vclMatrix(D)
+    gpuD <- vclMatrix(D2)
+    
+    gpuA[] <- gpuD
+    
+    expect_equivalent(gpuA[], gpuD[], 
+                      info = "updated dvclMatrix not equivalent to assigned vclMatrix")
 })
