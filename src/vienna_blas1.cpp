@@ -49,15 +49,19 @@ void cpp_gpuVector_axpy(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     vcl_B += alpha * vcl_A;
     
-    viennacl::copy(vcl_B, Bm);
+    // viennacl::copy(vcl_B, Bm);
+    viennacl::fast_copy(vcl_B.begin(), vcl_B.end(), &(Bm[0]));
 }
 
 template <typename T>
@@ -74,14 +78,20 @@ cpp_gpuVector_unary_axpy(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_Z = viennacl::zero_vector<T>(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    // viennacl::vector<T> vcl_Z = viennacl::zero_vector<T>(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_Z = viennacl::vector_base<T>(M, ctx = ctx);
+    viennacl::linalg::vector_assign(vcl_Z, (T)(0));
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::vector_base<T> vcl_Z = static_cast<viennacl::vector_base<T> >(vcl_Z);
+    
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_Z -= vcl_A;
-
-    viennacl::copy(vcl_Z, Am);
+    
+    // viennacl::copy(vcl_Z, Am);
+    viennacl::fast_copy(vcl_Z.begin(), vcl_Z.end(), &(Am[0]));
 }
 
 
@@ -103,11 +113,14 @@ T cpp_gpuVector_inner_prod(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     C = viennacl::linalg::inner_prod(vcl_A, vcl_B);
     
@@ -136,16 +149,20 @@ void cpp_gpuVector_outer_prod(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
     viennacl::matrix<T> vcl_C(M, M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     vcl_C = viennacl::linalg::outer_prod(vcl_A, vcl_B);
     
     viennacl::copy(vcl_C, Cm);
+    // viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -167,16 +184,20 @@ void cpp_gpuVector_elem_prod(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     vcl_C = viennacl::linalg::element_prod(vcl_A, vcl_B);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -196,13 +217,15 @@ cpp_gpuVector_scalar_prod(
     
     int M = Cm.size();
     
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Cm, vcl_C); 
+    // viennacl::copy(Cm, vcl_C); 
+    viennacl::fast_copy(Cm.data(), Cm.data() + Cm.size(), vcl_C.begin());
     
     vcl_C *= alpha;
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -224,16 +247,20 @@ void cpp_gpuVector_elem_div(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     vcl_C = viennacl::linalg::element_div(vcl_A, vcl_B);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -254,17 +281,25 @@ cpp_gpuVector_scalar_div(
     
     int M = Cm.size();
     
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Cm, vcl_C); 
+    // viennacl::copy(Cm, vcl_C); 
+    
+    viennacl::fast_copy(Cm.data(), Cm.data() + Cm.size(), vcl_C.begin());
     
     if(order == 0){
         vcl_C /= alpha;
-        viennacl::copy(vcl_C, Cm);
+        // viennacl::copy(vcl_C, Cm);
+        viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
     }else{
-        viennacl::vector<T> vcl_scalar = viennacl::scalar_vector<T>(M, alpha, ctx = ctx);
+        // viennacl::vector_base<T> vcl_scalar = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(M, alpha, ctx = ctx));
+        
+        viennacl::vector_base<T> vcl_scalar = viennacl::vector_base<T>(M, ctx = ctx);
+        viennacl::linalg::vector_assign(vcl_scalar, alpha);
+        
         vcl_scalar = viennacl::linalg::element_div(vcl_scalar, vcl_C);
-        viennacl::copy(vcl_scalar, Cm);
+        // viennacl::copy(vcl_scalar, Cm);
+        viennacl::fast_copy(vcl_scalar.begin(), vcl_scalar.end(), &(Cm[0]));
     }
 }
 
@@ -287,16 +322,20 @@ void cpp_gpuVector_elem_pow(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_B(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
-    viennacl::copy(Bm, vcl_B); 
+    // viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Bm, vcl_B); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    viennacl::fast_copy(Bm.data(), Bm.data() + Bm.size(), vcl_B.begin());
     
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -319,11 +358,16 @@ void cpp_gpuVector_scalar_pow(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
-    viennacl::vector<T> vcl_B = viennacl::scalar_vector<T>(M, scalar, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
+    // viennacl::vector_base<T> vcl_B = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(M, scalar, ctx = ctx));
     
-    viennacl::copy(Am, vcl_A); 
+    viennacl::vector_base<T> vcl_B = viennacl::vector_base<T>(M, ctx = ctx);
+    viennacl::linalg::vector_assign(vcl_B, scalar);
+    
+    // viennacl::copy(Am, vcl_A); 
+    
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     if(order == 0){
         vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
@@ -331,7 +375,8 @@ void cpp_gpuVector_scalar_pow(
         vcl_C = viennacl::linalg::element_pow(vcl_B, vcl_A);
     }
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -350,14 +395,16 @@ cpp_gpuVector_elem_sin(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_sin(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -376,14 +423,16 @@ cpp_gpuVector_elem_asin(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_asin(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -402,14 +451,16 @@ cpp_gpuVector_elem_sinh(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_sinh(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -428,14 +479,16 @@ cpp_gpuVector_elem_cos(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_cos(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -454,14 +507,16 @@ cpp_gpuVector_elem_acos(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_acos(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -478,14 +533,16 @@ cpp_gpuVector_elem_cosh(
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_cosh(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -504,14 +561,16 @@ cpp_gpuVector_elem_tan(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_tan(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -530,14 +589,16 @@ cpp_gpuVector_elem_atan(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_atan(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -556,14 +617,16 @@ cpp_gpuVector_elem_tanh(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_tanh(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -582,14 +645,16 @@ cpp_gpuVector_elem_exp(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_exp(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -608,14 +673,16 @@ cpp_gpuVector_elem_log10(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_log10(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -634,14 +701,16 @@ cpp_gpuVector_elem_log(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_log(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -661,15 +730,17 @@ cpp_gpuVector_elem_log_base(
     
     int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_log10(vcl_A);
     vcl_C /= log10(base);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -688,14 +759,16 @@ cpp_gpuVector_elem_abs(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
-    viennacl::vector<T> vcl_C(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     vcl_C = viennacl::linalg::element_fabs(vcl_A);
     
-    viennacl::copy(vcl_C, Cm);
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
 template <typename T>
@@ -714,9 +787,10 @@ cpp_gpuVector_max(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     max = viennacl::linalg::max(vcl_A);
     
@@ -739,9 +813,10 @@ cpp_gpuVector_min(
     
     const int M = Am.size();
     
-    viennacl::vector<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
     
-    viennacl::copy(Am, vcl_A); 
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
     
     max = viennacl::linalg::min(vcl_A);
     
@@ -1774,8 +1849,8 @@ void cpp_vclVector_axpy(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
     
     ptrB += alpha * (ptrA);
 }
@@ -1786,9 +1861,12 @@ cpp_vclVector_unary_axpy(
     SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
     
-    viennacl::vector<T> vcl_Z = viennacl::zero_vector<T>(vcl_A.size());
+    // viennacl::vector_base<T> vcl_Z = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(vcl_A.size()));
+    
+    viennacl::vector_base<T> vcl_Z = viennacl::vector_base<T>(vcl_A.size());
+    viennacl::linalg::vector_assign(vcl_Z, (T)(0));
     
     vcl_Z -= vcl_A;
     vcl_A = vcl_Z;
@@ -1804,8 +1882,8 @@ T cpp_vclVector_inner_prod(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
     
     out = viennacl::linalg::inner_prod(ptrA, ptrB);
     return out;
@@ -1823,8 +1901,8 @@ void cpp_vclVector_outer_prod(
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLMat<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
     viennacl::matrix_range<viennacl::matrix<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::outer_prod(ptrA, ptrB);
@@ -1841,9 +1919,9 @@ void cpp_vclVector_elem_prod(
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_prod(ptrA, ptrB);
 }
@@ -1857,7 +1935,7 @@ cpp_vclVector_scalar_prod(
     const T alpha = as<T>(scalar);
     
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
     
     vcl_C *= alpha;
 }
@@ -1872,9 +1950,9 @@ void cpp_vclVector_elem_div(
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_div(ptrA, ptrB);
 }
@@ -1888,7 +1966,7 @@ cpp_vclVector_scalar_div(
     const T alpha = as<T>(scalar);
     
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
     
     vcl_C /= alpha;
 }
@@ -1903,9 +1981,9 @@ void cpp_vclVector_elem_pow(
     Rcpp::XPtr<dynVCLVec<T> > pB(ptrB_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrB  = pB->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrB  = pB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_pow(ptrA, ptrB);
 }
@@ -1921,11 +1999,13 @@ void cpp_vclVector_scalar_pow(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
     
+    // viennacl::vector_base<T> vcl_B = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size(), scalar));
     
-    viennacl::vector<T> vcl_B = viennacl::scalar_vector<T>(vcl_A.size(), scalar);
+    viennacl::vector_base<T> vcl_B = viennacl::vector_base<T>(vcl_A.size());
+    viennacl::linalg::vector_assign(vcl_B, scalar);
     
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
     
@@ -1939,8 +2019,8 @@ void cpp_vclVector_elem_sin(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_sin(ptrA);
 }
@@ -1955,8 +2035,8 @@ void cpp_vclVector_elem_asin(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_asin(ptrA);
 }
@@ -1971,8 +2051,8 @@ void cpp_vclVector_elem_sinh(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_sinh(ptrA);
 }
@@ -1986,8 +2066,8 @@ void cpp_vclVector_elem_cos(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_cos(ptrA);
 }
@@ -2001,8 +2081,8 @@ void cpp_vclVector_elem_acos(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_acos(ptrA);
 }
@@ -2016,8 +2096,8 @@ void cpp_vclVector_elem_cosh(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_cosh(ptrA);
 }
@@ -2031,8 +2111,8 @@ void cpp_vclVector_elem_tan(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_tan(ptrA);
 }
@@ -2046,8 +2126,8 @@ void cpp_vclVector_elem_atan(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_atan(ptrA);
 }
@@ -2061,8 +2141,8 @@ void cpp_vclVector_elem_tanh(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_tanh(ptrA);
 }
@@ -2075,8 +2155,8 @@ void cpp_vclVector_elem_exp(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_exp(ptrA);
 }
@@ -2090,8 +2170,8 @@ void cpp_vclVector_elem_log10(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_log10(ptrA);
 }
@@ -2106,8 +2186,8 @@ void cpp_vclVector_elem_log_base(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_log10(ptrA);
     ptrC /= log10(base);
@@ -2121,8 +2201,8 @@ void cpp_vclVector_elem_log(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > ptrC  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
 
     ptrC = viennacl::linalg::element_log(ptrA);
 }
@@ -2136,8 +2216,8 @@ cpp_vclVector_elem_abs(
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
-    viennacl::vector_range<viennacl::vector<T> > vcl_C  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
     
     vcl_C = viennacl::linalg::element_fabs(vcl_A);
 }
@@ -2150,7 +2230,7 @@ cpp_vclVector_max(
     T max;
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
     
     max = viennacl::linalg::max(vcl_A);
     
@@ -2165,7 +2245,7 @@ cpp_vclVector_min(
     T max;
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_A  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
     
     max = viennacl::linalg::min(vcl_A);
     

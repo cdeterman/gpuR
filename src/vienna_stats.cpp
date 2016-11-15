@@ -45,12 +45,13 @@ cpp_gpuMatrix_colmean(
     const int K = vcl_A.size1();
     const int V = colMeans.size();
     
-    viennacl::vector<T> vcl_colMeans(V, ctx = ctx);
+    viennacl::vector_base<T> vcl_colMeans(V, ctx = ctx);
     
     vcl_colMeans = viennacl::linalg::column_sum(vcl_A);
     vcl_colMeans *= (T)(1)/(T)(K);
     
-    viennacl::copy(vcl_colMeans, colMeans);
+    // viennacl::copy(vcl_colMeans, colMeans);
+    viennacl::fast_copy(vcl_colMeans.begin(), vcl_colMeans.end(), &(colMeans[0]));
 }
 
 template <typename T>
@@ -69,11 +70,12 @@ cpp_gpuMatrix_colsum(
     
     const int V = colSums.size();
     
-    viennacl::vector<T> vcl_colSums(V, ctx = ctx);
+    viennacl::vector_base<T> vcl_colSums(V, ctx = ctx);
     
     vcl_colSums = viennacl::linalg::column_sum(vcl_A);
     
-    viennacl::copy(vcl_colSums, colSums);
+    // viennacl::copy(vcl_colSums, colSums);
+    viennacl::fast_copy(vcl_colSums.begin(), vcl_colSums.end(), &(colSums[0]));
 }
 
 template <typename T>
@@ -94,12 +96,13 @@ cpp_gpuMatrix_rowmean(
     const int M = vcl_A.size2();
     const int V = rowMeans.size();
     
-    viennacl::vector<T> vcl_rowMeans(V, ctx = ctx);
+    viennacl::vector_base<T> vcl_rowMeans(V, ctx = ctx);
     
     vcl_rowMeans = viennacl::linalg::row_sum(vcl_A);
     vcl_rowMeans *= (T)(1)/(T)(M);
     
-    viennacl::copy(vcl_rowMeans, rowMeans);
+    // viennacl::copy(vcl_rowMeans, rowMeans);
+    viennacl::fast_copy(vcl_rowMeans.begin(), vcl_rowMeans.end(), &(rowMeans[0]));
 }
 
 template <typename T>
@@ -119,11 +122,12 @@ cpp_gpuMatrix_rowsum(
     
     const int V = rowSums.size();
     
-    viennacl::vector<T> vcl_rowSums(V, ctx = ctx);
+    viennacl::vector_base<T> vcl_rowSums(V, ctx = ctx);
     
     vcl_rowSums = viennacl::linalg::row_sum(vcl_A);
     
-    viennacl::copy(vcl_rowSums, rowSums);
+    // viennacl::copy(vcl_rowSums, rowSums);
+    viennacl::fast_copy(vcl_rowSums.begin(), vcl_rowSums.end(), &(rowSums[0]));
 }
 
 /*** vclMatrix Templates ***/
@@ -137,7 +141,7 @@ cpp_vclMatrix_colmean(
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > vcl_colMeans  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_colMeans  = pC->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     
     const int K = vcl_A.size1();
@@ -156,7 +160,7 @@ cpp_vclMatrix_colsum(
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
     
-    viennacl::vector_range<viennacl::vector<T> > vcl_colSums  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_colSums  = pC->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     
     vcl_colSums = viennacl::linalg::column_sum(vcl_A);
@@ -170,7 +174,7 @@ cpp_vclMatrix_rowmean(
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_rowMeans  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_rowMeans  = pC->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
 
     const int M = vcl_A.size2();
@@ -187,7 +191,7 @@ cpp_vclMatrix_rowsum(
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    viennacl::vector_range<viennacl::vector<T> > vcl_rowSums  = pC->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_rowSums  = pC->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     
     vcl_rowSums = viennacl::linalg::row_sum(vcl_A);
@@ -209,9 +213,14 @@ cpp_gpuMatrix_pmcc(
     
     const int K = vcl_A.size1();
     const int M = vcl_A.size2();
+    // T one = 1;
     
-    viennacl::vector<T> ones = viennacl::scalar_vector<T>(K, 1, ctx = ctx);
-    viennacl::vector<T> vcl_meanVec(M, ctx = ctx);
+    // viennacl::vector_base<T> ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx = ctx));
+    
+    viennacl::vector_base<T> ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::linalg::vector_assign(ones, (T)(1));
+    
+    viennacl::vector_base<T> vcl_meanVec(M, ctx = ctx);
     viennacl::matrix<T> vcl_meanMat(K,M, ctx = ctx);
     
     // vector of column means
@@ -249,8 +258,11 @@ cpp_vclMatrix_pmcc(
     const int M = vcl_A.size2();
     const int K = vcl_A.size1();
     
-    viennacl::vector<T> ones = viennacl::scalar_vector<T>(K, 1, ctx=ctx);
-    viennacl::vector<T> vcl_meanVec(M, ctx=ctx);
+    // viennacl::vector_base<T> ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx=ctx));
+    viennacl::vector_base<T> ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::linalg::vector_assign(ones, (T)(1));
+    
+    viennacl::vector_base<T> vcl_meanVec(M, ctx=ctx);
     viennacl::matrix<T> vcl_meanMat(K,M, ctx=ctx);
     
     // vector of column means
@@ -290,8 +302,12 @@ cpp_gpuMatrix_eucl(
     const int K = vcl_A.size1();
       
     // temp objects
-    viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(K, 1, ctx = ctx);
-    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(K, ctx = ctx);
+    // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx = ctx));
+    // viennacl::vector_base<T> vcl_sqrt = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(K, ctx = ctx));
+    viennacl::vector_base<T> row_ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::vector_base<T> vcl_sqrt = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::linalg::vector_assign(row_ones, (T)(1));
+    viennacl::linalg::vector_assign(vcl_sqrt, (T)(0));
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
@@ -343,8 +359,12 @@ cpp_gpuMatrix_peucl(
     const int R = vcl_B.size2();
     const int Q = vcl_B.size1();
     
-    viennacl::vector<T> A_row_ones = viennacl::scalar_vector<T>(K, 1, ctx = ctx);
-    viennacl::vector<T> B_row_ones = viennacl::scalar_vector<T>(Q, 1, ctx = ctx);
+    // viennacl::vector_base<T> A_row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx = ctx));
+    // viennacl::vector_base<T> B_row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(Q, 1, ctx = ctx));
+    viennacl::vector_base<T> A_row_ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::vector_base<T> B_row_ones = viennacl::vector_base<T>(Q, ctx = ctx);
+    viennacl::linalg::vector_assign(A_row_ones, (T)(1));
+    viennacl::linalg::vector_assign(B_row_ones, (T)(1));
     
     viennacl::matrix<T> square_A = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size2(), ctx = ctx);
     viennacl::matrix<T> square_B = viennacl::zero_matrix<T>(vcl_B.size1(), vcl_B.size2(), ctx = ctx);
@@ -360,8 +380,12 @@ cpp_gpuMatrix_peucl(
     }
     
     {
-        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(K, ctx = ctx);
-        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(Q, ctx = ctx);
+        // viennacl::vector_base<T> vcl_A_rowsum = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(K, ctx = ctx));
+        // viennacl::vector_base<T> vcl_B_rowsum = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(Q, ctx = ctx));
+        viennacl::vector_base<T> vcl_A_rowsum = viennacl::vector_base<T>(K, ctx = ctx);
+        viennacl::vector_base<T> vcl_B_rowsum = viennacl::vector_base<T>(Q, ctx = ctx);
+        viennacl::linalg::vector_assign(vcl_A_rowsum, (T)(1));
+        viennacl::linalg::vector_assign(vcl_B_rowsum, (T)(1));
         
         vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
         vcl_B_rowsum = viennacl::linalg::row_sum(square_B);
@@ -403,8 +427,8 @@ cpp_vclMatrix_eucl(
 //    std::cout << "pulled data" << std::endl;
 //    std::cout << vcl_A.size1() << std::endl;
     
-//    viennacl::vector<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
-    viennacl::vector<T> vcl_sqrt;
+//    viennacl::vector_base<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
+    viennacl::vector_base<T> vcl_sqrt;
     
 //    std::cout << "row of zeros" << std::endl;
     
@@ -424,7 +448,9 @@ cpp_vclMatrix_eucl(
 //    std::cout << "powers and rowsum completed" << std::endl;
     
     {
-        viennacl::vector<T> row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx);
+        // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx));
+        viennacl::vector_base<T> row_ones = viennacl::vector_base<T>(vcl_A.size1(), ctx = ctx);
+        viennacl::linalg::vector_assign(row_ones, (T)(1));
         
 //        std::cout << "row of ones" << std::endl;
         
@@ -495,11 +521,22 @@ cpp_vclMatrix_peucl(
 //    std::cout << "power calculation complete" << std::endl;
     
     {
-        viennacl::vector<T> x_row_ones = viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx);
-        viennacl::vector<T> y_row_ones = viennacl::scalar_vector<T>(vcl_B.size1(), 1, ctx);
+        // viennacl::vector_base<T> x_row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx));
+        // viennacl::vector_base<T> y_row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_B.size1(), 1, ctx));
+        // 
+        // viennacl::vector_base<T> vcl_A_rowsum = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(vcl_A.size1(), ctx));
+        // viennacl::vector_base<T> vcl_B_rowsum = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(vcl_B.size1(), ctx));
         
-        viennacl::vector<T> vcl_A_rowsum = viennacl::zero_vector<T>(vcl_A.size1(), ctx);
-        viennacl::vector<T> vcl_B_rowsum = viennacl::zero_vector<T>(vcl_B.size1(), ctx);
+        viennacl::vector_base<T> x_row_ones = viennacl::vector_base<T>(vcl_A.size1(), ctx = ctx);
+        viennacl::vector_base<T> y_row_ones = viennacl::vector_base<T>(vcl_B.size1(), ctx = ctx);
+        viennacl::vector_base<T> vcl_A_rowsum = viennacl::vector_base<T>(vcl_A.size1(), ctx = ctx);
+        viennacl::vector_base<T> vcl_B_rowsum = viennacl::vector_base<T>(vcl_B.size1(), ctx = ctx);
+        
+        viennacl::linalg::vector_assign(x_row_ones, (T)(1));
+        viennacl::linalg::vector_assign(y_row_ones, (T)(1));
+        viennacl::linalg::vector_assign(vcl_A_rowsum, (T)(0));
+        viennacl::linalg::vector_assign(vcl_A_rowsum, (T)(0));
+        
         
         vcl_A_rowsum = viennacl::linalg::row_sum(square_A);
         vcl_B_rowsum = viennacl::linalg::row_sum(square_B);

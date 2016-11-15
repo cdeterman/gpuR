@@ -43,10 +43,10 @@ cpp_vclMatrix_svd(
     // viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
     viennacl::matrix<T> vcl_A = ptrA->matrix();
     
-    // viennacl::vector_range<viennacl::vector<T> > D  = ptrD->data();
+    // viennacl::vector_range<viennacl::vector_base<T> > D  = ptrD->data();
     // viennacl::matrix_range<viennacl::matrix<T> > U = ptrU->data();
     // viennacl::matrix_range<viennacl::matrix<T> > V = ptrV->data();
-    // viennacl::vector<T> D  = ptrD->vector();
+    // viennacl::vector_base<T> D  = ptrD->vector();
     viennacl::matrix<T> *U = ptrU->getPtr();
     viennacl::matrix<T> *V = ptrV->getPtr();
 

@@ -46,7 +46,7 @@ void cpp_gpu_eigen(
     
     viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
     viennacl::matrix<T> vcl_Q = ptrQ->device_data(ctx_id);
-    viennacl::vector<T> vcl_eigenvalues(K, ctx = ctx);
+    viennacl::vector_base<T> vcl_eigenvalues(K, ctx = ctx);
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
@@ -87,7 +87,7 @@ void cpp_vcl_eigen(
 //    Rcpp::XPtr<viennacl::vector<T> > ptreigenvalues(eigenvalues);
     
     Rcpp::XPtr<dynVCLVec<T> > ptreigenvalues(eigenvalues);
-    viennacl::vector_range<viennacl::vector<T> > vcl_eigenvalues  = ptreigenvalues->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_eigenvalues  = ptreigenvalues->data();
     
 //    viennacl::matrix<T> vcl_A = *ptrA;
 //    viennacl::matrix<T> &vcl_Q = *ptrQ;

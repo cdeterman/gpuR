@@ -34,7 +34,8 @@ template <typename T>
 int cpp_vclVector_size(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
-    viennacl::vector_range<viennacl::vector<T> > pA  = ptrA->data();
+    
+    viennacl::vector_range<viennacl::vector_base<T> > pA  = ptrA->data();
     return pA.size();
 }
 
