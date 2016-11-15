@@ -270,8 +270,8 @@ cpp_vclMat_vclVec_set_diag <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMat_vclVec_set_diag', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
-cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id) {
-    .Call('gpuR_cpp_deepcopy_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
+cpp_deepcopy_vclMatrix <- function(ptrA, type_flag, ctx_id, source) {
+    .Call('gpuR_cpp_deepcopy_vclMatrix', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id, source)
 }
 
 cpp_deepcopy_vclVector <- function(ptrA, type_flag, ctx_id) {

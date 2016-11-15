@@ -84,6 +84,9 @@ setGeneric("block", function(object, rowStart, rowEnd, colStart, colEnd){
 #' @title Copy a "gpuR" object
 #' @description This is needed to make a duplicate of a gpuR object 
 #' @param object A gpuR object
+#' @param ... Additional arguments
+#' @param source A boolean indicating if source matrix should be copied (only
+#' relevant for 'block' and 'slice' objects).
 #' @details This is needed to make a duplicate of a gpuR object 
 #' (i.e. \code{\link{gpuMatrix}}, \code{\link{gpuVector}}, 
 #' \code{\link{vclMatrix}}, \code{\link{vclVector}} because
@@ -94,7 +97,7 @@ setGeneric("block", function(object, rowStart, rowEnd, colStart, colEnd){
 #' @docType methods
 #' @rdname gpuR-deepcopy
 #' @export
-setGeneric("deepcopy", function(object){
+setGeneric("deepcopy", function(object, ...){
     standardGeneric("deepcopy")
 })
 

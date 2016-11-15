@@ -122,18 +122,19 @@ cpp_vclMat_vclVec_set_diag(SEXP ptrA_, SEXP ptrB_)
 //copy an existing Xptr
 template <typename T>
 SEXP
-cpp_deepcopy_vclMatrix(SEXP ptrA_, int ctx_id)
+cpp_deepcopy_vclMatrix(SEXP ptrA_, const int ctx_id, const bool source)
 {        
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    viennacl::matrix<T> pA  = ptrA->data();
+    dynVCLMat<T> *mat;
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(pA, ctx_id);
+    if(source){
+        mat = new dynVCLMat<T>(*ptrA->sharedPtr(), ctx_id);
+    }else{
+        mat = new dynVCLMat<T>(ptrA->data(), ctx_id);
+    }
+     
     //dynVCLMat<T> *mat = new dynVCLMat<T>(pA, ctx_id);
-
-    //mat->createMatrix(pA.size1(), pA.size2(), ctx_id);
-    //mat->setDims(pA.size1(), pA.size2());
-    //mat->setRange(0, pA.size1(), 0, pA.size2());
 
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
     return pMat;
@@ -713,15 +714,18 @@ cpp_vclMat_vclVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
 /*** vclMatrix deepcopy ***/
 // [[Rcpp::export]]
 SEXP
-cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag, int ctx_id)
+cpp_deepcopy_vclMatrix(SEXP ptrA, 
+                       const int type_flag, 
+                       const int ctx_id, 
+                       const bool source)
 {
     switch(type_flag) {
         case 4:
-            return cpp_deepcopy_vclMatrix<int>(ptrA, ctx_id);
+            return cpp_deepcopy_vclMatrix<int>(ptrA, ctx_id, source);
         case 6:
-            return cpp_deepcopy_vclMatrix<float>(ptrA, ctx_id);
+            return cpp_deepcopy_vclMatrix<float>(ptrA, ctx_id, source);
         case 8:
-            return cpp_deepcopy_vclMatrix<double>(ptrA, ctx_id);
+            return cpp_deepcopy_vclMatrix<double>(ptrA, ctx_id, source);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

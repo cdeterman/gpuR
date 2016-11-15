@@ -738,15 +738,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_deepcopy_vclMatrix
-SEXP cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag, int ctx_id);
-RcppExport SEXP gpuR_cpp_deepcopy_vclMatrix(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+SEXP cpp_deepcopy_vclMatrix(SEXP ptrA, const int type_flag, const int ctx_id, const bool source);
+RcppExport SEXP gpuR_cpp_deepcopy_vclMatrix(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP, SEXP sourceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_deepcopy_vclMatrix(ptrA, type_flag, ctx_id));
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    Rcpp::traits::input_parameter< const bool >::type source(sourceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_deepcopy_vclMatrix(ptrA, type_flag, ctx_id, source));
     return rcpp_result_gen;
 END_RCPP
 }

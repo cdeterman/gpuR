@@ -10,11 +10,11 @@
 \alias{deepcopy,vclVector-method}
 \title{Copy a "gpuR" object}
 \usage{
-deepcopy(object)
+deepcopy(object, ...)
 
 \S4method{deepcopy}{gpuVector}(object)
 
-\S4method{deepcopy}{vclMatrix}(object)
+\S4method{deepcopy}{vclMatrix}(object, source = FALSE)
 
 \S4method{deepcopy}{vclVector}(object)
 
@@ -22,6 +22,11 @@ deepcopy(object)
 }
 \arguments{
 \item{object}{A gpuR object}
+
+\item{...}{Additional arguments}
+
+\item{source}{A boolean indicating if source matrix should be copied (only
+relevant for 'block' and 'slice' objects).}
 }
 \value{
 A gpuR object

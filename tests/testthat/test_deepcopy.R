@@ -238,4 +238,22 @@ test_that("Check Double Precision vclMatrix deepcopy", {
 })
 
 
+test_that("Check Single Precision vclMatrix deepcopy from block source", {
+    
+    has_gpu_skip()
+    
+    vclA <- vclMatrix(A, type="float")
+    vclA2 <- block(vclA, 1L, 3L, 1L, 3L)
+    
+    # deepcopy
+    vclB <- deepcopy(vclA2, source = TRUE)
+    
+    expect_is(vclB, class(vclA))
+    expect_equal(vclA[], vclB[], tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    
+    vclB[1,1] <- 42
+    expect_false(isTRUE(all.equal(vclA[], vclB[], tolerance = 1e-07)),
+                 info = "float deepcopy not distinct from source")
+})
 
