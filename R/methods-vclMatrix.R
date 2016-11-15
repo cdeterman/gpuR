@@ -1132,6 +1132,9 @@ setMethod("rbind2",
               return(ptr)
           })
 
+
+#' @rdname t-methods
+#' @aliases t,vclMatrix
 #' @export
 setMethod("t", c(x = "vclMatrix"),
           function(x){

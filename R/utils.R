@@ -62,9 +62,37 @@ str.vclMatrix <- function(object, vec.len = strOptions()$vec.len,
 }
 
 
+#' @title Permuting functions for \code{gpuR} objects
+#' @description Generate a perumutation of row or column indices
+#' @param x A \code{gpuR} matrix object
+#' @param MARGIN dimenstion over which the ordering should be applied, 1
+#' indicates rows, 2 indicates columns
+#' @param order An integer vector indicating order of rows to assign
+#' @return A \code{gpuR} object
+#' @author Charles Determan Jr.
+#' @docType methods
+#' @rdname permute-methods
+#' @export
+permute <- function(x, MARGIN, order) UseMethod("permute") 
+ 
+ 
 #'@export
-permute <- function(X, MARGIN = 1, order){
-    file <- system.file("CL", "fset_row_order.cl", package = "gpuR")
+permute.vclMatrix <- function(x, MARGIN = 1, order){
+    
+    assert_is_scalar(MARGIN)
+    if(MARGIN != 1){
+        stop("only row permuting currently available")
+    }
+    
+    assert_is_not_null(order)
+    
+    type <- typeof(x)
+    
+    file <- switch(type,
+                   "float" = system.file("CL", "fset_row_order.cl", package = "gpuR"),
+                   "double" = system.file("CL", "dset_row_order.cl", package = "gpuR"),
+                   stop("only float and double type currently supported")
+    )
     
     if(!file_test("-f", file)){
         stop("kernel file does not exist")
@@ -72,29 +100,35 @@ permute <- function(X, MARGIN = 1, order){
     kernel <- readChar(file, file.info(file)$size)
     
     maxWorkGroupSize <- 
-        switch(deviceType(X@.platform_index, X@.device_index),
-               "gpu" = gpuInfo(X@.platform_index, X@.device_index)$maxWorkGroupSize,
-               "cpu" = cpuInfo(X@.platform_index, X@.device_index)$maxWorkGroupSize,
+        switch(deviceType(x@.platform_index, x@.device_index),
+               "gpu" = gpuInfo(x@.platform_index, x@.device_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(x@.platform_index, x@.device_index)$maxWorkGroupSize,
                stop("unrecognized device type")
         )
     
-    type <- typeof(X)
+    Y <- vclMatrix(nrow = nrow(x), ncol = ncol(x), type = type, ctx_id = x@.context_index)
     
-    Y <- vclMatrix(nrow = nrow(X), ncol = ncol(X), type = type, ctx_id = X@.context_index)
+    switch(type,
+           "float" = cpp_vclMatrix_set_row_order(x@address, 
+                                                 Y@address, 
+                                                 TRUE,
+                                                 TRUE,
+                                                 order - 1,
+                                                 kernel,
+                                                 sqrt(maxWorkGroupSize),
+                                                 6L,
+                                                 x@.context_index - 1),
+           "double" = cpp_vclMatrix_set_row_order(x@address, 
+                                                  Y@address, 
+                                                  TRUE,
+                                                  TRUE,
+                                                  order - 1,
+                                                  kernel,
+                                                  sqrt(maxWorkGroupSize),
+                                                  8L,
+                                                  x@.context_index - 1),
+           stop("only float and double currently supported"))
     
-    # print(Y[])
-    
-    cpp_vclMatrix_set_row_order(X@address, 
-                                Y@address, 
-                                TRUE,
-                                TRUE,
-                                order - 1,
-                                kernel,
-                                sqrt(maxWorkGroupSize),
-                                6L,
-                                X@.context_index - 1)
-    
-    # print(Y[])
     
     return(Y)
     
@@ -102,12 +136,24 @@ permute <- function(X, MARGIN = 1, order){
 
 
 
+#' @title Row and Column Names
+#' @description Retrieve or set the row or column names of a gpuR matrix object
+#' @param x A gpuR matrix object
+#' @param do.NULL logical. If \code{FALSE} names are NULL, names are created. 
+#' (not currently used)
+#' @param prefix for create names. (not currently used)
+#' @param value A character vector to assign as row/column names
+#' @param ... Additional arguments
+#' @docType methods
+#' @rdname colnames-methods
 #' @export
-colnames <- function(x, ...) UseMethod("colnames")
+colnames <- function(x, do.NULL, prefix) UseMethod("colnames")
 
+#' @rdname colnames-methods
 #' @export
 colnames.default <- base::colnames
 
+#' @rdname colnames-methods
 #' @export
 colnames.gpuMatrix <- function(x, ...)
 {
@@ -126,7 +172,7 @@ colnames.gpuMatrix <- function(x, ...)
     return(cnames)
 }
 
-
+#' @rdname colnames-methods
 #' @export
 setMethod("colnames<-",
           signature = "gpuMatrix",
@@ -147,6 +193,7 @@ setMethod("colnames<-",
           })
 
 
+#' @rdname colnames-methods
 #' @export
 colnames.vclMatrix <- function(x, ...)
 {
@@ -165,7 +212,7 @@ colnames.vclMatrix <- function(x, ...)
     return(cnames)
 }
 
-
+#' @rdname colnames-methods
 #' @export
 setMethod("colnames<-",
           signature = "vclMatrix",

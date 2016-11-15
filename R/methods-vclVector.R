@@ -6,6 +6,46 @@ as.vector.vclVector <- function(x, mode = "any"){
 }
 
 
+#' @rdname vclVector-methods
+#' @param shared Logical indicating if memory should be shared with \code{x}
+#' @export
+as.vclVector <- function (data, shared, ...) {
+    UseMethod("as.vclVector", data)
+}
+
+#' @export
+as.vclVector.vclMatrix <- function(data, shared = TRUE, ...){
+    if(shared){
+        
+        switch(typeof(data),
+               "integer" = return(new("ivclVector", 
+                                      address=vclMatTovclVec(data@address, 4L),
+                                      .context_index = data@.context_index,
+                                      .platform_index = data@.platform_index,
+                                      .platform = data@.platform,
+                                      .device_index = data@.device_index,
+                                      .device = data@.device)),
+               "float" = return(new("fvclVector", 
+                                    address=vclMatTovclVec(data@address, 6L),
+                                    .context_index = data@.context_index,
+                                    .platform_index = data@.platform_index,
+                                    .platform = data@.platform,
+                                    .device_index = data@.device_index,
+                                    .device = data@.device)),
+               "double" = return(new("dvclVector", 
+                                     address=vclMatTovclVec(data@address, 8L),
+                                     .context_index = data@.context_index,
+                                     .platform_index = data@.platform_index,
+                                     .platform = data@.platform,
+                                     .device_index = data@.device_index,
+                                     .device = data@.device))
+        )
+    }else{
+        stop("copy constructor not implemented yet")
+    }
+}
+
+
 #' @rdname extract-methods
 #' @export
 setMethod("[",

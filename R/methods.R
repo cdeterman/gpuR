@@ -1095,6 +1095,14 @@ setMethod("Summary", c(x="gpuMatrix"),
           }
 )
 
+#' @title \code{gpuR} matrix transpose
+#' @description Given a \code{gpuR} matrix \code{x}, \code{t} returns the 
+#' transpose of \code{x}
+#' @param x A \code{gpuR} matrix
+#' @return A \code{gpuR} matrix
+#' @author Charles Determan Jr.
+#' @rdname t-methods
+#' @aliases t,gpuMatrix
 #' @export
 setMethod("t", c(x = "gpuMatrix"),
           function(x){
