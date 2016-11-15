@@ -20,7 +20,8 @@ Imports:
     assertive
 LinkingTo: Rcpp,
     RcppEigen,
-    RViennaCL (>= 1.7.1.4)
+    RViennaCL (>= 1.7.1.4),
+    BH
 NeedsCompilation: yes
 Suggests:
     testthat,
