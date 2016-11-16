@@ -2,7 +2,7 @@
 \title{News for Package 'gpuR'}
 
 
-\section{Version 1.1.4}{
+\section{Version 1.2.0}{
     \itemize{
         \item New Features:
         \itemize{
@@ -14,12 +14,13 @@
             \item Added length method for matrix objects
             \item Added solve method for square vclMatrix objects
             \item Added QR-decompsition, SVD, Cholesky for square gpuMatrix/vclMatrix objects
+            \item Added diag and diag<- method for matix objects
+            \item Added colnames and colnames<- methods
         }
         \item Features in Progress:
         \itemize{
             \item 'device type' checks (i.e. deal with CPU & GPU objects), perhaps detect type from object?
             \item Parallel GPU functionality
-            \item Add diag and diag<- method for matix objects
             \item In-place operations
             \item Accept custom OpenCL kernels
         }
