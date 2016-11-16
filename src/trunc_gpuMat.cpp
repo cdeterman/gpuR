@@ -17,17 +17,9 @@ template<typename T>
 SEXP 
 trunc_mat(SEXP ptrA_, int nr, int nc)
 {    
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(ptrA_);
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Am(pMat->data(), pMat->rows(), pMat->cols());
-    
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = ptrA->data();
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am = ptrA->data();
     
     return wrap(Am.topLeftCorner(nr, nc));
 }

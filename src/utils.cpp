@@ -37,13 +37,9 @@ SEXP
 cpp_gpuMatrix_max(SEXP ptrA_)
 {       
     XPtr<dynEigenMat<T> > pMat(ptrA_);
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refA = pMat->data();
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am(
-        refA.data(), refA.rows(), refA.cols(),
-        Eigen::OuterStride<>(refA.outerStride())
-    );
-    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Am = pMat->data();
+
     return wrap(Am.maxCoeff());
 }
 

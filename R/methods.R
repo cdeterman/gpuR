@@ -1110,4 +1110,31 @@ setMethod("t", c(x = "gpuMatrix"),
           }
 )
 
+#' @rdname diag-methods
+#' @aliases diag,gpuMatrix
+#' @export
+setMethod("diag", c(x = "gpuMatrix"),
+          function(x){
+              # get diagonal elements
+              return(gpuMatrix_get_diag(x))
+          }
+)
+
+#' @rdname diag-methods
+#' @aliases diag<-,gpuMatrix,gpuVector
+#' @export
+setMethod("diag<-", c(x = "gpuMatrix", value = "gpuVector"),
+          function(x, value){
+              
+              if(nrow(x) != length(value)){
+                  stop("replacement diagnonal has wrong length")
+              }
+              
+              # get diagonal elements
+              gpuMat_gpuVec_set_diag(x, value)
+              
+              return(invisible(x))
+          }
+)
+
 

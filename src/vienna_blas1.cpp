@@ -137,7 +137,7 @@ void cpp_gpuVector_outer_prod(
     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     XPtr<dynEigenMat<T> > ptrC(ptrC_);
-    Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
+    // Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > refC = ptrC->data();
     
     XPtr<dynEigenVec<T> > ptrA(ptrA_);
     XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -145,7 +145,9 @@ void cpp_gpuVector_outer_prod(
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Bm = ptrB->data();
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(ptrC->data(), ptrC->rows(), ptrC->cols());
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+    // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > Cm(refC.data(), ptrC->nrow(), ptrC->ncol());
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Cm = ptrC->data();
     
     const int M = Am.size();
     

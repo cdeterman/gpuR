@@ -819,3 +819,42 @@ test_that("CPU gpuMatrix Double Precision transpose", {
     expect_equal(fgpuAt[,], At, tolerance=.Machine$double.eps^0.5, 
                  info="transposed double matrix elements not equivalent") 
 })
+
+
+test_that("CPU gpuMatrix Diagonal access", {
+    
+    has_cpu_skip()
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    D <- diag(A)
+    gpuD <- diag(fgpuA)
+        
+    expect_is(gpuD, "fgpuVector")
+    expect_equal(gpuD[,], D, tolerance=1e-07, 
+                 info="float matrix diagonal elements not equivalent") 
+    
+    vec <- rnorm(ORDER)
+    diag(fgpuA) <- gpuVector(vec, type = "float")
+    diag(A) <- vec
+    
+    expect_equal(fgpuA[,], A, tolerance=1e-07, 
+                 info="set float matrix diagonal elements not equivalent") 
+    
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    D <- diag(A)
+    gpuD <- diag(fgpuA)
+    
+    expect_is(gpuD, "dgpuVector")
+    expect_equal(gpuD[,], D, tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix diagonal elements not equivalent")  
+    
+    vec <- rnorm(ORDER)
+    diag(fgpuA) <- gpuVector(vec, type = "double")
+    diag(A) <- vec
+    
+    expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
+                 info="set double matrix diagonal elements not equivalent") 
+})

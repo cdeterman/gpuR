@@ -443,6 +443,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_gpuMatrix_get_diag
+void cpp_gpuMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuMatrix_get_diag(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMatrix_get_diag(ptrA, ptrB, type_flag);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_gpuMat_gpuVec_set_diag
+void cpp_gpuMat_gpuVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag);
+RcppExport SEXP gpuR_cpp_gpuMat_gpuVec_set_diag(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMat_gpuVec_set_diag(ptrA, ptrB, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuMatrix_custom_igemm
 void cpp_gpuMatrix_custom_igemm(SEXP ptrA_, const bool AisVCL, SEXP ptrB_, const bool BisVCL, SEXP ptrC_, const bool CisVCL, SEXP sourceCode_, int max_local_size, const int ctx_id);
 RcppExport SEXP gpuR_cpp_gpuMatrix_custom_igemm(SEXP ptrA_SEXP, SEXP AisVCLSEXP, SEXP ptrB_SEXP, SEXP BisVCLSEXP, SEXP ptrC_SEXP, SEXP CisVCLSEXP, SEXP sourceCode_SEXP, SEXP max_local_sizeSEXP, SEXP ctx_idSEXP) {

@@ -163,6 +163,14 @@ getCols <- function(ptrA, type_flag) {
     .Call('gpuR_getCols', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
+cpp_gpuMatrix_get_diag <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_get_diag', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+}
+
+cpp_gpuMat_gpuVec_set_diag <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_gpuMat_gpuVec_set_diag', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+}
+
 cpp_gpuMatrix_custom_igemm <- function(ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id))
 }

@@ -1147,3 +1147,37 @@ gpuMatrix_t <- function(A){
     return(B)
 }
 
+# Get gpuMatrix diagonal
+gpuMatrix_get_diag <- function(x){
+    
+    type <- typeof(x)
+    
+    # initialize vector to fill with diagonals
+    y <- gpuVector(length = nrow(x), type = type, ctx_id = x@.context_index)
+    
+    switch(type,
+           integer = {cpp_gpuMatrix_get_diag(x@address, y@address, 4L)},
+           float = {cpp_gpuMatrix_get_diag(x@address, y@address, 6L)},
+           double = {cpp_gpuMatrix_get_diag(x@address, y@address, 8L)},
+           stop("type not recognized")
+    )
+    
+    return(y)
+}
+
+# Set gpuMatrix diagonal with a gpuVector
+gpuMat_gpuVec_set_diag <- function(x, value){
+    
+    type <- typeof(x)
+    
+    switch(type,
+           integer = {cpp_gpuMat_gpuVec_set_diag(x@address, value@address, 4L)},
+           float = {cpp_gpuMat_gpuVec_set_diag(x@address, value@address, 6L)},
+           double = {cpp_gpuMat_gpuVec_set_diag(x@address, value@address, 8L)},
+           stop("type not recognized")
+    )
+    
+    return(invisible(x))
+}
+
+

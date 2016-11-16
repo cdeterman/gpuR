@@ -26,6 +26,34 @@ getCols(SEXP ptrA_){
     return cnames;
 }
 
+// get diagonal of gpuMatrix
+template <typename T>
+void
+cpp_gpuMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
+{
+    Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > pA = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >pB = ptrB->data();
+    
+    pB = pA.diagonal();
+}
+
+// set diagonal with gpuVector
+template <typename T>
+void
+cpp_gpuMat_gpuVec_set_diag(SEXP ptrA_, SEXP ptrB_)
+{
+    Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > pA = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >pB = ptrB->data();
+    
+    pA.diagonal() = pB;
+}
+
 
 //copy an existing gpuMatrix
 template <typename T>
@@ -571,6 +599,15 @@ EigenVecXPtrToMapEigenVec(SEXP ptrA, const int type_flag)
     }
 }
 
+
+template <typename T>
+SEXP
+MatXptrToMatSEXP(SEXP ptrA){
+    Rcpp::XPtr<dynEigenMat<T> > pMat(ptrA);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > mapA = pMat->data();
+    return wrap(mapA);
+}
+
 /*** Matrix XPtr to SEXP ***/
 
 // [[Rcpp::export]]
@@ -579,51 +616,11 @@ MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-        {
-            Rcpp::XPtr<dynEigenMat<int> > pMat(ptrA);
-            Eigen::Ref<Eigen::MatrixXi> refA = pMat->data();
-//            Eigen::Ref<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<int>(ptrA);
-            
-            
-//            Eigen::Map<Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), pMat->nrow(), pMat->ncol());
-//            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> mapA = refA;
-            Eigen::Map<Eigen::MatrixXi, 0, Eigen::OuterStride<> > mapA(refA.data(), refA.rows(), refA.cols(),
-                                                                        Eigen::OuterStride<>(refA.outerStride()));
-            return wrap(mapA);
-        }
+            return(MatXptrToMatSEXP<int>(ptrA));
         case 6:
-        {
-//            Rcpp::XPtr<dynEigenMat<float> > pMat(ptrA);
-//            Eigen::Ref<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<float>(ptrA);
-            
-            Rcpp::XPtr<dynEigenMat<float> > pMat(ptrA);
-            Eigen::Ref<Eigen::MatrixXf> refA = pMat->data();
-            
-//            std::cout << "float refA" << std::endl;
-//            std::cout << refA << std::endl;
-//            
-//            std::cout << refA.rows() << refA.cols() << std::endl;
-            
-//            Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), mapA->nrow(), pMat->ncol());
-            Eigen::Map<Eigen::MatrixXf, 0, Eigen::OuterStride<> > mapA(refA.data(), refA.rows(), refA.cols(),
-                                                                        Eigen::OuterStride<>(refA.outerStride()));
-//            Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mapA = refA;
-//            std::cout << "float mapA" << std::endl;
-//            std::cout << mapA << std::endl;
-            return wrap(mapA);  
-        }
+            return(MatXptrToMatSEXP<float>(ptrA));
         case 8:
-        {
-            Rcpp::XPtr<dynEigenMat<double> > pMat(ptrA);
-            Eigen::Ref<Eigen::MatrixXd> refA = pMat->data();
-//            Eigen::Ref<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > refA = EigenXPtrToMapEigen<double>(ptrA);
-            
-            Eigen::Map<Eigen::MatrixXd, 0, Eigen::OuterStride<> > mapA(refA.data(), refA.rows(), refA.cols(),
-                                                                        Eigen::OuterStride<>(refA.outerStride()));
-//            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > mapA(refA.data(), pMat->nrow(), pMat->ncol());
-//            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mapA = refA;
-            return wrap(mapA); 
-        }
+            return(MatXptrToMatSEXP<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -702,3 +699,44 @@ getCols(SEXP ptrA, const int type_flag)
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
+
+/*** gpuMatrix diag ***/
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        cpp_gpuMatrix_get_diag<int>(ptrA, ptrB);
+        return;
+    case 6:
+        cpp_gpuMatrix_get_diag<float>(ptrA, ptrB);
+        return;
+    case 8:
+        cpp_gpuMatrix_get_diag<double>(ptrA, ptrB);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// gpuMatrix set diag with gpuVector
+// [[Rcpp::export]]
+void
+cpp_gpuMat_gpuVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        cpp_gpuMat_gpuVec_set_diag<int>(ptrA, ptrB);
+        return;
+    case 6:
+        cpp_gpuMat_gpuVec_set_diag<float>(ptrA, ptrB);
+        return;
+    case 8:
+        cpp_gpuMat_gpuVec_set_diag<double>(ptrA, ptrB);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
