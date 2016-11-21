@@ -284,7 +284,7 @@ vclMatMult <- function(A, B){
 }
 
 # vclMatrix AXPY
-vclMat_axpy <- function(alpha, A, B){
+vclMat_axpy <- function(alpha, A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -295,15 +295,19 @@ vclMat_axpy <- function(alpha, A, B){
     
     type <- typeof(A)
     
-    Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
-    if(!missing(B))
-    {
-        if(length(B[]) != length(A[])){
-		stop("Lengths of matrices must match")
-	}
-        Z <- deepcopy(B)
+    if(inplace){
+        Z <- B
+    }else{
+        Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
+        if(!missing(B))
+        {
+            if(length(B[]) != length(A[])){
+                stop("Lengths of matrices must match")
+            }
+            Z <- deepcopy(B)
+        }    
     }
-
+    
     switch(type,
            integer = {
                # stop("OpenCL integer GEMM not currently
@@ -326,7 +330,11 @@ vclMat_axpy <- function(alpha, A, B){
             stop("type not recognized")
     )
 
-    return(Z)
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)   
+    }
 }
 
 # vclMatrix unary AXPY

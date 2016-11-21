@@ -1,13 +1,17 @@
 ### gpuVector Wrappers ###
 
 # GPU axpy wrapper
-gpuVec_axpy <- function(alpha, A, B){
+gpuVec_axpy <- function(alpha, A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
     type <- typeof(A)
     
-    Z <- deepcopy(B)
+    if(inplace){
+        Z <- B
+    }else{
+        Z <- deepcopy(B)   
+    }
     
     switch(type,
            integer = {
@@ -34,7 +38,11 @@ gpuVec_axpy <- function(alpha, A, B){
            stop("type not recognized")
     )
     
-    return(Z)
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
 }
 
 # GPU axpy wrapper

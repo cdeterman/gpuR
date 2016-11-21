@@ -11,7 +11,7 @@
 
 
 # GPU axpy wrapper
-gpu_Mat_axpy <- function(alpha, A, B){
+gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -22,11 +22,15 @@ gpu_Mat_axpy <- function(alpha, A, B){
     
     type <- typeof(A)
     
-    Z <- gpuMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
-    if(!missing(B))
-    {
-        if(length(B) != length(A)) stop("Lengths of matrices must match")
-        Z <- deepcopy(B)
+    if(inplace){
+        Z <- B
+    }else{
+        Z <- gpuMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
+        if(!missing(B))
+        {
+            if(length(B) != length(A)) stop("Lengths of matrices must match")
+            Z <- deepcopy(B)
+        }
     }
     
     switch(type,
@@ -58,7 +62,11 @@ gpu_Mat_axpy <- function(alpha, A, B){
            stop("type not recognized")
     )
     
-    return(Z)
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
 }
 
 # GPU axpy wrapper

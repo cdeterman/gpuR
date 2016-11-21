@@ -381,6 +381,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
           function(e1, e2)
           {
               op = .Generic[[1]]
+              
               switch(op,
                      `+` = vclMat_axpy(1, e1, e2),
                      `-` = vclMat_axpy(-1, e2, e1),

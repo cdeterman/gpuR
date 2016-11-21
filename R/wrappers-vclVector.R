@@ -76,17 +76,21 @@ vclVecOuter <- function(A, B){
 
 
 # vclVector AXPY
-vclVec_axpy <- function(alpha, A, B){
+vclVec_axpy <- function(alpha, A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
     type <- typeof(A)
     
-    Z <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
-    if(!missing(B))
-    {
-        if(length(B) != length(A)) stop("Lengths of matrices must match")
-        Z <- deepcopy(B)
+    if(inplace){
+        Z <- B 
+    }else{
+        Z <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(!missing(B))
+        {
+            if(length(B) != length(A)) stop("Lengths of matrices must match")
+            Z <- deepcopy(B)
+        }   
     }
     
     switch(type,
@@ -112,7 +116,11 @@ vclVec_axpy <- function(alpha, A, B){
            stop("type not recognized")
     )
     
-    return(Z)
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)
+    }
 }
 
 
