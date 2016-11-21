@@ -1099,6 +1099,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_scalar_vclVector
+SEXP cpp_scalar_vclVector(SEXP scalar, const int size, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_scalar_vclVector(SEXP scalarSEXP, SEXP sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< const int >::type size(sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_scalar_vclVector(scalar, size, type_flag, ctx_id));
+    return rcpp_result_gen;
+END_RCPP
+}
 // VCLtoVecSEXP
 SEXP VCLtoVecSEXP(SEXP ptrA, const int type_flag);
 RcppExport SEXP gpuR_VCLtoVecSEXP(SEXP ptrASEXP, SEXP type_flagSEXP) {

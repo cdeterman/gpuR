@@ -151,3 +151,69 @@ setMethod('vclVector',
           },
           valueClass = "vclVector"
 )
+
+
+
+#' @rdname vclVector-methods
+#' @aliases vclVector,vector
+setMethod('vclVector', 
+          signature(data = 'numeric', length = 'numeric'),
+          function(data, length, type=NULL, ctx_id = NULL){
+              
+              if (is.null(type)) type <- typeof(data)
+              
+              device <- currentDevice()
+              
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              device_index <- as.integer(device$device_index)
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
+              platform_index <- currentPlatform()$platform_index
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              if(type == "double" & !deviceHasDouble(platform_index, device_index)){
+                  stop("Double precision not supported for current device. 
+                       Try setting 'type = 'float'' or change device if multiple available.")
+              }
+              
+              data = switch(type,
+                            integer = {
+                                new("ivclVector", 
+                                    address=cpp_scalar_vclVector(data, length, 4L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            float = {
+                                new("fvclVector", 
+                                    address=cpp_scalar_vclVector(data, length, 6L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            double = {
+                                assert_has_double(platform_index, device_index)
+                                new("dvclVector",
+                                    address = cpp_scalar_vclVector(data, length, 8L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            stop("this is an unrecognized 
+                                 or unimplemented data type")
+              )
+              
+              return(data)
+              },
+          valueClass = "vclVector")
+

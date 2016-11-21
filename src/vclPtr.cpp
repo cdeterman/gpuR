@@ -312,6 +312,21 @@ sexpVecToVCL(
     return pVec;
 }
 
+// scalar initialized ViennaCL vector
+template <typename T>
+SEXP 
+cpp_scalar_vclVector(
+    SEXP scalar_, 
+    int size, 
+    int ctx_id)
+{
+    const T scalar = as<T>(scalar_);
+    
+    dynVCLVec<T> *vec = new dynVCLVec<T>(size, scalar, ctx_id);
+    Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
+    return pVec;
+}
+
 // convert SEXP Matrix to ViennaCL matrix
 template <typename T>
 SEXP cpp_sexp_mat_to_vclMatrix(
@@ -1201,6 +1216,25 @@ vclMatTovclVec(
     }
 }
 
+// [[Rcpp::export]]
+SEXP
+cpp_scalar_vclVector(
+    SEXP scalar, 
+    const int size, 
+    const int type_flag,
+    const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return cpp_scalar_vclVector<int>(scalar, size, ctx_id);
+    case 6:
+        return cpp_scalar_vclVector<float>(scalar, size, ctx_id);
+    case 8:
+        return cpp_scalar_vclVector<double>(scalar, size, ctx_id);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 /*** Vector exports ***/
 

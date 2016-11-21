@@ -289,6 +289,7 @@ setMethod("Math", c(x="vclVector"),
                      `log10` = vclVecElemLog10(x),
                      `exp` = vclVecElemExp(x),
                      `abs` = vclVecElemAbs(x),
+                     `sqrt` = vclVecScalarPow(x, 0.5),
                      stop("undefined operation")
               )
           },

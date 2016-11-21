@@ -120,6 +120,24 @@ class dynVCLVec {
             viennacl::range temp_r(begin-1, last);
             r = temp_r;
         }
+        dynVCLVec(const int size_in, T scalar, const int ctx_id){
+            viennacl::context ctx;
+            
+            // explicitly pull context for thread safe forking
+            ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+            
+            A.switch_memory_context(ctx);
+            A = viennacl::scalar_vector<T>(size_in, scalar, ctx);
+            A = static_cast<viennacl::vector_base<T> >(A);
+            
+            size = size_in;
+            ptr = &A;
+            begin = 1;
+            last = size_in;
+            viennacl::range temp_r(begin-1, last);
+            r = temp_r;
+            // shptr = std::make_shared<viennacl::matrix<T> >(A);
+        };
         // dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
         // dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec){
         //     size = dynVec->length();

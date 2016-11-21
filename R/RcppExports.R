@@ -378,6 +378,10 @@ vclMatTovclVec <- function(ptrA, type_flag) {
     .Call('gpuR_vclMatTovclVec', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
+cpp_scalar_vclVector <- function(scalar, size, type_flag, ctx_id) {
+    .Call('gpuR_cpp_scalar_vclVector', PACKAGE = 'gpuR', scalar, size, type_flag, ctx_id)
+}
+
 VCLtoVecSEXP <- function(ptrA, type_flag) {
     .Call('gpuR_VCLtoVecSEXP', PACKAGE = 'gpuR', ptrA, type_flag)
 }
