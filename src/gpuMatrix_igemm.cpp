@@ -47,15 +47,21 @@ cpp_gpuMatrix_custom_igemm(
     // get compiled kernel function
     viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("iMatMult");
     
-    cl_device_id raw_device = ctx.current_device().id();
-    cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "iMatMult").handle().get();
-    size_t preferred_work_group_size_multiple;
+    cl_device_type type_check = ctx.current_device().type();
     
-    cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-                                          CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-                                          sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-    
-    max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "iMatMult").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
+    }
     
     // set global work sizes
     my_kernel_mul.global_work_size(0, M_internal);
