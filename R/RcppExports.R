@@ -338,6 +338,10 @@ vclSetVCLMatrix <- function(ptrA, newdata, type_flag, ctx_id) {
     invisible(.Call('gpuR_vclSetVCLMatrix', PACKAGE = 'gpuR', ptrA, newdata, type_flag, ctx_id))
 }
 
+vclFillVCLMatrix <- function(ptrA, newdata, type_flag, ctx_id) {
+    invisible(.Call('gpuR_vclFillVCLMatrix', PACKAGE = 'gpuR', ptrA, newdata, type_flag, ctx_id))
+}
+
 vclGetCol <- function(ptrA, nc, type_flag, ctx_id) {
     .Call('gpuR_vclGetCol', PACKAGE = 'gpuR', ptrA, nc, type_flag, ctx_id)
 }

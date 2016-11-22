@@ -246,8 +246,11 @@ cpp_vclMatrix_block(
 {
     XPtr<dynVCLMat<T> > pA(ptrA);
     dynVCLMat<T> *mat = new dynVCLMat<T>();
-    // mat->setPtr(pA->getPtr());
+    
     mat->setSharedPtr(pA->sharedPtr());
+    // set old range
+    mat->setRange(pA->row_range(), pA->col_range());
+    // add new indices
     mat->setRange(rowStart, rowEnd, colStart, colEnd);
     mat->setDims(pA->nrow(), pA->ncol());
     
@@ -594,6 +597,16 @@ vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+}
+
+// update viennacl matrix with a scalar
+template <typename T>
+void
+vclFillVCLMatrix(SEXP data, T newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+    viennacl::linalg::matrix_assign(A, newdata);
 }
 
 /*** vclMatrix get elements ***/
@@ -1023,6 +1036,25 @@ vclSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
         return;
     case 8:
         vclSetVCLMatrix<double>(ptrA, newdata, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclFillVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVCLMatrix<int>(ptrA, as<int>(newdata), ctx_id);
+        return;
+    case 6:
+        vclFillVCLMatrix<float>(ptrA, as<float>(newdata), ctx_id);
+        return;
+    case 8:
+        vclFillVCLMatrix<double>(ptrA, as<double>(newdata), ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");

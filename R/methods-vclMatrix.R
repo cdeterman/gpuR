@@ -362,6 +362,24 @@ setMethod("[<-",
           })
 
 
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "numeric"),
+          function(x, i, j, value) {
+              
+              assert_is_scalar(value)
+              
+              switch(typeof(x),
+                     "integer" = vclFillVCLMatrix(x@address, value, 4L, x@.context_index - 1),
+                     "float" = vclFillVCLMatrix(x@address, value, 6L, x@.context_index - 1),
+                     "double" = vclFillVCLMatrix(x@address, value, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
 #' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),

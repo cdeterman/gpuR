@@ -33,7 +33,15 @@ class dynVCLMat {
     public:
         viennacl::matrix<T> A;
         
-        dynVCLMat() { } // private default constructor
+        dynVCLMat() { 
+            
+            viennacl::range temp_rr(0, 0);
+            viennacl::range temp_cr(0, 0);
+            
+            row_r = temp_rr;
+            col_r = temp_cr;
+            
+        } // private default constructor
 	    dynVCLMat(viennacl::matrix<T> mat, int ctx_id){
 	        
 	        viennacl::context ctx;
@@ -166,13 +174,29 @@ class dynVCLMat {
         viennacl::range col_range() { return col_r; }
         
         void setRange(
+            viennacl::range row_in, 
+            viennacl::range col_in
+        ){
+            row_r = row_in;
+            col_r = col_in;
+        }
+        void setRange(
             int row_start, int row_end,
             int col_start, int col_end
         ){
-            viennacl::range temp_rr(row_start, row_end);
-            viennacl::range temp_cr(col_start, col_end);
-            row_r = temp_rr;
-            col_r = temp_cr;
+            if(row_r.size() == 0 && col_r.size() == 0){
+                viennacl::range temp_rr(row_start, row_end);
+                viennacl::range temp_cr(col_start, col_end);
+                
+                row_r = temp_rr;
+                col_r = temp_cr;
+            }else{
+                viennacl::range temp_rr(row_start + row_r.start(), row_end + row_r.start());
+                viennacl::range temp_cr(col_start + col_r.start(), col_end + col_r.start());    
+                
+                row_r = temp_rr;
+                col_r = temp_cr;
+            }
         };
         void setMatrix(viennacl::matrix<T> mat){
             A = mat;

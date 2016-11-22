@@ -966,6 +966,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vclFillVCLMatrix
+void vclFillVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_vclFillVCLMatrix(SEXP ptrASEXP, SEXP newdataSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type newdata(newdataSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    vclFillVCLMatrix(ptrA, newdata, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
 // vclGetCol
 SEXP vclGetCol(SEXP ptrA, const int nc, const int type_flag, int ctx_id);
 RcppExport SEXP gpuR_vclGetCol(SEXP ptrASEXP, SEXP ncSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
