@@ -28,7 +28,7 @@ class dynEigenMat {
         
     public:
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A;
-        viennacl::matrix<T> *vclA = new viennacl::matrix<T>();
+        viennacl::matrix<T> *vclA;
         // Eigen::Block<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block;
         
         
@@ -211,7 +211,7 @@ class dynEigenMat {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            *vclA = viennacl::matrix<T>(K, M, ctx=ctx);
+            vclA = new viennacl::matrix<T>(K, M, ctx=ctx);
             shptr.reset(vclA);
             
             viennacl::copy(block, *shptr.get());
