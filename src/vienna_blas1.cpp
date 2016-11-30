@@ -4,6 +4,7 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
+#include "gpuR/getVCLptr.hpp"
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 #include "gpuR/dynVCLMat.hpp"
@@ -773,31 +774,6 @@ cpp_gpuVector_elem_abs(
     viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
 
-template <typename T>
-T
-cpp_gpuVector_max(
-    SEXP ptrA_,
-    int ctx_id)
-{    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
-    T max;
-    
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    max = viennacl::linalg::max(vcl_A);
-    
-    return max;
-}
 
 template <typename T>
 T
@@ -2224,6 +2200,92 @@ cpp_vclVector_elem_abs(
     vcl_C = viennacl::linalg::element_fabs(vcl_A);
 }
 
+
+// template <typename T>
+// void 
+// cpp_vclVector_elem_abs2(
+//     SEXP ptrC_,
+//     SEXP sourceCode_,
+//     const int ctx_id)
+// {    
+//     // Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
+//     // Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
+//     // 
+//     // viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+//     // viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
+//     // 
+//     // vcl_C = viennacl::linalg::element_fabs(vcl_A);
+//     
+//     viennacl::vector_base<T> *vcl_C;
+//     int max_local_size;
+//     
+//     // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+//     // viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
+//     // B = B + (alpha * scalar);
+//     // B = B + alpha;
+//     
+//     std::string my_kernel = as<std::string>(sourceCode_);
+//     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+//     
+//     Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+//     // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
+//     vcl_C = getVCLVecptr<T>(ptrC_, true, ctx_id);
+//     
+//     int M = vcl_C->size();
+//     int M_internal = vcl_C->internal_size();
+//     
+//     // add kernel to program
+//     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+//     
+//     // get compiled kernel function
+//     viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("abs_kernel");
+//     
+//     cl_device_type type_check = ctx.current_device().type();
+//     
+//     if(type_check & CL_DEVICE_TYPE_CPU){
+//         max_local_size = 1;
+//     }else{
+//         cl_device_id raw_device = ctx.current_device().id();
+//         cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "abs_kernel").handle().get();
+//         size_t preferred_work_group_size_multiple;
+//         
+//         cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+//                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+//                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+//         
+//         max_local_size = preferred_work_group_size_multiple;
+//     }
+//     
+//     // set global work sizes
+//     my_kernel_mul.global_work_size(0, M_internal);
+//     
+//     // set local work sizes
+//     my_kernel_mul.local_work_size(0, max_local_size);
+//     
+//     // execute kernel
+//     viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, M));
+//     
+// }
+
+
+template <typename T>
+T
+cpp_vclVector_elem_max_abs(
+    SEXP ptrA_)
+{    
+    T max;
+    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
+    
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+    
+    max = viennacl::linalg::max(viennacl::linalg::element_fabs(vcl_A));
+    
+    return max;
+}
+
+
+// probably want to have some sort of switch for when to leave on the
+// device and when to copy to host
 template <typename T>
 T
 cpp_vclVector_max(
@@ -2231,12 +2293,22 @@ cpp_vclVector_max(
 {    
     T max;
     
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+    // Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
+    // viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
+    // max = viennacl::linalg::max(vcl_A);
     
-    max = viennacl::linalg::max(vcl_A);
+    Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+    viennacl::vector_range<viennacl::vector_base<T> > tempA = ptrA->data();
     
-    return max;
+    viennacl::vector_base<T> pA = static_cast<viennacl::vector_base<T> >(tempA);
+    int M = pA.size();
+    
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am(M);
+    
+    // viennacl::copy(pA, Am); 
+    viennacl::fast_copy(pA.begin(), pA.end(), &(Am[0]));
+    
+    return Am.maxCoeff();
 }
 
 template <typename T>
@@ -2274,6 +2346,134 @@ void cpp_vclMatrix_axpy(
 }
 
 template <typename T>
+void cpp_vclMatrix_scalar_axpy(
+        SEXP alpha_, 
+        SEXP scalar_, 
+        SEXP ptrC_,
+        SEXP sourceCode_,
+        const int ctx_id)
+{
+    const T alpha = as<T>(alpha_);
+    const T scalar = as<T>(scalar_);
+    
+    viennacl::matrix<T> *vcl_C;
+    int max_local_size;
+    
+    // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    // viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
+    // B = B + (alpha * scalar);
+    // B = B + alpha;
+    
+    std::string my_kernel = as<std::string>(sourceCode_);
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
+    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    
+    int M = vcl_C->size1();
+    // int N = vcl_B.size1();
+    int P = vcl_C->size2();
+    int M_internal = vcl_C->internal_size1();
+    int P_internal = vcl_C->internal_size2();
+    
+    // add kernel to program
+    viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+    
+    // get compiled kernel function
+    viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("scalar_axpy");
+    
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "scalar_axpy").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = preferred_work_group_size_multiple;
+    }
+    
+    // set global work sizes
+    my_kernel_mul.global_work_size(0, M_internal);
+    my_kernel_mul.global_work_size(1, P_internal);
+    
+    // set local work sizes
+    my_kernel_mul.local_work_size(0, max_local_size);
+    my_kernel_mul.local_work_size(1, max_local_size);
+    
+    // execute kernel
+    viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, scalar, alpha, M, P, P_internal));
+    
+    
+}
+
+template <typename T>
+void cpp_vclMatrix_log_deriv(
+        SEXP ptrA_,
+        SEXP ptrC_,
+        SEXP sourceCode_,
+        const int ctx_id)
+{
+    viennacl::matrix<T> *vcl_A;
+    viennacl::matrix<T> *vcl_C;
+    int max_local_size;
+    
+    std::string my_kernel = as<std::string>(sourceCode_);
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    
+    vcl_A = getVCLptr<T>(ptrA_, true, ctx_id);
+    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    
+    int M = vcl_C->size1();
+    // int N = vcl_B.size1();
+    int P = vcl_C->size2();
+    int M_internal = vcl_C->internal_size1();
+    int P_internal = vcl_C->internal_size2();
+    
+    // add kernel to program
+    viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+    
+    // get compiled kernel function
+    viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("logistic_deriv");
+    
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "logistic_deriv").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = preferred_work_group_size_multiple;
+    }
+    
+    // set global work sizes
+    my_kernel_mul.global_work_size(0, M_internal);
+    my_kernel_mul.global_work_size(1, P_internal);
+    
+    // set local work sizes
+    my_kernel_mul.local_work_size(0, max_local_size);
+    my_kernel_mul.local_work_size(1, max_local_size);
+    
+    // execute kernel
+    viennacl::ocl::enqueue(my_kernel_mul(*vcl_A, *vcl_C, M, P, P_internal));
+}
+
+template <typename T>
 void 
 cpp_vclMatrix_unary_axpy(
     SEXP ptrA_,
@@ -2285,10 +2485,12 @@ cpp_vclMatrix_unary_axpy(
     viennacl::context ctx(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     
     
-    viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A.size1(),vcl_A.size2(), ctx);
+    // viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A.size1(),vcl_A.size2(), ctx);
+    // 
+    // vcl_Z -= vcl_A;
+    // vcl_A = vcl_Z;
     
-    vcl_Z -= vcl_A;
-    vcl_A = vcl_Z;
+    vcl_A = (T)(-1) * vcl_A;
 }
 
 
@@ -2352,6 +2554,68 @@ cpp_vclMatrix_scalar_div(
     viennacl::matrix_range<viennacl::matrix<T> > vcl_C  = ptrC->data();
     
     vcl_C /= alpha;
+}
+
+template <typename T>
+void cpp_vclMatrix_scalar_div_2(
+        SEXP scalar,
+        SEXP ptrC_,
+        SEXP sourceCode_,
+        const int ctx_id)
+{
+    // declarations
+    int max_local_size;
+    viennacl::matrix<T> *vcl_C;
+    
+    const T alpha = as<T>(scalar);
+    
+    std::string my_kernel = as<std::string>(sourceCode_);
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
+    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    
+    int M = vcl_C->size1();
+    // int N = vcl_B.size1();
+    int P = vcl_C->size2();
+    int M_internal = vcl_C->internal_size1();
+    int P_internal = vcl_C->internal_size2();
+    
+    // add kernel to program
+    viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+    
+    // get compiled kernel function
+    viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("ScalarElemDiv");
+    
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "ScalarElemDiv").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = preferred_work_group_size_multiple;
+    }
+    
+    // set global work sizes
+    my_kernel_mul.global_work_size(0, M_internal);
+    my_kernel_mul.global_work_size(1, P_internal);
+    
+    // set local work sizes
+    my_kernel_mul.local_work_size(0, max_local_size);
+    my_kernel_mul.local_work_size(1, max_local_size);
+    
+    // execute kernel
+    viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, alpha, M, P, P_internal));
+    
+    // C *= 1/alpha;
 }
 
 template <typename T>
@@ -2672,6 +2936,59 @@ cpp_vclMatrix_axpy(
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
+    
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_scalar_axpy(
+    SEXP alpha,
+    SEXP scalar, 
+    SEXP ptrB,
+    SEXP sourceCode,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_scalar_axpy<int>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatrix_scalar_axpy<float>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatrix_scalar_axpy<double>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_log_deriv(
+    SEXP ptrA,
+    SEXP ptrC,
+    SEXP sourceCode,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_log_deriv<int>(ptrA, ptrC, sourceCode, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatrix_log_deriv<float>(ptrA, ptrC, sourceCode, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatrix_log_deriv<double>(ptrA, ptrC, sourceCode, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
 
 // [[Rcpp::export]]
 void
@@ -2783,6 +3100,31 @@ cpp_vclMatrix_scalar_div(
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_scalar_div_2(
+    SEXP ptrC,
+    SEXP scalar,
+    SEXP sourceCode_,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_scalar_div_2<int>(scalar, ptrC, sourceCode_, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatrix_scalar_div_2<float>(scalar, ptrC, sourceCode_, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatrix_scalar_div_2<double>(scalar, ptrC, sourceCode_, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -3733,25 +4075,7 @@ cpp_gpuVector_elem_abs(
     }
 }
 
-// [[Rcpp::export]]
-SEXP
-cpp_gpuVector_max(
-    SEXP ptrA,
-    const int type_flag,
-    int ctx_id)
-{
-    
-    switch(type_flag) {
-        case 4:
-            return wrap(cpp_gpuVector_max<int>(ptrA, ctx_id));
-        case 6:
-            return wrap(cpp_gpuVector_max<float>(ptrA, ctx_id));
-        case 8:
-            return wrap(cpp_gpuVector_max<double>(ptrA, ctx_id));
-        default:
-            throw Rcpp::exception("unknown type detected for gpuVector object!");
-    }
-}
+
 
 // [[Rcpp::export]]
 SEXP
@@ -4316,6 +4640,31 @@ cpp_vclVector_elem_abs(
     }
 }
 
+
+// // [[Rcpp::export]]
+// void
+// cpp_vclVector_elem_abs2(
+//     SEXP ptrA,
+//     SEXP sourceCode,
+//     const int ctx_id,
+//     const int type_flag)
+// {
+//     
+//     switch(type_flag) {
+//     case 4:
+//         cpp_vclVector_elem_abs2<int>(ptrA, sourceCode, ctx_id);
+//         return;
+//     case 6:
+//         cpp_vclVector_elem_abs2<float>(ptrA, sourceCode, ctx_id);
+//         return;
+//     case 8:
+//         cpp_vclVector_elem_abs2<double>(ptrA, sourceCode, ctx_id);
+//         return;
+//     default:
+//         throw Rcpp::exception("unknown type detected for vclVector object!");
+//     }
+// }
+
 // [[Rcpp::export]]
 SEXP
 cpp_vclVector_max(
@@ -4332,6 +4681,25 @@ cpp_vclVector_max(
             return wrap(cpp_vclVector_max<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+cpp_vclVector_elem_max_abs(
+    SEXP ptrA,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return wrap(cpp_vclVector_elem_max_abs<int>(ptrA));
+    case 6:
+        return wrap(cpp_vclVector_elem_max_abs<float>(ptrA));
+    case 8:
+        return wrap(cpp_vclVector_elem_max_abs<double>(ptrA));
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
     }
 }
 

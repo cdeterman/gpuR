@@ -675,11 +675,15 @@ vclVecElemExp <- function(A){
 
 
 # GPU Element-Wise Absolute Value
-vclVecElemAbs <- function(A){
+vclVecElemAbs <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
@@ -699,6 +703,66 @@ vclVecElemAbs <- function(A){
     return(C)
 }
 
+#' #' @export
+#' vclVecElemAbs2 <- function(A){
+#'     
+#'     type <- typeof(A)
+#'     
+#'     switch(type,
+#'            integer = {
+#'                stop("integer not currently implemented")
+#'            },
+#'            float = {
+#'                file <- system.file("CL", "fabs.cl", package = "gpuR")
+#'                
+#'                if(!file_test("-f", file)){
+#'                    stop("kernel file does not exist")
+#'                }
+#'                kernel <- readChar(file, file.info(file)$size)
+#'                
+#'                cpp_vclVector_elem_abs2(A@address,
+#'                                            kernel,
+#'                                             A@.context_index - 1,
+#'                                            6L)
+#'            },
+#'            double = {
+#'                file <- system.file("CL", "dabs.cl", package = "gpuR")
+#'                
+#'                if(!file_test("-f", file)){
+#'                    stop("kernel file does not exist")
+#'                }
+#'                kernel <- readChar(file, file.info(file)$size)
+#'                
+#'                cpp_vclVector_elem_abs2(A@address,
+#'                                        kernel,
+#'                                        A@.context_index - 1,
+#'                                       8L)
+#'            },
+#'            stop("type not recognized")
+#'     )
+#'     return(invisible(A))
+#' }
+
+# GPU Element-Wise Absolute Value
+vclVecElemMaxAbs <- function(A){
+    
+    type <- typeof(A)
+    
+    out <- switch(type,
+                  integer = {
+                      stop("integer not currently implemented")
+                  },
+                  float = {cpp_vclVector_elem_max_abs(A@address,
+                                                      6L)
+                  },
+                  double = {
+                      cpp_vclVector_elem_max_abs(A@address,
+                                                 8L)
+                  },
+                  stop("type not recognized")
+    )
+    return(out)
+}
 
 # GPU Vector maximum
 vclVecMax <- function(A){

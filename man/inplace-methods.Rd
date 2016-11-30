@@ -5,7 +5,10 @@
 \alias{inplace}
 \alias{inplace,function,gpuMatrix,gpuMatrix-method}
 \alias{inplace,function,gpuVector,gpuVector-method}
+\alias{inplace,function,numeric,vclMatrix-method}
+\alias{inplace,function,vclMatrix,missing-method}
 \alias{inplace,function,vclMatrix,vclMatrix-method}
+\alias{inplace,function,vclVector,missing-method}
 \alias{inplace,function,vclVector,vclVector-method}
 \title{Inplace Function Wrapper}
 \usage{
@@ -13,9 +16,15 @@ inplace(f, x, y)
 
 \S4method{inplace}{`function`,vclMatrix,vclMatrix}(f, x, y)
 
+\S4method{inplace}{`function`,vclMatrix,missing}(f, x, y)
+
+\S4method{inplace}{`function`,numeric,vclMatrix}(f, x, y)
+
 \S4method{inplace}{`function`,gpuMatrix,gpuMatrix}(f, x, y)
 
 \S4method{inplace}{`function`,vclVector,vclVector}(f, x, y)
+
+\S4method{inplace}{`function`,vclVector,missing}(f, x, y)
 
 \S4method{inplace}{`function`,gpuVector,gpuVector}(f, x, y)
 }

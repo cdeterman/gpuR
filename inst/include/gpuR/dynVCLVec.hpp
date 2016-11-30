@@ -49,6 +49,28 @@ class dynVCLVec {
             viennacl::range temp_r(0, size);
             r = temp_r;
         }
+        dynVCLVec(viennacl::matrix_range<viennacl::matrix<T> > &mat, const int ctx_id) {
+            viennacl::context ctx;
+            
+            // explicitly pull context for thread safe forking
+            ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+            
+            A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+            
+            viennacl::matrix_base<T> dummy(A.handle(),
+                                           mat.size1(), 0, 1, mat.size1(),   //row layout
+                                           mat.size2(), 0, 1, mat.size2(),   //column layout
+                                           true); // row-major
+            dummy = mat;
+            
+            // shared = true;
+            size = A.size();
+            begin = 1;
+            last = size;
+            ptr = &A;
+            viennacl::range temp_r(0, size);
+            r = temp_r;
+        }
         dynVCLVec(viennacl::vector_base<T> vec, int ctx_id) {
             viennacl::context ctx;
 

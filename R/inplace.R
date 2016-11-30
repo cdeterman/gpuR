@@ -20,11 +20,42 @@ setMethod("inplace",
           signature = c("function", "vclMatrix", "vclMatrix"),
           function(f, x, y){
               
-              # f <- match.fun(f)
-              
               switch(deparse(substitute(f)),
                      `+` = vclMat_axpy(1, y, x, inplace = TRUE),
                      `-` = vclMat_axpy(-1, y, x, inplace = TRUE),
+                     `*` = vclMatElemMult(x, y, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "vclMatrix", "missing"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
+                     `exp` = vclMatElemExp(x, inplace = TRUE),
+                     `abs` = vclMatElemAbs(x, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "numeric", "vclMatrix"),
+          function(f, x, y){
+
+              switch(deparse(substitute(f)),
+                     `+` = vclMat_axpy(1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `-` = vclMat_axpy(-1, y, x, inplace = TRUE, BisScalar = TRUE),
+                     `/` = {
+                         # x = vclMatrix(x, ncol=ncol(y), nrow=nrow(y), type=typeof(y), ctx_id = y@.context_index)
+                         vclMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE)
+                     },
+                     `*` = vclMatScalarMult(y, x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -57,6 +88,18 @@ setMethod("inplace",
               )
           })
 
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "vclVector", "missing"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `abs` = vclVecElemAbs(x, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
 
 #' @rdname inplace-methods
 #' @export

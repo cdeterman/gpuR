@@ -449,17 +449,18 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMat_axpy(1, e1, e2)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         vclMat_axpy(1, e1, e2, AisScalar = TRUE)
                      },
                      `-` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMat_axpy(-1, e2, e1)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         # vclMat_axpy(-1, e2, e1)
+                         vclMat_axpy(-1, e2, e1, BisScalar = TRUE)
                      },
                      `*` = vclMatScalarMult(e2, e1),
                      `/` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMatElemDiv(e1, e2)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         vclMatScalarDiv(e1, e2, AisScalar = TRUE)
                      },
                      `^` = {
                          e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)

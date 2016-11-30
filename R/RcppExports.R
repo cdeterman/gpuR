@@ -250,6 +250,10 @@ cpp_gpuVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
+cpp_gpuVector_max <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
+}
+
 cpp_gpuMatrix_max <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
 }
@@ -370,6 +374,10 @@ vclSetVCLVector <- function(ptrA, newdata, type_flag) {
     invisible(.Call('gpuR_vclSetVCLVector', PACKAGE = 'gpuR', ptrA, newdata, type_flag))
 }
 
+vclSetVCLVectorRange <- function(ptrA, newdata, start, end, type_flag) {
+    invisible(.Call('gpuR_vclSetVCLVectorRange', PACKAGE = 'gpuR', ptrA, newdata, start, end, type_flag))
+}
+
 vectorToVCL <- function(ptrA, type_flag, ctx_id) {
     .Call('gpuR_vectorToVCL', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
 }
@@ -378,8 +386,8 @@ vectorToMatVCL <- function(ptrA, nr, nc, type_flag, ctx_id) {
     .Call('gpuR_vectorToMatVCL', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag, ctx_id)
 }
 
-vclMatTovclVec <- function(ptrA, type_flag) {
-    .Call('gpuR_vclMatTovclVec', PACKAGE = 'gpuR', ptrA, type_flag)
+vclMatTovclVec <- function(ptrA, shared, ctx_id, type_flag) {
+    .Call('gpuR_vclMatTovclVec', PACKAGE = 'gpuR', ptrA, shared, ctx_id, type_flag)
 }
 
 cpp_scalar_vclVector <- function(scalar, size, type_flag, ctx_id) {
@@ -494,6 +502,14 @@ cpp_vclMatrix_axpy <- function(alpha, ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_axpy', PACKAGE = 'gpuR', alpha, ptrA, ptrB, type_flag))
 }
 
+cpp_vclMatrix_scalar_axpy <- function(alpha, scalar, ptrB, sourceCode, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_scalar_axpy', PACKAGE = 'gpuR', alpha, scalar, ptrB, sourceCode, ctx_id, type_flag))
+}
+
+cpp_vclMatrix_log_deriv <- function(ptrA, ptrC, sourceCode, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_log_deriv', PACKAGE = 'gpuR', ptrA, ptrC, sourceCode, ctx_id, type_flag))
+}
+
 cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vclMatrix_unary_axpy', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id))
 }
@@ -512,6 +528,10 @@ cpp_vclMatrix_elem_div <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclMatrix_scalar_div <- function(ptrC, B_scalar, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_scalar_div', PACKAGE = 'gpuR', ptrC, B_scalar, type_flag))
+}
+
+cpp_vclMatrix_scalar_div_2 <- function(ptrC, scalar, sourceCode_, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_scalar_div_2', PACKAGE = 'gpuR', ptrC, scalar, sourceCode_, ctx_id, type_flag))
 }
 
 cpp_vclMatrix_elem_pow <- function(ptrA, ptrB, ptrC, type_flag) {
@@ -682,10 +702,6 @@ cpp_gpuVector_elem_abs <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuVector_elem_abs', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
-cpp_gpuVector_max <- function(ptrA, type_flag, ctx_id) {
-    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
-}
-
 cpp_gpuVector_min <- function(ptrA, type_flag, ctx_id) {
     .Call('gpuR_cpp_gpuVector_min', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
 }
@@ -788,6 +804,10 @@ cpp_vclVector_elem_abs <- function(ptrA, ptrC, type_flag) {
 
 cpp_vclVector_max <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_vclVector_elem_max_abs <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vclVector_elem_max_abs', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_vclVector_min <- function(ptrA, type_flag) {

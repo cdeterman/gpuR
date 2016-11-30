@@ -284,51 +284,162 @@ vclMatMult <- function(A, B){
 }
 
 # vclMatrix AXPY
-vclMat_axpy <- function(alpha, A, B, inplace = FALSE){
+vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScalar = FALSE){
     
-    assert_are_identical(A@.context_index, B@.context_index)
-    
-    nrA = nrow(A)
-    ncA = ncol(A)
-    nrB = nrow(B)
-    ncB = ncol(B)
-    
-    type <- typeof(A)
-    
-    if(inplace){
-        Z <- B
+    if(inherits(A, 'vclMatrix') & inherits(B, 'vclMatrix')){
+        assert_are_identical(A@.context_index, B@.context_index)
+        
+        # nrA = nrow(A)
+        # ncA = ncol(A)
+        # nrB = nrow(B)
+        # ncB = ncol(B)
+        
+        type <- typeof(A)
+        
     }else{
-        Z <- vclMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
-        if(!missing(B))
-        {
-            if(length(B[]) != length(A[])){
-                stop("Lengths of matrices must match")
-            }
-            Z <- deepcopy(B)
-        }    
+        if(inherits(A, 'vclMatrix')){
+            type <- typeof(A)
+        }else{
+            type <- typeof(B)
+        }
     }
     
-    switch(type,
-           integer = {
-               # stop("OpenCL integer GEMM not currently
-               #      supported for viennacl matrices")
-               cpp_vclMatrix_axpy(alpha, 
-                                  A@address, 
-                                  Z@address,
-                                  4L)
-           },
-           float = {cpp_vclMatrix_axpy(alpha, 
-                                       A@address, 
-                                       Z@address,
-                                       6L)
-           },
-           double = {cpp_vclMatrix_axpy(alpha, 
-                                        A@address,
-                                        Z@address,
-                                        8L)
-           },
-            stop("type not recognized")
-    )
+    if(inplace){
+        if(!AisScalar && !BisScalar){
+            Z <- B
+        }else{
+            if(inherits(A, 'vclMatrix')){
+                Z <- A
+            }else{
+                Z <- B
+            }
+            # if(AisScalar){
+            #     Z <- B    
+            # }else{
+            #     Z <- A
+            # }    
+        }
+    }else{
+        if(!AisScalar && !BisScalar){
+            if(!missing(B))
+            {
+                if(length(B[]) != length(A[])){
+                    stop("Lengths of matrices must match")
+                }
+                Z <- deepcopy(B)
+            }   
+        }else{
+            if(AisScalar){
+                if(!missing(B))
+                {
+                    if(inherits(A, 'vclMatrix')){
+                        if(length(B[]) != length(A[])){
+                            stop("Lengths of matrices must match")
+                        }
+                    }
+                    Z <- deepcopy(B)
+                }
+            }else{
+                if(!missing(A))
+                {
+                    if(inherits(B, 'vclMatrix')){
+                        if(length(B[]) != length(A[])){
+                            stop("Lengths of matrices must match")
+                        }
+                    }
+                    Z <- deepcopy(A)
+                }     
+            }
+        }
+        
+        
+    }
+    
+    if(AisScalar || BisScalar){
+        
+        scalar <- if(AisScalar) A else B
+        
+        # print(scalar)
+        # print(alpha)
+        # print(head(Z[]))
+        
+        switch(type,
+               integer = {
+                   file <- system.file("CL", "iScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_axpy(alpha, 
+                                             scalar, 
+                                             Z@address,
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             4L)
+               },
+               float = {
+                   
+                   file <- system.file("CL", "fScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_axpy(alpha, 
+                                             scalar, 
+                                             Z@address,
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             6L)
+               },
+               double = {
+                   
+                   file <- system.file("CL", "dScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_axpy(alpha, 
+                                             scalar,
+                                             Z@address,
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        
+        # print('default axpy')
+        switch(type,
+               integer = {
+                   # stop("OpenCL integer GEMM not currently
+                   #      supported for viennacl matrices")
+                   cpp_vclMatrix_axpy(alpha, 
+                                      A@address, 
+                                      Z@address,
+                                      4L)
+               },
+               float = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      A@address, 
+                                      Z@address,
+                                      6L)
+               },
+               double = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      A@address,
+                                      Z@address,
+                                      8L)
+               },
+               stop("type not recognized")
+        )
+    }
 
     if(inplace){
         return(invisible(Z))
@@ -337,12 +448,17 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE){
     }
 }
 
+
 # vclMatrix unary AXPY
-vclMatrix_unary_axpy <- function(A){
+vclMatrix_unary_axpy <- function(A, inplace = FALSE){
     
     type = typeof(A)
     
-    Z <- deepcopy(A)
+    if(inplace){
+        Z <- A
+    }else{
+        Z <- deepcopy(A)   
+    }
     
     switch(type,
            integer = {
@@ -363,7 +479,11 @@ vclMatrix_unary_axpy <- function(A){
            stop("type not recognized")
     )
     
-    return(Z)
+    if(inplace){
+    	return(invisible(Z))
+    }else{
+    	return(Z)	
+    }
 }
 
 # vclMatrix crossprod
@@ -425,7 +545,7 @@ vcl_tcrossprod <- function(X, Y){
 
 
 # GPU Element-Wise Multiplication
-vclMatElemMult <- function(A, B){
+vclMatElemMult <- function(A, B, inplace = FALSE){
     
     if(!all(dim(A) == dim(B))){
         stop("matrices not conformable")
@@ -435,7 +555,11 @@ vclMatElemMult <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
@@ -462,11 +586,15 @@ vclMatElemMult <- function(A, B){
 }
 
 # GPU Scalar Element-Wise Multiplication
-vclMatScalarMult <- function(A, B){
+vclMatScalarMult <- function(A, B, inplace = FALSE){
     
     type <- typeof(A)
 
-    C <- deepcopy(A)
+    if(inplace){
+        C <- A
+    }else{
+        C <- deepcopy(A)    
+    }
     
     switch(type,
            integer = {
@@ -486,11 +614,15 @@ vclMatScalarMult <- function(A, B){
            stop("type not recognized")
     )
 
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Division
-vclMatElemDiv <- function(A, B){
+vclMatElemDiv <- function(A, B, inplace = FALSE){
     
     if(!all(dim(A) == dim(B))){
         stop("matrices not conformable")
@@ -500,7 +632,11 @@ vclMatElemDiv <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
@@ -527,31 +663,92 @@ vclMatElemDiv <- function(A, B){
 }
 
 # GPU Scalar Element-Wise Division
-vclMatScalarDiv <- function(A, B){
+vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
     
-    type <- typeof(A)
-    
-    C <- deepcopy(A)
-    
-    switch(type,
-           integer = {
-               cpp_vclMatrix_scalar_div(C@address,
-                                        B,
-                                        4L)
-           },
-           float = {cpp_vclMatrix_scalar_div(C@address,
-                                             B,
-                                             6L)
-           },
-           double = {
-               cpp_vclMatrix_scalar_div(C@address,
-                                        B,
-                                        8L)
-           },
-           stop("type not recognized")
-    )
+    if(AisScalar){
+        type <- typeof(B)
+        scalar <- A
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)    
+        }
+        
+        switch(type,
+               integer = {
+                   src <- file <- system.file("CL", "iScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              kernel,
+                                              C@.context_index - 1,
+                                              4L)
+               },
+               float = {
+                   src <- file <- system.file("CL", "fScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              kernel,
+                                              C@.context_index - 1,
+                                              6L)
+               },
+               double = {
+                   src <- file <- system.file("CL", "dScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_vclMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              kernel,
+                                              C@.context_index - 1,
+                                              8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        type <- typeof(A)
+        C <- deepcopy(A)
+        scalar <- B
+        
+        switch(type,
+               integer = {
+                   cpp_vclMatrix_scalar_div(C@address,
+                                            scalar,
+                                            4L)
+               },
+               float = {cpp_vclMatrix_scalar_div(C@address,
+                                                 scalar,
+                                                 6L)
+               },
+               double = {
+                   cpp_vclMatrix_scalar_div(C@address,
+                                            scalar,
+                                            8L)
+               },
+               stop("type not recognized")
+        )
+    }
 
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Power
@@ -966,11 +1163,15 @@ vclMatElemLog10 <- function(A){
 }
 
 # GPU Element-Wise Exponential
-vclMatElemExp <- function(A){
+vclMatElemExp <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
@@ -990,7 +1191,11 @@ vclMatElemExp <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+    	return(invisible(C))
+    }else{
+    	return(C)	
+    }
 }
 
 # vclMatrix colSums
@@ -1186,11 +1391,15 @@ vclMatrix_peuclidean <- function(A, B, D, squareDist){
 }
 
 # GPU Element-Wise Absolute Value
-vclMatElemAbs <- function(A){
+vclMatElemAbs <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1210,7 +1419,11 @@ vclMatElemAbs <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 # GPU Vector maximum

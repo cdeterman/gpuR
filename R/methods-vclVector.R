@@ -5,7 +5,6 @@ as.vector.vclVector <- function(x, mode = "any"){
     return(out)
 }
 
-
 #' @rdname vclVector-methods
 #' @param shared Logical indicating if memory should be shared with \code{x}
 #' @export
@@ -14,35 +13,33 @@ as.vclVector <- function (data, shared, ...) {
 }
 
 #' @export
-as.vclVector.vclMatrix <- function(data, shared = TRUE, ...){
-    if(shared){
-        
-        switch(typeof(data),
-               "integer" = return(new("ivclVector", 
-                                      address=vclMatTovclVec(data@address, 4L),
-                                      .context_index = data@.context_index,
-                                      .platform_index = data@.platform_index,
-                                      .platform = data@.platform,
-                                      .device_index = data@.device_index,
-                                      .device = data@.device)),
-               "float" = return(new("fvclVector", 
-                                    address=vclMatTovclVec(data@address, 6L),
-                                    .context_index = data@.context_index,
-                                    .platform_index = data@.platform_index,
-                                    .platform = data@.platform,
-                                    .device_index = data@.device_index,
-                                    .device = data@.device)),
-               "double" = return(new("dvclVector", 
-                                     address=vclMatTovclVec(data@address, 8L),
-                                     .context_index = data@.context_index,
-                                     .platform_index = data@.platform_index,
-                                     .platform = data@.platform,
-                                     .device_index = data@.device_index,
-                                     .device = data@.device))
-        )
-    }else{
-        stop("copy constructor not implemented yet")
-    }
+as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+    
+    ctx_id <- data@.context_index - 1
+    
+    switch(typeof(data),
+           "integer" = return(new("ivclVector", 
+                                  address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+                                  .context_index = data@.context_index,
+                                  .platform_index = data@.platform_index,
+                                  .platform = data@.platform,
+                                  .device_index = data@.device_index,
+                                  .device = data@.device)),
+           "float" = return(new("fvclVector", 
+                                address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+                                .context_index = data@.context_index,
+                                .platform_index = data@.platform_index,
+                                .platform = data@.platform,
+                                .device_index = data@.device_index,
+                                .device = data@.device)),
+           "double" = return(new("dvclVector", 
+                                 address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+                                 .context_index = data@.context_index,
+                                 .platform_index = data@.platform_index,
+                                 .platform = data@.platform,
+                                 .device_index = data@.device_index,
+                                 .device = data@.device))
+    )
 }
 
 
@@ -149,6 +146,26 @@ setMethod("[<-",
               return(x)
           })
 
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "numeric", j = "missing", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              
+              start <- head(i, 1) - 1
+              end <- tail(i, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLVectorRange(x@address, value@address, start, end, 4L),
+                     "float" = vclSetVCLVectorRange(x@address, value@address, start, end, 6L),
+                     "double" = vclSetVCLVectorRange(x@address, value@address, start, end, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
 
 #' @rdname grapes-times-grapes-methods
 #' @export
