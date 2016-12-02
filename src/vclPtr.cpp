@@ -102,6 +102,41 @@ vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
 }
 
 
+template<typename T>
+void
+assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
+    
+    // viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    // ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    XPtr<dynVCLMat<T> > ptrM(ptrM_);
+    XPtr<dynVCLVec<T> > ptrV(ptrV_);
+    viennacl::matrix_range<viennacl::matrix<T> > M = ptrM->data();
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+    
+    // viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+    
+    // viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+    
+    std::cout << "matrix?" << std::endl;
+    std::cout << M << std::endl;
+    
+    std::cout << "vector?" << std::endl;
+    std::cout << V << std::endl;
+    
+    viennacl::matrix_base<T> dummy(V.handle(),
+                                   M.size1(), 0, 1, M.size1(),   //row layout
+                                   M.size2(), 0, 1, M.size2(),   //column layout
+                                   true); // row-major
+    
+    std::cout << "dummy mat" << std::endl;
+    std::cout << dummy << std::endl;
+    
+    M = dummy;
+}
+
 template <typename T>
 void
 setVCLcols(SEXP ptrA_, CharacterVector names){
@@ -384,6 +419,10 @@ SEXP cpp_sexp_mat_to_vclMatrix(
 {
     dynVCLMat<T> *mat = new dynVCLMat<T>(A, ctx_id);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > tmp = pMat->data();
+    std::cout << tmp << std::endl;
+    
     return pMat;
 }
 
@@ -1462,5 +1501,25 @@ vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+assignVectorToMat(SEXP ptrM, SEXP ptrV, const int type_flag)
+{
+    switch(type_flag){
+    case 4:
+        assignVectorToMat<int>(ptrM, ptrV);
+        return;
+    case 6:
+        assignVectorToMat<float>(ptrM, ptrV);
+        return;
+    case 8:
+        assignVectorToMat<double>(ptrM, ptrV);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix");
     }
 }

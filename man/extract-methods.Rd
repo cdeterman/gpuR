@@ -30,6 +30,7 @@
 \alias{[<-,vclMatrix,missing,missing,matrix-method}
 \alias{[<-,vclMatrix,missing,missing,numeric-method}
 \alias{[<-,vclMatrix,missing,missing,vclMatrix-method}
+\alias{[<-,vclMatrix,missing,missing,vclVector-method}
 \alias{[<-,vclMatrix,missing,numeric,numeric-method}
 \alias{[<-,vclMatrix,numeric,missing,numeric-method}
 \alias{[<-,vclMatrix,numeric,numeric,numeric-method}
@@ -72,6 +73,8 @@
 \S4method{[}{vclMatrix,missing,missing,vclMatrix}(x, i, j) <- value
 
 \S4method{[}{vclMatrix,missing,missing,numeric}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,missing,missing,vclVector}(x, i, j) <- value
 
 \S4method{[}{vclVector,missing,missing,missing}(x, i, j, drop)
 

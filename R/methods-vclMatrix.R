@@ -380,6 +380,23 @@ setMethod("[<-",
               return(x)
           })
 
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = assignVectorToMat(x@address, value@address, 4L),
+                     "float" = assignVectorToMat(x@address, value@address, 6L),
+                     "double" = assignVectorToMat(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
 #' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
