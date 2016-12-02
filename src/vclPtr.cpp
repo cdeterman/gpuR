@@ -120,19 +120,19 @@ assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
     
     // viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
     
-    std::cout << "matrix?" << std::endl;
-    std::cout << M << std::endl;
-    
-    std::cout << "vector?" << std::endl;
-    std::cout << V << std::endl;
+    // std::cout << "matrix?" << std::endl;
+    // std::cout << M << std::endl;
+    // 
+    // std::cout << "vector?" << std::endl;
+    // std::cout << V << std::endl;
     
     viennacl::matrix_base<T> dummy(V.handle(),
                                    M.size1(), 0, 1, M.size1(),   //row layout
                                    M.size2(), 0, 1, M.size2(),   //column layout
                                    true); // row-major
     
-    std::cout << "dummy mat" << std::endl;
-    std::cout << dummy << std::endl;
+    // std::cout << "dummy mat" << std::endl;
+    // std::cout << dummy << std::endl;
     
     M = dummy;
 }
@@ -419,9 +419,6 @@ SEXP cpp_sexp_mat_to_vclMatrix(
 {
     dynVCLMat<T> *mat = new dynVCLMat<T>(A, ctx_id);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > tmp = pMat->data();
-    std::cout << tmp << std::endl;
     
     return pMat;
 }
