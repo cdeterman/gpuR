@@ -56,6 +56,52 @@ using namespace Rcpp;
 // }
 
 
+template<typename T>
+void
+vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
+    
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    XPtr<dynVCLVec<T> > ptrV(ptrV_);
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+    
+    int start = 0;
+    int end = 0;
+    
+    // std::cout << "start loop" << std::endl;
+    for(int i = 0; i < mylist.size(); i++){
+        
+        S4 tmp = mylist[i];
+        SEXP tmp_address = tmp.slot("address");
+        XPtr<dynVCLMat<T> > tmpPtr(tmp_address);
+        viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+        
+        viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+        
+        viennacl::matrix_base<T> dummy(A.handle(),
+                                       mat.size1(), 0, 1, mat.size1(),   //row layout
+                                       mat.size2(), 0, 1, mat.size2(),   //column layout
+                                       true); // row-major
+        dummy = mat;
+        
+        end += A.size();
+        
+        // std::cout << "start: " << start << std::endl;
+        // std::cout << "end: " << end << std::endl;
+        
+        viennacl::range r(start, end);
+        viennacl::vector_range<viennacl::vector_base<T> > vsub(V, r);
+        
+        vsub = A;
+        
+        start += A.size();
+    }
+}
+
+
 template <typename T>
 void
 setVCLcols(SEXP ptrA_, CharacterVector names){
@@ -1398,3 +1444,23 @@ getVCLcols(SEXP ptrA, const int type_flag)
 //         throw Rcpp::exception("unknown type detected for vclMatrix object");
 //     }
 // }
+
+
+// [[Rcpp::export]]
+void
+vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
+{
+    switch(type_flag){
+        case 4:
+            vectorizeList<int>(mylist, ptrV, ctx_id);
+            return;
+        case 6:
+            vectorizeList<int>(mylist, ptrV, ctx_id);
+            return;
+        case 8:
+            vectorizeList<int>(mylist, ptrV, ctx_id);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix");
+    }
+}
