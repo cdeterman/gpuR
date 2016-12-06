@@ -2659,6 +2659,38 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuR_qr
+SEXP cpp_gpuR_qr(SEXP ptrA, const bool isVCL, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_gpuR_qr(SEXP ptrASEXP, SEXP isVCLSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type isVCL(isVCLSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_gpuR_qr(ptrA, isVCL, type_flag, ctx_id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_recover_qr
+void cpp_recover_qr(SEXP ptrQR, const bool QRisVCL, SEXP ptrQ, const bool QisVCL, SEXP ptrR, const bool RisVCL, SEXP betas, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_recover_qr(SEXP ptrQRSEXP, SEXP QRisVCLSEXP, SEXP ptrQSEXP, SEXP QisVCLSEXP, SEXP ptrRSEXP, SEXP RisVCLSEXP, SEXP betasSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrQR(ptrQRSEXP);
+    Rcpp::traits::input_parameter< const bool >::type QRisVCL(QRisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrQ(ptrQSEXP);
+    Rcpp::traits::input_parameter< const bool >::type QisVCL(QisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrR(ptrRSEXP);
+    Rcpp::traits::input_parameter< const bool >::type RisVCL(RisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type betas(betasSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_recover_qr(ptrQR, QRisVCL, ptrQ, QisVCL, ptrR, RisVCL, betas, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuMatrix_pmcc
 void cpp_gpuMatrix_pmcc(SEXP ptrA, SEXP ptrB, const int type_flag, int ctx_id);
 RcppExport SEXP gpuR_cpp_gpuMatrix_pmcc(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
