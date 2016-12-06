@@ -218,6 +218,26 @@ truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
 
+cpp_gpuVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_max <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_min <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
 vcl_dncol <- function(ptrA) {
     .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
 }
@@ -244,26 +264,6 @@ vcl_inrow <- function(ptrA) {
 
 cpp_vclVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_max <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_min <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_identity_vclMatrix <- function(ptrA, type_flag) {
@@ -824,6 +824,14 @@ cpp_gpu_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
 
 cpp_vcl_eigen <- function(Am, Qm, eigenvalues, symmetric, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vcl_eigen', PACKAGE = 'gpuR', Am, Qm, eigenvalues, symmetric, type_flag, ctx_id))
+}
+
+cpp_gpuR_qr <- function(ptrA, isVCL, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuR_qr', PACKAGE = 'gpuR', ptrA, isVCL, type_flag, ctx_id)
+}
+
+cpp_recover_qr <- function(ptrQR, QRisVCL, ptrQ, QisVCL, ptrR, RisVCL, betas, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_recover_qr', PACKAGE = 'gpuR', ptrQR, QRisVCL, ptrQ, QisVCL, ptrR, RisVCL, betas, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
