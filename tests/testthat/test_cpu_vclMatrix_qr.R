@@ -6,7 +6,6 @@ set.seed(123)
 
 ORDER <- 10
 
-
 # Base R objects
 X <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 nsqA <- matrix(rnorm(20), nrow = 4)
