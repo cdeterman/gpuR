@@ -197,5 +197,3 @@ setMethod("qr.Q", signature(qr = "gpuQR"),
               
               return(Q)
           }) 
-
-
