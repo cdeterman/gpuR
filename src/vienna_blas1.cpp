@@ -4,10 +4,11 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
+#include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
-#include "gpuR/dynEigenMat.hpp"
+// #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
-#include "gpuR/dynVCLMat.hpp"
+// #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
 // Use OpenCL with ViennaCL
@@ -2291,7 +2292,7 @@ T
 cpp_vclVector_max(
     SEXP ptrA_)
 {    
-    T max;
+    // T max;
     
     // Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     // viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
@@ -2350,6 +2351,7 @@ void cpp_vclMatrix_scalar_axpy(
         SEXP alpha_, 
         SEXP scalar_, 
         SEXP ptrC_,
+        int max_local_size,
         SEXP sourceCode_,
         const int ctx_id)
 {
@@ -2357,7 +2359,6 @@ void cpp_vclMatrix_scalar_axpy(
     const T scalar = as<T>(scalar_);
     
     viennacl::matrix<T> *vcl_C;
-    int max_local_size;
     
     // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     // viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
@@ -2396,8 +2397,11 @@ void cpp_vclMatrix_scalar_axpy(
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
         
-        max_local_size = preferred_work_group_size_multiple;
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
+    
+    // std::cout << "local size" << std::endl;
+    // std::cout << max_local_size << std::endl;
     
     // set global work sizes
     my_kernel_mul.global_work_size(0, M_internal);
@@ -2943,6 +2947,7 @@ cpp_vclMatrix_scalar_axpy(
     SEXP alpha,
     SEXP scalar, 
     SEXP ptrB,
+    int max_local_size,
     SEXP sourceCode,
     const int ctx_id,
     const int type_flag)
@@ -2950,13 +2955,13 @@ cpp_vclMatrix_scalar_axpy(
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_scalar_axpy<int>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        cpp_vclMatrix_scalar_axpy<int>(alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_scalar_axpy<float>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        cpp_vclMatrix_scalar_axpy<float>(alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_scalar_axpy<double>(alpha, scalar, ptrB, sourceCode, ctx_id);
+        cpp_vclMatrix_scalar_axpy<double>(alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");

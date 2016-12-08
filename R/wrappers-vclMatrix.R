@@ -363,6 +363,13 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
         # print(alpha)
         # print(head(Z[]))
         
+        maxWorkGroupSize <- 
+            switch(deviceType(Z@.platform_index, Z@.device_index),
+                   "gpu" = gpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+                   stop("unrecognized device type")
+            )
+        
         switch(type,
                integer = {
                    file <- system.file("CL", "iScalarAXPY.cl", package = "gpuR")
@@ -375,6 +382,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
                                              4L)
@@ -391,6 +399,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
                                              6L)
@@ -407,6 +416,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar,
                                              Z@address,
+                                             sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
                                              8L)

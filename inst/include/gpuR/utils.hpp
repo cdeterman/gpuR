@@ -25,7 +25,7 @@ roundDown(int numToRound, int multiple)
         return numToRound;
     
     int remainder = numToRound % multiple;
-    if (remainder == 0)
+    if (remainder == 0 || remainder == numToRound)
         return numToRound;
     
     return numToRound - remainder;
