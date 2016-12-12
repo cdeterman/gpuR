@@ -38,6 +38,7 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
                
                cpp_vclMatrix_log_deriv(Z@address,
                                        B@address,
+                                       sqrt(maxWorkGroupSize),
                                        kernel,
                                        Z@.context_index - 1,
                                        6L)
@@ -53,6 +54,7 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
                
                cpp_vclMatrix_log_deriv(Z@address,
                                        B@address,
+                                       sqrt(maxWorkGroupSize),
                                        kernel,
                                        Z@.context_index - 1,
                                        8L)

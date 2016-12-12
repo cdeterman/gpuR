@@ -2421,12 +2421,12 @@ template <typename T>
 void cpp_vclMatrix_log_deriv(
         SEXP ptrA_,
         SEXP ptrC_,
+        int max_local_size,
         SEXP sourceCode_,
         const int ctx_id)
 {
     viennacl::matrix<T> *vcl_A;
     viennacl::matrix<T> *vcl_C;
-    int max_local_size;
     
     std::string my_kernel = as<std::string>(sourceCode_);
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -2462,7 +2462,7 @@ void cpp_vclMatrix_log_deriv(
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
         
-        max_local_size = preferred_work_group_size_multiple;
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
     
     // set global work sizes
@@ -2564,11 +2564,11 @@ template <typename T>
 void cpp_vclMatrix_scalar_div_2(
         SEXP scalar,
         SEXP ptrC_,
+        int max_local_size,
         SEXP sourceCode_,
         const int ctx_id)
 {
     // declarations
-    int max_local_size;
     viennacl::matrix<T> *vcl_C;
     
     const T alpha = as<T>(scalar);
@@ -2605,7 +2605,7 @@ void cpp_vclMatrix_scalar_div_2(
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
         
-        max_local_size = preferred_work_group_size_multiple;
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
     
     // set global work sizes
@@ -2974,6 +2974,7 @@ void
 cpp_vclMatrix_log_deriv(
     SEXP ptrA,
     SEXP ptrC,
+    int max_local_size,
     SEXP sourceCode,
     const int ctx_id,
     const int type_flag)
@@ -2981,13 +2982,13 @@ cpp_vclMatrix_log_deriv(
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_log_deriv<int>(ptrA, ptrC, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<int>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_log_deriv<float>(ptrA, ptrC, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<float>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_log_deriv<double>(ptrA, ptrC, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<double>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -3113,6 +3114,7 @@ void
 cpp_vclMatrix_scalar_div_2(
     SEXP ptrC,
     SEXP scalar,
+    int max_local_size,
     SEXP sourceCode_,
     const int ctx_id,
     const int type_flag)
@@ -3120,13 +3122,13 @@ cpp_vclMatrix_scalar_div_2(
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_scalar_div_2<int>(scalar, ptrC, sourceCode_, ctx_id);
+        cpp_vclMatrix_scalar_div_2<int>(scalar, ptrC, max_local_size, sourceCode_, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_scalar_div_2<float>(scalar, ptrC, sourceCode_, ctx_id);
+        cpp_vclMatrix_scalar_div_2<float>(scalar, ptrC, max_local_size, sourceCode_, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_scalar_div_2<double>(scalar, ptrC, sourceCode_, ctx_id);
+        cpp_vclMatrix_scalar_div_2<double>(scalar, ptrC, max_local_size, sourceCode_, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");

@@ -1550,16 +1550,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vclMatrix_log_deriv
-void cpp_vclMatrix_log_deriv(SEXP ptrA, SEXP ptrC, SEXP sourceCode, const int ctx_id, const int type_flag);
-RcppExport SEXP gpuR_cpp_vclMatrix_log_deriv(SEXP ptrASEXP, SEXP ptrCSEXP, SEXP sourceCodeSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
+void cpp_vclMatrix_log_deriv(SEXP ptrA, SEXP ptrC, int max_local_size, SEXP sourceCode, const int ctx_id, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_log_deriv(SEXP ptrASEXP, SEXP ptrCSEXP, SEXP max_local_sizeSEXP, SEXP sourceCodeSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
     Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_vclMatrix_log_deriv(ptrA, ptrC, sourceCode, ctx_id, type_flag);
+    cpp_vclMatrix_log_deriv(ptrA, ptrC, max_local_size, sourceCode, ctx_id, type_flag);
     return R_NilValue;
 END_RCPP
 }
@@ -1626,16 +1627,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vclMatrix_scalar_div_2
-void cpp_vclMatrix_scalar_div_2(SEXP ptrC, SEXP scalar, SEXP sourceCode_, const int ctx_id, const int type_flag);
-RcppExport SEXP gpuR_cpp_vclMatrix_scalar_div_2(SEXP ptrCSEXP, SEXP scalarSEXP, SEXP sourceCode_SEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
+void cpp_vclMatrix_scalar_div_2(SEXP ptrC, SEXP scalar, int max_local_size, SEXP sourceCode_, const int ctx_id, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_scalar_div_2(SEXP ptrCSEXP, SEXP scalarSEXP, SEXP max_local_sizeSEXP, SEXP sourceCode_SEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
     Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
     Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_vclMatrix_scalar_div_2(ptrC, scalar, sourceCode_, ctx_id, type_flag);
+    cpp_vclMatrix_scalar_div_2(ptrC, scalar, max_local_size, sourceCode_, ctx_id, type_flag);
     return R_NilValue;
 END_RCPP
 }

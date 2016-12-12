@@ -514,8 +514,8 @@ cpp_vclMatrix_scalar_axpy <- function(alpha, scalar, ptrB, max_local_size, sourc
     invisible(.Call('gpuR_cpp_vclMatrix_scalar_axpy', PACKAGE = 'gpuR', alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id, type_flag))
 }
 
-cpp_vclMatrix_log_deriv <- function(ptrA, ptrC, sourceCode, ctx_id, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_log_deriv', PACKAGE = 'gpuR', ptrA, ptrC, sourceCode, ctx_id, type_flag))
+cpp_vclMatrix_log_deriv <- function(ptrA, ptrC, max_local_size, sourceCode, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_log_deriv', PACKAGE = 'gpuR', ptrA, ptrC, max_local_size, sourceCode, ctx_id, type_flag))
 }
 
 cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
@@ -538,8 +538,8 @@ cpp_vclMatrix_scalar_div <- function(ptrC, B_scalar, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_scalar_div', PACKAGE = 'gpuR', ptrC, B_scalar, type_flag))
 }
 
-cpp_vclMatrix_scalar_div_2 <- function(ptrC, scalar, sourceCode_, ctx_id, type_flag) {
-    invisible(.Call('gpuR_cpp_vclMatrix_scalar_div_2', PACKAGE = 'gpuR', ptrC, scalar, sourceCode_, ctx_id, type_flag))
+cpp_vclMatrix_scalar_div_2 <- function(ptrC, scalar, max_local_size, sourceCode_, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_scalar_div_2', PACKAGE = 'gpuR', ptrC, scalar, max_local_size, sourceCode_, ctx_id, type_flag))
 }
 
 cpp_vclMatrix_elem_pow <- function(ptrA, ptrB, ptrC, type_flag) {

@@ -685,6 +685,13 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
             C <- deepcopy(B)    
         }
         
+        maxWorkGroupSize <- 
+            switch(deviceType(C@.platform_index, C@.device_index),
+                   "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   stop("unrecognized device type")
+            )
+        
         switch(type,
                integer = {
                    src <- file <- system.file("CL", "iScalarElemDiv.cl", package = "gpuR")
@@ -696,6 +703,7 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
                    
                    cpp_vclMatrix_scalar_div_2(C@address,
                                               scalar,
+                                              sqrt(maxWorkGroupSize),
                                               kernel,
                                               C@.context_index - 1,
                                               4L)
@@ -710,6 +718,7 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
                    
                    cpp_vclMatrix_scalar_div_2(C@address,
                                               scalar,
+                                              sqrt(maxWorkGroupSize),
                                               kernel,
                                               C@.context_index - 1,
                                               6L)
@@ -724,6 +733,7 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
                    
                    cpp_vclMatrix_scalar_div_2(C@address,
                                               scalar,
+                                              sqrt(maxWorkGroupSize),
                                               kernel,
                                               C@.context_index - 1,
                                               8L)
