@@ -126,7 +126,11 @@ assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
     // std::cout << "vector?" << std::endl;
     // std::cout << V << std::endl;
     
-    viennacl::matrix_base<T> dummy(V.handle(),
+    viennacl::vector_base<T> tmp = V;
+    
+    // int start = ptrV->begin - 1;
+    
+    viennacl::matrix_base<T> dummy(tmp.handle(),
                                    M.size1(), 0, 1, M.size1(),   //row layout
                                    M.size2(), 0, 1, M.size2(),   //column layout
                                    true); // row-major
