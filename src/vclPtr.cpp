@@ -85,6 +85,8 @@ vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
                                        mat.size1(), 0, 1, mat.size1(),   //row layout
                                        mat.size2(), 0, 1, mat.size2(),   //column layout
                                        true); // row-major
+        
+        
         dummy = mat;
         
         end += A.size();
@@ -1495,10 +1497,10 @@ vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
             vectorizeList<int>(mylist, ptrV, ctx_id);
             return;
         case 6:
-            vectorizeList<int>(mylist, ptrV, ctx_id);
+            vectorizeList<float>(mylist, ptrV, ctx_id);
             return;
         case 8:
-            vectorizeList<int>(mylist, ptrV, ctx_id);
+            vectorizeList<double>(mylist, ptrV, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix");

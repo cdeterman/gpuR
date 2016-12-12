@@ -2420,28 +2420,28 @@ void cpp_vclMatrix_scalar_axpy(
 template <typename T>
 void cpp_vclMatrix_log_deriv(
         SEXP ptrA_,
-        SEXP ptrC_,
+        SEXP ptrB_,
         int max_local_size,
         SEXP sourceCode_,
         const int ctx_id)
 {
-    viennacl::matrix<T> *vcl_A;
-    viennacl::matrix<T> *vcl_C;
+		viennacl::matrix<T> *vcl_A;
+		viennacl::matrix<T> *vcl_B;
     
     std::string my_kernel = as<std::string>(sourceCode_);
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     
     vcl_A = getVCLptr<T>(ptrA_, true, ctx_id);
-    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    vcl_B = getVCLptr<T>(ptrB_, true, ctx_id);
     
-    int M = vcl_C->size1();
+    int M = vcl_A->size1();
     // int N = vcl_B.size1();
-    int P = vcl_C->size2();
-    int M_internal = vcl_C->internal_size1();
-    int P_internal = vcl_C->internal_size2();
+    int P = vcl_A->size2();
+    int M_internal = vcl_A->internal_size1();
+    int P_internal = vcl_A->internal_size2();
     
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
@@ -2465,6 +2465,8 @@ void cpp_vclMatrix_log_deriv(
         max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
     
+    // std::cout << max_local_size << std::endl;
+    
     // set global work sizes
     my_kernel_mul.global_work_size(0, M_internal);
     my_kernel_mul.global_work_size(1, P_internal);
@@ -2474,7 +2476,7 @@ void cpp_vclMatrix_log_deriv(
     my_kernel_mul.local_work_size(1, max_local_size);
     
     // execute kernel
-    viennacl::ocl::enqueue(my_kernel_mul(*vcl_A, *vcl_C, M, P, P_internal));
+    viennacl::ocl::enqueue(my_kernel_mul(*vcl_A, *vcl_B, M, P, P_internal));
 }
 
 template <typename T>
@@ -2973,7 +2975,7 @@ cpp_vclMatrix_scalar_axpy(
 void
 cpp_vclMatrix_log_deriv(
     SEXP ptrA,
-    SEXP ptrC,
+    SEXP ptrB,
     int max_local_size,
     SEXP sourceCode,
     const int ctx_id,
@@ -2982,13 +2984,13 @@ cpp_vclMatrix_log_deriv(
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_log_deriv<int>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<int>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_log_deriv<float>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<float>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_log_deriv<double>(ptrA, ptrC, max_local_size, sourceCode, ctx_id);
+        cpp_vclMatrix_log_deriv<double>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");

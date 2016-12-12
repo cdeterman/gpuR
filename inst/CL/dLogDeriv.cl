@@ -1,5 +1,5 @@
 __kernel void logistic_deriv(
-    __global float *A, __global float *B,
+    __global double *A, __global double *B,
     const int Mdim, const int Pdim, const int MdimPad) {
     
     // Get the index of the elements to be processed

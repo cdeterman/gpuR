@@ -12,6 +12,13 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
     
     type <- typeof(Z)
     
+    maxWorkGroupSize <- 
+        switch(deviceType(Z@.platform_index, Z@.device_index),
+               "gpu" = gpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+               stop("unrecognized device type")
+        )
+    
     switch(type,
            integer = {
                stop("not currently implemented")
@@ -37,11 +44,11 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
                kernel <- readChar(file, file.info(file)$size)
                
                cpp_vclMatrix_log_deriv(Z@address,
-                                       B@address,
-                                       sqrt(maxWorkGroupSize),
-                                       kernel,
-                                       Z@.context_index - 1,
-                                       6L)
+               												B@address,
+               												sqrt(maxWorkGroupSize),
+               												kernel,
+               												Z@.context_index - 1,
+               												6L)
            },
            double = {
                
@@ -53,11 +60,11 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
                kernel <- readChar(file, file.info(file)$size)
                
                cpp_vclMatrix_log_deriv(Z@address,
-                                       B@address,
-                                       sqrt(maxWorkGroupSize),
-                                       kernel,
-                                       Z@.context_index - 1,
-                                       8L)
+               												B@address,
+               												sqrt(maxWorkGroupSize),
+               												kernel,
+               												Z@.context_index - 1,
+               												8L)
            },
            stop("type not recognized")
     )
