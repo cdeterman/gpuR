@@ -7,6 +7,7 @@
 
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynVCLMat.hpp"
+#include "gpuR/dynVCLVec.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -262,6 +263,62 @@ cpp_vclMatrix_crossprod(
 }
 
 template <typename T>
+void 
+cpp_vclMat_vclVec_crossprod(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrC->data();
+    
+    viennacl::vector_base<T> tmp = V;
+    
+    // int start = ptrV->begin - 1;
+    
+    // std::cout << ptrC->getPtr()->size()/B.size2() << std::endl;
+    // std::cout << B.size2() << std::endl;
+    // std::cout << A.size2() << std::endl;
+    
+    
+    viennacl::matrix_base<T> C(tmp.handle(),
+                                A.size2(), 0, 1, A.size2(),   // row layout
+                                B.size2(), 0, 1, B.size2(),   // column layout
+                                true); // row-major
+    
+    // viennacl::matrix_base<T> pC(V.handle(),
+    //                             ptrC->getPtr()->size()/B.size2(), 0, 1, ptrC->getPtr()->size()/B.size2(),   //row layout
+    //                             B.size2(), 0, 1, B.size2(),   //column layout
+    //                             true); // row-major
+    
+    // viennacl::matrix_base<T> pC(V.handle(),
+    //                             30, 0, 1, 30,   //row layout
+    //                             1, 0, 1, 1,   //column layout
+    //                             true); // row-major
+    
+    // std::cout << "row_start: " << row_start << std::endl; 
+    // std::cout << "row_end: " << row_end << std::endl; 
+    // 
+    // viennacl::range r(row_start-1, row_end);
+    // viennacl::range c(0, pC.size2());
+    // 
+    // viennacl::matrix_range<viennacl::matrix_base<T> > C(pC, r, c);
+    
+    // std::cout << C << std::endl;
+    
+    C = viennacl::linalg::prod(trans(A), B);
+    
+    // std::cout << C << std::endl;
+    
+    V = tmp;
+}
+
+template <typename T>
 void
 cpp_vclMatrix_tcrossprod(
     SEXP ptrA_, 
@@ -342,6 +399,27 @@ cpp_vclMatrix_crossprod(
     }
 }
 
+// [[Rcpp::export]]
+void
+cpp_vclMat_vclVec_crossprod(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMat_vclVec_crossprod<int>(ptrA, ptrB, ptrC);
+        return;
+    case 6:
+        cpp_vclMat_vclVec_crossprod<float>(ptrA, ptrB, ptrC);
+        return;
+    case 8:
+        cpp_vclMat_vclVec_crossprod<double>(ptrA, ptrB, ptrC);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 // [[Rcpp::export]]
 void
