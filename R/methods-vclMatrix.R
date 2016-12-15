@@ -361,6 +361,25 @@ setMethod("[<-",
               return(x)
           })
 
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              start = head(j, 1) - 1
+              end = tail(j, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclMatSetVCLCols(x@address, value@address, start, end, 4L, x@.context_index - 1),
+                     "float" = vclMatSetVCLCols(x@address, value@address, start, end, 6L, x@.context_index - 1),
+                     "double" = vclMatSetVCLCols(x@address, value@address, start, end, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
 
 #' @rdname extract-methods
 #' @export
@@ -391,6 +410,22 @@ setMethod("[<-",
                      "integer" = assignVectorToMat(x@address, value@address, 4L),
                      "float" = assignVectorToMat(x@address, value@address, 6L),
                      "double" = assignVectorToMat(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = assignVectorToCol(x@address, value@address, j-1, 4L),
+                     "float" = assignVectorToCol(x@address, value@address, j-1, 6L),
+                     "double" = assignVectorToCol(x@address, value@address, j-1, 8L),
                      stop("unsupported matrix type")
               )
               
@@ -914,45 +949,11 @@ setMethod("cbind2",
               
               assert_are_identical(x@.context_index, y@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L,
-                                                               x@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L,
-                                                               x@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device
-                                    )
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L,
-                                                               x@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + ncol(y), type = typeof(y), y@.context_index)
               
-              return(ptr)
+              cbind_wrapper(x,y,z)
+              
+              return(z)
           })
 
 setMethod("cbind2",
@@ -960,42 +961,11 @@ setMethod("cbind2",
           function(x, y, ...){
               
               x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y), y@.context_index)
+              z <- vclMatrix(nrow = nrow(y), ncol = 1 + ncol(y), type = typeof(y), y@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, y@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, y@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, y@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              cbind_wrapper(x,y,z)
               
-              return(ptr)
+              return(z)
           })
 
 setMethod("cbind2",
@@ -1003,43 +973,55 @@ setMethod("cbind2",
           function(x, y, ...){
               
               y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x), x@.context_index)
+              z <- vclMatrix(nrow = nrow(x), ncol = 1 + ncol(x), type = typeof(x), ctx_id = x@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, x@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, x@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, x@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              cbind_wrapper(x,y,z)
               
-              return(ptr)
+              return(z)
           })
+
+
+setMethod("cbind2",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y, ...){
+              if(nrow(x) != length(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              print('cbind called')
+              assert_are_identical(x@.context_index, y@.context_index)
+              
+              z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + 1, type = typeof(y), ctx_id = y@.context_index)
+              
+              z[,1:(ncol(z) - 1)] <- x
+              z[,ncol(z)] <- y
+              
+              # cbind_wrapper2(x,y,z, FALSE)
+              
+              print(z[])
+              
+              print('cbind complete')
+              
+              return(z)
+          })
+
+
+setMethod("cbind2",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y, ...){
+              if(length(x) != nrow(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              assert_are_identical(x@.context_index, y@.context_index)
+              
+              z <- vclMatrix(nrow = nrow(y), ncol = 1 + ncol(y), type = typeof(y), ctx_id = y@.context_index)
+              
+              cbind_wrapper2(y,x,z, TRUE)
+              
+              return(z)
+          })
+
 
 setMethod("rbind2",
           signature(x = "vclMatrix", y = "vclMatrix"),

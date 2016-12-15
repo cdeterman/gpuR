@@ -2418,6 +2418,30 @@ void cpp_vclMatrix_scalar_axpy(
 }
 
 template <typename T>
+void cpp_vclMatrix_logistic(
+        SEXP ptrA_,
+        const int ctx_id)
+{
+    // 1/(1 + exp(-x))
+    
+    viennacl::matrix<T> *vcl_A;
+        
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    
+    vcl_A = getVCLptr<T>(ptrA_, true, ctx_id);
+    
+    viennacl::matrix<T> ones = viennacl::scalar_matrix<T>(vcl_A->size1(), vcl_A->size2(), 1);
+    
+    *vcl_A = (T)(-1) * *vcl_A;
+    *vcl_A = viennacl::linalg::element_exp(*vcl_A);
+    *vcl_A = ones + *vcl_A;
+    *vcl_A = viennacl::linalg::element_div(ones, *vcl_A);
+}
+
+
+template <typename T>
 void cpp_vclMatrix_log_deriv(
         SEXP ptrA_,
         SEXP ptrB_,
@@ -2970,6 +2994,28 @@ cpp_vclMatrix_scalar_axpy(
     }
 }
 
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_logistic(
+    SEXP ptrA,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_logistic<int>(ptrA, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatrix_logistic<float>(ptrA, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatrix_logistic<double>(ptrA, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 // [[Rcpp::export]]
 void

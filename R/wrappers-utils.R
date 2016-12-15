@@ -269,3 +269,67 @@ setContext <- function(id = 1L){
     }
     cpp_setContext(id)
 }
+
+
+#' @export
+cbind_wrapper <- function(x, y, z){
+    switch(typeof(x),
+           "integer" = {
+               address <- cpp_cbind_vclMatrix(x@address, 
+                                              y@address, 
+                                              z@address, 
+                                              4L,
+                                              x@.context_index - 1)
+           },
+           "float" = {
+               address <- cpp_cbind_vclMatrix(x@address, 
+                                              y@address, 
+                                              z@address, 
+                                              6L,
+                                              x@.context_index - 1)
+           },
+           "double" = {
+               address <- cpp_cbind_vclMatrix(x@address, 
+                                              y@address, 
+                                              z@address, 
+                                              8L,
+                                              x@.context_index - 1)
+           },
+           stop("type not recognized")
+    )
+    
+    return(invisible(z))
+}
+
+#' @export
+cbind_wrapper2 <- function(x, y, z, order = TRUE){
+    switch(typeof(x),
+           "integer" = {
+               address <- cpp_cbind_vclMat_vclVec(x@address, 
+                                                  y@address, 
+                                                  z@address, 
+                                                  order,
+                                                  4L,
+                                                  x@.context_index - 1)
+           },
+           "float" = {
+               address <- cpp_cbind_vclMat_vclVec(x@address, 
+                                                  y@address, 
+                                                  z@address, 
+                                                  order,
+                                                  6L,
+                                                  x@.context_index - 1)
+           },
+           "double" = {
+               address <- cpp_cbind_vclMat_vclVec(x@address, 
+                                                  y@address, 
+                                                  z@address, 
+                                                  order,
+                                                  8L,
+                                                  x@.context_index - 1)
+           },
+           stop("type not recognized")
+    )
+    
+    return(invisible(z))
+}

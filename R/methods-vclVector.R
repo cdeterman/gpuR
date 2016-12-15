@@ -167,6 +167,53 @@ setMethod("[<-",
               return(x)
           })
 
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "missing", j = "missing", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              if(length(x) != length(value)){
+                  stop("lengths must match")
+              }
+              
+              switch(typeof(x),
+                     "integer" = vclVecSetVCLMatrix(x@address, value@address, 4L),
+                     "float" = vclVecSetVCLMatrix(x@address, value@address, 6L),
+                     "double" = vclVecSetVCLMatrix(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "numeric", j = "missing", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              if(length(i) != length(value)){
+                  stop("lengths must match")
+              }
+              
+              start <- head(i, 1) - 1
+              end <- tail(i, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLMatrixRange(x@address, value@address, start, end, 4L, x@.context_index - 1L),
+                     "float" = vclSetVCLMatrixRange(x@address, value@address, start, end, 6L, x@.context_index - 1L),
+                     "double" = vclSetVCLMatrixRange(x@address, value@address, start, end, 8L, x@.context_index - 1L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
 #' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclVector", y = "vclVector"),

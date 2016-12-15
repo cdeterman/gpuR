@@ -32,11 +32,15 @@
 \alias{[<-,vclMatrix,missing,missing,vclMatrix-method}
 \alias{[<-,vclMatrix,missing,missing,vclVector-method}
 \alias{[<-,vclMatrix,missing,numeric,numeric-method}
+\alias{[<-,vclMatrix,missing,numeric,vclMatrix-method}
+\alias{[<-,vclMatrix,missing,numeric,vclVector-method}
 \alias{[<-,vclMatrix,numeric,missing,numeric-method}
 \alias{[<-,vclMatrix,numeric,numeric,numeric-method}
 \alias{[<-,vclVector,missing,missing,numeric-method}
+\alias{[<-,vclVector,missing,missing,vclMatrix-method}
 \alias{[<-,vclVector,missing,missing,vclVector-method}
 \alias{[<-,vclVector,numeric,missing,numeric-method}
+\alias{[<-,vclVector,numeric,missing,vclMatrix-method}
 \alias{[<-,vclVector,numeric,missing,vclVector-method}
 \title{Extract gpuR object elements}
 \usage{
@@ -72,9 +76,13 @@
 
 \S4method{[}{vclMatrix,missing,missing,vclMatrix}(x, i, j) <- value
 
+\S4method{[}{vclMatrix,missing,numeric,vclMatrix}(x, i, j) <- value
+
 \S4method{[}{vclMatrix,missing,missing,numeric}(x, i, j) <- value
 
 \S4method{[}{vclMatrix,missing,missing,vclVector}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,missing,numeric,vclVector}(x, i, j) <- value
 
 \S4method{[}{vclVector,missing,missing,missing}(x, i, j, drop)
 
@@ -89,6 +97,10 @@
 \S4method{[}{vclVector,missing,missing,vclVector}(x, i, j) <- value
 
 \S4method{[}{vclVector,numeric,missing,vclVector}(x, i, j) <- value
+
+\S4method{[}{vclVector,missing,missing,vclMatrix}(x, i, j) <- value
+
+\S4method{[}{vclVector,numeric,missing,vclMatrix}(x, i, j) <- value
 
 \S4method{[}{gpuMatrix,missing,missing,missing}(x, i, j, drop)
 

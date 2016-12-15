@@ -524,6 +524,46 @@ vcl_crossprod <- function(X, Y){
     return(Z)
 }
 
+
+vclVec_crossprod <- function(X, Y, Z = NULL){
+    
+    if(nrow(X) != nrow(Y)){
+        stop("matrices non-conformable")
+    }
+    
+    assert_are_identical(X@.context_index, Y@.context_index)
+    
+    type <- typeof(X)
+    
+    if(is.null(Z)){
+        Z <- vclVector(length = ncol(X) * ncol(Y), type = type, ctx_id = X@.context_index)
+        inplace = FALSE
+    }else{
+        if(length(Z) != ncol(X) * ncol(Y)){
+            stop("dimensions don't match")
+        }
+        inplace = TRUE
+    }
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vclMat_vclVec_crossprod(X@address, 
+                                             Y@address, 
+                                             Z@address,
+                                             6L),
+           "double" = cpp_vclMat_vclVec_crossprod(X@address, 
+                                              Y@address, 
+                                              Z@address,
+                                              8L)
+    )
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
+}
+
 # vclMatrix crossprod
 vcl_tcrossprod <- function(X, Y){
     

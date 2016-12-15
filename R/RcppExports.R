@@ -175,6 +175,10 @@ cpp_gpuMatrix_custom_igemm <- function(ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisV
     invisible(.Call('gpuR_cpp_gpuMatrix_custom_igemm', PACKAGE = 'gpuR', ptrA_, AisVCL, ptrB_, BisVCL, ptrC_, CisVCL, sourceCode_, max_local_size, ctx_id))
 }
 
+cpp_gpu_rprop_plus <- function(ptrGradients, ptrGradientsOld, ptrWeights, ptrlr, learningrate_factor, learningrate_limit, sourceCode, max_local_size, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_gpu_rprop_plus', PACKAGE = 'gpuR', ptrGradients, ptrGradientsOld, ptrWeights, ptrlr, learningrate_factor, learningrate_limit, sourceCode, max_local_size, ctx_id, type_flag))
+}
+
 #' @title Detect Number of Platforms
 #' @description Find out how many OpenCL enabled platforms are available.
 #' @return An integer value representing the number of platforms available.
@@ -198,8 +202,12 @@ cpp_platformInfo <- function(platform_idx_) {
     .Call('gpuR_cpp_platformInfo', PACKAGE = 'gpuR', platform_idx_)
 }
 
-cpp_vclMatrix_set_row_order <- function(ptrA, ptrB, AisVCL, BisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id) {
-    invisible(.Call('gpuR_cpp_vclMatrix_set_row_order', PACKAGE = 'gpuR', ptrA, ptrB, AisVCL, BisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id))
+cpp_vclVector_permute <- function(ptrA, indices, sourceCode, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclVector_permute', PACKAGE = 'gpuR', ptrA, indices, sourceCode, type_flag, ctx_id))
+}
+
+cpp_vclMatrix_set_row_order <- function(ptrA, AisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_set_row_order', PACKAGE = 'gpuR', ptrA, AisVCL, indices, sourceCode, max_local_size, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id) {
@@ -298,8 +306,12 @@ cpp_vclMatrix_block <- function(ptrA, rowStart, rowEnd, colStart, colEnd, type_f
     .Call('gpuR_cpp_vclMatrix_block', PACKAGE = 'gpuR', ptrA, rowStart, rowEnd, colStart, colEnd, type_flag)
 }
 
-cpp_cbind_vclMatrix <- function(ptrA, ptrB, type_flag, ctx_id) {
-    .Call('gpuR_cpp_cbind_vclMatrix', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id)
+cpp_cbind_vclMatrix <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_cbind_vclMatrix', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
+}
+
+cpp_cbind_vclMat_vclVec <- function(ptrA, ptrB, ptrC, order, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_cbind_vclMat_vclVec', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, order, type_flag, ctx_id))
 }
 
 cpp_rbind_vclMatrix <- function(ptrA, ptrB, type_flag, ctx_id) {
@@ -342,6 +354,10 @@ vclSetVCLMatrix <- function(ptrA, newdata, type_flag, ctx_id) {
     invisible(.Call('gpuR_vclSetVCLMatrix', PACKAGE = 'gpuR', ptrA, newdata, type_flag, ctx_id))
 }
 
+vclMatSetVCLCols <- function(ptrA, newdata, start, end, type_flag, ctx_id) {
+    invisible(.Call('gpuR_vclMatSetVCLCols', PACKAGE = 'gpuR', ptrA, newdata, start, end, type_flag, ctx_id))
+}
+
 vclFillVCLMatrix <- function(ptrA, newdata, type_flag, ctx_id) {
     invisible(.Call('gpuR_vclFillVCLMatrix', PACKAGE = 'gpuR', ptrA, newdata, type_flag, ctx_id))
 }
@@ -376,6 +392,14 @@ vclSetVCLVector <- function(ptrA, newdata, type_flag) {
 
 vclSetVCLVectorRange <- function(ptrA, newdata, start, end, type_flag) {
     invisible(.Call('gpuR_vclSetVCLVectorRange', PACKAGE = 'gpuR', ptrA, newdata, start, end, type_flag))
+}
+
+vclVecSetVCLMatrix <- function(ptrA, newdata, type_flag) {
+    invisible(.Call('gpuR_vclVecSetVCLMatrix', PACKAGE = 'gpuR', ptrA, newdata, type_flag))
+}
+
+vclSetVCLMatrixRange <- function(ptrA, newdata, start, end, type_flag, ctx_id) {
+    invisible(.Call('gpuR_vclSetVCLMatrixRange', PACKAGE = 'gpuR', ptrA, newdata, start, end, type_flag, ctx_id))
 }
 
 vectorToVCL <- function(ptrA, type_flag, ctx_id) {
@@ -416,6 +440,10 @@ vectorizeList <- function(mylist, ptrV, ctx_id, type_flag) {
 
 assignVectorToMat <- function(ptrM, ptrV, type_flag) {
     invisible(.Call('gpuR_assignVectorToMat', PACKAGE = 'gpuR', ptrM, ptrV, type_flag))
+}
+
+assignVectorToCol <- function(ptrM, ptrV, index, type_flag) {
+    invisible(.Call('gpuR_assignVectorToCol', PACKAGE = 'gpuR', ptrM, ptrV, index, type_flag))
 }
 
 cpp_gpuMatrix_elem_prod <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
@@ -512,6 +540,10 @@ cpp_vclMatrix_axpy <- function(alpha, ptrA, ptrB, type_flag) {
 
 cpp_vclMatrix_scalar_axpy <- function(alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_scalar_axpy', PACKAGE = 'gpuR', alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id, type_flag))
+}
+
+cpp_vclMatrix_logistic <- function(ptrA, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_logistic', PACKAGE = 'gpuR', ptrA, ctx_id, type_flag))
 }
 
 cpp_vclMatrix_log_deriv <- function(ptrA, ptrB, max_local_size, sourceCode, ctx_id, type_flag) {
@@ -844,6 +876,10 @@ cpp_vclMatrix_gemm <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclMatrix_crossprod <- function(ptrA, ptrB, ptrC, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
+}
+
+cpp_vclMat_vclVec_crossprod <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMat_vclVec_crossprod', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
 cpp_vclMatrix_tcrossprod <- function(ptrA, ptrB, ptrC, type_flag) {
