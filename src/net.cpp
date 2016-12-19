@@ -58,7 +58,7 @@ void cpp_gpu_rprop_plus(
     const T lr_min = Rcpp::as<T>(learningrate_limit["min"]);
     const int M = gradients.size();
     
-    std::cout << "length: " << M << std::endl;
+    // std::cout << "length: " << M << std::endl;
     
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
@@ -91,7 +91,7 @@ void cpp_gpu_rprop_plus(
     if(gradients.size() < max_local_size){
         my_kernel_mul.global_work_size(0, max_local_size);
     }else{
-        my_kernel_mul.global_work_size(0, gradients.size());
+    		my_kernel_mul.global_work_size(0, roundUp(gradients.size(), max_local_size));
     }
 
     // set local work sizes
