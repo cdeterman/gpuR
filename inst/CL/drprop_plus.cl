@@ -23,7 +23,7 @@ __kernel void rprop_plus(
 	    //	elem = 0;
 	    //}
 	    
-	    if(i == 0){
+	    if(i == 4){
 	    	printf("elem: %f\n", elem);
 	    	printf("lr: %f\n", l);
 	    	printf("w: %f\n", w);
@@ -38,11 +38,24 @@ __kernel void rprop_plus(
 	        }
 	        weights[i] = w - sign_grad * l;
 	        
+	        if(i == 4){
+	          printf("positive elem: %f\n", elem);
+	          printf("calculated: %f\n", w - sign_grad * l);
+	          printf("updated weight: %f\n", weights[i]);
+	        }
+	        
 	        gradients_old[i] = sign_grad;
 	        
 	    }else{
 	        weights[i] = w + go * l;
 	        lr[i] = max(l * lr_factor_minus, lr_limit_min);
+	        
+	        
+	        if(i == 4){
+	          printf("negative elem: %f\n", elem);
+	          printf("calculated: %f\n", w - sign_grad * l);
+	          printf("updated weight: %f\n", weights[i]);
+	        }
 	        
 	        gradients_old[i] = 0;
 	    }
