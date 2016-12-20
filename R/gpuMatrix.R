@@ -27,7 +27,11 @@ setMethod('gpuMatrix',
           signature(data = 'matrix'),
           function(data, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- getOption("gpuR.default.type")
+              if (is.null(type)) {
+                  type <- switch(typeof(data),
+                                 "integer" = "integer",
+                                 getOption("gpuR.default.type"))
+              }
               
               device <- currentDevice()
               
