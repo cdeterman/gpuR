@@ -27,7 +27,7 @@ setMethod('gpuMatrix',
           signature(data = 'matrix'),
           function(data, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- typeof(data)
+              if (is.null(type)) type <- getOption("gpuR.default.type")
               
               device <- currentDevice()
               
@@ -158,7 +158,7 @@ setMethod('gpuMatrix',
           signature(data = 'numeric'),
           function(data, nrow, ncol, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- "double"
+              if (is.null(type)) type <- getOption("gpuR.default.type")
                             
               assert_is_numeric(nrow)
               assert_is_numeric(ncol)
