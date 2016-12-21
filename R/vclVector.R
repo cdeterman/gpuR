@@ -24,7 +24,12 @@ setMethod('vclVector',
           signature(data = 'vector', length = 'missing'),
           function(data, length, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- typeof(data)
+              if (is.null(type)) {
+                  type <- switch(typeof(data),
+                                 "integer" = "integer",
+                                 getOption("gpuR.default.type"))
+              }
+              
               if (!missing(length)) {
                   warning("length argument not currently used when passing
                           in data")
