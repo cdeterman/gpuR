@@ -145,7 +145,7 @@ unlist_gpuRvec <- function(x){
 		# print(start)
 		# print(end)
 		vec[start:end] <- elem
-		start <- start + end
+		start <- start + length(elem)
 		
 	}
 	

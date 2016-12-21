@@ -9,6 +9,8 @@ __kernel void rprop_plus(
     
     if(i <= length){
     
+        //printf("index: %d\n", i);
+    
 	    float elem;
 	    
 	    // Do the operation
