@@ -115,19 +115,43 @@ case `uname` in
             CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
 
         else
-            echo "OPENCL_LIB not set, will be compiled from source"
-            LIBS="PKG_LIBS=-L../inst/include/loader -lOpenCL -pthread"
-            BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
-
-            echo "Checking OpenCL C++ API"
-
-            if ${OPENCL_INC+"false"}; then
-                echo "OPENCL_INC not set, using default include directory /usr/include"
-                OPENCL_INC=/usr/include/
+        
+            # try searching for opencl library
+            # if fails, build library from scratch
+            
+            if [ `ldconfig -p | grep 'libOpenCL\|lOpenCL' | wc -l` > 0 ]; then
+                echo "found OpenCL library"
+                LIBS="PKG_LIBS=-lOpenCL"
+                
+                echo "Checking OpenCL C++ API"
+    
+                if ${OPENCL_INC+"false"}; then
+                    echo "OPENCL_INC not set, using default include directory /usr/include"
+                    OPENCL_INC=/usr/include/
+                else
+                    echo "Using OPENCL_INC = " $OPENCL_INC
+                fi
+                CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
             else
-                echo "Using OPENCL_INC = " $OPENCL_INC
+                echo "no OpenCL found"
+                # exit 1
+                
+                # setting defaults to compile from source
+                echo "OPENCL_LIB not set, will be compiled from source"
+                LIBS="PKG_LIBS=-L../inst/include/loader -lOpenCL -pthread"
+                BUILD_LIB="BUILD_LIB=../inst/include/loader/libOpenCL.a"
+    
+                echo "Checking OpenCL C++ API"
+    
+                if ${OPENCL_INC+"false"}; then
+                    echo "OPENCL_INC not set, using default include directory /usr/include"
+                    OPENCL_INC=/usr/include/
+                else
+                    echo "Using OPENCL_INC = " $OPENCL_INC
+                fi
+                CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
             fi
-            CPPFLAGS="${CPPFLAGS} -I'${OPENCL_INC}'"
+            
         fi
 
         if test -e "$OPENCL_INC/CL/cl2.hpp"; then
