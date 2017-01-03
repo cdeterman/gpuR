@@ -2279,7 +2279,14 @@ cpp_vclVector_elem_max_abs(
     
     viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
     
-    max = viennacl::linalg::max(viennacl::linalg::element_fabs(vcl_A));
+    // max = viennacl::linalg::max(viennacl::linalg::element_fabs(vcl_A));
+    
+    Eigen::Matrix<T, Eigen::Dynamic, 1> Am(vcl_A.size());
+    
+    viennacl::fast_copy(vcl_A.begin(), vcl_A.end(), &(Am[0]));
+    // viennacl::fast_copy(block.data(), block.data() + block.size(), shptr.get()->begin());
+    
+    max = Am.cwiseAbs().maxCoeff();
     
     return max;
 }
