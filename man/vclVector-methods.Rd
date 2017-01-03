@@ -6,7 +6,7 @@
 \alias{vclVector}
 \alias{vclVector,missing}
 \alias{vclVector,missing,ANY-method}
-\alias{vclVector,numeric,numeric-method}
+\alias{vclVector,numeric,numericOrInt-method}
 \alias{vclVector,vector}
 \alias{vclVector,vector,missing-method}
 \title{Construct a vclVector}
@@ -20,7 +20,7 @@ vclVector(data, length, type = NULL, ...)
 
 \S4method{vclVector}{missing,ANY}(data, length, type = NULL, ctx_id = NULL)
 
-\S4method{vclVector}{numeric,numeric}(data, length, type = NULL,
+\S4method{vclVector}{numeric,numericOrInt}(data, length, type = NULL,
   ctx_id = NULL)
 }
 \arguments{

@@ -157,7 +157,7 @@ setMethod('vclVector',
 #' @rdname vclVector-methods
 #' @aliases vclVector,vector
 setMethod('vclVector', 
-          signature(data = 'numeric', length = 'numeric'),
+          signature(data = 'numeric', length = 'numericOrInt'),
           function(data, length, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- typeof(data)
