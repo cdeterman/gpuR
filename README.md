@@ -1,5 +1,7 @@
 # gpuR
 
+[![DOI](https://zenodo.org/badge/32588017.svg)](https://zenodo.org/badge/latestdoi/32588017)
+
 ###Gitter rooms available for discussion
 [![chat](https://img.shields.io/badge/gitter-chat-brightgreen.svg)](https://gitter.im/cdeterman/gpuR)
 [![general](https://img.shields.io/badge/gitter-general-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/general)
@@ -23,9 +25,9 @@ to one brand (e.g. NVIDIA) or are not very user friendly.  The goal of this
 package is to provide the user a very simple R API that can be used with
 any GPU (via an OpenCL backend).  This is accomplished by interfacing with the 
 ViennaCL library that I have packaged in the R package 
-[RViennaCL](http://cran.r-project.org/package=RViennaCL).  To make the R API simple,
+[RViennaCL](https://CRAN.R-project.org/package=RViennaCL).  To make the R API simple,
 I created new classes similar to the structure of the 
-[Matrix](http://cran.r-project.org/package=Matrix)
+[Matrix](https://CRAN.R-project.org/package=Matrix)
 package.  By doing so, typical methods may be overloaded to make for a very
 pleasing sytax.  For example, to perform vector addition the syntax is: 
 

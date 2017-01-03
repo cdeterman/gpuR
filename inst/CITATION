@@ -1,0 +1,38 @@
+citHeader("To cite the 'gpuR' package in publications please use both:")
+
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
+vers <- paste("R package version", meta$Version)
+
+bibentry(bibtype="Manual",
+         title = "gpuR: GPU Functions for R Objects",
+         author = personList(as.person("Charles Determan Jr.")),
+         year = year,
+         note = vers,
+         url="http://github.com/cdeterman/gpuR",
+         
+         textVersion = paste0('Charles Determan Jr. (', year, '). gpuR: ', 
+                              meta$Title, '. ', vers, '. ', 
+                              'http://github.com/cdeterman/gpuR', 
+                              sep = '')
+         
+         )
+         
+bibentry(
+    bibtype = "Article",
+    title = "ViennaCL-Linear Algebra Library for Multi- and Many-Core Architectures",
+    author = personList(as.person("Karl Rupp"),
+                        as.person("Phillippe Tillet"),
+                        as.person("Florian Rudolf"),
+                        as.person("Josef Weinbub"),
+                        as.person("Tibor Grasser"),
+                        as.person("Ansgar Jüngel")),
+    year = "2016-10-27",
+    url = "http://dx.doi.org/10.1137/15m1026419",
+    doi = "10.1137/15m1026419",
+    journal = "SIAM Journal on Scientific Computing",
+    
+    textVersion = 'Rupp, Karl, et al. "ViennaCL - Linear Algebra Library for 
+                  Multi-and Many-Core Architectures." SIAM Journal on Scientific 
+                  Computing 38.5 (2016): S412-S439. ISSN: 1064-8275. 
+                  DOI: 10.1137/15m1026419.'
+)
