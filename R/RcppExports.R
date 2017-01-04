@@ -338,6 +338,10 @@ vclSetCol <- function(ptrA, nc, newdata, type_flag) {
     invisible(.Call('gpuR_vclSetCol', PACKAGE = 'gpuR', ptrA, nc, newdata, type_flag))
 }
 
+vclFillCol <- function(ptrA, nc, newdata, ctx_id, type_flag) {
+    invisible(.Call('gpuR_vclFillCol', PACKAGE = 'gpuR', ptrA, nc, newdata, ctx_id, type_flag))
+}
+
 vclSetRow <- function(ptrA, nr, newdata, type_flag) {
     invisible(.Call('gpuR_vclSetRow', PACKAGE = 'gpuR', ptrA, nr, newdata, type_flag))
 }

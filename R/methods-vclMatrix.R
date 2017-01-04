@@ -154,19 +154,30 @@ setMethod("[<-",
           signature(x = "vclMatrix", i = "missing", j = "numeric", value = "numeric"),
           function(x, i, j, value) {
               
-              if(length(value) != nrow(x)){
-                  stop("number of items to replace is not a multiple of replacement length")
-              }
+          	if(j > ncol(x)){
+          		stop("column index exceeds number of columns")
+          	}
+          	
+          	if(length(value) > 1){
+          		
+          		if(length(value) != nrow(x)){
+          			stop("number of items to replace is not a multiple of replacement length")
+          		}
+          		
+          		switch(typeof(x),
+          					 "float" = vclSetCol(x@address, j, value, 6L),
+          					 "double" = vclSetCol(x@address, j, value, 8L),
+          					 stop("unsupported matrix type")
+          		)
+          		
+          	}else{
+          		switch(typeof(x),
+          			   "float" = vclFillCol(x@address, j, value, x@.context_index, 6L),
+          			   "double" = vclFillCol(x@address, j, value, x@.context_index, 8L),
+          			   stop("unsupported matrix type")
+          		)
+          	}
               
-              if(j > ncol(x)){
-                  stop("column index exceeds number of columns")
-              }
-
-              switch(typeof(x),
-                     "float" = vclSetCol(x@address, j, value, 6L),
-                     "double" = vclSetCol(x@address, j, value, 8L),
-                     stop("unsupported matrix type")
-              )
               
               return(x)
           })

@@ -756,6 +756,21 @@ vclSetCol(SEXP data, SEXP newdata, const int nc)
 //    } 
 }
 
+// update viennacl matrix with a scalar
+template <typename T>
+void
+vclFillCol(SEXP data, SEXP newdata, const int nc, const int ctx_id)
+{
+    T fill_data = as<T>(newdata);
+	Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+	viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+	
+	viennacl::matrix_range<viennacl::matrix<T> > C(A, viennacl::range(0, A.size1()), viennacl::range(nc - 1, nc));
+	
+	// assign existing matrix with new data
+	viennacl::linalg::matrix_assign(C, fill_data);
+}
+
 // update viennacl row elements
 template <typename T>
 void
@@ -1235,6 +1250,26 @@ vclSetCol(SEXP ptrA, const int nc, SEXP newdata, const int type_flag)
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
+}
+
+// [[Rcpp::export]]
+void
+vclFillCol(SEXP ptrA, const int nc, SEXP newdata, 
+           const int ctx_id, const int type_flag){
+	
+	switch(type_flag) {
+		case 4:
+			vclFillCol<int>(ptrA, newdata, nc, ctx_id);
+			return;
+		case 6:
+			vclFillCol<float>(ptrA, newdata, nc, ctx_id);
+			return;
+		case 8:
+			vclFillCol<double>(ptrA, newdata, nc, ctx_id);
+			return;
+		default:
+			throw Rcpp::exception("unknown type detected for vclMatrix object!");
+	}
 }
 
 // [[Rcpp::export]]
