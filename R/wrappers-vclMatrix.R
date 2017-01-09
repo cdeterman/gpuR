@@ -283,6 +283,123 @@ vclMatMult <- function(A, B){
     return(C)
 }
 
+
+# vclMatrix GEMM
+vclGEMV<- function(A, B){
+    
+    type <- typeof(A)
+    
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    AisVec <- inherits(A, "vclVector")
+    BisVec <- inherits(B, "vclVector")
+    
+    if(AisVec){
+        C <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- vclVector(length = length(B), type=type, ctx_id = A@.context_index)
+    }
+    
+    
+    if(AisVec){
+        switch(type,
+               integer = {
+                   stop("OpenCL integer GEMM not currently
+                        supported for viennacl matrices")
+                   
+                   # file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
+                   # 
+                   # if(!file_test("-f", file)){
+                   #     stop("kernel file does not exist")
+                   # }
+                   # kernel <- readChar(file, file.info(file)$size)
+                   # 
+                   # maxWorkGroupSize <- 
+                   #     switch(deviceType(C@.platform_index, C@.device_index),
+                   #            "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   #            "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   #            stop("unrecognized device type")
+                   #     )
+                   # 
+                   # cpp_gpuMatrix_custom_igemm(A@address,
+                   #                            TRUE,
+                   #                            B@address,
+                   #                            TRUE,
+                   #                            C@address,
+                   #                            TRUE,
+                   #                            kernel,
+                   #                            sqrt(maxWorkGroupSize),
+                   #                            C@.context_index - 1)
+               },
+               float = {cpp_vclMatrix_gevm(A@address,
+                                           B@address,
+                                           C@address,
+                                           6L)
+               },
+               double = {
+                   cpp_vclMatrix_gevm(A@address,
+                                      B@address,
+                                      C@address,
+                                      8L)
+                   
+               },
+               stop("type not recognized")
+        )
+    }else{
+        
+        if(!BisVec){
+            stop("B should be a vclVector object")
+        }
+        
+        switch(type,
+               integer = {
+                   stop("OpenCL integer GEMM not currently
+                        supported for viennacl matrices")
+                   
+                   # file <- system.file("CL", "basic_gemm.cl", package = "gpuR")
+                   # 
+                   # if(!file_test("-f", file)){
+                   #     stop("kernel file does not exist")
+                   # }
+                   # kernel <- readChar(file, file.info(file)$size)
+                   # 
+                   # maxWorkGroupSize <- 
+                   #     switch(deviceType(C@.platform_index, C@.device_index),
+                   #            "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   #            "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   #            stop("unrecognized device type")
+                   #     )
+                   # 
+                   # cpp_gpuMatrix_custom_igemm(A@address,
+                   #                            TRUE,
+                   #                            B@address,
+                   #                            TRUE,
+                   #                            C@address,
+                   #                            TRUE,
+                   #                            kernel,
+                   #                            sqrt(maxWorkGroupSize),
+                   #                            C@.context_index - 1)
+               },
+               float = {cpp_vclMatrix_gemv(A@address,
+                                           B@address,
+                                           C@address,
+                                           6L)
+               },
+               double = {
+                   cpp_vclMatrix_gemv(A@address,
+                                      B@address,
+                                      C@address,
+                                      8L)
+                   
+               },
+               stop("type not recognized")
+        )
+    }
+    
+    
+    return(C)
+}
+
 # vclMatrix AXPY
 vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScalar = FALSE){
     

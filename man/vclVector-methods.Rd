@@ -7,6 +7,7 @@
 \alias{vclVector,missing}
 \alias{vclVector,missing,ANY-method}
 \alias{vclVector,numeric,numericOrInt-method}
+\alias{vclVector,vclMatrix,missing-method}
 \alias{vclVector,vector}
 \alias{vclVector,vector,missing-method}
 \title{Construct a vclVector}
@@ -22,6 +23,9 @@ vclVector(data, length, type = NULL, ...)
 
 \S4method{vclVector}{numeric,numericOrInt}(data, length, type = NULL,
   ctx_id = NULL)
+
+\S4method{vclVector}{vclMatrix,missing}(data, length = NULL, type = NULL,
+  ctx_id = NULL, col = NULL, row = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 

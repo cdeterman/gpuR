@@ -217,3 +217,109 @@ setMethod('vclVector',
               },
           valueClass = "vclVector")
 
+
+#' @rdname vclVector-methods
+#' @aliases vclVector,vector
+setMethod('vclVector', 
+          signature(data = 'vclMatrix', length = 'missing'),
+          function(data, length=NULL, type=NULL, ctx_id = NULL, col = NULL, row = NULL){
+              
+              # print('called correctly')
+              
+              if (is.null(type)){
+                  type <- typeof(data)  
+              }else{
+                  if(type != typeof(data)){
+                      stop("type must match parent matrix")
+                  }
+              }
+              
+              if(!is.null(col) && !is.null(row)){
+                  stop("only a single column or row can be extracted")
+              }
+              if(length(col) > 1 || length(row) > 1){
+                  stop("only a single column or row can be extracted")
+              }
+              
+              
+              context_index <- data@.context_index
+              platform_index <- data@.platform_index
+              device_index <- data@.device_index
+              device_type <- deviceType(platform_index, device_index)
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              if(!is.null(col)){
+                  data = switch(type,
+                                integer = {
+                                    new("ivclVector", 
+                                        address=extractCol(data@address, col, 4L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                float = {
+                                    new("fvclVector", 
+                                        address=extractCol(data@address, col, 6L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                double = {
+                                    new("dvclVector",
+                                        address = extractCol(data@address, col, 8L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                stop("this is an unrecognized 
+                                 or unimplemented data type")
+                  )
+              }else{
+                  data = switch(type,
+                                integer = {
+                                    new("ivclVector", 
+                                        address=extractRow(data@address, row, 4L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                float = {
+                                    new("fvclVector", 
+                                        address=extractRow(data@address, row, 6L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                double = {
+                                    new("dvclVector",
+                                        address = extractRow(data@address, row, 8L, context_index - 1),
+                                        .context_index = context_index,
+                                        .platform_index = platform_index,
+                                        .platform = platform_name,
+                                        .device_index = device_index,
+                                        .device = device_name)
+                                },
+                                stop("this is an unrecognized 
+                                 or unimplemented data type")
+                  )
+              }
+              
+              
+              return(data)
+              },
+          valueClass = "vclVector")

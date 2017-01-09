@@ -59,7 +59,7 @@ cpp_vclMatrix_set_row_order(
     const int ctx_id)
 {
     
-    std::cout << "called" << std::endl;
+    // std::cout << "called" << std::endl;
     
     std::string my_kernel = as<std::string>(sourceCode_);
     
@@ -68,7 +68,7 @@ cpp_vclMatrix_set_row_order(
     viennacl::matrix<T> *vcl_A;
     // viennacl::matrix<T> *vcl_B;
     
-    std::cout << "getting matrix" << std::endl;
+    // std::cout << "getting matrix" << std::endl;
     vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     // vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
@@ -78,48 +78,48 @@ cpp_vclMatrix_set_row_order(
     unsigned int M_internal = vcl_A->internal_size1();
     unsigned int P_internal = vcl_A->internal_size2();
     
-    std::cout << "initialized" << std::endl;
+    // std::cout << "initialized" << std::endl;
     
     viennacl::ocl::kernel set_row_order;
     
-    try {
-        // protected code
-        
-        // add kernel to program
-        viennacl::ocl::program & my_prog = ctx.get_program("permute_kernel");
-        
-        std::cout << "got program" << std::endl;
-        
-        // get compiled kernel function
-        set_row_order = my_prog.get_kernel("set_row_order");
-        
-        std::cout << "got kernel" << std::endl;
-    }catch(...) {
+    // try {
+    //     // protected code
+    //     
+    //     // add kernel to program
+    //     viennacl::ocl::program & my_prog = ctx.get_program("permute_kernel");
+    //     
+    //     // std::cout << "got program" << std::endl;
+    //     
+    //     // get compiled kernel function
+    //     set_row_order = my_prog.get_kernel("set_row_order");
+    //     
+    //     // std::cout << "got kernel" << std::endl;
+    // }catch(...) {
         // code to handle any exception
-        std::cout << "exception handler" << std::endl;
+        // std::cout << "exception handler" << std::endl;
         // add kernel to program
         viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "permute_kernel");
         
-        std::cout << "program added" << std::endl;
+        // std::cout << "program added" << std::endl;
         
         // get compiled kernel function
         set_row_order = my_prog.get_kernel("set_row_order");
         
-        std::cout << "got kernel" << std::endl;
-    }
+        // std::cout << "got kernel" << std::endl;
+    // }
     
     
     // set global work sizes
     set_row_order.global_work_size(0, M_internal);
     set_row_order.global_work_size(1, P_internal);
     
-    std::cout << "set global" << std::endl;
+    // std::cout << "set global" << std::endl;
     
     // set local work sizes
     set_row_order.local_work_size(0, max_local_size);
     set_row_order.local_work_size(1, max_local_size);
     
-    std::cout << "begin enqueue" << std::endl;
+    // std::cout << "begin enqueue" << std::endl;
     
     // std::cout << vcl_I << std::endl;
     // 
@@ -128,11 +128,11 @@ cpp_vclMatrix_set_row_order(
     
     {
         
-        std::cout << "moving indexes" << std::endl;
+        // std::cout << "moving indexes" << std::endl;
         viennacl::vector<int> vcl_I(indices.size());
         viennacl::copy(indices, vcl_I);
         
-        std::cout << "creating dummy vector" << std::endl;
+        // std::cout << "creating dummy vector" << std::endl;
         viennacl::vector<T> vcl_V = viennacl::zero_vector<T>(M);
         
         viennacl::matrix_base<T> vcl_B(vcl_V.handle(),

@@ -2447,6 +2447,29 @@ void cpp_vclMatrix_logistic(
     *vcl_A = viennacl::linalg::element_div(ones, *vcl_A);
 }
 
+template <typename T>
+void cpp_vclVector_logistic(
+        SEXP ptrA_,
+        const int ctx_id)
+{
+    // 1/(1 + exp(-x))
+    
+    viennacl::vector_base<T> *vcl_A;
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+    
+    vcl_A = getVCLVecptr<T>(ptrA_, true, ctx_id);
+    
+    viennacl::vector<T> ones = viennacl::scalar_vector<T>(vcl_A->size(), 1);
+    
+    *vcl_A = (T)(-1) * *vcl_A;
+    *vcl_A = viennacl::linalg::element_exp(*vcl_A);
+    *vcl_A = ones + *vcl_A;
+    *vcl_A = viennacl::linalg::element_div(ones, *vcl_A);
+}
+
 
 template <typename T>
 void cpp_vclMatrix_log_deriv(
@@ -2508,6 +2531,67 @@ void cpp_vclMatrix_log_deriv(
     
     // execute kernel
     viennacl::ocl::enqueue(my_kernel_mul(*vcl_A, *vcl_B, M, P, P_internal));
+}
+
+template <typename T>
+void cpp_vclVector_log_deriv(
+        SEXP ptrA_,
+        SEXP ptrB_,
+        int max_local_size,
+        SEXP sourceCode_,
+        const int ctx_id)
+{
+    // viennacl::matrix<T> *vcl_A;
+    // viennacl::matrix<T> *vcl_B;
+    
+    std::string my_kernel = as<std::string>(sourceCode_);
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+    
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_A = ptrA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > vcl_B = ptrB->data();
+    
+    // vcl_A = getVCLptr<T>(ptrA_, true, ctx_id);
+    // vcl_B = getVCLptr<T>(ptrB_, true, ctx_id);
+    
+    int M = vcl_A.size();
+    
+    // add kernel to program
+    viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+    
+    // get compiled kernel function
+    viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("logistic_deriv");
+    
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "logistic_deriv").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
+    }
+    
+    // std::cout << max_local_size << std::endl;
+    
+    // set global work sizes
+    my_kernel_mul.global_work_size(0, M);
+    // my_kernel_mul.global_work_size(1, P_internal);
+    
+    // set local work sizes
+    my_kernel_mul.local_work_size(0, max_local_size);
+    // my_kernel_mul.local_work_size(1, max_local_size);
+    
+    // execute kernel
+    viennacl::ocl::enqueue(my_kernel_mul(vcl_A, vcl_B));
 }
 
 template <typename T>
@@ -3026,6 +3110,29 @@ cpp_vclMatrix_logistic(
 
 // [[Rcpp::export]]
 void
+cpp_vclVector_logistic(
+    SEXP ptrA,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclVector_logistic<int>(ptrA, ctx_id);
+        return;
+    case 6:
+        cpp_vclVector_logistic<float>(ptrA, ctx_id);
+        return;
+    case 8:
+        cpp_vclVector_logistic<double>(ptrA, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
 cpp_vclMatrix_log_deriv(
     SEXP ptrA,
     SEXP ptrB,
@@ -3044,6 +3151,32 @@ cpp_vclMatrix_log_deriv(
         return;
     case 8:
         cpp_vclMatrix_log_deriv<double>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclVector_log_deriv(
+    SEXP ptrA,
+    SEXP ptrB,
+    int max_local_size,
+    SEXP sourceCode,
+    const int ctx_id,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclVector_log_deriv<int>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
+        return;
+    case 6:
+        cpp_vclVector_log_deriv<float>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
+        return;
+    case 8:
+        cpp_vclVector_log_deriv<double>(ptrA, ptrB, max_local_size, sourceCode, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");

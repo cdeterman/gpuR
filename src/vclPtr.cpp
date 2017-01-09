@@ -916,6 +916,50 @@ vclGetRow(
     return(Am);
 }
 
+
+template <typename T>
+SEXP
+extractRow(
+    SEXP &data, 
+    const int row_idx,
+    const int ctx_id)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
+    
+    // viennacl::vector_base<T> vec;
+    // viennacl::vector_base<T> vec = viennacl::vector_base<T>(pA.size1() * pA.size2(), ctx_id);
+    // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
+    // viennacl::vector_range<viennacl::vector_base<T> > v = vec->data();
+    
+    viennacl::vector<T> vec = viennacl::row(pA, row_idx - 1);
+    dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    
+    Rcpp::XPtr<dynVCLVec<T> > pVec(v);
+    return pVec;
+}
+
+template <typename T>
+SEXP
+extractCol(
+    SEXP &data, 
+    const int col_idx,
+    const int ctx_id)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
+    
+    // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
+    
+    viennacl::vector<T> vec = viennacl::column(pA, col_idx - 1);
+    dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    
+    Rcpp::XPtr<dynVCLVec<T> > pVec(v);
+    return pVec;
+}
+
 // Get viennacl row elements
 template <typename T>
 T
@@ -1418,6 +1462,38 @@ vclGetRow(SEXP ptrA, const int nr, const int type_flag, int ctx_id)
             return wrap(vclGetRow<double>(ptrA, nr, ctx_id));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+extractRow(SEXP ptrA, const int row_idx, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return wrap(extractRow<int>(ptrA, row_idx, ctx_id));
+    case 6:
+        return wrap(extractRow<float>(ptrA, row_idx, ctx_id));
+    case 8:
+        return wrap(extractRow<double>(ptrA, row_idx, ctx_id));
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+extractCol(SEXP ptrA, const int col_idx, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return wrap(extractCol<int>(ptrA, col_idx, ctx_id));
+    case 6:
+        return wrap(extractCol<float>(ptrA, col_idx, ctx_id));
+    case 8:
+        return wrap(extractCol<double>(ptrA, col_idx, ctx_id));
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 

@@ -6,6 +6,8 @@
 \alias{\%*\%,gpuMatrix,gpuMatrix-method}
 \alias{\%*\%,gpuVector,gpuVector-method}
 \alias{\%*\%,vclMatrix,vclMatrix-method}
+\alias{\%*\%,vclMatrix,vclVector-method}
+\alias{\%*\%,vclVector,vclMatrix-method}
 \alias{\%*\%,vclVector,vclVector-method}
 \title{Matrix Multiplication}
 \usage{
@@ -13,7 +15,11 @@
 
 \S4method{\%*\%}{vclMatrix,vclMatrix}(x, y)
 
+\S4method{\%*\%}{vclMatrix,vclVector}(x, y)
+
 \S4method{\%*\%}{vclVector,vclVector}(x, y)
+
+\S4method{\%*\%}{vclVector,vclMatrix}(x, y)
 
 \S4method{\%*\%}{gpuMatrix,gpuMatrix}(x, y)
 }

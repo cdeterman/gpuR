@@ -456,6 +456,19 @@ setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
           valueClass = "vclMatrix"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclMatrix", y = "vclVector"),
+          function(x,y)
+          {
+              if( ncol(x) != length(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "vclVector"
+)
+
 #' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),

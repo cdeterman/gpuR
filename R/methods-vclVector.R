@@ -227,6 +227,21 @@ setMethod("%*%", signature(x="vclVector", y = "vclVector"),
           valueClass = "vclVector"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclVector", y = "vclMatrix"),
+          function(x,y)
+          {
+              # print(length(x))
+              # print(nrow(y))
+              if(length(x) != nrow(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "vclVector"
+)
+
 #' @rdname grapes-o-grapes-methods
 #' @export
 setMethod("%o%", signature(X="vclVector", Y = "vclVector"),

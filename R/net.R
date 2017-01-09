@@ -12,6 +12,19 @@ vclMat_logistic <- function(A){
     )
 }
 
+#' @export
+vclVec_logistic <- function(A){
+    
+    type <- typeof(A)
+    ctx_id <- A@.context_index - 1
+    
+    switch(type,
+           "float" = cpp_vclVector_logistic(A@address, ctx_id, 6L),
+           "double" = cpp_vclVector_logistic(A@address, ctx_id, 8L),
+           stop("unimplemented type")
+    )
+}
+
 # vclMatrix log deriv
 
 #' @export
@@ -89,6 +102,96 @@ vclMat_log_deriv <- function(A, B, inplace = FALSE){
     }
 }
 
+
+#' @export
+vclVec_log_deriv <- function(A, B, inplace = FALSE){
+	
+    if(inherits(A, "vclMatrix")){
+        inplace_failsafe = FALSE
+        
+        if(ncol(A) == 1){
+            Z <- vclVector(A, col = 1) 
+        }else{
+            stop("can't pass multiple columns here currently")
+        }
+    }else{
+        inplace_failsafe = TRUE
+        
+        if(inplace){
+            Z <- A
+        }else{
+            Z <- deepcopy(A)
+        }
+    }
+    
+	type <- typeof(Z)
+	
+	maxWorkGroupSize <- 
+		switch(deviceType(Z@.platform_index, Z@.device_index),
+			   "gpu" = gpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+			   "cpu" = cpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+			   stop("unrecognized device type")
+		)
+	
+	switch(type,
+		   integer = {
+		   	stop("not currently implemented")
+		   	# file <- system.file("CL", "iScalarAXPY.cl", package = "gpuR")
+		   	# 
+		   	# if(!file_test("-f", file)){
+		   	#     stop("kernel file does not exist")
+		   	# }
+		   	# kernel <- readChar(file, file.info(file)$size)
+		   	# 
+		   	# cpp_vclMatrix_log_deriv(Z@address,
+		   	#                           kernel,
+		   	#                           Z@.context_index - 1,
+		   	#                           4L)
+		   },
+		   float = {
+		   	
+		   	file <- system.file("CL", "fVecLogDeriv.cl", package = "gpuR")
+		   	
+		   	if(!file_test("-f", file)){
+		   		stop("kernel file does not exist")
+		   	}
+		   	kernel <- readChar(file, file.info(file)$size)
+		   	
+		   	cpp_vclVector_log_deriv(Z@address,
+		   							B@address,
+		   							sqrt(maxWorkGroupSize),
+		   							kernel,
+		   							Z@.context_index - 1,
+		   							6L)
+		   },
+		   double = {
+		   	
+		   	file <- system.file("CL", "dVecLogDeriv.cl", package = "gpuR")
+		   	
+		   	if(!file_test("-f", file)){
+		   		stop("kernel file does not exist")
+		   	}
+		   	kernel <- readChar(file, file.info(file)$size)
+		   	
+		   	cpp_vclVector_log_deriv(Z@address,
+		   							B@address,
+		   							sqrt(maxWorkGroupSize),
+		   							kernel,
+		   							Z@.context_index - 1,
+		   							8L)
+		   },
+		   stop("type not recognized")
+	)
+	
+	if(inplace){
+	    if(!inplace_failsafe){
+	        A[,1] = Z
+	    }
+		return(invisible(Z))
+	}else{
+		return(Z)
+	}
+}
 
 #' @export
 max_abs <- function(x){

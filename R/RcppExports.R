@@ -374,6 +374,14 @@ vclGetRow <- function(ptrA, nr, type_flag, ctx_id) {
     .Call('gpuR_vclGetRow', PACKAGE = 'gpuR', ptrA, nr, type_flag, ctx_id)
 }
 
+extractRow <- function(ptrA, row_idx, type_flag, ctx_id) {
+    .Call('gpuR_extractRow', PACKAGE = 'gpuR', ptrA, row_idx, type_flag, ctx_id)
+}
+
+extractCol <- function(ptrA, col_idx, type_flag, ctx_id) {
+    .Call('gpuR_extractCol', PACKAGE = 'gpuR', ptrA, col_idx, type_flag, ctx_id)
+}
+
 vclGetElement <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_vclGetElement', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
@@ -550,8 +558,16 @@ cpp_vclMatrix_logistic <- function(ptrA, ctx_id, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_logistic', PACKAGE = 'gpuR', ptrA, ctx_id, type_flag))
 }
 
+cpp_vclVector_logistic <- function(ptrA, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclVector_logistic', PACKAGE = 'gpuR', ptrA, ctx_id, type_flag))
+}
+
 cpp_vclMatrix_log_deriv <- function(ptrA, ptrB, max_local_size, sourceCode, ctx_id, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_log_deriv', PACKAGE = 'gpuR', ptrA, ptrB, max_local_size, sourceCode, ctx_id, type_flag))
+}
+
+cpp_vclVector_log_deriv <- function(ptrA, ptrB, max_local_size, sourceCode, ctx_id, type_flag) {
+    invisible(.Call('gpuR_cpp_vclVector_log_deriv', PACKAGE = 'gpuR', ptrA, ptrB, max_local_size, sourceCode, ctx_id, type_flag))
 }
 
 cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
@@ -856,6 +872,14 @@ cpp_vclVector_elem_max_abs <- function(ptrA, type_flag) {
 
 cpp_vclVector_min <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_vclMatrix_gemv <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_gemv', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
+}
+
+cpp_vclMatrix_gevm <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_gevm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
 cpp_gpuMatrix_gemm <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
