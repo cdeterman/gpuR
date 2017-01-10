@@ -400,6 +400,7 @@ vclGEMV<- function(A, B){
     return(C)
 }
 
+
 # vclMatrix AXPY
 vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScalar = FALSE){
     
@@ -573,6 +574,60 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
     }else{
         return(Z)   
     }
+}
+
+
+# need API for matrix-vector Arith methods
+# can convert vector to 'dummy' matrix
+# not sure about the vector-matrix methods
+# may need to 'copy' the matrix for now because of the padding
+
+vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
+ 
+    type <- typeof(A)
+    
+    if(inplace){
+        Z <- B
+    }else{
+        Z <- deepcopy(B) 
+    }
+    
+    
+    AisVec <- inherits(A, "vclVector")
+    BisVec <- inherits(B, "vclVector")
+    
+    switch(type,
+           integer = {
+               cpp_vclMatVec_axpy(alpha, 
+                                  A@address, 
+                                  AisVec,
+                                  Z@address,
+                                  BisVec,
+                                  4L,
+                                  A@.context_index)
+           },
+           float = {
+               cpp_vclMatVec_axpy(alpha, 
+                                  A@address, 
+                                  AisVec,
+                                  Z@address,
+                                  BisVec,
+                                  6L,
+                                  A@.context_index)
+           },
+           double = {
+               cpp_vclMatVec_axpy(alpha, 
+                                  A@address, 
+                                  AisVec,
+                                  Z@address,
+                                  BisVec,
+                                  8L,
+                                  A@.context_index)
+           },
+           stop("type not recognized")
+    )   
+    
+    return(Z)
 }
 
 

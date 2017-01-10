@@ -562,6 +562,22 @@ setMethod("Arith", c(e1="vclMatrix", e2="missing"),
           valueClass = "vclMatrix"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="vclVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMatVec_axpy(1, e1, e2),
+                     `-` = vclMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
 
 #' @rdname Math-methods
 #' @export

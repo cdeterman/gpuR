@@ -61,6 +61,55 @@ void cpp_vclMatrix_gevm(
     C = viennacl::linalg::prod(trans(B), A);
 }
 
+
+template <typename T>
+void cpp_vclMatVec_axpy(
+        SEXP alpha_,
+        SEXP ptrA_, 
+        const bool AisVec,
+        SEXP ptrB_,
+        const bool BisVec,
+        const int ctx_id)
+{
+    
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    const T alpha = as<T>(alpha_);
+    
+    if(AisVec){
+        Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+        Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+        
+        viennacl::vector_range<viennacl::vector_base<T> > A = ptrA->data();
+        viennacl::matrix_range<viennacl::matrix<T> > vcl_B = ptrB->data();
+        
+        viennacl::matrix_base<T> vcl_A = viennacl::matrix_base<T>(A.handle(),
+                                                                  vcl_B.size2(), 0, 1, vcl_B.size2(),   //row layout
+                                                                  vcl_B.size1(), 0, 1, vcl_B.size1(),   //column layout
+                                                                  true); // row-major
+        vcl_B += alpha * trans(vcl_A);
+    }else{
+        if(BisVec){
+            Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+            Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+            
+            viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+            viennacl::vector_range<viennacl::vector_base<T> > B = ptrB->data();
+            
+            viennacl::matrix_base<T> vcl_B = viennacl::matrix_base<T>(B.handle(),
+                                                                      vcl_A.size2(), 0, 1, vcl_A.size2(),   //row layout
+                                                                      vcl_A.size1(), 0, 1, vcl_A.size1(),   //column layout
+                                                                      true); // row-major
+            
+            vcl_B += alpha * trans(vcl_A);
+        }else{
+            throw Rcpp::exception("one of the objects must be a vector");
+        }
+    }
+}
+
+
+
 // [[Rcpp::export]]
 void
 cpp_vclMatrix_gemv(
@@ -107,3 +156,29 @@ cpp_vclMatrix_gevm(
 }
 
 
+// [[Rcpp::export]]
+void
+cpp_vclMatVec_axpy(
+    SEXP alpha,
+    SEXP ptrA, 
+    const bool AisVec,
+    SEXP ptrB, 
+    const bool BisVec,
+    const int type_flag,
+    const int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatVec_axpy<int>(alpha, ptrA, AisVec, ptrB, BisVec, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatVec_axpy<float>(alpha, ptrA, AisVec, ptrB, BisVec, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatVec_axpy<double>(alpha, ptrA, AisVec, ptrB, BisVec, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
