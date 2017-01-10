@@ -37,7 +37,7 @@ template <typename T>
 void cpp_gpuVector_axpy(
     SEXP alpha_, 
     SEXP A_, SEXP B_,
-    int ctx_id)
+    const int ctx_id)
 {
     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
