@@ -696,8 +696,8 @@ vcl_crossprod <- function(X, Y){
     return(Z)
 }
 
-
-vclVec_crossprod <- function(X, Y, Z = NULL){
+# vclMatrix crossproduct where result is a vclVector
+vcl_crossprod2 <- function(X, Y, Z = NULL){
     
     if(nrow(X) != nrow(Y)){
         stop("matrices non-conformable")
@@ -725,6 +725,70 @@ vclVec_crossprod <- function(X, Y, Z = NULL){
                                              6L),
            "double" = cpp_vclMat_vclVec_crossprod(X@address, 
                                               Y@address, 
+                                              Z@address,
+                                              8L)
+    )
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
+}
+
+
+vcl_mat_vec_crossprod <- function(X, Y, Z = NULL){
+    
+    assert_are_identical(X@.context_index, Y@.context_index)
+    
+    type <- typeof(X)
+    
+    AisVec <- inherits(X, "vclVector")
+    BisVec <- inherits(Y, "vclVector")
+    
+    if(AisVec){
+        if(length(X) != nrow(Y)){
+            stop("non-conformable arguments")
+        }
+    }else{
+        if(nrow(X) != length(Y)){
+            stop("non-conformable arguments")
+        }
+    }
+    
+    if(is.null(Z)){
+        if(AisVec){
+            Z <- vclVector(length = ncol(Y), type = type, ctx_id = X@.context_index)
+        }else{
+            Z <- vclVector(length = ncol(X), type = type, ctx_id = X@.context_index)    
+        }
+        inplace = FALSE
+    }else{
+        if(AisVec){
+            if(length(Z) != ncol(Y)){
+                stop("dimensions don't match")
+            }
+        }else{
+            if(length(Z) != ncol(X)){
+                stop("dimensions don't match")
+            }
+        }
+        
+        inplace = TRUE
+    }
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vclMatVec_crossprod(X@address, 
+                                             AisVec,
+                                             Y@address, 
+                                             BisVec,
+                                             Z@address,
+                                             6L),
+           "double" = cpp_vclMatVec_crossprod(X@address, 
+                                              AisVec,
+                                              Y@address, 
+                                              BisVec,
                                               Z@address,
                                               8L)
     )

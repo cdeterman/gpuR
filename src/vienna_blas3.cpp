@@ -262,6 +262,7 @@ cpp_vclMatrix_crossprod(
     C = viennacl::linalg::prod(trans(A), B);
 }
 
+// for use in cases where two matrices crossprod result in 1 row/column
 template <typename T>
 void 
 cpp_vclMat_vclVec_crossprod(
@@ -278,13 +279,6 @@ cpp_vclMat_vclVec_crossprod(
     viennacl::vector_range<viennacl::vector_base<T> > V = ptrC->data();
     
     viennacl::vector_base<T> tmp = V;
-    
-    // int start = ptrV->begin - 1;
-    
-    // std::cout << ptrC->getPtr()->size()/B.size2() << std::endl;
-    // std::cout << B.size2() << std::endl;
-    // std::cout << A.size2() << std::endl;
-    
     
     viennacl::matrix_base<T> C(tmp.handle(),
                                 A.size2(), 0, 1, A.size2(),   // row layout
@@ -315,8 +309,9 @@ cpp_vclMat_vclVec_crossprod(
     
     // std::cout << C << std::endl;
     
-    V = tmp;
+    // V = tmp;
 }
+
 
 template <typename T>
 void
@@ -420,6 +415,7 @@ cpp_vclMat_vclVec_crossprod(
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
+
 
 // [[Rcpp::export]]
 void

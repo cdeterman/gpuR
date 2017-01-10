@@ -5,6 +5,8 @@
 \alias{crossprod,vclMatrix}
 \alias{crossprod,vclMatrix,missing-method}
 \alias{crossprod,vclMatrix,vclMatrix-method}
+\alias{crossprod,vclMatrix,vclVector-method}
+\alias{crossprod,vclVector,vclMatrix-method}
 \alias{tcrossprod,vclMatrix,missing-method}
 \alias{tcrossprod,vclMatrix,vclMatrix-method}
 \title{vclMatrix Crossproduct}
@@ -12,6 +14,10 @@
 \S4method{crossprod}{vclMatrix,missing}(x, y)
 
 \S4method{crossprod}{vclMatrix,vclMatrix}(x, y)
+
+\S4method{crossprod}{vclMatrix,vclVector}(x, y)
+
+\S4method{crossprod}{vclVector,vclMatrix}(x, y)
 
 \S4method{tcrossprod}{vclMatrix,missing}(x, y)
 

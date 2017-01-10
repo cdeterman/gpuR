@@ -882,6 +882,10 @@ cpp_vclMatrix_gevm <- function(ptrA, ptrB, ptrC, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_gevm', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
 }
 
+cpp_vclMatVec_crossprod <- function(ptrA, AisVec, ptrB, BisVec, ptrC, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatVec_crossprod', PACKAGE = 'gpuR', ptrA, AisVec, ptrB, BisVec, ptrC, type_flag))
+}
+
 cpp_vclMatVec_axpy <- function(alpha, ptrA, AisVec, ptrB, BisVec, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vclMatVec_axpy', PACKAGE = 'gpuR', alpha, ptrA, AisVec, ptrB, BisVec, type_flag, ctx_id))
 }

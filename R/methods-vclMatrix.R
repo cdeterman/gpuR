@@ -704,6 +704,24 @@ setMethod("crossprod",
               vcl_crossprod(x, y)
           })
 
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y){
+              vcl_mat_vec_crossprod(x, y)
+          })
+
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y){
+              vcl_mat_vec_crossprod(x, y)
+          })
+
+
 
 #' @rdname vclMatrix-crossprod
 setMethod("tcrossprod",

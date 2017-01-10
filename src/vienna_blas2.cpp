@@ -63,6 +63,42 @@ void cpp_vclMatrix_gevm(
 
 
 template <typename T>
+void 
+cpp_vclMatVec_crossprod(
+    SEXP ptrA_, 
+    const bool AisVec,
+    SEXP ptrB_,
+    const bool BisVec,
+    SEXP ptrC_)
+{
+    if(AisVec){
+        Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+        Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+        Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+        
+        viennacl::vector_range<viennacl::vector_base<T> > A = ptrA->data();
+        viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+        viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+        
+        C = viennacl::linalg::prod(trans(B), A);
+    }else{
+        if(BisVec){
+            Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+            Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+            Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+            
+            viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+            viennacl::vector_range<viennacl::vector_base<T> > B = ptrB->data();
+            viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+            
+            C = viennacl::linalg::prod(trans(A), B);
+        }else{
+            throw Rcpp::exception("one of the objects must be a vector");
+        }
+    }
+}
+
+template <typename T>
 void cpp_vclMatVec_axpy(
         SEXP alpha_,
         SEXP ptrA_, 
@@ -149,6 +185,32 @@ cpp_vclMatrix_gevm(
         return;
     case 8:
         cpp_vclMatrix_gevm<double>(ptrA, ptrB, ptrC);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclMatVec_crossprod(
+    SEXP ptrA, 
+    const bool AisVec, 
+    SEXP ptrB, 
+    const bool BisVec, 
+    SEXP ptrC,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatVec_crossprod<int>(ptrA, AisVec, ptrB, BisVec, ptrC);
+        return;
+    case 6:
+        cpp_vclMatVec_crossprod<float>(ptrA, AisVec, ptrB, BisVec, ptrC);
+        return;
+    case 8:
+        cpp_vclMatVec_crossprod<double>(ptrA, AisVec, ptrB, BisVec, ptrC);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
