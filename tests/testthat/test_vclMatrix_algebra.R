@@ -367,6 +367,33 @@ test_that("vclMatrix Single Precision tcrossprod", {
     expect_error(tcrossprod(fvclX, fvclZ))
 })
 
+
+test_that("vclMatrix Single Precision matrix-vector tcrossprod", {
+    
+    has_gpu_skip()
+    
+    X <- matrix(rnorm(10), nrow=2)
+    Y <- rnorm(5)
+    Z <- rnorm(2)
+    
+    C <- tcrossprod(X,t(Y))
+    C2 <- tcrossprod(Y,X)
+    
+    fvclX <- vclMatrix(X, type="float")
+    fvclY <- vclVector(Y, type="float")
+    fvclZ <- vclVector(Z, type="float")
+    
+    fvclC <- tcrossprod(fvclX, fvclY)
+    fvclC2 <- tcrossprod(fvclY, fvclX)
+    
+    expect_is(fvclC, "fvclVector")
+    expect_equal(fvclC[,], c(C), tolerance=1e-07,
+                 info="float matrix elements not equivalent")
+    expect_equal(fvclC2[,], c(C2), tolerance=1e-07,
+                 info="float matrix elements not equivalent")
+    expect_error(tcrossprod(fvclX, fvclZ))
+})
+
 test_that("vclMatrix Single Precision transpose", {
 
     has_gpu_skip()

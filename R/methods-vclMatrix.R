@@ -722,7 +722,6 @@ setMethod("crossprod",
           })
 
 
-
 #' @rdname vclMatrix-crossprod
 setMethod("tcrossprod",
           signature(x = "vclMatrix", y = "missing"),
@@ -737,6 +736,22 @@ setMethod("tcrossprod",
           signature(x = "vclMatrix", y = "vclMatrix"),
           function(x, y){
               vcl_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-tcrossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y){
+              vcl_mat_vec_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-tcrossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y){
+              vcl_mat_vec_tcrossprod(x, y)
           })
 
 #' @rdname cov-methods

@@ -2749,6 +2749,21 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_vclMatVec_tcrossprod
+void cpp_vclMatVec_tcrossprod(SEXP ptrA, const bool AisVec, SEXP ptrB, const bool BisVec, SEXP ptrC, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatVec_tcrossprod(SEXP ptrASEXP, SEXP AisVecSEXP, SEXP ptrBSEXP, SEXP BisVecSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVec(AisVecSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVec(BisVecSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_vclMatVec_tcrossprod(ptrA, AisVec, ptrB, BisVec, ptrC, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_vclMatVec_axpy
 void cpp_vclMatVec_axpy(SEXP alpha, SEXP ptrA, const bool AisVec, SEXP ptrB, const bool BisVec, const int type_flag, const int ctx_id);
 RcppExport SEXP gpuR_cpp_vclMatVec_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP AisVecSEXP, SEXP ptrBSEXP, SEXP BisVecSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {

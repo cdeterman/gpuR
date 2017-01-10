@@ -736,7 +736,7 @@ vcl_crossprod2 <- function(X, Y, Z = NULL){
     }
 }
 
-
+# vclMatrix-vclVector crossproduct
 vcl_mat_vec_crossprod <- function(X, Y, Z = NULL){
     
     assert_are_identical(X@.context_index, Y@.context_index)
@@ -829,6 +829,69 @@ vcl_tcrossprod <- function(X, Y){
     return(Z)
 }
 
+# vclMatrix-vclVector tcrossproduct
+vcl_mat_vec_tcrossprod <- function(X, Y, Z = NULL){
+    
+    assert_are_identical(X@.context_index, Y@.context_index)
+    
+    type <- typeof(X)
+    
+    AisVec <- inherits(X, "vclVector")
+    BisVec <- inherits(Y, "vclVector")
+    
+    if(AisVec){
+        if(length(X) != ncol(Y)){
+            stop("non-conformable arguments")
+        }
+    }else{
+        if(ncol(X) != length(Y)){
+            stop("non-conformable arguments")
+        }
+    }
+    
+    if(is.null(Z)){
+        if(AisVec){
+            Z <- vclVector(length = nrow(Y), type = type, ctx_id = X@.context_index)
+        }else{
+            Z <- vclVector(length = nrow(X), type = type, ctx_id = X@.context_index)    
+        }
+        inplace = FALSE
+    }else{
+        if(AisVec){
+            if(length(Z) != ncol(Y)){
+                stop("dimensions don't match")
+            }
+        }else{
+            if(length(Z) != ncol(X)){
+                stop("dimensions don't match")
+            }
+        }
+        
+        inplace = TRUE
+    }
+    
+    switch(type,
+           "integer" = stop("integer type not currently implemented"),
+           "float" = cpp_vclMatVec_tcrossprod(X@address, 
+                                             AisVec,
+                                             Y@address, 
+                                             BisVec,
+                                             Z@address,
+                                             6L),
+           "double" = cpp_vclMatVec_tcrossprod(X@address, 
+                                              AisVec,
+                                              Y@address, 
+                                              BisVec,
+                                              Z@address,
+                                              8L)
+    )
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
+}
 
 # GPU Element-Wise Multiplication
 vclMatElemMult <- function(A, B, inplace = FALSE){
