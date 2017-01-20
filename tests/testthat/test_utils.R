@@ -12,6 +12,7 @@ test_that("detectGPUs() accepts appropriate input", {
     expect_error(detectGPUs(0))
     expect_error(detectGPUs(2))
     expect_error(detectGPUs(c(2,3)))
+    expect_error(detectGPUs(7))
 })
 
 test_that("gpuInfo() accepts appropriate input", {
@@ -39,6 +40,7 @@ test_that("detectCPUs() accepts correct input", {
     expect_error(detectCPUs(0))
     expect_error(detectCPUs(2))
     expect_error(detectCPUs(c(2,3)))
+    expect_error(detectCPUs(7))
 })
 
 test_that("contexts behave correctly", {

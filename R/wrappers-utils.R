@@ -58,6 +58,11 @@ detectCPUs <- function(platform_idx=NULL){
     }else{
         assert_is_integer(platform_idx)
         assert_all_are_positive(platform_idx)
+        numPlats <- detectPlatforms()
+        
+        if(platform_idx > numPlats){
+            stop("Platform index exceeds number of platforms.")
+        }
         
         cpus <- try(cpp_detectCPUs(platform_idx), silent=TRUE)
         if(class(cpus)[1] == "try-error"){
@@ -100,6 +105,12 @@ detectGPUs <- function(platform_idx=NULL){
     }else{
         assert_is_integer(platform_idx)
         assert_all_are_positive(platform_idx)
+        
+        numPlats <- detectPlatforms()
+        
+        if(platform_idx > numPlats){
+            stop("Platform index exceeds number of platforms.")
+        }
         
         gpus <- try(cpp_detectGPUs(platform_idx), silent=TRUE)
         if(class(gpus)[1] == "try-error"){
