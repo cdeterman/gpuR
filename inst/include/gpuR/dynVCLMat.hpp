@@ -26,12 +26,12 @@ class dynVCLMat {
         Rcpp::StringVector _colNames, _rowNames;
         viennacl::range row_r;
         viennacl::range col_r;
-        viennacl::matrix<T> *ptr;
+        // viennacl::matrix<T> *ptr;
         std::shared_ptr<viennacl::matrix<T> > shptr;
         // = std::make_shared<viennacl::matrix<T> >();
     
     public:
-        viennacl::matrix<T> A;
+        // viennacl::matrix<T> A;
         
         dynVCLMat() { 
             
@@ -51,12 +51,13 @@ class dynVCLMat {
 	        
 	        // must explicity switch context to make sure the same
 	        // it appears when class initialized the A is set to current context (may not be desired)
-	        A.switch_memory_context(ctx);
-	        A = mat;
+	        // A.switch_memory_context(ctx);
+	        
+	        viennacl::matrix<T> A = mat;
 	        
 	        nr = A.size1();
 	        nc = A.size2();
-	        ptr = &A;
+	        // ptr = &A;
 	        shptr = std::make_shared<viennacl::matrix<T> >(A);
 	        // shptr.reset(ptr);
 	        viennacl::range temp_rr(0, nr);
@@ -75,14 +76,14 @@ class dynVCLMat {
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
-            A.switch_memory_context(ctx);
-            A = viennacl::matrix<T>(K,M, ctx);
+            // A.switch_memory_context(ctx);
+            viennacl::matrix<T> A = viennacl::matrix<T>(K,M, ctx);
             
             viennacl::copy(Am, A); 
             
             nr = K;
             nc = M;
-            ptr = &A;
+            // ptr = &A;
             
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
@@ -100,13 +101,13 @@ class dynVCLMat {
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
-            A.switch_memory_context(ctx);
-            A = viennacl::matrix<T>(nr_in, nc_in, ctx);
+            // A.switch_memory_context(ctx);
+            viennacl::matrix<T> A = viennacl::matrix<T>(nr_in, nc_in, ctx);
             viennacl::copy(Am, A); 
             
             nr = nr_in;
             nc = nc_in;
-            ptr = &A;
+            // ptr = &A;
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
             viennacl::range temp_rr(0, nr);
@@ -120,12 +121,12 @@ class dynVCLMat {
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
-            A.switch_memory_context(ctx);
-            A = viennacl::zero_matrix<T>(nr_in, nc_in, ctx);
+            // A.switch_memory_context(ctx);
+            viennacl::matrix<T> A = viennacl::zero_matrix<T>(nr_in, nc_in, ctx);
             
             nr = nr_in;
             nc = nc_in;
-            ptr = &A;
+            // ptr = &A;
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
             viennacl::range temp_rr(0, nr);
@@ -139,12 +140,12 @@ class dynVCLMat {
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
-            A.switch_memory_context(ctx);
-            A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar, ctx);
+            // A.switch_memory_context(ctx);
+            viennacl::matrix<T> A = viennacl::scalar_matrix<T>(nr_in, nc_in, scalar, ctx);
             
             nr = nr_in;
             nc = nc_in;
-            ptr = &A;
+            // ptr = &A;
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
             viennacl::range temp_rr(0, nr);
@@ -199,8 +200,8 @@ class dynVCLMat {
             }
         };
         void setMatrix(viennacl::matrix<T> mat){
-            A = mat;
-            ptr = &A;
+            viennacl::matrix<T> A = mat;
+            // ptr = &A;
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
         }
@@ -239,8 +240,8 @@ class dynVCLMat {
         }
         
         void setPtr(viennacl::matrix<T>* ptr_){
-            ptr = ptr_;
-            shptr = std::make_shared<viennacl::matrix<T> >(*ptr);
+            // ptr = ptr_;
+            shptr = std::make_shared<viennacl::matrix<T> >(*ptr_);
             // shptr.reset(ptr_);
         };
         void setSharedPtr(std::shared_ptr<viennacl::matrix<T> > shptr_){
@@ -252,7 +253,7 @@ class dynVCLMat {
             return m_sub;
         };
         viennacl::matrix<T> matrix() {
-            return A;
+            return *shptr;
         }
         
         viennacl::vector<T> row(int row_id) {
