@@ -54,9 +54,9 @@ setMethod('vclMatrix',
                   context_info <- context_info[, context_info$context == ctx_id]
                   
                   device_name <- as.character(context_info$device)
-                  device_index <- context_info$device_index
+                  device_index <- context_info$device_index + 1L
                   device_type <- context_info$device_type
-                  platform_index <- context_info$platform_index
+                  platform_index <- context_info$platform_index + 1L
                   platform_name <- as.character(context_info$platform)
               }
               
@@ -128,9 +128,9 @@ setMethod('vclMatrix',
                   context_info <- context_info[, context_info$context == ctx_id]
                   
                   device_name <- as.character(context_info$device)
-                  device_index <- context_info$device_index
+                  device_index <- context_info$device_index + 1L
                   device_type <- context_info$device_type
-                  platform_index <- context_info$platform_index
+                  platform_index <- context_info$platform_index + 1L
                   platform_name <- as.character(context_info$platform)
               }
               

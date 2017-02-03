@@ -22,9 +22,9 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
         context_info <- context_info[, context_info$context == ctx_id]
         
         device_name <- as.character(context_info$device)
-        device_index <- context_info$device_index
+        device_index <- context_info$device_index + 1L
         device_type <- context_info$device_type
-        platform_index <- context_info$platform_index
+        platform_index <- context_info$platform_index + 1L
         platform_name <- as.character(context_info$platform)
     }
 
@@ -83,9 +83,9 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
         context_info <- context_info[, context_info$context == ctx_id]
         
         device_name <- as.character(context_info$device)
-        device_index <- context_info$device_index
+        device_index <- context_info$device_index + 1L
         device_type <- context_info$device_type
-        platform_index <- context_info$platform_index
+        platform_index <- context_info$platform_index + 1L
         platform_name <- as.character(context_info$platform)
     }
     
@@ -149,11 +149,11 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
         context_info <- listContexts()
         context_info <- context_info[, context_info$context == ctx_id]
         
-        device_name <- context_info$device
-        device_index <- context_info$device_index
+        device_name <- as.character(context_info$device)
+        device_index <- context_info$device_index + 1L
         device_type <- context_info$device_type
-        platform_index <- context_info$platform_index
-        platform_name <- context_info$platform
+        platform_index <- context_info$platform_index + 1L
+        platform_name <- as.character(context_info$platform)
     }
     
     data = switch(type,
@@ -221,9 +221,9 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
         context_info <- context_info[, context_info$context == ctx_id]
         
         device_name <- as.character(context_info$device)
-        device_index <- context_info$device_index
+        device_index <- context_info$device_index + 1L
         device_type <- context_info$device_type
-        platform_index <- context_info$platform_index
+        platform_index <- context_info$platform_index + 1L
         platform_name <- as.character(context_info$platform)
     }
     
