@@ -5,7 +5,7 @@ Description: Provides GPU enabled functions for R objects in a simple and
     approachable manner.  New gpu* and vcl* classes have been provided to
     wrap typical R objects (e.g. vector, matrix), in both host and device
     spaces, to mirror typical R syntax without the need to know OpenCL.
-Version: 1.2.1
+Version: 1.2.2
 Date: 2016-12-30
 Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
