@@ -2,19 +2,31 @@
 # vclMatrix numeric vector initializer
 vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
 
-    device <- currentDevice()
-    
-    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- as.integer(device$device_index)
-    device_type <- device$device_type
-    
-    device_name <- switch(device_type,
-                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          stop("Unrecognized device type")
-    )
-    platform_index <- currentPlatform()$platform_index
-    platform_name <- platformInfo(platform_index)$platformName
+    if(is.null(ctx_id)){
+        device <- currentDevice()
+        
+        context_index <- currentContext() 
+        device_index <- as.integer(device$device_index)
+        device_type <- device$device_type
+        device_name <- switch(device_type,
+                              "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              stop("Unrecognized device type")
+        )
+        platform_index <- currentPlatform()$platform_index
+        platform_name <- platformInfo(platform_index)$platformName
+    }else{
+        context_index <- as.integer(ctx_id)
+        
+        context_info <- listContexts()
+        context_info <- context_info[, context_info$context == ctx_id]
+        
+        device_name <- context_info$device
+        device_index <- context_info$device_index
+        device_type <- context_info$device_type
+        platform_index <- context_info$platform_index
+        platform_name <- context_info$platform
+    }
 
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
@@ -51,18 +63,31 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
 # vclMatrix numeric initializer
 vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
     
-    device <- currentDevice()
-    
-    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- as.integer(device$device_index)
-    device_type <- device$device_type
-    device_name <- switch(device_type,
-                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          stop("Unrecognized device type")
-    )
-    platform_index <- currentPlatform()$platform_index
-    platform_name <- platformInfo(platform_index)$platformName
+    if(is.null(ctx_id)){
+        device <- currentDevice()
+        
+        context_index <- currentContext() 
+        device_index <- as.integer(device$device_index)
+        device_type <- device$device_type
+        device_name <- switch(device_type,
+                              "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              stop("Unrecognized device type")
+        )
+        platform_index <- currentPlatform()$platform_index
+        platform_name <- platformInfo(platform_index)$platformName
+    }else{
+        context_index <- as.integer(ctx_id)
+        
+        context_info <- listContexts()
+        context_info <- context_info[, context_info$context == ctx_id]
+        
+        device_name <- context_info$device
+        device_index <- context_info$device_index
+        device_type <- context_info$device_type
+        platform_index <- context_info$platform_index
+        platform_name <- context_info$platform
+    }
     
     data = switch(type,
                   integer = stop("integer matrix must be initialized with an integer (e.g. 3L)"),
@@ -105,18 +130,31 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
 # vclMatrix integer vector initializer
 vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
     
-    device <- currentDevice()
-    
-    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- as.integer(device$device_index)
-    device_type <- device$device_type
-    device_name <- switch(device_type,
-                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          stop("Unrecognized device type")
-    )
-    platform_index <- currentPlatform()$platform_index
-    platform_name <- platformInfo(platform_index)$platformName
+    if(is.null(ctx_id)){
+        device <- currentDevice()
+        
+        context_index <- currentContext() 
+        device_index <- as.integer(device$device_index)
+        device_type <- device$device_type
+        device_name <- switch(device_type,
+                              "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              stop("Unrecognized device type")
+        )
+        platform_index <- currentPlatform()$platform_index
+        platform_name <- platformInfo(platform_index)$platformName
+    }else{
+        context_index <- as.integer(ctx_id)
+        
+        context_info <- listContexts()
+        context_info <- context_info[, context_info$context == ctx_id]
+        
+        device_name <- context_info$device
+        device_index <- context_info$device_index
+        device_type <- context_info$device_type
+        platform_index <- context_info$platform_index
+        platform_name <- context_info$platform
+    }
     
     data = switch(type,
                   integer = {
@@ -163,18 +201,31 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
 # vclMatrix integer scalar initializer
 vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
     
-    device <- currentDevice()
-    
-    context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
-    device_index <- as.integer(device$device_index)
-    device_type <- device$device_type
-    device_name <- switch(device_type,
-                          "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                          stop("Unrecognized device type")
-    )
-    platform_index <- currentPlatform()$platform_index
-    platform_name <- platformInfo(platform_index)$platformName
+    if(is.null(ctx_id)){
+        device <- currentDevice()
+        
+        context_index <- currentContext() 
+        device_index <- as.integer(device$device_index)
+        device_type <- device$device_type
+        device_name <- switch(device_type,
+                              "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                              stop("Unrecognized device type")
+        )
+        platform_index <- currentPlatform()$platform_index
+        platform_name <- platformInfo(platform_index)$platformName
+    }else{
+        context_index <- as.integer(ctx_id)
+        
+        context_info <- listContexts()
+        context_info <- context_info[, context_info$context == ctx_id]
+        
+        device_name <- context_info$device
+        device_index <- context_info$device_index
+        device_type <- context_info$device_type
+        platform_index <- context_info$platform_index
+        platform_name <- context_info$platform
+    }
     
     data = switch(type,
                   integer = {
