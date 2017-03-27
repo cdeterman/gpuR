@@ -184,11 +184,16 @@ vclVecElemMult <- function(A, B){
 
 
 # GPU Scalar Element-Wise Multiplication
-vclVecScalarMult <- function(A, B){
+vclVecScalarMult <- function(A, B, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- deepcopy(A)
+    if(inplace){
+        C <- A
+    }else{
+        C <- deepcopy(A)
+    }
+    
     
     switch(type,
            integer = {
@@ -205,7 +210,12 @@ vclVecScalarMult <- function(A, B){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+    	return(invisible(C))
+    }else{
+    	return(C)	
+    }
 }
 
 
