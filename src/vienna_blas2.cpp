@@ -105,29 +105,60 @@ cpp_vclMatVec_tcrossprod(
     const bool AisVec,
     SEXP ptrB_,
     const bool BisVec,
-    SEXP ptrC_)
+    SEXP ptrC_,
+    const bool CisVec)
 {
     if(AisVec){
         Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
         Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-        Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
         
         viennacl::vector_range<viennacl::vector_base<T> > A = ptrA->data();
         viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
-        viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
         
-        C = viennacl::linalg::prod(B, A);
+        if(CisVec){
+            Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+            viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+            C = viennacl::linalg::prod(B, A);
+        }else{
+            Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+            viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
+
+            viennacl::vector<T> B_vec = viennacl::column(B, 0);
+
+            // this won't work for ranges!!!!
+            // viennacl::matrix_base<float> dummy(A.handle(),
+            //                                    vcl_A.size(), 0, 1, vcl_A.size(),   //row layout
+            //                                    1, 0, 1, 1,   //column layout
+            //                                    true); // row-major
+            // C = viennacl::linalg::prod(B, trans(dummy));
+
+            C = viennacl::linalg::outer_prod(A, B_vec);
+        }
     }else{
         if(BisVec){
             Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
             Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
-            Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
             
             viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
             viennacl::vector_range<viennacl::vector_base<T> > B = ptrB->data();
-            viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
             
-            C = viennacl::linalg::prod(A, B);
+            viennacl::vector<T> A_vec = viennacl::column(A, 0);
+            
+            if(CisVec){
+                Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+                viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+                C = viennacl::linalg::prod(trans(A), B);
+            }else{
+                Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+                viennacl::matrix_range<viennacl::matrix<T> > C = ptrC->data();
+                
+                // viennacl::matrix_base<float> dummy(vcl_B.handle(),
+                //                                    vcl_B.size(), 0, 1, vcl_B.size(),   //row layout
+                //                                    1, 0, 1, 1,   //column layout
+                //                                    true); // row-major
+                
+                C = viennacl::linalg::outer_prod(A_vec, B);
+            }
         }else{
             throw Rcpp::exception("one of the objects must be a vector");
         }
@@ -262,18 +293,19 @@ cpp_vclMatVec_tcrossprod(
     SEXP ptrB, 
     const bool BisVec, 
     SEXP ptrC,
+    const bool CisVec,
     const int type_flag)
 {
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatVec_tcrossprod<int>(ptrA, AisVec, ptrB, BisVec, ptrC);
+        cpp_vclMatVec_tcrossprod<int>(ptrA, AisVec, ptrB, BisVec, ptrC, CisVec);
         return;
     case 6:
-        cpp_vclMatVec_tcrossprod<float>(ptrA, AisVec, ptrB, BisVec, ptrC);
+        cpp_vclMatVec_tcrossprod<float>(ptrA, AisVec, ptrB, BisVec, ptrC, CisVec);
         return;
     case 8:
-        cpp_vclMatVec_tcrossprod<double>(ptrA, AisVec, ptrB, BisVec, ptrC);
+        cpp_vclMatVec_tcrossprod<double>(ptrA, AisVec, ptrB, BisVec, ptrC, CisVec);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
