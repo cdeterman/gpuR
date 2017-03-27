@@ -282,7 +282,8 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
     Rcpp::XPtr<dynVCLVec<T> > pVec(ptrA_);
     
     dynVCLVec<T> *vec = new dynVCLVec<T>();
-    vec->setPtr(pVec->getPtr());
+    // vec->setPtr(pVec->getPtr());
+    vec->setSharedPtr(pVec->sharedPtr());
     vec->setRange(start, end);
     vec->updateSize();
     
@@ -420,13 +421,12 @@ VCLtoVecSEXP(SEXP A_)
     Rcpp::XPtr<dynVCLVec<T> > ptrA(A_);
     
     viennacl::vector_range<viennacl::vector_base<T> > tempA = ptrA->data();
-
+    
     viennacl::vector_base<T> pA = static_cast<viennacl::vector_base<T> >(tempA);
     int M = pA.size();
     
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am(M);
     
-    // viennacl::copy(pA, Am); 
     viennacl::fast_copy(pA.begin(), pA.end(), &(Am[0]));
     
     return Am;
@@ -614,7 +614,7 @@ vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
 //    A(idx-1) = as<T>(newdata);
 }
 
-// update viennacl matrix with R vector
+// update viennacl vector with R vector
 template <typename T>
 void
 vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
@@ -630,6 +630,68 @@ vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+    
+    delete mat;
+}
+
+// update viennacl vector with R scalar
+template <typename T>
+void
+vclFillVectorScalar(SEXP data, T newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    pMat->fill(newdata);
+}
+
+// update viennacl vector range with R scalar
+template <typename T>
+void
+vclFillVectorRangeScalar(SEXP data, T newdata, const int start, const int end, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    viennacl::range r(start, end);
+    
+    pMat->fill(r, newdata);
+}
+
+// update viennacl vector slice with R scalar
+template <typename T>
+void
+vclFillVectorSliceScalar(
+    SEXP data, const NumericVector newdata, 
+    const IntegerVector start, const int stride,
+    const int ctx_id)
+{
+    int size;
+    int start_pt;
+    
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    for(unsigned int i = 0; i < newdata.size(); i++){
+        
+        size = ceil((pMat->length() - i)/newdata.size());
+        
+        std::cout << i % newdata.size() << std::endl;
+        
+        viennacl::slice s(start[i], stride * newdata.size(), size);
+        
+        std::cout << newdata[start[i % newdata.size()]] << std::endl;
+        
+        pMat->fill(s, newdata[start[i % newdata.size()]]);    
+    }
+}
+
+template <typename T>
+void
+vclFillVectorElementwise(
+    SEXP data, SEXP newdata, 
+    const IntegerVector elems, 
+    const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    pMat->fill(elems, newdata);
 }
 
 // update viennacl matrix with another viennacl vector
@@ -825,6 +887,8 @@ vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+    
+    delete mat;
 }
 
 // update viennacl matrix with another viennacl matrix
@@ -933,7 +997,7 @@ extractRow(
     // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
     // viennacl::vector_range<viennacl::vector_base<T> > v = vec->data();
     
-    viennacl::vector<T> vec = viennacl::row(pA, row_idx - 1);
+    viennacl::vector<T> vec = viennacl::row(pA, row_idx);
     dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
     
     Rcpp::XPtr<dynVCLVec<T> > pVec(v);
@@ -953,8 +1017,16 @@ extractCol(
     
     // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
     
-    viennacl::vector<T> vec = viennacl::column(pA, col_idx - 1);
-    dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    // viennacl::vector<T> vec = viennacl::column(pA, col_idx);
+    
+    int start = pMat->row_range().start() * pA.internal_size2() + col_idx;
+    
+    // std::cout << "start point" << std::endl;
+    // std::cout << start << std::endl;
+    
+    // viennacl::vector_base<T> vec(pA.handle(), pA.size1(), start, pA.internal_size2());
+    // dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    dynVCLVec<T> *v = new dynVCLVec<T>(pMat->getPtr(), false, start);
     
     Rcpp::XPtr<dynVCLVec<T> > pVec(v);
     return pVec;
@@ -1569,6 +1641,92 @@ vclSetVector(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
     }
 }
 
+// [[Rcpp::export]]
+void
+vclFillVectorScalar(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorScalar<int>(ptrA, as<int>(newdata), ctx_id);
+        return;
+    case 6:
+        vclFillVectorScalar<float>(ptrA, as<float>(newdata), ctx_id);
+        return;
+    case 8:
+        vclFillVectorScalar<double>(ptrA, as<double>(newdata), ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclFillVectorRangeScalar(
+    SEXP ptrA, SEXP newdata, 
+    const int start, const int end,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorRangeScalar<int>(ptrA, as<int>(newdata), start, end, ctx_id);
+        return;
+    case 6:
+        vclFillVectorRangeScalar<float>(ptrA, as<float>(newdata), start, end, ctx_id);
+        return;
+    case 8:
+        vclFillVectorRangeScalar<double>(ptrA, as<double>(newdata), start, end, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+    
+// [[Rcpp::export]]
+void
+vclFillVectorSliceScalar(
+    SEXP ptrA, const NumericVector newdata, 
+    const IntegerVector start, const int stride,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorSliceScalar<int>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    case 6:
+        vclFillVectorSliceScalar<float>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    case 8:
+        vclFillVectorSliceScalar<double>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+vclFillVectorElementwise(
+    SEXP ptrA, SEXP newdata, 
+    const IntegerVector start,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorElementwise<int>(ptrA, newdata, start, ctx_id);
+        return;
+    case 6:
+        vclFillVectorElementwise<float>(ptrA, newdata, start, ctx_id);
+        return;
+    case 8:
+        vclFillVectorElementwise<double>(ptrA, newdata, start, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
 
 // [[Rcpp::export]]
 void
