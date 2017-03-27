@@ -679,7 +679,7 @@ setMethod("length", signature(x="vclMatrix"),
 #' @title vclMatrix Crossproduct
 #' @description Return the matrix cross-product of two conformable
 #' matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
-#' or x %*% t(t) (tcrossprod) but faster as no data transfer between
+#' or x %*% t(y) (tcrossprod) but faster as no data transfer between
 #' device and host is required.
 #' @param x A vclMatrix
 #' @param y A vclMatrix
@@ -738,7 +738,7 @@ setMethod("tcrossprod",
               vcl_tcrossprod(x, y)
           })
 
-#' @rdname vclMatrix-tcrossprod
+#' @rdname vclMatrix-crossprod
 #' @export
 setMethod("tcrossprod",
           signature(x = "vclMatrix", y = "vclVector"),
@@ -746,7 +746,7 @@ setMethod("tcrossprod",
               vcl_mat_vec_tcrossprod(x, y)
           })
 
-#' @rdname vclMatrix-tcrossprod
+#' @rdname vclMatrix-crossprod
 #' @export
 setMethod("tcrossprod",
           signature(x = "vclVector", y = "vclMatrix"),
