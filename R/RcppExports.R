@@ -210,6 +210,22 @@ cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_solve', PACKAGE = 'gpuR', ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id))
 }
 
+#' @title Synchronize Device Execution
+#' @description This pauses execution until the processing is complete
+#' on the device (CPU/GPU/etc.).  This is important especially for
+#' benchmarking applications.
+#' @return NULL
+#' @author Charles Determan Jr.
+#' @examples \dontrun{
+#'     mat <- vclMatrix(rnorm(500^2), ncol = 500, nrow = 500)
+#'     system.time(mat %*% mat)
+#'     system.time(mat %*% mat; synchronize())
+#' }
+#' @export
+synchronize <- function() {
+    invisible(.Call('gpuR_synchronize', PACKAGE = 'gpuR'))
+}
+
 truncIntgpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncIntgpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
@@ -220,6 +236,30 @@ truncFloatgpuMat <- function(ptrA_, nr, nc) {
 
 truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
+}
+
+cpp_gpuVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuVector_max <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
+}
+
+cpp_gpuMatrix_max <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_min <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 vcl_dncol <- function(ptrA) {
@@ -248,30 +288,6 @@ vcl_inrow <- function(ptrA) {
 
 cpp_vclVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuVector_max <- function(ptrA, type_flag, ctx_id) {
-    .Call('gpuR_cpp_gpuVector_max', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
-}
-
-cpp_gpuMatrix_max <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_max', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_min <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_min', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_identity_vclMatrix <- function(ptrA, type_flag) {
