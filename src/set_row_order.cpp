@@ -66,6 +66,8 @@ cpp_vclMatrix_set_row_order(
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     viennacl::matrix<T> *vcl_A;
+    // Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    // viennacl::matrix<T> vcl_A = ptrA->data();
     // viennacl::matrix<T> *vcl_B;
     
     // std::cout << "getting matrix" << std::endl;
@@ -77,6 +79,8 @@ cpp_vclMatrix_set_row_order(
     unsigned int P = vcl_A->size2();
     unsigned int M_internal = vcl_A->internal_size1();
     unsigned int P_internal = vcl_A->internal_size2();
+    
+    // std::cout << M_internal << std::endl;
     
     // std::cout << "initialized" << std::endl;
     
@@ -111,13 +115,13 @@ cpp_vclMatrix_set_row_order(
     
     // set global work sizes
     set_row_order.global_work_size(0, M_internal);
-    set_row_order.global_work_size(1, P_internal);
+    // set_row_order.global_work_size(1, P_internal);
     
     // std::cout << "set global" << std::endl;
     
     // set local work sizes
     set_row_order.local_work_size(0, max_local_size);
-    set_row_order.local_work_size(1, max_local_size);
+    // set_row_order.local_work_size(1, max_local_size);
     
     // std::cout << "begin enqueue" << std::endl;
     
@@ -133,10 +137,10 @@ cpp_vclMatrix_set_row_order(
         viennacl::copy(indices, vcl_I);
         
         // std::cout << "creating dummy vector" << std::endl;
-        viennacl::vector<T> vcl_V = viennacl::zero_vector<T>(M);
+        viennacl::vector<T> vcl_V = viennacl::zero_vector<T>(M_internal);
         
         viennacl::matrix_base<T> vcl_B(vcl_V.handle(),
-                                       M, 0, 1, M,   //row layout
+                                       M_internal, 0, 1, M_internal,   //row layout
                                        1, 0, 1, 1,   //column layout
                                        true); // row-major
         
@@ -144,19 +148,21 @@ cpp_vclMatrix_set_row_order(
         
         for(unsigned int i=0; i < P; i++){
             
+            // std::cout << "column: " << i << std::endl;
+            
             viennacl::range c(i, i+1);
             
             viennacl::matrix_range<viennacl::matrix<T> > tmp(*vcl_A, r, c);
             
             // std::cout << tmp << std::endl;
             
-            viennacl::ocl::enqueue(set_row_order(tmp, vcl_B, vcl_I, M, i, M_internal));
+            viennacl::ocl::enqueue(set_row_order(tmp, vcl_B, vcl_I, M, i, P_internal));
             
             tmp = vcl_B;
         }
     }
     
-    
+    // delete vcl_A;
     
     // // execute kernel
     // viennacl::ocl::enqueue(set_row_order(*vcl_A, *vcl_B, vcl_I, M, P, M_internal));

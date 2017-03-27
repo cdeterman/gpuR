@@ -8,7 +8,6 @@ __kernel void set_row_order(
     
     // Do the operation
     if((globalRow <= Mdim)){
-        
         B[globalRow] = A[indices[globalRow] * MdimPad + globalCol];
     }
 }

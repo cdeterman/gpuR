@@ -7,7 +7,14 @@ __kernel void set_row_order(
     //const int globalCol = get_global_id(1); // C Col ID
     
     // Do the operation
-    if((globalRow <= Mdim)){
+    if(globalRow < Mdim){
+        
+        //printf("Mdim: %d\n", Mdim);
+        //printf("globalRow: %d\n", globalRow);
+    
+        //printf("index: %d\n", indices[globalRow]);
+        //printf("final index: %d\n", indices[globalRow] * MdimPad + globalCol);
+        //printf("A index: %f\n", A[indices[globalRow] * MdimPad + globalCol]);
         
         B[globalRow] = A[indices[globalRow] * MdimPad + globalCol];
     }
