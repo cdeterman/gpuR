@@ -9,6 +9,8 @@
 \alias{crossprod,vclVector,vclMatrix-method}
 \alias{tcrossprod,vclMatrix,missing-method}
 \alias{tcrossprod,vclMatrix,vclMatrix-method}
+\alias{tcrossprod,vclMatrix,vclVector-method}
+\alias{tcrossprod,vclVector,vclMatrix-method}
 \title{vclMatrix Crossproduct}
 \usage{
 \S4method{crossprod}{vclMatrix,missing}(x, y)
@@ -22,6 +24,10 @@
 \S4method{tcrossprod}{vclMatrix,missing}(x, y)
 
 \S4method{tcrossprod}{vclMatrix,vclMatrix}(x, y)
+
+\S4method{tcrossprod}{vclMatrix,vclVector}(x, y)
+
+\S4method{tcrossprod}{vclVector,vclMatrix}(x, y)
 }
 \arguments{
 \item{x}{A vclMatrix}
@@ -34,7 +40,7 @@ A vclMatrix
 \description{
 Return the matrix cross-product of two conformable
 matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
-or x %*% t(t) (tcrossprod) but faster as no data transfer between
+or x %*% t(y) (tcrossprod) but faster as no data transfer between
 device and host is required.
 }
 \author{

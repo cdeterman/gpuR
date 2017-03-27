@@ -9,6 +9,7 @@
 \alias{inplace,function,vclMatrix,missing-method}
 \alias{inplace,function,vclMatrix,vclMatrix-method}
 \alias{inplace,function,vclVector,missing-method}
+\alias{inplace,function,vclVector,numeric-method}
 \alias{inplace,function,vclVector,vclVector-method}
 \title{Inplace Function Wrapper}
 \usage{
@@ -26,6 +27,8 @@ inplace(f, x, y)
 
 \S4method{inplace}{`function`,vclVector,missing}(f, x, y)
 
+\S4method{inplace}{`function`,vclVector,numeric}(f, x, y)
+
 \S4method{inplace}{`function`,gpuVector,gpuVector}(f, x, y)
 }
 \arguments{
@@ -41,6 +44,20 @@ No return, result applied in-place
 \description{
 Applies the provided function in-place on the 
 first object passed
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+		  signature = c("function", "vclMatrix", "vclVector", "vclVector"),
+		  function(f, x, y){
+		  	
+		  	switch(deparse(substitute(f)),
+		  		   `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
+		  		   `exp` = vclMatElemExp(x, inplace = TRUE),
+		  		   `abs` = vclMatElemAbs(x, inplace = TRUE),
+		  		   stop("undefined operation")
+		  	)
+		  })
 }
 \author{
 Charles Determan Jr.
