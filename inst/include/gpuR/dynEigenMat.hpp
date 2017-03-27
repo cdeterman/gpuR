@@ -144,6 +144,36 @@ class dynEigenMat {
             ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(A);
         };
         
+        void setRow(SEXP value, const int idx){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            block.row(idx-1) = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(value);
+        }
+        void setCol(SEXP value, const int idx){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            block.col(idx-1) = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(value);
+        }
+        void setElement(SEXP value, const int nr, const int nc){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            block(nr-1, nc-1) = Rcpp::as<T>(value);
+        }
+        
+        Eigen::Matrix<T, Eigen::Dynamic, 1> getRow(const int idx){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            Eigen::Matrix<T, Eigen::Dynamic, 1> out = block.row(idx-1);
+            return out;
+        }
+        Eigen::Matrix<T, Eigen::Dynamic, 1> getCol(const int idx){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            Eigen::Matrix<T, Eigen::Dynamic, 1> out = block.col(idx-1);
+            return out;
+        }
+        T getElement(const int nr, const int nc){
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block = this->data();
+            T out = block(nr-1, nc-1);
+            return out;
+        }
+        
+        
         // setting pointer explicitly
         // note - this will assume complete control of pointer and delete it as well
         // following deletion of wherever this is set

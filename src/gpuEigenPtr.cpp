@@ -1,10 +1,113 @@
 
 #include "gpuR/windows_check.hpp"
+
+#include "gpuR/dynEigenMat.hpp"
+#include "gpuR/dynEigenVec.hpp"
+
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_helpers.hpp"
-
 using namespace Rcpp;
+
+
+// convert SEXP Matrix to Eigen matrix
+template <typename T>
+SEXP 
+getRmatEigenAddress(SEXP A, const int nr, const int nc)
+{    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A);
+    Rcpp::XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
+// convert SEXP Vector to Eigen Vector (i.e. 1 column matrix)
+template <typename T>
+SEXP 
+sexpVecToEigenVecXptr(SEXP A, const int size)
+{
+    dynEigenVec<T> *vec = new dynEigenVec<T>(A);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
+
+// convert an XPtr back to a MapVec object to ultimately 
+// be returned as a SEXP object
+template <typename T>
+Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
+EigenVecXPtrToMapEigenVec(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA_);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = pVec->data();
+    return MapVec;
+}
+
+template <typename T>
+void
+SetMatRow(SEXP data, const int idx, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setRow(value, idx);
+}
+
+
+template <typename T>
+void
+SetMatCol(SEXP data, const int idx, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setCol(value, idx);
+}
+
+template <typename T>
+void
+SetMatElement(SEXP data, const int nr, const int nc, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setElement(value, nr, nc);
+}
+
+template <typename T>
+SEXP
+GetMatRow(const SEXP data, const int idx)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getRow(idx)));
+}
+
+template <typename T>
+SEXP
+GetMatCol(const SEXP data, const int idx)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getCol(idx)));
+}
+
+template <typename T>
+SEXP
+GetMatElement(const SEXP data, const int nr, const int nc)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getElement(nr, nc)));
+}
+
+// create an empty eigen matrix
+template <typename T>
+SEXP emptyEigenXptr(int nr, int nc)
+{
+    dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc);
+    //    std::cout << mat->data() << std::endl;
+    Rcpp::XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
+// create an empty eigen vector
+template <typename T>
+SEXP 
+emptyEigenVecXptr(const int size)
+{    
+    dynEigenVec<T> *vec = new dynEigenVec<T>(size);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
 
 template <typename T>
 void
