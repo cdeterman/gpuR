@@ -42,6 +42,20 @@ setMethod("inplace",
               )
           })
 
+# @rdname inplace-methods
+# @export
+# setMethod("inplace",
+# 		  signature = c("function", "vclMatrix", "vclVector", "vclVector"),
+# 		  function(f, x, y){
+# 
+# 		  	switch(deparse(substitute(f)),
+# 		  		   `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
+# 		  		   `exp` = vclMatElemExp(x, inplace = TRUE),
+# 		  		   `abs` = vclMatElemAbs(x, inplace = TRUE),
+# 		  		   stop("undefined operation")
+# 		  	)
+# 		  })
+
 #' @rdname inplace-methods
 #' @export
 setMethod("inplace",
@@ -100,6 +114,22 @@ setMethod("inplace",
                      stop("undefined operation")
               )
           })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+		  signature = c("function", "vclVector", "numeric"),
+		  function(f, x, y){
+		  	
+		  	switch(deparse(substitute(f)),
+		  		   `+` = {
+		  		   		z <- vclVector(rep(y, length(x)), type=typeof(x), ctx_id = x@.context_index)
+		  		   		vclVec_axpy(1, z, x, inplace = TRUE)
+		  		   	},
+		  		   `*` = vclVecScalarMult(x, y, TRUE),
+		  		   stop("undefined operation")
+		  	)
+		  })
 
 #' @rdname inplace-methods
 #' @export
