@@ -841,30 +841,61 @@ vcl_mat_vec_tcrossprod <- function(X, Y, Z = NULL){
     
     if(AisVec){
         if(length(X) != ncol(Y)){
-            stop("non-conformable arguments")
+            if(ncol(Y) != 1){
+                stop("non-conformable arguments")   
+            }
         }
     }else{
-        if(ncol(X) != length(Y)){
+        if(ncol(X) != 1){
             stop("non-conformable arguments")
         }
     }
     
     if(is.null(Z)){
         if(AisVec){
-            Z <- vclVector(length = nrow(Y), type = type, ctx_id = X@.context_index)
+            if(ncol(Y) == 1){
+                Z <- vclMatrix(nrow = length(X), ncol = nrow(Y), type = type, ctx_id = X@.context_index)   
+                CisVec <- FALSE    
+            }else{
+                Z <- vclVector(length = nrow(Y), type = type, ctx_id = X@.context_index)
+                CisVec <- TRUE
+            }
         }else{
-            Z <- vclVector(length = nrow(X), type = type, ctx_id = X@.context_index)    
+            if(ncol(X) == 1){
+                Z <- vclMatrix(nrow = nrow(X), ncol = length(Y), type = type, ctx_id = X@.context_index)   
+                CisVec <- FALSE    
+            }else{
+                Z <- vclVector(length = nrow(X), type = type, ctx_id = X@.context_index)
+                CisVec <- TRUE
+            }
+            
         }
         inplace = FALSE
     }else{
+        
+        # to be tested
         if(AisVec){
-            if(length(Z) != ncol(Y)){
-                stop("dimensions don't match")
-            }
+        	if(ncol(Y) == 1){
+        		if(nrow(Z) != length(X) || ncol(Z) != nrow(Y)){
+        			stop("Output matrix not conformant to arguments")
+        		}
+        		CisVec <- FALSE    
+        	}else{
+        		if(length(Z) != ncol(Y)){
+        			stop("dimensions don't match")
+        		}
+        		CisVec <- TRUE
+        	}
         }else{
-            if(length(Z) != ncol(X)){
-                stop("dimensions don't match")
-            }
+        	if(ncol(X) == 1){
+	            stop("still need to troubleshoot this")
+        		CisVec <- FALSE
+        	}else{
+        		if(length(Z) != ncol(X)){
+        			stop("dimensions don't match")
+        		}
+        		CisVec <- TRUE
+        	}
         }
         
         inplace = TRUE
@@ -877,12 +908,14 @@ vcl_mat_vec_tcrossprod <- function(X, Y, Z = NULL){
                                              Y@address, 
                                              BisVec,
                                              Z@address,
+                                             CisVec,
                                              6L),
            "double" = cpp_vclMatVec_tcrossprod(X@address, 
                                               AisVec,
                                               Y@address, 
                                               BisVec,
                                               Z@address,
+                                              CisVec,
                                               8L)
     )
     
