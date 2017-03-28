@@ -139,8 +139,8 @@ getRmatEigenAddress <- function(ptrA, nr, nc, type_flag) {
     .Call('gpuR_getRmatEigenAddress', PACKAGE = 'gpuR', ptrA, nr, nc, type_flag)
 }
 
-EigenVecXPtrToMapEigenVec <- function(ptrA, type_flag) {
-    .Call('gpuR_EigenVecXPtrToMapEigenVec', PACKAGE = 'gpuR', ptrA, type_flag)
+getEigenMatrix <- function(ptrA, type_flag) {
+    .Call('gpuR_getEigenMatrix', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 MatXptrToMatSEXP <- function(ptrA, type_flag) {

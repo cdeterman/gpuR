@@ -120,6 +120,14 @@ class dynEigenVec {
             shptr.reset();
         };
         
+        void setElement(const int idx, SEXP value){
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = this->data();
+            MapVec(idx-1) = Rcpp::as<T>(value);
+        }
+        T getElement(const int idx){
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = this->data();
+            return(MapVec(idx - 1));
+        }
 };
 
 #endif

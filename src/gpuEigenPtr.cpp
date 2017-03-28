@@ -33,7 +33,7 @@ sexpVecToEigenVecXptr(SEXP A, const int size)
 // be returned as a SEXP object
 template <typename T>
 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
-EigenVecXPtrToMapEigenVec(SEXP ptrA_)
+getEigenMatrix(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA_);
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = pVec->data();
@@ -284,16 +284,17 @@ template <typename T>
 T
 GetVecElement(const SEXP data, const int idx)
 {    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = EigenVecXPtrToMapEigenVec<T>(data);
-    return(A(idx-1));
+    XPtr<dynEigenVec<T> > pVec(data);
+    return(pVec->getElement(idx));
 }
 
 template <typename T>
 void
 SetVecElement(const SEXP data, const int idx, SEXP value)
 {    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = EigenVecXPtrToMapEigenVec<T>(data);
-    A(idx-1) = as<T>(value);
+    XPtr<dynEigenVec<T> > pVec(data);
+    pVec->setElement(idx, value);
+    return;
 }
 
 
@@ -688,15 +689,15 @@ getRmatEigenAddress(SEXP ptrA,
 
 // [[Rcpp::export]]
 SEXP
-EigenVecXPtrToMapEigenVec(SEXP ptrA, const int type_flag)
+getEigenMatrix(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return wrap(EigenVecXPtrToMapEigenVec<int>(ptrA));
+            return wrap(getEigenMatrix<int>(ptrA));
         case 6:
-            return wrap(EigenVecXPtrToMapEigenVec<float>(ptrA));
+            return wrap(getEigenMatrix<float>(ptrA));
         case 8:
-            return wrap(EigenVecXPtrToMapEigenVec<double>(ptrA));
+            return wrap(getEigenMatrix<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

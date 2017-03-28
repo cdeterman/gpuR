@@ -370,15 +370,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// EigenVecXPtrToMapEigenVec
-SEXP EigenVecXPtrToMapEigenVec(SEXP ptrA, const int type_flag);
-RcppExport SEXP gpuR_EigenVecXPtrToMapEigenVec(SEXP ptrASEXP, SEXP type_flagSEXP) {
+// getEigenMatrix
+SEXP getEigenMatrix(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_getEigenMatrix(SEXP ptrASEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    rcpp_result_gen = Rcpp::wrap(EigenVecXPtrToMapEigenVec(ptrA, type_flag));
+    rcpp_result_gen = Rcpp::wrap(getEigenMatrix(ptrA, type_flag));
     return rcpp_result_gen;
 END_RCPP
 }

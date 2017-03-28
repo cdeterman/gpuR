@@ -260,9 +260,9 @@ setMethod("[",
           signature(x = "gpuVector", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(EigenVecXPtrToMapEigenVec(x@address, 4L)),
-                     "float" = return(EigenVecXPtrToMapEigenVec(x@address, 6L)),
-                     "double" = return(EigenVecXPtrToMapEigenVec(x@address, 8L))
+                     "integer" = return(getEigenMatrix(x@address, 4L)),
+                     "float" = return(getEigenMatrix(x@address, 6L)),
+                     "double" = return(getEigenMatrix(x@address, 8L))
               )
           })
 
