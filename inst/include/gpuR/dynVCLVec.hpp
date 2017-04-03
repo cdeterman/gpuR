@@ -30,8 +30,8 @@
 template <class T> 
 class dynVCLVec {
     private:
-        bool shared = false;
-        int shared_type = 0;
+        bool shared;
+        int shared_type;
         viennacl::range r;
         // viennacl::vector_base<T> *ptr;
         std::shared_ptr<viennacl::vector_base<T> > shptr;
@@ -83,6 +83,7 @@ class dynVCLVec {
         // }
         dynVCLVec(viennacl::matrix<T> *mat) : ptr_matrix(mat) {
             shared = true;
+            shared_type = 0;
             size = mat->internal_size();
             begin = 1;
             last = size;
@@ -127,6 +128,9 @@ class dynVCLVec {
             // ptr = &A;
             viennacl::range temp_r(0, size);
             r = temp_r;
+            
+            shared = false;
+            shared_type = 0;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         }
         dynVCLVec(viennacl::vector_base<T> vec, int ctx_id) {
@@ -144,6 +148,9 @@ class dynVCLVec {
             // ptr = &A;
             viennacl::range temp_r(0, size);
             r = temp_r;
+            
+            shared = false;
+            shared_type = 0;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         }
         // dynVCLVec(viennacl::vector_range<viennacl::vector_base<T> > vec, int ctx_id){
@@ -187,6 +194,9 @@ class dynVCLVec {
             // ptr = &A;
             viennacl::range temp_r(0, size);
             r = temp_r;
+            
+            shared = false;
+            shared_type = 0;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         }
         // dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
@@ -209,6 +219,9 @@ class dynVCLVec {
             // ptr = &A;
             viennacl::range temp_r(begin-1, last);
             r = temp_r;
+            
+            shared = false;
+            shared_type = 0;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         }
         dynVCLVec(const int size_in, T scalar, const int ctx_id){
@@ -234,6 +247,9 @@ class dynVCLVec {
             // 	std::cout << "Call delete from lambda...\n";
             // 	// delete p;
             // });
+            
+            shared = false;
+            shared_type = 0;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         };
         // dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
@@ -267,15 +283,24 @@ class dynVCLVec {
             viennacl::vector_base<T> A = vec;
             // ptr = &A;
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            
+            shared = false;
+            shared_type = 0;
         };
         void setPtr(viennacl::vector_base<T>* ptr_){
             // ptr = ptr_;
             // this will result in a copy I believe
             // shptr = std::make_shared<viennacl::vector_base<T> >(*ptr_);
             shptr.reset(ptr_);
+            
+            shared = false;
+            shared_type = 0;
         };
         void setSharedPtr(std::shared_ptr<viennacl::vector_base<T> > shptr_){
             shptr = shptr_;
+            
+            shared = false;
+            shared_type = 0;
         };
         
         viennacl::vector_range<viennacl::vector_base<T> > data(){ 
