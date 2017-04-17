@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/32588017.svg)](https://zenodo.org/badge/latestdoi/32588017)
 
-###Gitter rooms available for discussion
+### Gitter rooms available for discussion
 [![chat](https://img.shields.io/badge/gitter-chat-brightgreen.svg)](https://gitter.im/cdeterman/gpuR)
 [![general](https://img.shields.io/badge/gitter-general-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/general)
 [![development](https://img.shields.io/badge/gitter-development-brightgreen.svg)](https://gitter.im/cdeterman/gpuR/development)
