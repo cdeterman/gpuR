@@ -80,6 +80,18 @@ setMethod('gpuMatrix',
                                     .device_index = device_index,
                                     .device = device_name)
                             },
+                            fcomplex = {
+                                new("cgpuMatrix",
+                                    address = getRmatEigenAddress(data, 
+                                                                  nrow(data),
+                                                                  ncol(data), 
+                                                                  10L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
                             )

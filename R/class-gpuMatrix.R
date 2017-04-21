@@ -71,7 +71,7 @@ setClass("igpuMatrix",
 
 
 #' @title fgpuMatrix Class
-#' @description An integer type matrix in the S4 \code{gpuMatrix}
+#' @description A float type matrix in the S4 \code{gpuMatrix}
 #' representation.
 #' @section Slots:
 #'  \describe{
@@ -95,7 +95,7 @@ setClass("fgpuMatrix",
 
 
 #' @title dgpuMatrix Class
-#' @description An integer type matrix in the S4 \code{gpuMatrix}
+#' @description A double type matrix in the S4 \code{gpuMatrix}
 #' representation.
 #' @section Slots:
 #'  \describe{
@@ -113,6 +113,29 @@ setClass("dgpuMatrix",
          validity = function(object) {
              if( typeof(object) != "double"){
                  return("dgpuMatrix must be of type 'double'")
+             }
+             TRUE
+         })
+
+#' @title cgpuMatrix Class
+#' @description An complex float type matrix in the S4 \code{gpuMatrix}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a complex float matrix.}
+#'  }
+#' @name cgpuMatrix-class
+#' @rdname cgpuMatrix-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{gpuMatrix-class}}, 
+#' \code{\link{igpuMatrix-class}},
+#' \code{\link{dgpuMatrix-class}}
+#' @export
+setClass("cgpuMatrix",
+         contains = "gpuMatrix",
+         validity = function(object) {
+             if( typeof(object) != "fcomplex"){
+                 return("cgpuMatrix must be of type 'fcomplex'")
              }
              TRUE
          })

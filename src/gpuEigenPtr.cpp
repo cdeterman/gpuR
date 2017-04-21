@@ -4,6 +4,8 @@
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
+#include <complex>
+
 #include <RcppEigen.h>
 
 using namespace Rcpp;
@@ -680,6 +682,8 @@ getRmatEigenAddress(SEXP ptrA,
             return getRmatEigenAddress<float>(ptrA, nr, nc);
         case 8:
             return getRmatEigenAddress<double>(ptrA, nr, nc);
+        case 10:
+            return getRmatEigenAddress<std::complex<float> >(ptrA, nr, nc);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

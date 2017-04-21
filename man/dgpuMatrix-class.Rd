@@ -5,7 +5,7 @@
 \alias{dgpuMatrix-class}
 \title{dgpuMatrix Class}
 \description{
-An integer type matrix in the S4 \code{gpuMatrix}
+A double type matrix in the S4 \code{gpuMatrix}
 representation.
 }
 \section{Slots}{

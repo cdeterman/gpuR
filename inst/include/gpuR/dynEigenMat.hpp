@@ -14,10 +14,19 @@
 
 #include <RcppEigen.h>
 
+#include <type_traits>
 #include <memory>
 
 template <class T> 
 class dynEigenMat {
+    
+    static_assert(std::is_same<T, double>::value || 
+                  std::is_same<T, float>::value ||
+                  std::is_same<T, int>::value ||
+                  std::is_same<T, std::complex<double> >::value ||
+                  std::is_same<T, std::complex<float> >::value,
+                  "some meaningful error message");
+    
     private:
         int nr, orig_nr, nc, orig_nc, r_start, r_end, c_start, c_end;
         Rcpp::StringVector _colNames, _rowNames;
