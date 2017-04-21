@@ -205,6 +205,14 @@ class dynVCLMat {
             shptr = std::make_shared<viennacl::matrix<T> >(A);
             // shptr.reset(ptr);
         }
+        void updateMatrix(const viennacl::matrix<T> &mat){
+            viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), row_r, col_r);
+            m_sub = mat;
+        }
+        void updateMatrix(const viennacl::matrix_range<viennacl::matrix<T> > &mat){
+            viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), row_r, col_r);
+            m_sub = mat;
+        }
         // void setMatrix(viennacl::matrix_range<viennacl::matrix<T> > mat){
         //     A = mat;
         //     ptr = &A;

@@ -341,9 +341,9 @@ cpp_vclMatrix_transpose(
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     
     viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
     
-    B = trans(A);
+    // B = trans(A);
+    ptrB->updateMatrix(trans(A));
 }
 
 
