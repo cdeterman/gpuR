@@ -19,7 +19,7 @@ class dynEigenVec {
         
     public:
         Eigen::Matrix<T, Eigen::Dynamic, 1> A;
-        viennacl::vector_base<T> *vclA = new viennacl::vector_base<T>();
+        // viennacl::vector_base<T> *vclA = new viennacl::vector_base<T>();
         
         dynEigenVec() { } // private default constructor
         dynEigenVec(SEXP A_){
@@ -108,8 +108,9 @@ class dynEigenVec {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            *vclA = viennacl::vector_base<T>(M, ctx=ctx);
-            shptr.reset(vclA);
+            viennacl::vector_base<T> vclA = viennacl::vector_base<T>(M, ctx=ctx);
+            // shptr.reset(vclA);
+            shptr = std::make_shared<viennacl::vector_base<T> >(vclA);
             
             viennacl::fast_copy(block.data(), block.data() + block.size(), shptr.get()->begin());
             // viennacl::copy(block, *shptr.get());
