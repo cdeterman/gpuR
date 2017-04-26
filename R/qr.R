@@ -1,7 +1,7 @@
 
 
 #' @title The QR Decomposition of a gpuR matrix
-#' @description \code{qr} computs the QR decomposition of a gpuR matrix
+#' @description \code{qr} computes the QR decomposition of a gpuR matrix
 #' @param x A gpuR matrix
 #' @param ... further arguments passed to or from other methods
 #' @param inplace Logical indicating if operations performed inplace
@@ -101,7 +101,7 @@ qr.vclMatrix <-
               return(out)
           }
 
-#' @title Reconstruct the Q or R Matrices form a gpuQR Object
+#' @title Reconstruct the Q or R Matrices from a gpuQR Object
 #' @description Returns the components of the QR decomposition.
 #' @param qr \code{gpuQR} object
 #' @param complete not currently used
