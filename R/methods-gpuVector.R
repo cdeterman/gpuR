@@ -40,10 +40,6 @@ setMethod("%*%", c(x="gpuVector", y="gpuVector"),
 #' @export
 setMethod("%o%", c(X="gpuVector", Y="gpuVector"),
           function(X, Y){
-              if(length(X) != length(Y)){
-                  stop("non-conformable arguments")
-              }
-              
               gpuVecOuterProd(X,Y)
           })
 

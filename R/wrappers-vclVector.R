@@ -38,7 +38,7 @@ vclVecInner <- function(A, B){
 # vclVector Outer Product
 vclVecOuter <- function(A, B){
     
-    if(length(B) != length(A)) stop("Non conformant arguments")
+    # if(length(B) != length(A)) stop("Non conformant arguments")
     
     assert_are_identical(A@.context_index, B@.context_index)
     

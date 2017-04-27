@@ -11,6 +11,7 @@ Aint <- sample(seq.int(10), ORDER, replace = TRUE)
 Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
+D <- rnorm(ORDER + 1)
 E <- rnorm(ORDER-1)
 
 # Integer Tests
@@ -298,13 +299,20 @@ test_that("CPU gpuVector Single precision outer product", {
     has_cpu_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="float")
     gpuB <- gpuVector(B, type="float")
+    gpuD <- gpuVector(D, type="float")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "fgpuMatrix")
+    expect_is(gpuC2, "fgpuMatrix")
     expect_equal(gpuC[], C, tolerance=1e-06, 
+                 info="float vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=1e-06,
                  info="float vector outer product elements not equivalent")
 })
 
@@ -540,12 +548,19 @@ test_that("CPU gpuVector double precision outer product", {
     
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="double")
     gpuB <- gpuVector(B, type="double")
+    gpuD <- gpuVector(D, type="double")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "dgpuMatrix")
+    expect_is(gpuC2, "dgpuMatrix")
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double vector outer product elements not equivalent")
+    expect_equal(gpuC2[], C2, tolerance=.Machine$double.eps^0.5,
                  info="double vector outer product elements not equivalent")
 })

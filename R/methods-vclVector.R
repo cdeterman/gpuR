@@ -342,9 +342,6 @@ setMethod("%*%", signature(x="vclVector", y = "vclMatrix"),
 setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           function(X,Y)
           {
-              if( length(X) != length(Y)){
-                  stop("Non-conformant arguments")
-              }
               return(vclVecOuter(X, Y))
           },
           valueClass = "vclMatrix"

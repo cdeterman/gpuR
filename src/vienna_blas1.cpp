@@ -152,10 +152,11 @@ void cpp_gpuVector_outer_prod(
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > Cm = ptrC->data();
     
     const int M = Am.size();
+    const int N = Bm.size();
     
     viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_B(M, ctx = ctx);
-    viennacl::matrix<T> vcl_C(M, M, ctx = ctx);
+    viennacl::vector_base<T> vcl_B(N, ctx = ctx);
+    viennacl::matrix<T> vcl_C(M, N, ctx = ctx);
     
     // viennacl::copy(Am, vcl_A); 
     // viennacl::copy(Bm, vcl_B); 
