@@ -371,6 +371,37 @@ gpuMatScalarPow <- function(A, B){
     return(C)
 }
 
+# GPU Element-Wise sqrt
+gpuMatSqrt <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    
+    switch(type,
+           integer = {
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_sqrt(A@address,
+                                  C@address,
+                                  4L,
+                                  A@.context_index - 1)
+           },
+           float = {cpp_gpuMatrix_sqrt(A@address,
+                                       C@address,
+                                       6L,
+                                       A@.context_index - 1)
+           },
+           double = {
+               cpp_gpuMatrix_sqrt(A@address,
+                                  C@address,
+                                  8L,
+                                  A@.context_index - 1)
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
 # GPU Element-Wise Sine
 gpuMatElemSin <- function(A){
     

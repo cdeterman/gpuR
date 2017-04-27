@@ -598,6 +598,7 @@ setMethod("Math", c(x="vclMatrix"),
                      `log10` = vclMatElemLog10(x),
                      `exp` = vclMatElemExp(x),
                      `abs` = vclMatElemAbs(x),
+                     `sqrt` = vclMatSqrt(x),
                      stop("undefined operation")
               )
           },

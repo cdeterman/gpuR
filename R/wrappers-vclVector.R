@@ -341,6 +341,31 @@ vclVecScalarPow <- function(A, B){
 }
 
 
+# GPU Element-Wise sqrt
+vclVecSqrt <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vclVector_sqrt(A@address,
+                                       C@address,
+                                       6L)
+           },
+           double = {
+               cpp_vclVector_sqrt(A@address,
+                                  C@address,
+                                  8L)
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
 # GPU Element-Wise Sine
 vclVecElemSin <- function(A){
     

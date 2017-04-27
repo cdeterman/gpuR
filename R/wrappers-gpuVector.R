@@ -320,6 +320,34 @@ gpuVecScalarPow <- function(A, B, order){
     return(C)
 }
 
+# GPU Element-Wise sqrt
+gpuVecSqrt <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_gpuVector_sqrt(A@address,
+                                       C@address,
+                                       6L,
+                                       A@.context_index - 1)
+           },
+           double = {
+               cpp_gpuVector_sqrt(A@address,
+                                  C@address,
+                                  8L,
+                                  A@.context_index - 1)
+           },
+           {
+               stop("type not recognized")
+           })
+    return(C)
+}
+
 # GPU Element-Wise Sine
 gpuVecElemSin <- function(A){
     

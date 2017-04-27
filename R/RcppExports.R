@@ -510,6 +510,10 @@ cpp_gpuMatrix_scalar_pow <- function(ptrA, scalar, ptrC, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag, ctx_id))
 }
 
+cpp_gpuMatrix_sqrt <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuMatrix_sqrt', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
+}
+
 cpp_gpuMatrix_elem_sin <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
@@ -612,6 +616,10 @@ cpp_vclMatrix_elem_pow <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclMatrix_scalar_pow <- function(ptrA, scalar, ptrC, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vclMatrix_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag, ctx_id))
+}
+
+cpp_vclMatrix_sqrt <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclMatrix_sqrt', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_vclMatrix_elem_sin <- function(ptrA, ptrB, type_flag) {
@@ -718,6 +726,10 @@ cpp_gpuVector_scalar_pow <- function(ptrA, scalar, ptrC, order, type_flag, ctx_i
     invisible(.Call('gpuR_cpp_gpuVector_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, order, type_flag, ctx_id))
 }
 
+cpp_gpuVector_sqrt <- function(ptrA, ptrB, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_gpuVector_sqrt', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
+}
+
 cpp_gpuVector_elem_sin <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuVector_elem_sin', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
@@ -816,6 +828,10 @@ cpp_vclVector_elem_pow <- function(ptrA, ptrB, ptrC, type_flag) {
 
 cpp_vclVector_scalar_pow <- function(ptrA, scalar, ptrC, type_flag) {
     invisible(.Call('gpuR_cpp_vclVector_scalar_pow', PACKAGE = 'gpuR', ptrA, scalar, ptrC, type_flag))
+}
+
+cpp_vclVector_sqrt <- function(ptrA, ptrB, type_flag) {
+    invisible(.Call('gpuR_cpp_vclVector_sqrt', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
 cpp_vclVector_elem_sin <- function(ptrA, ptrB, type_flag) {

@@ -254,3 +254,32 @@ test_that("CPU vclMatrix Double Precision Maximum/Minimum", {
     expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double matrix element not equivalent")  
 })
+
+test_that("CPU vclMatrix Single Precision Matrix sqrt", {
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- vclMatrix(abs(A), type="float")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "fvclMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float matrix elements not equivalent")  
+})
+
+test_that("CPU vclMatrix Double Precision Matrix sqrt", {
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- vclMatrix(abs(A), type="double")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "dvclMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt double matrix elements not equivalent")  
+})
+

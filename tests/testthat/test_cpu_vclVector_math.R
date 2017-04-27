@@ -254,3 +254,34 @@ test_that("CPU vclVector Double Precision Maximum/Minimum", {
     expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
 })
+
+test_that("CPU vclVector Single Precision sqrt", {
+    
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fvclA <- vclVector(abs(A), type="float")
+    
+    fvcl_sqrt <- sqrt(fvclA)
+    
+    expect_is(fvcl_sqrt, "fvclVector")
+    expect_equal(fvcl_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Double Precision sqrt", {
+    
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fvclA <- vclVector(abs(A), type="double")
+    
+    fvcl_sqrt <- sqrt(fvclA)
+    
+    expect_is(fvcl_sqrt, "dvclVector")
+    expect_equal(fvcl_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double vector elements not equivalent")  
+})
+

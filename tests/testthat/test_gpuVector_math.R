@@ -260,3 +260,35 @@ test_that("gpuVector Double Precision Maximum/Minimum", {
     expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
 })
+
+test_that("gpuVector Single Precision sqrt", {
+    
+    has_gpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuVector(abs(A), type="float")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "fgpuVector")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float vector elements not equivalent")  
+})
+
+test_that("gpuVector Double Precision sqrt", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuVector(abs(A), type="double")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "dgpuVector")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double vector elements not equivalent")  
+})
+

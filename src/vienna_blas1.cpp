@@ -386,6 +386,34 @@ void cpp_gpuVector_scalar_pow(
 
 template <typename T>
 void 
+cpp_gpuVector_sqrt(
+    SEXP ptrA_, SEXP ptrC_,
+    int ctx_id)
+{    
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
+    
+    const int M = Am.size();
+    
+    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
+    
+    // viennacl::copy(Am, vcl_A); 
+    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    
+    vcl_C = viennacl::linalg::element_sqrt(vcl_A);
+    
+    // viennacl::copy(vcl_C, Cm);
+    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+}
+
+template <typename T>
+void 
 cpp_gpuVector_elem_sin(
     SEXP ptrA_, SEXP ptrC_,
     int ctx_id)
@@ -984,14 +1012,31 @@ cpp_gpuMatrix_scalar_pow(
     
     viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(K,M,scalar, ctx = ctx);
     
-    // std::cout << vcl_A << std::endl;
-    // std::cout << vcl_B << std::endl;
-    
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
     
-    // std::cout << vcl_C << std::endl;
-    
     ptrC->to_host(vcl_C);
+}
+
+template <typename T>
+void cpp_gpuMatrix_sqrt(
+        SEXP ptrA_, 
+        SEXP ptrB_,
+        int ctx_id)
+{    
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    XPtr<dynEigenMat<T> > ptrB(ptrB_);    
+    
+    const int K = ptrB->nrow();
+    const int M = ptrB->ncol();
+    
+    viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
+    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
+    
+    vcl_B = viennacl::linalg::element_sqrt(vcl_A);
+    
+    ptrB->to_host(vcl_B);
 }
 
 template <typename T>
@@ -1442,6 +1487,29 @@ cpp_gpuMatrix_scalar_pow(
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_gpuMatrix_sqrt(
+    SEXP ptrA, SEXP ptrB,
+    const int type_flag,
+    int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_gpuMatrix_sqrt<int>(ptrA, ptrB, ctx_id);
+        return;
+    case 6:
+        cpp_gpuMatrix_sqrt<float>(ptrA, ptrB, ctx_id);
+        return;
+    case 8:
+        cpp_gpuMatrix_sqrt<double>(ptrA, ptrB, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
 }
 
@@ -1989,6 +2057,20 @@ void cpp_vclVector_scalar_pow(
     
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
     
+}
+
+template <typename T>
+void cpp_vclVector_sqrt(
+        SEXP ptrA_, 
+        SEXP ptrC_)
+{    
+    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
+    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
+    
+    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
+    
+    ptrC = viennacl::linalg::element_sqrt(ptrA);
 }
 
 template <typename T>
@@ -2613,6 +2695,21 @@ cpp_vclMatrix_scalar_pow(
 }
 
 template <typename T>
+void cpp_vclMatrix_sqrt(
+        SEXP ptrA_, 
+        SEXP ptrB_)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > A  = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
+    
+    B = viennacl::linalg::element_sqrt(A);
+}
+
+template <typename T>
 void cpp_vclMatrix_elem_sin(
     SEXP ptrA_, 
     SEXP ptrB_)
@@ -3101,6 +3198,27 @@ cpp_vclMatrix_scalar_pow(
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+//[[Rcpp::export]]
+void cpp_vclMatrix_sqrt(
+        SEXP ptrA, 
+        SEXP ptrB,
+        const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_sqrt<int>(ptrA, ptrB);
+        return;
+    case 6:
+        cpp_vclMatrix_sqrt<float>(ptrA, ptrB);
+        return;
+    case 8:
+        cpp_vclMatrix_sqrt<double>(ptrA, ptrB);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -3682,6 +3800,29 @@ cpp_gpuVector_scalar_pow(
 
 // [[Rcpp::export]]
 void
+cpp_gpuVector_sqrt(
+    SEXP ptrA, SEXP ptrB, 
+    const int type_flag,
+    int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_gpuVector_sqrt<int>(ptrA, ptrB, ctx_id);
+        return;
+    case 6:
+        cpp_gpuVector_sqrt<float>(ptrA, ptrB, ctx_id);
+        return;
+    case 8:
+        cpp_gpuVector_sqrt<double>(ptrA, ptrB, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
 cpp_gpuVector_elem_sin(
     SEXP ptrA, SEXP ptrB, 
     const int type_flag,
@@ -4250,6 +4391,28 @@ cpp_vclVector_scalar_pow(
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+cpp_vclVector_sqrt(
+    SEXP ptrA, SEXP ptrB, 
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclVector_sqrt<int>(ptrA, ptrB);
+        return;
+    case 6:
+        cpp_vclVector_sqrt<float>(ptrA, ptrB);
+        return;
+    case 8:
+        cpp_vclVector_sqrt<double>(ptrA, ptrB);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
     }
 }
 

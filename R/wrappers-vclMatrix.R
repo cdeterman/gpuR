@@ -1214,6 +1214,34 @@ vclMatScalarPow <- function(A, B){
     return(C)
 }
 
+# GPU Element-Wise sqrt
+vclMatSqrt <- function(A){
+    
+    type <- typeof(A)
+    
+    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    
+    switch(type,
+           integer = {
+               cpp_vclMatrix_sqrt(A@address,
+                                  C@address,
+                                  4L)
+           },
+           float = {cpp_vclMatrix_sqrt(A@address,
+                                       C@address,
+                                       6L)
+           },
+           double = {
+               cpp_vclMatrix_sqrt(A@address,
+                                  C@address,
+                                  8L)
+           },
+           stop("type not recognized")
+    )
+    
+    return(C)
+}
+
 # GPU Element-Wise Sine
 vclMatElemSin <- function(A){
     

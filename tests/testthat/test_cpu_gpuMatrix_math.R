@@ -276,4 +276,34 @@ test_that("gpuMatrix Double Precision Maximum/Minimum", {
                  info="min double matrix element not equivalent")  
 })
 
+test_that("CPU gpuMatrix Single Precision Matrix sqrt", {
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuMatrix(abs(A), type="float")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "fgpuMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("CPU gpuMatrix Double Precision Matrix sqrt", {
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuMatrix(abs(A), type="double")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "dgpuMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
 options(warn=0)
