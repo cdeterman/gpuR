@@ -1014,6 +1014,10 @@ cpp_gpuMatrix_rowsum <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_gpuMatrix_rowsum', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
 }
 
+cpp_gpuMatrix_sum <- function(ptrA, type_flag, ctx_id) {
+    .Call('gpuR_cpp_gpuMatrix_sum', PACKAGE = 'gpuR', ptrA, type_flag, ctx_id)
+}
+
 cpp_vclMatrix_colmean <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_colmean', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
@@ -1028,6 +1032,10 @@ cpp_vclMatrix_rowmean <- function(ptrA, ptrB, type_flag) {
 
 cpp_vclMatrix_rowsum <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('gpuR_cpp_vclMatrix_rowsum', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
+}
+
+cpp_vclMatrix_sum <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vclMatrix_sum', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_vclMatrix_svd <- function(ptrA, ptrD, ptrU, ptrV, type_flag, ctx_id) {

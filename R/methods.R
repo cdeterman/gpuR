@@ -1090,6 +1090,7 @@ setMethod("Summary", c(x="gpuMatrix"),
               result <- switch(op,
                                `max` = gpuMatrix_max(x),
                                `min` = gpuMatrix_min(x),
+                               `sum` = gpuMatrix_sum(x),
                                stop("undefined operation")
               )
               return(result)

@@ -23,6 +23,33 @@ CS <- colSums(A[2:4, 2:4])
 RMS <- rowMeans(A[2:4, 2:4])
 CMS <- colMeans(A[2:4, 2:4])
 
+S <- sum(A)
+
+test_that("gpuMatrix Single Precision Sum",
+{
+    has_gpu_skip()
+    
+    fgpuX <- gpuMatrix(A, type="float")
+    
+    gpuS <- sum(fgpuX)
+    
+    expect_equal(gpuS, S, tolerance=1e-06, 
+                 info="float sum value not equivalent")  
+})
+
+
+test_that("gpuMatrix Double Precision Sum",
+{
+    has_gpu_skip()
+    has_double_skip()
+    
+    fgpuX <- gpuMatrix(A, type="double")
+    
+    gpuS <- sum(fgpuX)
+    
+    expect_equal(gpuS, S, tolerance=.Machine$double.eps^0.5, 
+                 info="double sum value not equivalent")  
+})
 
 test_that("gpuMatrix Single Precision Column Sums",
 {

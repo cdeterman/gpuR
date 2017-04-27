@@ -833,6 +833,7 @@ setMethod("Summary", c(x="vclMatrix"),
               result <- switch(op,
                                `max` = vclMatMax(x),
                                `min` = vclMatMin(x),
+                               `sum` = vclMatSum(x),
                                stop("undefined operation")
               )
               return(result)

@@ -877,6 +877,36 @@ gpu_rowSums <- function(A){
     return(sums)
 }
 
+# GPU sum
+gpuMatrix_sum <- function(A){
+    
+    type <- typeof(A)
+    
+    result <- switch(type,
+                     "integer" = {
+                         cpp_gpuMatrix_sum(
+                             A@address,
+                             4L,
+                             A@.context_index - 1)
+                     },
+                     "float" = {
+                         cpp_gpuMatrix_sum(
+                             A@address,
+                             6L,
+                             A@.context_index - 1)
+                     },
+                     "double" = {
+                         cpp_gpuMatrix_sum(
+                             A@address,
+                             8L,
+                             A@.context_index - 1)
+                     },
+                     stop("unsupported matrix type")
+    )
+    
+    return(result)
+}
+
 # GPU colMeans
 gpu_colMeans <- function(A){
     

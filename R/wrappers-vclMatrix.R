@@ -1668,6 +1668,24 @@ vclMatrix_rowSums <- function(A){
     return(sums)
 }
 
+# vclMatrix sum
+vclMatSum <- function(A){
+    
+    type <- typeof(A)
+    
+    result <- switch(type,
+           "integer" = cpp_vclMatrix_sum(A@address, 
+                                         4L),
+           "float" = cpp_vclMatrix_sum(A@address, 
+                                       6L),
+           "double" = cpp_vclMatrix_sum(A@address,
+                                        8L),
+           stop("unsupported matrix type")
+    )
+    
+    return(result)
+}
+
 # vclMatrix colMeans
 vclMatrix_colMeans <- function(A){
     

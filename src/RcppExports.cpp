@@ -3141,6 +3141,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuMatrix_sum
+SEXP cpp_gpuMatrix_sum(SEXP ptrA, const int type_flag, int ctx_id);
+RcppExport SEXP gpuR_cpp_gpuMatrix_sum(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_gpuMatrix_sum(ptrA, type_flag, ctx_id));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_vclMatrix_colmean
 void cpp_vclMatrix_colmean(SEXP ptrA, SEXP ptrB, const int type_flag);
 RcppExport SEXP gpuR_cpp_vclMatrix_colmean(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
@@ -3187,6 +3200,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     cpp_vclMatrix_rowsum(ptrA, ptrB, type_flag);
     return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_sum
+SEXP cpp_vclMatrix_sum(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_sum(SEXP ptrASEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_vclMatrix_sum(ptrA, type_flag));
+    return rcpp_result_gen;
 END_RCPP
 }
 // cpp_vclMatrix_svd

@@ -130,6 +130,23 @@ cpp_gpuMatrix_rowsum(
     viennacl::fast_copy(vcl_rowSums.begin(), vcl_rowSums.end(), &(rowSums[0]));
 }
 
+template <typename T>
+SEXP
+cpp_gpuMatrix_sum(
+    SEXP ptrA_, 
+    int ctx_id)
+{
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    
+    viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
+    
+    T res = viennacl::linalg::sum(viennacl::linalg::row_sum(vcl_A));
+    
+    return Rcpp::wrap(res);
+}
+
 /*** vclMatrix Templates ***/
 
 template <typename T>
@@ -196,6 +213,19 @@ cpp_vclMatrix_rowsum(
     
     vcl_rowSums = viennacl::linalg::row_sum(vcl_A);
 }
+
+template <typename T>
+SEXP
+cpp_vclMatrix_sum(
+    SEXP ptrA_)
+{
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+    
+    T res = viennacl::linalg::sum(viennacl::linalg::row_sum(vcl_A));
+    return wrap(res);
+}
+
 
 template <typename T>
 void 
@@ -805,6 +835,26 @@ cpp_gpuMatrix_rowsum(
     }
 }
 
+// [[Rcpp::export]]
+SEXP
+cpp_gpuMatrix_sum(
+    SEXP ptrA,
+    const int type_flag,
+    int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return cpp_gpuMatrix_sum<int>(ptrA, ctx_id);
+    case 6:
+        return cpp_gpuMatrix_sum<float>(ptrA, ctx_id);
+    case 8:
+        return cpp_gpuMatrix_sum<double>(ptrA, ctx_id);
+    default:
+        throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
 /*** vclMatrix Functions ***/
 
 // [[Rcpp::export]]
@@ -896,4 +946,21 @@ cpp_vclMatrix_rowsum(
     }
 }
 
-
+// [[Rcpp::export]]
+SEXP
+cpp_vclMatrix_sum(
+    SEXP ptrA,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return cpp_vclMatrix_sum<int>(ptrA);
+    case 6:
+        return cpp_vclMatrix_sum<float>(ptrA);
+    case 8:
+        return cpp_vclMatrix_sum<double>(ptrA);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
