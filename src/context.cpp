@@ -196,7 +196,8 @@ listContexts()
                   Rcpp::Named("platform_index") = platform_index,
 				  Rcpp::Named("device") = device_name,
                   Rcpp::Named("device_index") = device_index,
-                  Rcpp::Named("device_type") = device_type);
+                  Rcpp::Named("device_type") = device_type,
+                  _["stringsAsFactors"] = false );
 }
 
 
