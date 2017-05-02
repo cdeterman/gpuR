@@ -34,14 +34,20 @@ setMethod('vclMatrix',
               
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
-              device_type <- device$device_type
-              device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    stop("Unrecognized device type")
-              )
+              
               platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
               platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        platform_idx = platform_index,
+                                        device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(
+                                        platform_idx = platform_index,
+                                        device_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               
               data = switch(type,
                             integer = {
@@ -93,14 +99,20 @@ setMethod('vclMatrix',
 
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
               device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
-              device_type <- device$device_type
-              device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    stop("Unrecognized device type")
-              )
+              
               platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
               platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        platform_idx = platform_index,
+                                        device_idx = as.integer(device_index))$deviceName,
+                                    "cpu" = cpuInfo(
+                                        platform_idx = platform_index,
+                                        device_idx = as.integer(device_index))$deviceName,
+                                    stop("Unrecognized device type")
+              )
               
               data = switch(type,
                             integer = {
