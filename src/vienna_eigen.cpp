@@ -26,26 +26,24 @@ void cpp_gpu_eigen(
     SEXP &Am, 
     SEXP &Qm,
     SEXP &eigenvalues,
-    bool symmetric,
-    int ctx_id)
+    bool symmetric)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     Rcpp::XPtr<dynEigenVec<T> > ptreigenvalues(eigenvalues);
     
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > eigen_A = *ptrA;
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > &eigen_Q = *ptrQ;
 //    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &eigen_eigenvalues = *ptreigenvalues;
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > eigen_eigenvalues = ptreigenvalues->data();
-    
-    
+
     XPtr<dynEigenMat<T> > ptrA(Am);
     XPtr<dynEigenMat<T> > ptrQ(Qm);
     
     const int K = ptrA->nrow();
     
-    viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
-    viennacl::matrix<T> vcl_Q = ptrQ->device_data(ctx_id);
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
+    
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> vcl_Q = ptrQ->device_data();
     viennacl::vector_base<T> vcl_eigenvalues(K, ctx = ctx);
 
     //temp D
@@ -111,18 +109,17 @@ cpp_gpu_eigen(
     SEXP Qm,
     SEXP eigenvalues,
     const bool symmetric,
-    const int type_flag,
-    int ctx_id)
+    const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric, ctx_id);
+            cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric);
             return;
         case 6:
-            cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric, ctx_id);
+            cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric);
             return;
         case 8:
-            cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric, ctx_id);
+            cpp_gpu_eigen<double>(Am, Qm, eigenvalues, symmetric);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");

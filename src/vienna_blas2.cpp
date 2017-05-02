@@ -4,7 +4,7 @@
 // eigen headers for handling the R input data
 #include <RcppEigen.h>
 
-#include "gpuR/dynEigenMat.hpp"
+// #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 

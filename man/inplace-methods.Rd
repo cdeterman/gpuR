@@ -44,20 +44,6 @@ No return, result applied in-place
 \description{
 Applies the provided function in-place on the 
 first object passed
-
-#' @rdname inplace-methods
-#' @export
-setMethod("inplace",
-		  signature = c("function", "vclMatrix", "vclVector", "vclVector"),
-		  function(f, x, y){
-		  	
-		  	switch(deparse(substitute(f)),
-		  		   `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
-		  		   `exp` = vclMatElemExp(x, inplace = TRUE),
-		  		   `abs` = vclMatElemAbs(x, inplace = TRUE),
-		  		   stop("undefined operation")
-		  	)
-		  })
 }
 \author{
 Charles Determan Jr.

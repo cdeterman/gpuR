@@ -75,9 +75,9 @@ svd.gpuMatrix <-
               V <- gpuMatrix(0, ncol = ncol(x), nrow = ncol(x), type = type, ctx_id=x@.context_index)
               
               switch(type,
-                     integer = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 4L, ctx_id = x@.context_index - 1)},
-                     float = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 6L, ctx_id = x@.context_index - 1)},
-                     double = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 8L, ctx_id = x@.context_index - 1)},
+                     integer = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 4L)},
+                     float = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 6L)},
+                     double = {cpp_gpuMatrix_svd(x@address, D@address, U@address, V@address, 8L)},
                      stop("type not recognized")
               )
               

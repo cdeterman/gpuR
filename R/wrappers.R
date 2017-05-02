@@ -44,20 +44,17 @@ gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE){
                cpp_gpuMatrix_axpy(alpha, 
                                   A@address, 
                                   Z@address, 
-                                  4L,
-                                  A@.context_index - 1)
+                                  4L)
            },
            float = {cpp_gpuMatrix_axpy(alpha, 
                                        A@address, 
                                        Z@address, 
-                                       6L,
-                                       A@.context_index - 1)
+                                       6L)
            },
            double = {cpp_gpuMatrix_axpy(alpha, 
                                         A@address,
                                         Z@address,
-                                        8L,
-                                        A@.context_index - 1)
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -79,18 +76,15 @@ gpuMatrix_unary_axpy <- function(A){
     switch(type,
            integer = {
                cpp_gpuMatrix_unary_axpy(Z@address, 
-                                        4L,
-                                        A@.context_index - 1)
+                                        4L)
            },
            float = {
                cpp_gpuMatrix_unary_axpy(Z@address, 
-                                        6L,
-                                        A@.context_index - 1)
+                                        6L)
            },
            double = {
                cpp_gpuMatrix_unary_axpy(Z@address,
-                                        8L,
-                                        A@.context_index - 1)
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -133,20 +127,18 @@ gpu_Mat_mult <- function(A, B){
                                           FALSE,
                                           kernel,
                                           sqrt(maxWorkGroupSize),
-                                          A@.context_index - 1)
+                                          C@.context_index - 1L)
            },
            float = {cpp_gpuMatrix_gemm(A@address,
                                        B@address,
                                        C@address,
-                                       6L,
-                                       A@.context_index - 1)
+                                       6L)
            },
            double = {
                cpp_gpuMatrix_gemm(A@address,
                                   B@address,
                                   C@address,
-                                  8L,
-                                  A@.context_index - 1)
+                                  8L)
            },
            stop("type not recognized")
     )
@@ -173,21 +165,18 @@ gpuMatElemMult <- function(A, B){
                cpp_gpuMatrix_elem_prod(A@address,
                                        B@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_prod(A@address,
                                             B@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_prod(A@address,
                                        B@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            {
                stop("type not recognized")
@@ -207,19 +196,16 @@ gpuMatScalarMult <- function(A, B){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_scalar_prod(C@address,
                                          B,
-                                         4L,
-                                         A@.context_index - 1)
+                                         4L)
            },
            float = {cpp_gpuMatrix_scalar_prod(C@address,
                                               B,
-                                              6L,
-                                              A@.context_index - 1)
+                                              6L)
            },
            double = {
                cpp_gpuMatrix_scalar_prod(C@address,
                                          B,
-                                         8L,
-                                         A@.context_index - 1)
+                                         8L)
            },
            stop("type not recognized")
     )
@@ -245,21 +231,18 @@ gpuMatElemDiv <- function(A, B){
                cpp_gpuMatrix_elem_div(A@address,
                                       B@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_div(A@address,
                                            B@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_div(A@address,
                                       B@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -278,19 +261,16 @@ gpuMatScalarDiv <- function(A, B){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_scalar_div(C@address,
                                         B,
-                                        4L,
-                                        A@.context_index - 1)
+                                        4L)
            },
            float = {cpp_gpuMatrix_scalar_div(C@address,
                                              B,
-                                             6L,
-                                             A@.context_index - 1)
+                                             6L)
            },
            double = {
                cpp_gpuMatrix_scalar_div(C@address,
                                         B,
-                                        8L,
-                                        A@.context_index - 1)
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -316,21 +296,18 @@ gpuMatElemPow <- function(A, B){
                cpp_gpuMatrix_elem_pow(A@address,
                                       B@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_pow(A@address,
                                            B@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_pow(A@address,
                                       B@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -350,21 +327,18 @@ gpuMatScalarPow <- function(A, B){
                cpp_gpuMatrix_scalar_pow(A@address,
                                         B,
                                         C@address,
-                                        4L,
-                                        A@.context_index - 1)
+                                        4L)
            },
            float = {cpp_gpuMatrix_scalar_pow(A@address,
                                              B,
                                              C@address,
-                                             6L,
-                                             A@.context_index - 1)
+                                             6L)
            },
            double = {
                cpp_gpuMatrix_scalar_pow(A@address,
                                         B,
                                         C@address,
-                                        8L,
-                                        A@.context_index - 1)
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -383,19 +357,16 @@ gpuMatSqrt <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_sqrt(A@address,
                                   C@address,
-                                  4L,
-                                  A@.context_index - 1)
+                                  4L)
            },
            float = {cpp_gpuMatrix_sqrt(A@address,
                                        C@address,
-                                       6L,
-                                       A@.context_index - 1)
+                                       6L)
            },
            double = {
                cpp_gpuMatrix_sqrt(A@address,
                                   C@address,
-                                  8L,
-                                  A@.context_index - 1)
+                                  8L)
            },
            stop("type not recognized")
     )
@@ -414,19 +385,16 @@ gpuMatElemSin <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_sin(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_sin(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_sin(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -445,19 +413,16 @@ gpuMatElemArcSin <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_asin(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_asin(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_asin(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -476,19 +441,16 @@ gpuMatElemHypSin <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_sinh(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_sinh(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_sinh(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -507,19 +469,16 @@ gpuMatElemCos <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_cos(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_cos(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_cos(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -538,19 +497,16 @@ gpuMatElemArcCos <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_acos(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_acos(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_acos(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -569,19 +525,16 @@ gpuMatElemHypCos <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_cosh(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_cosh(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_cosh(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -600,19 +553,16 @@ gpuMatElemTan <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_tan(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_tan(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_tan(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -631,19 +581,16 @@ gpuMatElemArcTan <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_atan(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_atan(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_atan(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -662,19 +609,16 @@ gpuMatElemHypTan <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_tanh(A@address,
                                        C@address,
-                                       4L,
-                                       A@.context_index - 1)
+                                       4L)
            },
            float = {cpp_gpuMatrix_elem_tanh(A@address,
                                             C@address,
-                                            6L,
-                                            A@.context_index - 1)
+                                            6L)
            },
            double = {
                cpp_gpuMatrix_elem_tanh(A@address,
                                        C@address,
-                                       8L,
-                                       A@.context_index - 1)
+                                       8L)
            },
            stop("type not recognized")
     )
@@ -693,19 +637,16 @@ gpuMatElemLog <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_log(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_log(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_log(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -725,21 +666,18 @@ gpuMatElemLogBase <- function(A, base){
                cpp_gpuMatrix_elem_log_base(A@address,
                                            C@address,
                                            base,
-                                           4L,
-                                           A@.context_index - 1)
+                                           4L)
            },
            float = {cpp_gpuMatrix_elem_log_base(A@address,
                                                 C@address,
                                                 base,
-                                                6L,
-                                                A@.context_index - 1)
+                                                6L)
            },
            double = {
                cpp_gpuMatrix_elem_log_base(A@address,
                                            C@address,
                                            base,
-                                           8L,
-                                           A@.context_index - 1)
+                                           8L)
            },
            stop("type not recognized")
     )
@@ -758,19 +696,16 @@ gpuMatElemLog10 <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_log10(A@address,
                                         C@address,
-                                        4L,
-                                        A@.context_index - 1)
+                                        4L)
            },
            float = {cpp_gpuMatrix_elem_log10(A@address,
                                              C@address,
-                                             6L,
-                                             A@.context_index - 1)
+                                             6L)
            },
            double = {
                cpp_gpuMatrix_elem_log10(A@address,
                                         C@address,
-                                        8L,
-                                        A@.context_index - 1)
+                                        8L)
            },
            stop("type not recognized")
     )
@@ -789,19 +724,16 @@ gpuMatElemExp <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_exp(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_exp(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_exp(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -820,20 +752,17 @@ gpu_colSums <- function(A){
                # stop("integer type not currently implemented")
                cpp_gpuMatrix_colsum(A@address, 
                                     sums@address, 
-                                    4L,
-                                    A@.context_index - 1)
+                                    4L)
            },
            "float" = {
                cpp_gpuMatrix_colsum(A@address, 
                                     sums@address, 
-                                    6L,
-                                    A@.context_index - 1)
+                                    6L)
            },
            "double" = {
                cpp_gpuMatrix_colsum(A@address, 
                                     sums@address, 
-                                    8L,
-                                    A@.context_index - 1)
+                                    8L)
            },
            stop("unsupported matrix type")
     )
@@ -854,22 +783,19 @@ gpu_rowSums <- function(A){
                cpp_gpuMatrix_rowsum(
                    A@address, 
                    sums@address,
-                   4L,
-                   A@.context_index - 1)
+                   4L)
            },
            "float" = {
                cpp_gpuMatrix_rowsum(
                    A@address, 
                    sums@address,
-                   6L,
-                   A@.context_index - 1)
+                   6L)
            },
            "double" = {
                cpp_gpuMatrix_rowsum(
                    A@address, 
                    sums@address,
-                   8L,
-                   A@.context_index - 1)
+                   8L)
            },
            stop("unsupported matrix type")
     )
@@ -886,20 +812,17 @@ gpuMatrix_sum <- function(A){
                      "integer" = {
                          cpp_gpuMatrix_sum(
                              A@address,
-                             4L,
-                             A@.context_index - 1)
+                             4L)
                      },
                      "float" = {
                          cpp_gpuMatrix_sum(
                              A@address,
-                             6L,
-                             A@.context_index - 1)
+                             6L)
                      },
                      "double" = {
                          cpp_gpuMatrix_sum(
                              A@address,
-                             8L,
-                             A@.context_index - 1)
+                             8L)
                      },
                      stop("unsupported matrix type")
     )
@@ -919,17 +842,14 @@ gpu_colMeans <- function(A){
                # stop("integer type not currently implemented")
                cpp_gpuMatrix_colmean(A@address, 
                                      sums@address, 
-                                     4L,
-                                     A@.context_index - 1)
+                                     4L)
            },
            "float" = cpp_gpuMatrix_colmean(A@address, 
                                            sums@address, 
-                                           6L,
-                                           A@.context_index - 1),
+                                           6L),
            "double" = cpp_gpuMatrix_colmean(A@address, 
                                             sums@address, 
-                                            8L,
-                                            A@.context_index - 1)
+                                            8L)
     )
     
     return(sums)
@@ -947,17 +867,14 @@ gpu_rowMeans <- function(A){
                # stop("integer type not currently implemented")
                cpp_gpuMatrix_rowmean(A@address, 
                                      sums@address, 
-                                     4L,
-                                     A@.context_index - 1)
+                                     4L)
            },
            "float" = cpp_gpuMatrix_rowmean(A@address, 
                                            sums@address, 
-                                           6L,
-                                           A@.context_index - 1),
+                                           6L),
            "double" = cpp_gpuMatrix_rowmean(A@address, 
                                             sums@address, 
-                                            8L,
-                                            A@.context_index - 1)
+                                            8L)
     )
     
     return(sums)
@@ -975,17 +892,14 @@ gpu_pmcc <- function(A){
                stop("integer type not currently implemented")
                # cpp_gpuMatrix_pmcc(A@address, 
                #                    B@address, 
-               #                    4L,
-               #                    A@.context_index - 1)
+               #                    4L)
            },
            "float" = cpp_gpuMatrix_pmcc(A@address, 
                                         B@address, 
-                                        6L,
-                                        A@.context_index - 1),
+                                        6L),
            "double" = cpp_gpuMatrix_pmcc(A@address, 
                                          B@address, 
-                                         8L,
-                                         A@.context_index - 1)
+                                         8L)
     )
     
     return(B)
@@ -1008,22 +922,19 @@ gpu_crossprod <- function(X, Y){
                # cpp_gpuMatrix_crossprod(X@address, 
                #                         Y@address, 
                #                         Z@address,
-               #                         4L,
-               #                         X@.context_index - 1)
+               #                         4L)
            },
            "float" = {
                cpp_gpuMatrix_crossprod(X@address, 
                                        Y@address, 
                                        Z@address,
-                                       6L,
-                                       X@.context_index - 1)
+                                       6L)
            },
            "double" = {
                cpp_gpuMatrix_crossprod(X@address, 
                                        Y@address, 
                                        Z@address, 
-                                       8L,
-                                       X@.context_index - 1)
+                                       8L)
            },
            stop("Unsupported type")
     )
@@ -1048,22 +959,19 @@ gpu_tcrossprod <- function(X, Y){
                # cpp_gpuMatrix_tcrossprod(X@address, 
                #                          Y@address, 
                #                          Z@address, 
-               #                          4L,
-               #                          X@.context_index - 1)
+               #                          4L)
            },
            "float" = {
                cpp_gpuMatrix_tcrossprod(X@address, 
                                         Y@address, 
                                         Z@address, 
-                                        6L,
-                                        X@.context_index - 1)
+                                        6L)
            },
            "double" = {
                cpp_gpuMatrix_tcrossprod(X@address,
                                         Y@address, 
                                         Z@address, 
-                                        8L,
-                                        X@.context_index - 1)
+                                        8L)
            },
            stop("unsupported type")
     )
@@ -1083,19 +991,16 @@ gpuMatrix_euclidean <- function(A, D, diag, upper, p, squareDist){
                # cpp_gpuMatrix_eucl(A@address, 
                #                    D@address, 
                #                    squareDist,
-               #                    4L,
-               #                    A@.context_index - 1)
+               #                    4L)
                },
            "float" = cpp_gpuMatrix_eucl(A@address, 
                                         D@address, 
                                         squareDist,
-                                        6L,
-                                        A@.context_index - 1),
+                                        6L),
            "double" = cpp_gpuMatrix_eucl(A@address, 
                                          D@address,
                                          squareDist,
-                                         8L,
-                                         A@.context_index - 1),
+                                         8L),
            stop("Unsupported matrix type")
     )
     
@@ -1114,21 +1019,18 @@ gpuMatrix_peuclidean <- function(A, B, D, squareDist){
                #                     B@address,
                #                     D@address,
                #                     squareDist,
-               #                     4L,
-               #                     A@.context_index - 1)
+               #                     4L)
            },
            "float" = cpp_gpuMatrix_peucl(A@address,
                                          B@address,
                                          D@address, 
                                          squareDist, 
-                                         6L,
-                                         A@.context_index - 1),
+                                         6L),
            "double" = cpp_gpuMatrix_peucl(A@address, 
                                           B@address,
                                           D@address,
                                           squareDist,
-                                          8L,
-                                          A@.context_index - 1),
+                                          8L),
            stop("Unsupported matrix type")
     )
     
@@ -1147,19 +1049,16 @@ gpuMatElemAbs <- function(A){
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_abs(A@address,
                                       C@address,
-                                      4L,
-                                      A@.context_index - 1)
+                                      4L)
            },
            float = {cpp_gpuMatrix_elem_abs(A@address,
                                            C@address,
-                                           6L,
-                                           A@.context_index - 1)
+                                           6L)
            },
            double = {
                cpp_gpuMatrix_elem_abs(A@address,
                                       C@address,
-                                      8L,
-                                      A@.context_index - 1)
+                                      8L)
            },
            stop("type not recognized")
     )
@@ -1204,12 +1103,9 @@ gpuMatrix_t <- function(A){
     B <- gpuMatrix(init, ncol = nrow(A), nrow = ncol(A), type = type, ctx_id = A@.context_index)
     
     switch(type,
-           integer = {cpp_gpuMatrix_transpose(A@address, B@address, 4L,
-                                              A@.context_index - 1)},
-           float = {cpp_gpuMatrix_transpose(A@address, B@address,  6L,
-                                            A@.context_index - 1)},
-           double = {cpp_gpuMatrix_transpose(A@address, B@address,  8L,
-                                             A@.context_index - 1)},
+           integer = {cpp_gpuMatrix_transpose(A@address, B@address, 4L)},
+           float = {cpp_gpuMatrix_transpose(A@address, B@address,  6L)},
+           double = {cpp_gpuMatrix_transpose(A@address, B@address,  8L)},
            stop("type not recognized")
     )
     

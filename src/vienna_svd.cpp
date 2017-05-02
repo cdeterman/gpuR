@@ -72,8 +72,7 @@ cpp_gpuMatrix_svd(
     SEXP ptrA_,
     SEXP ptrD_,
     SEXP ptrU_,
-    SEXP ptrV_,
-    int ctx_id)
+    SEXP ptrV_)
 {
     
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -83,9 +82,9 @@ cpp_gpuMatrix_svd(
     
     // std::cout << "got ptrs" << std::endl;
     
-    viennacl::matrix<T> vcl_A = ptrA->device_data(ctx_id);
-    viennacl::matrix<T> U = ptrU->device_data(ctx_id);
-    viennacl::matrix<T> V = ptrV->device_data(ctx_id);
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> U = ptrU->device_data();
+    viennacl::matrix<T> V = ptrV->device_data();
     
     // std::cout << "got matrices" << std::endl;
     
@@ -155,19 +154,18 @@ cpp_gpuMatrix_svd(
     SEXP ptrD,
     SEXP ptrU,
     SEXP ptrV,
-    int type_flag,
-    int ctx_id)
+    int type_flag)
 {
     
     switch(type_flag) {
     case 4:
-        cpp_gpuMatrix_svd<int>(ptrA, ptrD, ptrU, ptrV, ctx_id);
+        cpp_gpuMatrix_svd<int>(ptrA, ptrD, ptrU, ptrV);
         return;
     case 6:
-        cpp_gpuMatrix_svd<float>(ptrA, ptrD, ptrU, ptrV, ctx_id);
+        cpp_gpuMatrix_svd<float>(ptrA, ptrD, ptrU, ptrV);
         return;
     case 8:
-        cpp_gpuMatrix_svd<double>(ptrA, ptrD, ptrU, ptrV, ctx_id);
+        cpp_gpuMatrix_svd<double>(ptrA, ptrD, ptrU, ptrV);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
