@@ -4,6 +4,7 @@
 
 #include "viennacl/ocl/backend.hpp"
 
+#include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
 
 // using namespace cl;
@@ -55,7 +56,7 @@ cpp_vclMatrix_set_row_order(
     const bool AisVCL,
     Eigen::VectorXi indices,
     SEXP sourceCode_,
-    const int max_local_size,
+    int max_local_size,
     const int ctx_id)
 {
     
@@ -111,6 +112,22 @@ cpp_vclMatrix_set_row_order(
         
         // std::cout << "got kernel" << std::endl;
     // }
+    
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("permute_kernel", "set_row_order").handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
+    }
     
     
     // set global work sizes
