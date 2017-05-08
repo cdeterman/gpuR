@@ -27,7 +27,8 @@ setMethod('gpuMatrix',
           signature(data = 'matrix'),
           function(data, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- typeof(data)
+              # if (is.null(type)) type <- typeof(data)
+              if (is.null(type)) type <- getOption("gpuR.default.type")
               
               device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
               
