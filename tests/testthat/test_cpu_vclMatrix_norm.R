@@ -59,12 +59,12 @@ test_that("CPU vclMatrix Single Precision Matrix Norms",
                            info="float matrix one norm now equivalent") 
               expect_equal(gm_norm_nsq, m_norm_nsq, tolerance=1e-05, 
                            info="float matrix one norm now equivalent") 
-              expect_equal(gs_norm_nsq, s_norm_nsq, tolerance=1e-03, 
+              expect_equal(gs_norm_nsq, s_norm_nsq, tolerance=1e-04, 
                            info="float matrix one norm now equivalent") 
           })
 
 
-test_that("CPU vclMatrix Single Precision Matrix Norms",
+test_that("CPU vclMatrix Double Precision Matrix Norms",
           {
               
               has_cpu_skip()
