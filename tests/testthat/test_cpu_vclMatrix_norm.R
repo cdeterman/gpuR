@@ -59,7 +59,7 @@ test_that("CPU vclMatrix Single Precision Matrix Norms",
                            info="float matrix one norm now equivalent") 
               expect_equal(gm_norm_nsq, m_norm_nsq, tolerance=1e-05, 
                            info="float matrix one norm now equivalent") 
-              expect_equal(gs_norm_nsq, s_norm_nsq, tolerance=1e-04, 
+              expect_equal(gs_norm_nsq, s_norm_nsq, tolerance=1e-03, 
                            info="float matrix one norm now equivalent") 
           })
 
