@@ -101,6 +101,10 @@ T cpp_vclMatrix_norm_2(SEXP ptrA_)
     viennacl::matrix<T> vcl_A = ptrA->matrix();
     viennacl::context ctx = ptrA->getContext();
     
+    if(vcl_A.size1() != vcl_A.size2()){
+        stop("only square matrices currently supported");
+    }
+        
     viennacl::matrix<T> U = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size1(), ctx);
     viennacl::matrix<T> V = viennacl::zero_matrix<T>(vcl_A.size2(), vcl_A.size2(), ctx);
         
