@@ -205,6 +205,10 @@ cpp_gpuMatrix_nrow(
         return wrap(cpp_nrow<float>(ptrA));
     case 8:
         return wrap(cpp_nrow<double>(ptrA));
+    case 10:
+        return wrap(cpp_nrow<std::complex<float> >(ptrA));
+    case 12:
+        return wrap(cpp_nrow<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -224,6 +228,10 @@ cpp_gpuMatrix_ncol(
         return wrap(cpp_ncol<float>(ptrA));
     case 8:
         return wrap(cpp_ncol<double>(ptrA));
+    case 10:
+        return wrap(cpp_ncol<std::complex<float> >(ptrA));
+    case 12:
+        return wrap(cpp_ncol<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

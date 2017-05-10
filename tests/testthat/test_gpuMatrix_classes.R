@@ -4,7 +4,38 @@ context("gpuMatrix classes")
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
 D <- matrix(rnorm(100), 10)
+Dc <- matrix(as.complex(D), nrow = 10)
 
+test_that("gpuMatrix complex float class initializer" ,{
+    
+    has_gpu_skip()
+    
+    vclDc <- gpuMatrix(Dc, type="fcomplex")
+    
+    expect_is(vclDc, "cgpuMatrix")
+    expect_equal(vclDc[], Dc, tolerance=1e-07,
+                 info="vcl complex float matrix elements not equivalent")
+    expect_equal(dim(vclDc), dim(Dc))
+    expect_equal(ncol(vclDc), ncol(Dc))
+    expect_equal(nrow(vclDc), nrow(Dc))
+    expect_equal(typeof(vclDc), "fcomplex")
+})
+
+test_that("gpuMatrix complex double class initializer" ,{
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    vclDc <- gpuMatrix(Dc, type = "dcomplex")
+    
+    expect_is(vclDc, "zgpuMatrix")
+    expect_equal(vclDc[], Dc, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="vcl complex Dcouble matrix elements not equivalent")
+    expect_equal(dim(vclDc), dim(Dc))
+    expect_equal(ncol(vclDc), ncol(Dc))
+    expect_equal(nrow(vclDc), nrow(Dc))
+    expect_equal(typeof(vclDc), "dcomplex")
+})
 
 test_that("gpuMatrix class contains correct information", {
     

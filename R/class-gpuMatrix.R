@@ -141,6 +141,29 @@ setClass("cgpuMatrix",
          })
 
 
+#' @title zgpuMatrix Class
+#' @description An complex double type matrix in the S4 \code{gpuMatrix}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a complex double matrix.}
+#'  }
+#' @name zgpuMatrix-class
+#' @rdname zgpuMatrix-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{gpuMatrix-class}}, 
+#' \code{\link{igpuMatrix-class}},
+#' \code{\link{dgpuMatrix-class}}
+#' @export
+setClass("zgpuMatrix",
+         contains = "gpuMatrix",
+         validity = function(object) {
+             if( typeof(object) != "dcomplex"){
+                 return("zgpuMatrix must be of type 'dcomplex'")
+             }
+             TRUE
+         })
+
 # @export
 setClass("igpuMatrixBlock", 
          contains = "igpuMatrix")

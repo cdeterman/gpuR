@@ -4,8 +4,6 @@
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
-#include <complex>
-
 #include <RcppEigen.h>
 
 using namespace Rcpp;
@@ -717,6 +715,10 @@ MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
             return(MatXptrToMatSEXP<float>(ptrA));
         case 8:
             return(MatXptrToMatSEXP<double>(ptrA));
+        case 10:
+            return(MatXptrToMatSEXP<std::complex<float> >(ptrA));
+        case 12:
+            return(MatXptrToMatSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

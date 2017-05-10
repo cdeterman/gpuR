@@ -16,6 +16,7 @@
 
 #include <type_traits>
 #include <memory>
+#include <complex>
 
 template <class T> 
 class dynEigenMat {

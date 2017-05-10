@@ -17,6 +17,8 @@ setMethod("[",
                      "integer" = VCLtoMatSEXP(x@address, 4L),
                      "float" = VCLtoMatSEXP(x@address, 6L),
                      "double" = VCLtoMatSEXP(x@address, 8L),
+                     "fcomplex" = VCLtoMatSEXP(x@address, 10L),
+                     "dcomplex" = VCLtoMatSEXP(x@address, 12L),
                      stop("unsupported matrix type")
               )
               
@@ -629,9 +631,11 @@ setMethod('nrow', signature(x="vclMatrix"),
           function(x) {
               
               result <- switch(typeof(x),
-                     "integer" = vcl_inrow(x@address),
-                     "float" = vcl_fnrow(x@address),
-                     "double" = vcl_dnrow(x@address),
+                     "integer" = cpp_vcl_nrow(x@address, 4L),
+                     "float" = cpp_vcl_nrow(x@address, 6L),
+                     "double" = cpp_vcl_nrow(x@address, 8L),
+                     "fcomplex" = cpp_vcl_nrow(x@address, 10L),
+                     "dcomplex" = cpp_vcl_nrow(x@address, 12L),
                      stop("unsupported matrix type")
               )
               
@@ -645,9 +649,11 @@ setMethod('ncol', signature(x="vclMatrix"),
           function(x) {
               
               result <- switch(typeof(x),
-                     "integer" = vcl_incol(x@address),
-                     "float" = vcl_fncol(x@address),
-                     "double" = vcl_dncol(x@address),
+                     "integer" = cpp_vcl_ncol(x@address, 4L),
+                     "float" = cpp_vcl_ncol(x@address, 6L),
+                     "double" = cpp_vcl_ncol(x@address, 8L),
+                     "fcomplex" = cpp_vcl_ncol(x@address, 10L),
+                     "dcomplex" = cpp_vcl_ncol(x@address, 12L),
                      stop("unsupported matrix type")
               )
               

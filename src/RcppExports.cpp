@@ -686,69 +686,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// vcl_dncol
-int vcl_dncol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_dncol(SEXP ptrASEXP) {
+// cpp_vcl_nrow
+SEXP cpp_vcl_nrow(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_vcl_nrow(SEXP ptrASEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_dncol(ptrA));
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_vcl_nrow(ptrA, type_flag));
     return rcpp_result_gen;
 END_RCPP
 }
-// vcl_fncol
-int vcl_fncol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_fncol(SEXP ptrASEXP) {
+// cpp_vcl_ncol
+SEXP cpp_vcl_ncol(SEXP ptrA, const int type_flag);
+RcppExport SEXP gpuR_cpp_vcl_ncol(SEXP ptrASEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_fncol(ptrA));
-    return rcpp_result_gen;
-END_RCPP
-}
-// vcl_incol
-int vcl_incol(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_incol(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_incol(ptrA));
-    return rcpp_result_gen;
-END_RCPP
-}
-// vcl_dnrow
-int vcl_dnrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_dnrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_dnrow(ptrA));
-    return rcpp_result_gen;
-END_RCPP
-}
-// vcl_fnrow
-int vcl_fnrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_fnrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_fnrow(ptrA));
-    return rcpp_result_gen;
-END_RCPP
-}
-// vcl_inrow
-int vcl_inrow(SEXP ptrA);
-RcppExport SEXP gpuR_vcl_inrow(SEXP ptrASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    rcpp_result_gen = Rcpp::wrap(vcl_inrow(ptrA));
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_vcl_ncol(ptrA, type_flag));
     return rcpp_result_gen;
 END_RCPP
 }

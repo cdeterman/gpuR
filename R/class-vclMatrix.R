@@ -120,6 +120,51 @@ setClass("dvclMatrix",
              TRUE
          })
 
+#' @title cvclMatrix Class
+#' @description An complex float type matrix in the S4 \code{vclMatrix}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a complex float type matrix}
+#'  }
+#' @name cvclMatrix-class
+#' @rdname cvclMatrix-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{vclMatrix-class}}, 
+#' \code{\link{ivclMatrix-class}},
+#' \code{\link{fvclMatrix-class}}
+#' @export
+setClass("cvclMatrix",
+         contains = "vclMatrix",
+         validity = function(object) {
+             if( typeof(object) != "fcomplex"){
+                 return("cvclMatrix must be of type 'fcomplex'")
+             }
+             TRUE
+         })
+
+#' @title zvclMatrix Class
+#' @description An complex double type matrix in the S4 \code{vclMatrix}
+#' representation.
+#' @section Slots:
+#'  \describe{
+#'      \item{\code{address}:}{Pointer to a complex double type matrix}
+#'  }
+#' @name zvclMatrix-class
+#' @rdname zvclMatrix-class
+#' @author Charles Determan Jr.
+#' @seealso \code{\link{vclMatrix-class}}, 
+#' \code{\link{ivclMatrix-class}},
+#' \code{\link{fvclMatrix-class}}
+#' @export
+setClass("zvclMatrix",
+         contains = "vclMatrix",
+         validity = function(object) {
+             if( typeof(object) != "dcomplex"){
+                 return("zvclMatrix must be of type 'dcomplex'")
+             }
+             TRUE
+         })
 
 # @export
 setClass("ivclMatrixBlock", 

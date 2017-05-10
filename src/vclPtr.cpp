@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 
 //#include "gpuR/vcl_helpers.hpp"
 #include "gpuR/dynVCLMat.hpp"
@@ -514,9 +514,93 @@ VCLtoSEXP(SEXP A)
     int nr = pA.size1();
     int nc = pA.size2();
     
+    // std::cout << pA << std::endl;
+    
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am(nr, nc);
     
     viennacl::copy(pA, Am); 
+    
+    return Am;
+}
+
+template <>
+Eigen::Matrix<std::complex<float>, Eigen::Dynamic, Eigen::Dynamic> 
+VCLtoSEXP(SEXP A)
+{
+    Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(A);
+    viennacl::matrix_range<viennacl::matrix<float> > tempA  = ptrA->data();
+    
+    viennacl::matrix<float> pA = static_cast<viennacl::matrix<float> >(tempA);
+    const int nr = pA.size1();
+    const int nc = pA.size2() / 2;
+    
+    Eigen::MatrixXcf Am = Eigen::MatrixXcf::Zero(nr, nc);
+    
+    // assign real elements
+    // assign existing matrix with new data
+    viennacl::matrix_slice<viennacl::matrix<float> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+    
+    // other attempts for more direct copy
+    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+    // std::cout << "try copy" << std::endl;
+    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+    
+    Eigen::MatrixXf pAm(Am.real());
+    viennacl::copy(A_sub, pAm);
+    Am.real() = pAm;
+    
+    // assign imaginary elements
+    A_sub = viennacl::matrix_slice<viennacl::matrix<float> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+    
+    pAm = Am.imag();
+    viennacl::copy(A_sub, pAm);
+    Am.imag() = pAm;
+    
+    return Am;
+}
+
+template <>
+Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> 
+VCLtoSEXP(SEXP A)
+{
+    Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(A);
+    viennacl::matrix_range<viennacl::matrix<double> > tempA  = ptrA->data();
+    
+    viennacl::matrix<double> pA = static_cast<viennacl::matrix<double> >(tempA);
+    const int nr = pA.size1();
+    const int nc = pA.size2() / 2;
+    
+    Eigen::MatrixXcd Am = Eigen::MatrixXcd::Zero(nr, nc);
+    
+    // assign real elements
+    // assign existing matrix with new data
+    viennacl::matrix_slice<viennacl::matrix<double> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+    
+    // other attempts for more direct copy
+    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+    // std::cout << "try copy" << std::endl;
+    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+    
+    Eigen::MatrixXd pAm(Am.real());
+    viennacl::copy(A_sub, pAm);
+    Am.real() = pAm;
+    
+    // assign imaginary elements
+    A_sub = viennacl::matrix_slice<viennacl::matrix<double> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+
+    pAm = Am.imag();
+    viennacl::copy(A_sub, pAm);
+    Am.imag() = pAm;
     
     return Am;
 }
@@ -664,7 +748,7 @@ vclFillVectorSliceScalar(
     const int ctx_id)
 {
     int size;
-    int start_pt;
+    //int start_pt;
     
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     
@@ -1278,6 +1362,10 @@ cpp_sexp_mat_to_vclMatrix(
             return cpp_sexp_mat_to_vclMatrix<float>(ptrA, ctx_id);
         case 8:
             return cpp_sexp_mat_to_vclMatrix<double>(ptrA, ctx_id);
+        case 10:
+            return cpp_sexp_mat_to_vclMatrix<std::complex<float> >(ptrA, ctx_id);
+        case 12:
+            return cpp_sexp_mat_to_vclMatrix<std::complex<double> >(ptrA, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -1299,6 +1387,10 @@ VCLtoMatSEXP(
             return wrap(VCLtoSEXP<float>(ptrA));
         case 8:
             return wrap(VCLtoSEXP<double>(ptrA));
+        case 10:
+            return wrap(VCLtoSEXP<std::complex<float> >(ptrA));
+        case 12:
+            return wrap(VCLtoSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }

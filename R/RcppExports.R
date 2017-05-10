@@ -262,28 +262,12 @@ cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-vcl_dncol <- function(ptrA) {
-    .Call('gpuR_vcl_dncol', PACKAGE = 'gpuR', ptrA)
+cpp_vcl_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vcl_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
-vcl_fncol <- function(ptrA) {
-    .Call('gpuR_vcl_fncol', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_incol <- function(ptrA) {
-    .Call('gpuR_vcl_incol', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_dnrow <- function(ptrA) {
-    .Call('gpuR_vcl_dnrow', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_fnrow <- function(ptrA) {
-    .Call('gpuR_vcl_fnrow', PACKAGE = 'gpuR', ptrA)
-}
-
-vcl_inrow <- function(ptrA) {
-    .Call('gpuR_vcl_inrow', PACKAGE = 'gpuR', ptrA)
+cpp_vcl_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vcl_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_vclVector_size <- function(ptrA, type_flag) {

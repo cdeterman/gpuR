@@ -209,7 +209,9 @@ setMethod('nrow', signature(x="gpuMatrix"),
               switch(typeof(x),
                      "integer" = return(cpp_gpuMatrix_nrow(x@address, 4L)),
                      "float" = return(cpp_gpuMatrix_nrow(x@address, 6L)),
-                     "double" = return(cpp_gpuMatrix_nrow(x@address, 8L))
+                     "double" = return(cpp_gpuMatrix_nrow(x@address, 8L)),
+                     "fcomplex" = return(cpp_gpuMatrix_nrow(x@address, 10L)),
+                     "dcomplex" = return(cpp_gpuMatrix_nrow(x@address, 12L))
               )
           }
 )
@@ -221,7 +223,9 @@ setMethod('ncol', signature(x="gpuMatrix"),
               switch(typeof(x),
                      "integer" = return(cpp_gpuMatrix_ncol(x@address, 4L)),
                      "float" = return(cpp_gpuMatrix_ncol(x@address, 6L)),
-                     "double" = return(cpp_gpuMatrix_ncol(x@address, 8L))
+                     "double" = return(cpp_gpuMatrix_ncol(x@address, 8L)),
+                     "fcomplex" = return(cpp_gpuMatrix_ncol(x@address, 10L)),
+                     "dcomplex" = return(cpp_gpuMatrix_ncol(x@address, 12L))
               )
           }
 )
@@ -269,7 +273,10 @@ setMethod("[",
               switch(typeof(x),
                      "integer" = return(MatXptrToMatSEXP(x@address, 4L)),
                      "float" = return(MatXptrToMatSEXP(x@address, 6L)),
-                     "double" = return(MatXptrToMatSEXP(x@address, 8L))
+                     "double" = return(MatXptrToMatSEXP(x@address, 8L)),
+                     "fcomplex" = return(MatXptrToMatSEXP(x@address, 10L)),
+                     "dcomplex" = return(MatXptrToMatSEXP(x@address, 12L)),
+                     stop("type not recognized")
               )
           })
 

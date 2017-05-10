@@ -29,6 +29,11 @@ setMethod('vclMatrix',
           function(data, type=NULL, ctx_id=NULL){
               
               if (is.null(type)) type <- typeof(data)
+              
+              if(type == "complex"){
+                  warning("default complex type is double (dcomplex)")
+                  type <- 'dcomplex'
+              }
 
               device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
               
@@ -78,10 +83,28 @@ setMethod('vclMatrix',
                                     .device_index = device_index,
                                     .device = device_name)
                             },
+                            fcomplex = {
+                                new("cvclMatrix", 
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 10L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            dcomplex = {
+                                assert_has_double(platform_index, device_index)
+                                new("zvclMatrix",
+                                    address = cpp_sexp_mat_to_vclMatrix(data, 12L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
                             stop("this is an unrecognized 
                                  or unimplemented data type")
                             )
-              
               return(data)
           },
           valueClass = "vclMatrix")
