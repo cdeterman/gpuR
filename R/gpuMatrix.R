@@ -27,7 +27,14 @@ setMethod('gpuMatrix',
           signature(data = 'matrix'),
           function(data, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) type <- typeof(data)
+              if (is.null(type)){
+                  if(typeof(data) == "integer") {
+                      type <- "integer"
+                  }else{
+                      type <- getOption("gpuR.default.type")    
+                  }
+              }
+              
               
               if(type == "complex"){
                   warning("default complex type is double (dcomplex)")

@@ -489,6 +489,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_vclMatrix_norm
+SEXP cpp_vclMatrix_norm(SEXP ptrA, std::string method, const int type_flag);
+RcppExport SEXP gpuR_cpp_vclMatrix_norm(SEXP ptrASEXP, SEXP methodSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_vclMatrix_norm(ptrA, method, type_flag));
+    return rcpp_result_gen;
+END_RCPP
+}
 // detectPlatforms
 SEXP detectPlatforms();
 RcppExport SEXP gpuR_detectPlatforms() {

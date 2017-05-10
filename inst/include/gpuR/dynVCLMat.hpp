@@ -38,6 +38,7 @@ class dynVCLMat {
         // viennacl::matrix<T> *ptr;
         std::shared_ptr<viennacl::matrix<T> > shptr;
         // = std::make_shared<viennacl::matrix<T> >();
+        viennacl::context ctx;
     
     public:
         // viennacl::matrix<T> A;
@@ -52,8 +53,6 @@ class dynVCLMat {
             
         } // private default constructor
 	    dynVCLMat(viennacl::matrix<T> mat, int ctx_id){
-	        
-	        viennacl::context ctx;
 	        
 	        // explicitly pull context for thread safe forking
 	        ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
@@ -80,7 +79,6 @@ class dynVCLMat {
             
             int K = Am.rows();
             int M = Am.cols();
-            viennacl::context ctx;
             
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
@@ -105,7 +103,6 @@ class dynVCLMat {
             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am,
             int nr_in, int nc_in, int ctx_id
         ){    
-            viennacl::context ctx;
             
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
@@ -124,8 +121,7 @@ class dynVCLMat {
             row_r = temp_rr;
             col_r = temp_cr;
         };
-        dynVCLMat(int nr_in, int nc_in, int ctx_id){    
-            viennacl::context ctx;
+        dynVCLMat(int nr_in, int nc_in, int ctx_id){   
             
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
@@ -144,7 +140,6 @@ class dynVCLMat {
             col_r = temp_cr;
         };
         dynVCLMat(int nr_in, int nc_in, T scalar, int ctx_id){
-            viennacl::context ctx;
             
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
@@ -182,6 +177,10 @@ class dynVCLMat {
         int ncol() { return nc; }
         viennacl::range row_range() { return row_r; }
         viennacl::range col_range() { return col_r; }
+        
+        viennacl::context getContext(){
+            return ctx;
+        }
         
         void setRange(
             viennacl::range row_in, 
