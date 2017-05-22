@@ -29,3 +29,22 @@ norm.vclMatrix <-
         return(result)
     }
 
+
+#' @rdname norm-methods
+#' @export
+norm.gpuMatrix <- 
+    function(x, type = "O"){
+        
+        mtype <- typeof(x)
+        
+        result <- switch(mtype,
+                         integer = {cpp_gpuMatrix_norm(x@address, type, 4L)},
+                         float = {cpp_gpuMatrix_norm(x@address, type, 6L)},
+                         double = {cpp_gpuMatrix_norm(x@address, type, 8L)},
+                         stop("type not recognized")
+        )
+        
+        return(result)
+    }
+
+

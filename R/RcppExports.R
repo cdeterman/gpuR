@@ -179,6 +179,10 @@ cpp_vclMatrix_norm <- function(ptrA, method, type_flag) {
     .Call('gpuR_cpp_vclMatrix_norm', PACKAGE = 'gpuR', ptrA, method, type_flag)
 }
 
+cpp_gpuMatrix_norm <- function(ptrA, method, type_flag) {
+    .Call('gpuR_cpp_gpuMatrix_norm', PACKAGE = 'gpuR', ptrA, method, type_flag)
+}
+
 #' @title Detect Number of Platforms
 #' @description Find out how many OpenCL enabled platforms are available.
 #' @return An integer value representing the number of platforms available.
@@ -242,6 +246,18 @@ truncDoublegpuMat <- function(ptrA_, nr, nc) {
     .Call('gpuR_truncDoublegpuMat', PACKAGE = 'gpuR', ptrA_, nr, nc)
 }
 
+cpp_vcl_nrow <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vcl_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_vcl_ncol <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vcl_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
+cpp_vclVector_size <- function(ptrA, type_flag) {
+    .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
+}
+
 cpp_gpuVector_size <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
 }
@@ -264,18 +280,6 @@ cpp_gpuMatrix_nrow <- function(ptrA, type_flag) {
 
 cpp_gpuMatrix_ncol <- function(ptrA, type_flag) {
     .Call('gpuR_cpp_gpuMatrix_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_vcl_nrow <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_vcl_nrow', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_vcl_ncol <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_vcl_ncol', PACKAGE = 'gpuR', ptrA, type_flag)
-}
-
-cpp_vclVector_size <- function(ptrA, type_flag) {
-    .Call('gpuR_cpp_vclVector_size', PACKAGE = 'gpuR', ptrA, type_flag)
 }
 
 cpp_identity_vclMatrix <- function(ptrA, type_flag) {
