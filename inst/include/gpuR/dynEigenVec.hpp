@@ -2,6 +2,12 @@
 #ifndef DYNEIGEN_VEC_HPP
 #define DYNEIGEN_VEC_HPP
 
+// Use OpenCL with ViennaCL
+#define VIENNACL_WITH_OPENCL 1
+
+// Use ViennaCL algorithms on Eigen objects
+#define VIENNACL_WITH_EIGEN 1
+
 #include <RcppEigen.h>
 
 // ViennaCL headers
