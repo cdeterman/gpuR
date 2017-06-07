@@ -4,11 +4,12 @@
 
 #include <RcppEigen.h>
 
-
 // ViennaCL headers
 // #include "viennacl/vector_def.hpp"
 #include "viennacl/vector.hpp"
 #include "viennacl/vector_proxy.hpp"
+
+#include <memory>
 
 template <class T> 
 class dynEigenVec {
