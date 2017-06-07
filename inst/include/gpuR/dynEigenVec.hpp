@@ -101,13 +101,15 @@ class dynEigenVec {
 //            Eigen::Matrix<T, Eigen::Dynamic, 1>& vec = A;
             return vec;
         }
-        // void to_host(viennacl::vector<T> &vclMat){
-        //     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
-        //     // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
-        //     viennacl::copy(vclMat, A);
-        // }
-        // copy to device (w/in class)
+
+	// copy back to host
+        void to_host(){
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
+            viennacl::copy(*shptr.get(), block);
+        }
         
+	// copy to device (w/in class)
         void to_device(long ctx_in){
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
