@@ -22,7 +22,8 @@ template <class T>
 class dynEigenVec {
     private:
         int size,begin,last,ctx_id;
-        T* ptr;
+        // T* ptr;
+        std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptr;
         std::shared_ptr<viennacl::vector_base<T> > shptr;
         
     public:
@@ -35,35 +36,35 @@ class dynEigenVec {
             size = A.size();
             begin = 1;
             last = size;
-            ptr = A.data();
+            ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         }
         dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_){
             A = A_;
             size = A.size();
             begin = 1;
             last = size;
-            ptr = A.data();
+            ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         };
         // dynEigenVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_){
         //     A = A_;
         //     size = A.size();
         //     begin = 1;
         //     last = size;
-        //     ptr = A.data();
+        //     ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         // }
         dynEigenVec(int size_in){
             A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(size_in);
             size = size_in;
             begin = 1;
             last = size;
-            ptr = A.data();
+            ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         }
         // dynEigenVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end){
         //     A = A_;
         //     size = A.size();
         //     begin = start - 1;
         //     last = end - 1;
-        //     ptr = A.data();
+        //     ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         // }
         // dynEigenVec(Rcpp::XPtr<dynEigenVec<T> > dynVec){
         //     size = dynVec->length();
@@ -72,8 +73,19 @@ class dynEigenVec {
         //     ptr = dynVec->getPtr();
         // }
         
-        T* getPtr() { return A.data(); }
-        viennacl::vector_base<T>* getDevicePtr() { return shptr.get(); }
+        // T* getPtr() { return A.data(); }
+        
+        // pointer access
+        Eigen::Matrix<T, Eigen::Dynamic, 1>* getPtr(){
+            return ptr.get();
+        };
+        std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, 1> > getHostPtr(){
+            return ptr;
+        };
+        viennacl::vector_base<T>* getDevicePtr(){
+            return shptr.get(); 
+        };
+        
         int length() { return size; }
         int start() { return begin; }
         int end() { return last; }
@@ -87,12 +99,23 @@ class dynEigenVec {
         void setVector(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &vec){
             A = vec;
         }
-        void setPtr(T* ptr_){
+        // void setPtr(T* ptr_){
+        //     ptr = ptr_;
+        // }
+        
+        // setting pointer explicitly
+        // note - this will assume complete control of pointer and delete it as well
+        // following deletion of wherever this is set
+        void setPtr(Eigen::Matrix<T, Eigen::Dynamic, 1>* ptr_){
+            ptr.reset(ptr_);
+        };
+        void setHostPtr(std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, 1> > ptr_){
             ptr = ptr_;
-        }
+        };
+        
         //Eigen::Matrix<T, Eigen::Dynamic, 1> data() { return A; }
 	    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > data() { 
-            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
             return block;
         }
@@ -104,14 +127,21 @@ class dynEigenVec {
 
 	// copy back to host
         void to_host(){
-            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
-            viennacl::copy(*shptr.get(), block);
+            // viennacl::copy(*shptr.get(), block);
+            viennacl::fast_copy(shptr.get()->begin(), shptr.get()->end(), &(block[0]));
         }
+	    
+	    void to_host(viennacl::vector_base<T> &vclVec){
+	        Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
+	        Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
+	        viennacl::fast_copy(vclVec.begin(), vclVec.end(), &(block[0]));
+	    }
         
 	// copy to device (w/in class)
         void to_device(long ctx_in){
-            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
             
             const int M = block.size();

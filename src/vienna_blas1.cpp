@@ -63,7 +63,8 @@ void cpp_gpuVector_axpy(
     vcl_B += alpha * vcl_A;
     
     // viennacl::copy(vcl_B, Bm);
-    viennacl::fast_copy(vcl_B.begin(), vcl_B.end(), &(Bm[0]));
+    ptrB->to_host(vcl_B);
+    // viennacl::fast_copy(vcl_B.begin(), vcl_B.end(), &(Bm[0]));
 }
 
 template <typename T>
