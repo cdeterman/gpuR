@@ -8,13 +8,14 @@
 // #include "viennacl/vector_def.hpp"
 #include "viennacl/vector.hpp"
 #include "viennacl/vector_proxy.hpp"
+#include "viennacl/ocl/backend.hpp"
 
 #include <memory>
 
 template <class T> 
 class dynEigenVec {
     private:
-        int size,begin,last;
+        int size,begin,last,ctx_id;
         T* ptr;
         std::shared_ptr<viennacl::vector_base<T> > shptr;
         
@@ -101,11 +102,12 @@ class dynEigenVec {
         // }
         // copy to device (w/in class)
         
-        void to_device(long ctx_id){
+        void to_device(long ctx_in){
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr, size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
             
             const int M = block.size();
+            ctx_id = ctx_in;
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
