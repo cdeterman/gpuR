@@ -35,9 +35,9 @@ cpp_gpuMatrix_custom_igemm(
     vcl_B = getVCLptr<int>(ptrB_, BisVCL, ctx_id);
     vcl_C = getVCLptr<int>(ptrC_, CisVCL, ctx_id);
     
-    int M = vcl_A->size1();
+    int M = vcl_A->size2();
     // int N = vcl_B.size1();
-    int P = vcl_B->size2();
+    int P = vcl_B->size1();
     int M_internal = vcl_C->internal_size2();
     int P_internal = vcl_C->internal_size1();
     
