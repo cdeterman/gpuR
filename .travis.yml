@@ -26,7 +26,7 @@ warnings_are_errors: false
 
 env:
   global:
-    - POCL_LLVM_VERSION=3.8.0
+    - POCL_LLVM_VERSION=3.8
     - POCL_LLVM_CONFIG=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
     - POCL_CXX_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang++
     - POCL_C_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang
