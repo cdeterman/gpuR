@@ -7,11 +7,16 @@ branches:
 
 language: r
 
+dist: trusty
 sudo: required
+group: edge
 warnings_are_errors: false
 
 compiler:
   - g++
+  
+env:
+  - POCL_HOME=/usr/local/pocl
 
 r_build_args: --no-build-vignettes --no-manual --no-resave-data
 r_check_args: --no-build-vignettes --no-manual
@@ -34,12 +39,24 @@ before_install:
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
   - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update || true
-  - sudo apt-get install -qq mesa-common-dev fglrx fglrx-dev opencl-headers
-  - sudo apt-get install -qq g++-4.8
+  - sudo echo "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" >> /etc/apt/sources.list
+  - sudo echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" >> /etc/apt/sources.list
+  - sudo echo "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main" >> /etc/apt/sources.list
+  - sudo echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main" >> /etc/apt/sources.list
+  - wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+  - apt-get update || true
+  - sudo apt-get install -qq apt-get install -y --force-yes g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-3.8 lldb-3.8 libclang-3.8-dev
   - export CXX="g++-4.8"
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+  - |
+    git clone -b release_0_14 https://github.com/pocl/pocl.git $POCL_HOME; \
+	cd $POCL_HOME; \
+	mkdir build; \
+	cd build; \
+	cmake ..; \
+	make; \
+	sudo make install
 
 after_success:
   - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
