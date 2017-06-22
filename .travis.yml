@@ -24,12 +24,12 @@ sudo: required
 group: edge
 warnings_are_errors: false
 
-#env:
-#  global:
-#    - POCL_LLVM_VERSION=3.8.0
-#    - POCL_LLVM_CONFIG=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
-#    - POCL_CXX_COMPILER=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/clang++
-#    - POCL_C_COMPILER=${DEPS_DIR}/llvm-${POCL_LLVM_VERSION}/bin/clang
+env:
+  global:
+    - POCL_LLVM_VERSION=3.8.0
+    - POCL_LLVM_CONFIG=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
+    - POCL_CXX_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang++
+    - POCL_C_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang
 
 compiler:
   - g++
@@ -60,15 +60,13 @@ before_install:
   - sudo apt-get update -qq || true
   - sudo apt-get install -qq -y --force-yes g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-3.8 lldb-3.8 libclang-3.8-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 90
-  - sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
   - |
     git clone -b release_0_14 https://github.com/pocl/pocl.git pocl
     cd pocl
     mkdir build
     cd build
-    cmake ..
+    cmake -DCMAKE_C_COMPILER=${POCL_C_COMPILER} -DCMAKE_CXX_COMPILER=${POCL_CXX_COMPILER} -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} ..
     make
     sudo make install
   - export CXX="g++-4.8"
