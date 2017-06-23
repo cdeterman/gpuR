@@ -3,16 +3,18 @@
 \name{norm}
 \alias{norm}
 \alias{norm.vclMatrix}
+\alias{norm.gpuMatrix}
 \title{Compute the Norm of a Matrix}
 \usage{
 norm(x, type = "O")
 
 \method{norm}{vclMatrix}(x, type = "O")
-}
-\author{
-Charles Determan Jr.
+
+\method{norm}{gpuMatrix}(x, type = "O")
 }
 \seealso{
 \link[base]{norm}
 }
-
+\author{
+Charles Determan Jr.
+}

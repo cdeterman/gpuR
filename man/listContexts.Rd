@@ -25,4 +25,3 @@ data.frame containing the following fields
 Provide a data.frame of available OpenCL contexts and
 associated information.
 }
-

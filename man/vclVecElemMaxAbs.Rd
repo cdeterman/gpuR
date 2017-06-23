@@ -85,4 +85,3 @@ vclVecElemAbs2 <- function(A){
     return(invisible(A))
 }
 }
-

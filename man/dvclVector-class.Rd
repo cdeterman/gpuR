@@ -14,10 +14,10 @@ representation.
      \item{\code{address}:}{Pointer to a double typed vector}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{vclVector-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

@@ -3,14 +3,14 @@
 \docType{methods}
 \name{vclMatrix}
 \alias{vclMatrix}
-\alias{vclMatrix,integer}
-\alias{vclMatrix,integer-method}
-\alias{vclMatrix,matrix}
 \alias{vclMatrix,matrix-method}
-\alias{vclMatrix,missing}
+\alias{vclMatrix,matrix}
 \alias{vclMatrix,missing-method}
+\alias{vclMatrix,missing}
 \alias{vclMatrix,numeric-method}
 \alias{vclMatrix,vector}
+\alias{vclMatrix,integer-method}
+\alias{vclMatrix,integer}
 \title{Construct a vclMatrix}
 \usage{
 vclMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
@@ -50,4 +50,3 @@ the GPU to avoid the cost of data transfer between host and device.
 \author{
 Charles Determan Jr.
 }
-

@@ -21,4 +21,3 @@ benchmarking applications.
 \author{
 Charles Determan Jr.
 }
-

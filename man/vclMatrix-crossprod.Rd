@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-vclMatrix.R
 \docType{methods}
 \name{crossprod,vclMatrix,missing-method}
-\alias{crossprod,vclMatrix}
 \alias{crossprod,vclMatrix,missing-method}
+\alias{crossprod,vclMatrix}
 \alias{crossprod,vclMatrix,vclMatrix-method}
 \alias{crossprod,vclMatrix,vclVector-method}
 \alias{crossprod,vclVector,vclMatrix-method}
@@ -46,4 +46,3 @@ device and host is required.
 \author{
 Charles Determan Jr.
 }
-

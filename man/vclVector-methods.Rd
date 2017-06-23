@@ -4,12 +4,14 @@
 \name{as.vclVector}
 \alias{as.vclVector}
 \alias{vclVector}
-\alias{vclVector,missing}
+\alias{vclVector,vector,missing-method}
+\alias{vclVector,vector}
 \alias{vclVector,missing,ANY-method}
+\alias{vclVector,missing}
 \alias{vclVector,numeric,numericOrInt-method}
+\alias{vclVector,vector}
 \alias{vclVector,vclMatrix,missing-method}
 \alias{vclVector,vector}
-\alias{vclVector,vector,missing-method}
 \title{Construct a vclVector}
 \usage{
 as.vclVector(data, shared, ...)
@@ -53,4 +55,3 @@ the GPU to avoid the cost of data transfer between host and device.
 \author{
 Charles Determan Jr.
 }
-

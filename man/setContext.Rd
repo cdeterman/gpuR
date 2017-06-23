@@ -15,4 +15,3 @@ Change the current context used by default
 \seealso{
 \link{listContexts}
 }
-

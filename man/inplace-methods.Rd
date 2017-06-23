@@ -3,14 +3,14 @@
 \docType{methods}
 \name{inplace}
 \alias{inplace}
-\alias{inplace,function,gpuMatrix,gpuMatrix-method}
-\alias{inplace,function,gpuVector,gpuVector-method}
-\alias{inplace,function,numeric,vclMatrix-method}
-\alias{inplace,function,vclMatrix,missing-method}
 \alias{inplace,function,vclMatrix,vclMatrix-method}
+\alias{inplace,function,vclMatrix,missing-method}
+\alias{inplace,function,numeric,vclMatrix-method}
+\alias{inplace,function,gpuMatrix,gpuMatrix-method}
+\alias{inplace,function,vclVector,vclVector-method}
 \alias{inplace,function,vclVector,missing-method}
 \alias{inplace,function,vclVector,numeric-method}
-\alias{inplace,function,vclVector,vclVector-method}
+\alias{inplace,function,gpuVector,gpuVector-method}
 \title{Inplace Function Wrapper}
 \usage{
 inplace(f, x, y)
@@ -48,4 +48,3 @@ first object passed
 \author{
 Charles Determan Jr.
 }
-

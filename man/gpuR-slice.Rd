@@ -40,4 +40,3 @@ values in the source vector.
 \author{
 Charles Determan Jr.
 }
-

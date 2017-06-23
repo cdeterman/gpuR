@@ -38,10 +38,9 @@ as \link[base]{qr}.  The matrix storage format applied herein doesn't match
 the base compact form.  The method also doesn't return \code{qraux}, 
 \code{rank}, or \code{pivot} but instead returns \code{betas}
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \link[base]{qr}
 }
-
+\author{
+Charles Determan Jr.
+}

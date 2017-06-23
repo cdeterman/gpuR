@@ -2,11 +2,11 @@
 % Please edit documentation in R/methods-vclMatrix.R
 \docType{methods}
 \name{colSums,vclMatrix,missing,missing-method}
-\alias{colMeans,vclMatrix,missing,missing-method}
-\alias{colSums,vclMatrix}
 \alias{colSums,vclMatrix,missing,missing-method}
-\alias{rowMeans,vclMatrix,missing,missing-method}
+\alias{colSums,vclMatrix}
 \alias{rowSums,vclMatrix,missing,missing-method}
+\alias{colMeans,vclMatrix,missing,missing-method}
+\alias{rowMeans,vclMatrix,missing,missing-method}
 \title{Row and Column Sums and Means of vclMatrix}
 \usage{
 \S4method{colSums}{vclMatrix,missing,missing}(x, na.rm, dims)
@@ -33,4 +33,3 @@ Row and column sums and of vclMatrix objects
 \author{
 Charles Determan Jr.
 }
-

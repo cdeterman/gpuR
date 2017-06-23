@@ -14,12 +14,12 @@ representation.
      \item{\code{address}:}{Pointer to a double type matrix}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{gpuMatrix-class}}, 
 \code{\link{igpuMatrix-class}},
 \code{\link{fgpuMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

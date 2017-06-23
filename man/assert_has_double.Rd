@@ -22,10 +22,9 @@ double precision
 Function to query if device (identified by index) supports
 double precision
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \link{deviceHasDouble}
 }
-
+\author{
+Charles Determan Jr.
+}

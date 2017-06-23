@@ -10,4 +10,3 @@ has_cpu_skip()
 Function to skip testthat tests
 if no valid CPU's are detected
 }
-

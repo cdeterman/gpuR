@@ -3,12 +3,12 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{\%*\%,gpuVector,gpuVector-method}
-\alias{\%*\%,gpuMatrix,gpuMatrix-method}
 \alias{\%*\%,gpuVector,gpuVector-method}
 \alias{\%*\%,vclMatrix,vclMatrix-method}
 \alias{\%*\%,vclMatrix,vclVector-method}
-\alias{\%*\%,vclVector,vclMatrix-method}
 \alias{\%*\%,vclVector,vclVector-method}
+\alias{\%*\%,vclVector,vclMatrix-method}
+\alias{\%*\%,gpuMatrix,gpuMatrix-method}
 \title{Matrix Multiplication}
 \usage{
 \S4method{\%*\%}{gpuVector,gpuVector}(x, y)
@@ -35,4 +35,3 @@ are vectors of the same length, it will return the inner product (as a matrix).
 \author{
 Charles Determan Jr.
 }
-

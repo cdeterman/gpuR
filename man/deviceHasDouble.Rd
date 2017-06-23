@@ -21,4 +21,3 @@ variable cl_khr_fp64 which means the device supports double precision.
 \seealso{
 \link{gpuInfo}
 }
-

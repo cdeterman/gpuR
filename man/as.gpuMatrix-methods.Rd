@@ -24,4 +24,3 @@ from \code{gpuMatrix}
 \author{
 Charles Determan Jr.
 }
-

@@ -17,4 +17,3 @@ A character string indicating the device type
 \description{
 Check what type a device is given platform and device indices
 }
-

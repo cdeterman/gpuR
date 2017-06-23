@@ -3,12 +3,12 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{length,gpuVector-method}
-\alias{length,gpuMatrix-method}
 \alias{length,gpuVector-method}
 \alias{length,vclMatrix-method}
-\alias{length,vclVector-method}
-\alias{length-gpuMatrix}
 \alias{length-vclMatrix}
+\alias{length,vclVector-method}
+\alias{length,gpuMatrix-method}
+\alias{length-gpuMatrix}
 \title{gpuMatrix/vclMatrix length method}
 \usage{
 \S4method{length}{gpuVector}(x)
@@ -31,4 +31,3 @@ Retrieve number of elements in object
 \author{
 Charles Determan Jr.
 }
-

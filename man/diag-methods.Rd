@@ -2,14 +2,14 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{diag,vclMatrix-method}
-\alias{diag,gpuMatrix}
-\alias{diag,gpuMatrix-method}
-\alias{diag,vclMatrix}
 \alias{diag,vclMatrix-method}
-\alias{diag<-,gpuMatrix,gpuVector}
-\alias{diag<-,gpuMatrix,gpuVector-method}
-\alias{diag<-,vclMatrix,vclVector}
+\alias{diag,vclMatrix}
 \alias{diag<-,vclMatrix,vclVector-method}
+\alias{diag<-,vclMatrix,vclVector}
+\alias{diag,gpuMatrix-method}
+\alias{diag,gpuMatrix}
+\alias{diag<-,gpuMatrix,gpuVector-method}
+\alias{diag<-,gpuMatrix,gpuVector}
 \title{gpuR Matrix Diagonals}
 \usage{
 \S4method{diag}{vclMatrix}(x)
@@ -35,10 +35,9 @@ Extract or replace the diagonal of a matrix
 \note{
 If an identity matrix is desired, please see \link{identity_matrix}.
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \link{identity_matrix}
 }
-
+\author{
+Charles Determan Jr.
+}

@@ -14,12 +14,12 @@ representation.
      \item{\code{address}:}{Pointer to a integer typed matrix}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{vclMatrix-class}}, 
 \code{\link{ivclMatrix-class}},
 \code{\link{dvclMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

@@ -2,11 +2,11 @@
 % Please edit documentation in R/methods.R
 \docType{methods}
 \name{crossprod,gpuMatrix,missing-method}
+\alias{crossprod,gpuMatrix,missing-method}
 \alias{crossprod,gpuMatrix}
 \alias{crossprod,gpuMatrix,gpuMatrix-method}
-\alias{crossprod,gpuMatrix,missing-method}
-\alias{tcrossprod,gpuMatrix,gpuMatrix-method}
 \alias{tcrossprod,gpuMatrix,missing-method}
+\alias{tcrossprod,gpuMatrix,gpuMatrix-method}
 \title{gpuMatrix Crossproduct}
 \usage{
 \S4method{crossprod}{gpuMatrix,missing}(x, y)
@@ -34,4 +34,3 @@ device and host is required.
 \author{
 Charles Determan Jr.
 }
-

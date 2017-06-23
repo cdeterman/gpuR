@@ -3,29 +3,29 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{Arith,gpuVector,gpuVector-method}
-\alias{Arith,gpuMatrix,gpuMatrix-method}
-\alias{Arith,gpuMatrix,missing-method}
-\alias{Arith,gpuMatrix,numeric-method}
 \alias{Arith,gpuVector,gpuVector-method}
-\alias{Arith,gpuVector,missing-method}
-\alias{Arith,gpuVector,numeric-method}
-\alias{Arith,numeric,gpuMatrix-method}
-\alias{Arith,numeric,gpuVector-method}
-\alias{Arith,numeric,vclMatrix-method}
-\alias{Arith,numeric,vclVector-method}
-\alias{Arith,vclMatrix,missing-method}
-\alias{Arith,vclMatrix,numeric-method}
-\alias{Arith,vclMatrix,vclMatrix-method}
-\alias{Arith,vclMatrix,vclVector-method}
-\alias{Arith,vclVector,missing-method}
-\alias{Arith,vclVector,numeric-method}
-\alias{Arith,vclVector,vclMatrix-method}
-\alias{Arith,vclVector,vclVector-method}
-\alias{Arith-gpuR-method}
 \alias{Arith-gpuVector-gpuVector-method}
-\alias{Arith-gpuVector-missing-method}
-\alias{Arith-gpuVector-numeric-method}
+\alias{Arith,numeric,gpuVector-method}
 \alias{Arith-numeric-gpuVector-method}
+\alias{Arith,gpuVector,numeric-method}
+\alias{Arith-gpuVector-numeric-method}
+\alias{Arith,gpuVector,missing-method}
+\alias{Arith-gpuVector-missing-method}
+\alias{Arith,vclMatrix,vclMatrix-method}
+\alias{Arith,vclMatrix,numeric-method}
+\alias{Arith,numeric,vclMatrix-method}
+\alias{Arith,vclMatrix,missing-method}
+\alias{Arith,vclMatrix,vclVector-method}
+\alias{Arith,vclVector,vclVector-method}
+\alias{Arith,numeric,vclVector-method}
+\alias{Arith,vclVector,numeric-method}
+\alias{Arith,vclVector,missing-method}
+\alias{Arith,vclVector,vclMatrix-method}
+\alias{Arith,gpuMatrix,gpuMatrix-method}
+\alias{Arith-gpuR-method}
+\alias{Arith,gpuMatrix,numeric-method}
+\alias{Arith,numeric,gpuMatrix-method}
+\alias{Arith,gpuMatrix,missing-method}
 \title{Arith methods}
 \usage{
 \S4method{Arith}{gpuVector,gpuVector}(e1, e2)
@@ -78,4 +78,3 @@ Methods for the base Arith methods \link[methods]{S4groupGeneric}
 \author{
 Charles Determan Jr.
 }
-

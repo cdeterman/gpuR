@@ -3,10 +3,10 @@
 \docType{methods}
 \name{gpuVector}
 \alias{gpuVector}
-\alias{gpuVector,missingOrNULL}
-\alias{gpuVector,missingOrNULL,ANY-method}
-\alias{gpuVector,vector}
 \alias{gpuVector,vector,missing-method}
+\alias{gpuVector,vector}
+\alias{gpuVector,missingOrNULL,ANY-method}
+\alias{gpuVector,missingOrNULL}
 \title{Construct a gpuVector}
 \usage{
 gpuVector(data, length, type = NULL, ...)
@@ -39,4 +39,3 @@ from \code{gpuVector}
 \author{
 Charles Determan Jr.
 }
-

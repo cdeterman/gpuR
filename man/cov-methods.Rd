@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{cov,vclMatrix,missing,missing,missing-method}
-\alias{cov,gpuMatrix,missing,missing,character-method}
-\alias{cov,gpuMatrix,missing,missing,missing-method}
-\alias{cov,vclMatrix,missing,missing,character-method}
 \alias{cov,vclMatrix,missing,missing,missing-method}
+\alias{cov,vclMatrix,missing,missing,character-method}
+\alias{cov,gpuMatrix,missing,missing,missing-method}
+\alias{cov,gpuMatrix,missing,missing,character-method}
 \title{Covariance (gpuR)}
 \usage{
 \S4method{cov}{vclMatrix,missing,missing,missing}(x, y = NULL, use = NULL,
@@ -38,4 +38,3 @@ Compute covariance values
 \author{
 Charles Determan Jr.
 }
-

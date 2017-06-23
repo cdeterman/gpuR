@@ -3,8 +3,8 @@
 \docType{methods}
 \name{as.gpuVector}
 \alias{as.gpuVector}
-\alias{as.gpuVector,vector}
 \alias{as.gpuVector,vector-method}
+\alias{as.gpuVector,vector}
 \title{Convert object to a gpuVector}
 \usage{
 as.gpuVector(object, type)
@@ -28,4 +28,3 @@ from \code{gpuVector}
 \author{
 Charles Determan Jr.
 }
-

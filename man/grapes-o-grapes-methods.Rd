@@ -21,4 +21,3 @@ The outer product of two gpuR vector objects
 \author{
 Charles Determan Jr.
 }
-
