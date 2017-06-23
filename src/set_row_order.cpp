@@ -66,13 +66,12 @@ cpp_vclMatrix_set_row_order(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    viennacl::matrix<T> *vcl_A;
     // Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     // viennacl::matrix<T> vcl_A = ptrA->data();
     // viennacl::matrix<T> *vcl_B;
     
     // std::cout << "getting matrix" << std::endl;
-    vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     // vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_A->size1();

@@ -477,6 +477,7 @@ setMethod("Math", c(x="vclVector"),
                      `exp` = vclVecElemExp(x),
                      `abs` = vclVecElemAbs(x),
                      `sqrt` = vclVecSqrt(x),
+                     `sign` = gpuVecSign(x),
                      stop("undefined operation")
               )
           },

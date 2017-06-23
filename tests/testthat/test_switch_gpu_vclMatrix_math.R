@@ -430,3 +430,49 @@ test_that("Switching GPU vclMatrix Double Precision Matrix sqrt", {
                  info = "context index has been change unintentionally")
 })
 
+test_that("Switching GPU vclMatrix Single Precision Matrix sign", {
+    
+    has_multiple_gpu_skip()
+    
+    R_sign <- sign(abs(A))
+    
+    setContext(2L)
+    
+    fgpuA <- vclMatrix(abs(A), type="float")
+    
+    setContext(1L)
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "fvclMatrix")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign float matrix elements not equivalent")  
+    expect_equal(fgpu_sign@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
+})
+
+test_that("Switching GPU vclMatrix Double Precision Matrix sign", {
+    
+    has_multiple_gpu_skip()
+    has_multiple_double_skip()
+    
+    R_sign <- sign(abs(A))
+    
+    setContext(2L)
+    
+    fgpuA <- vclMatrix(abs(A), type="double")
+    
+    setContext(1L)
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "dvclMatrix")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign double matrix elements not equivalent")  
+    expect_equal(fgpu_sign@.context_index, 2L,
+                 info = "context index not assigned properly")
+    expect_equal(currentContext(), 1L, 
+                 info = "context index has been change unintentionally")
+})

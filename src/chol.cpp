@@ -33,9 +33,7 @@ cpp_vclMatrix_custom_chol(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    viennacl::matrix<T> *vcl_B;
-    
-    vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();
@@ -86,16 +84,16 @@ cpp_vclMatrix_custom_chol(
     
     // execute kernels
     for(unsigned int k=0; k < M; k++){
-        viennacl::ocl::enqueue(update_kk(*vcl_B, M_internal, k));
-        viennacl::ocl::enqueue(update_k(*vcl_B, upper, M, M_internal, k));
-        viennacl::ocl::enqueue(update_block(*vcl_B, upper, M, M_internal, k));
+        viennacl::ocl::enqueue(update_kk(*vcl_B.get(), M_internal, k));
+        viennacl::ocl::enqueue(update_k(*vcl_B.get(), upper, M, M_internal, k));
+        viennacl::ocl::enqueue(update_block(*vcl_B.get(), upper, M, M_internal, k));
     }
     
     if(!BisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         
         // copy device data back to CPU
-        ptrB->to_host(*vcl_B);
+        ptrB->to_host(*vcl_B.get());
         ptrB->release_device();
     }
 }

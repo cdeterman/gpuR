@@ -20,13 +20,11 @@ cpp_gpuR_qr(
     
     // viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    viennacl::matrix<T> *ptrA;
-    
     // Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     
     // viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
     // viennacl::matrix<T> vcl_A = ptrA->matrix();
-    ptrA = getVCLptr<T>(ptrA_, isVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > ptrA = getVCLptr<T>(ptrA_, isVCL, ctx_id);
     
     // dereference to create copy
     // likely will add option to allow inplace
@@ -61,14 +59,10 @@ cpp_recover_qr(
 {
 
     // viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-
-    viennacl::matrix<T> *vcl_QR;
-    viennacl::matrix<T> *vcl_Q;
-    viennacl::matrix<T> *vcl_R;
     
-    vcl_QR = getVCLptr<T>(ptrQR_, QRisVCL, ctx_id);
-    vcl_Q = getVCLptr<T>(ptrQ_, QisVCL, ctx_id);
-    vcl_R = getVCLptr<T>(ptrR_, RisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_QR = getVCLptr<T>(ptrQR_, QRisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_Q = getVCLptr<T>(ptrQ_, QisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_R = getVCLptr<T>(ptrR_, RisVCL, ctx_id);
     
     std::vector<T> betas = as<std::vector<T> >(betas_);
 

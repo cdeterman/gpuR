@@ -8,17 +8,17 @@
 #include "gpuR/dynEigenVec.hpp"
 
 template<typename T>
-viennacl::matrix<T>*
+std::shared_ptr<viennacl::matrix<T> >
 getVCLptr(
     SEXP ptr_,
     const bool isVCL,
     const int ctx_id
 ){
-    viennacl::matrix<T>* vclptr;
+    std::shared_ptr<viennacl::matrix<T> > vclptr;
     
     if(isVCL){
         Rcpp::XPtr<dynVCLMat<T> > ptr(ptr_);
-        vclptr = ptr->getPtr();
+        vclptr = ptr->sharedPtr();
     }else{
         Rcpp::XPtr<dynEigenMat<T> > ptr(ptr_);
         ptr->to_device(ctx_id);
@@ -29,17 +29,17 @@ getVCLptr(
 }
 
 template<typename T>
-viennacl::vector_base<T>*
+std::shared_ptr<viennacl::vector_base<T> >
 getVCLVecptr(
     SEXP ptr_,
     const bool isVCL,
     const int ctx_id
 ){
-    viennacl::vector_base<T>* vclptr;
+    std::shared_ptr<viennacl::vector_base<T> > vclptr;
     
     if(isVCL){
         Rcpp::XPtr<dynVCLVec<T> > ptr(ptr_);
-        vclptr = ptr->getPtr();
+        vclptr = ptr->sharedPtr();
     }else{
         Rcpp::XPtr<dynEigenVec<T> > ptr(ptr_);
         

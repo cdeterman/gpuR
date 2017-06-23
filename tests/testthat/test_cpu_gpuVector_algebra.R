@@ -55,6 +55,26 @@ test_that("CPU gpuVector integer subtraction", {
     expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
 
+# test_that("CPU gpuVector Integer Precision Scalar Division", {
+#     
+#     has_cpu_skip()
+#     
+#     C <- A/2
+#     C2 <- 2/A
+#     
+#     dgpuA <- gpuVector(A, type="float")
+#     
+#     dgpuC <- dgpuA/2
+#     dgpuC2 <- 2/dgpuA
+#     
+#     expect_is(dgpuC, "fgpuVector")
+#     expect_equal(dgpuC[,], C, tolerance=1e-07, 
+#                  info="float vector elements not equivalent") 
+#     expect_is(dgpuC2, "fgpuVector")
+#     expect_equal(dgpuC2[,], C2, tolerance=1e-07, 
+#                  info="float vector elements not equivalent") 
+# })
+
 # Single Precision Tests
 
 test_that("CPU gpuVector comparison operator", {

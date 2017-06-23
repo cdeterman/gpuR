@@ -39,7 +39,7 @@ roundUp(int numToRound, int multiple)
 		return numToRound;
 	
 	int remainder = numToRound % multiple;
-	if (remainder == 0 || remainder == numToRound)
+	if (remainder == 0 || multiple == numToRound)
 		return numToRound;
 	
 	return numToRound + multiple - remainder;

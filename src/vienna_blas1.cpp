@@ -2403,8 +2403,6 @@ void cpp_vclMatrix_scalar_axpy(
     const T alpha = as<T>(alpha_);
     const T scalar = as<T>(scalar_);
     
-    viennacl::matrix<T> *vcl_C;
-    
     // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     // viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
     // B = B + (alpha * scalar);
@@ -2415,7 +2413,7 @@ void cpp_vclMatrix_scalar_axpy(
     
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
     // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
-    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();
@@ -2555,8 +2553,6 @@ void cpp_vclMatrix_scalar_div_2(
         const int ctx_id)
 {
     // declarations
-    viennacl::matrix<T> *vcl_C;
-    
     const T alpha = as<T>(scalar);
     
     std::string my_kernel = as<std::string>(sourceCode_);
@@ -2564,7 +2560,7 @@ void cpp_vclMatrix_scalar_div_2(
     
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
     // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
-    vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, true, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();

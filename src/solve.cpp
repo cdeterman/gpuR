@@ -29,12 +29,9 @@ void cpp_gpuMatrix_solve(
         const int ctx_id)
 {
     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
-    viennacl::matrix<T> *vcl_A;
-    viennacl::matrix<T> *vcl_B;
 
-    vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
 
     // solution of a full system right into the load vector vcl_rhs:
     viennacl::linalg::lu_factorize(*vcl_A);

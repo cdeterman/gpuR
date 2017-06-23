@@ -601,6 +601,7 @@ setMethod("Math", c(x="vclMatrix"),
                      `exp` = vclMatElemExp(x),
                      `abs` = vclMatElemAbs(x),
                      `sqrt` = vclMatSqrt(x),
+                     `sign` = gpuMatSign(x),
                      stop("undefined operation")
               )
           },

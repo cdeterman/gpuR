@@ -36,6 +36,14 @@ cpp_setContext <- function(id) {
     invisible(.Call('gpuR_cpp_setContext', PACKAGE = 'gpuR', id))
 }
 
+cpp_vclMatrix_sign <- function(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclMatrix_sign', PACKAGE = 'gpuR', ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id))
+}
+
+cpp_vclVector_sign <- function(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id) {
+    invisible(.Call('gpuR_cpp_vclVector_sign', PACKAGE = 'gpuR', ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id))
+}
+
 cpp_deviceType <- function(platform_idx_, gpu_idx_) {
     .Call('gpuR_cpp_deviceType', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
 }

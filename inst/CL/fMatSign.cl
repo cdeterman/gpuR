@@ -1,5 +1,5 @@
 __kernel void MatSign(
-    __global const double *A, __global double *B,
+    __global const float *A, __global float *B,
     const int Mdim, const int Pdim, const int MdimPad) {
     
     // Get the index of the elements to be processed
@@ -8,7 +8,9 @@ __kernel void MatSign(
     
     // Do the operation
     if((globalRow <= Mdim) && (globalCol <= Pdim)){
-        
-        B[globalRow * MdimPad + globalCol] = sign(A[globalRow * MdimPad + globalCol];
+        //printf("globalRow = %d\n", globalRow);
+        //printf("globalCol = %d\n", globalCol);
+        //printf("value = %f\n", A[globalRow * MdimPad + globalCol]);
+        B[globalRow * MdimPad + globalCol] = sign(A[globalRow * MdimPad + globalCol]);
     }
 }

@@ -108,9 +108,12 @@ class dynEigenMat {
         std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> getHostPtr(){
             return ptr;
         };
-        viennacl::matrix<T>* getDevicePtr(){
-            return shptr.get(); 
+        std::shared_ptr<viennacl::matrix<T> > getDevicePtr(){
+            return shptr; 
         };
+        // viennacl::matrix<T>* getDevicePtr(){
+        //     return shptr.get(); 
+        // };
         
         // object values
         int nrow(){ return nr; }

@@ -155,6 +155,7 @@ setMethod("Math", c(x="gpuVector"),
                      `exp` = gpuVecElemExp(x),
                      `abs` = gpuVecElemAbs(x),
                      `sqrt` = gpuVecSqrt(x),
+                     `sign` = gpuVecSign(x),
                      stop("undefined operation")
               )
           },

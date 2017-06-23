@@ -82,8 +82,11 @@ class dynEigenVec {
         std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, 1> > getHostPtr(){
             return ptr;
         };
-        viennacl::vector_base<T>* getDevicePtr(){
-            return shptr.get(); 
+        // viennacl::vector_base<T>* getDevicePtr(){
+        //     return shptr.get(); 
+        // };
+        std::shared_ptr<viennacl::vector_base<T> > getDevicePtr(){
+            return shptr; 
         };
         
         int length() { return size; }

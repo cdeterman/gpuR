@@ -134,7 +134,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
 #' @details Currently implemented methods include:
 #' \itemize{
 #'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh",
-#'  "log10", "exp", "abs"}
+#'  "log10", "exp", "abs", "sqrt", "sign"}
 #'  }
 #' @docType methods
 #' @rdname Math-methods
@@ -159,6 +159,7 @@ setMethod("Math", c(x="gpuMatrix"),
                      `exp` = gpuMatElemExp(x),
                      `abs` = gpuMatElemAbs(x),
                      `sqrt` = gpuMatSqrt(x),
+                     `sign` = gpuMatSign(x),
                      stop("undefined operation")
               )
           },

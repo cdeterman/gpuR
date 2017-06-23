@@ -294,3 +294,34 @@ test_that("vclVector Double Precision sqrt", {
                  info="sqrt double vector elements not equivalent")  
 })
 
+
+test_that("vclVector Single Precision Matrix sign", {
+    has_gpu_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- vclVector(A, type="float")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "fvclVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign float matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("vclVector Double Precision Matrix sign", {
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- vclVector(A, type="double")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "dvclVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=.Machine$double.base^0.5, 
+                 info="sign double matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
