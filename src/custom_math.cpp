@@ -213,9 +213,7 @@ cpp_vclVector_sign(
     mat_sign.local_work_size(0, max_local_size);
     
     // execute kernels
-    for(unsigned int k=0; k < M; k++){
-        viennacl::ocl::enqueue(mat_sign(*vcl_A, *vcl_B, M));
-    }
+    viennacl::ocl::enqueue(mat_sign(*vcl_A, *vcl_B, M));
     
     if(!BisVCL){
         Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -283,9 +281,7 @@ cpp_vclVector_pmax(
     pmax.local_work_size(0, max_local_size);
     
     // execute kernels
-    for(unsigned int k=0; k < M; k++){
-        viennacl::ocl::enqueue(pmax(*vcl_A, *vcl_B, value, M));
-    }
+    viennacl::ocl::enqueue(pmax(*vcl_A, *vcl_B, value, M));
     
     if(!BisVCL){
         Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
