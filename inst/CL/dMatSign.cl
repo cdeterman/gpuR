@@ -9,6 +9,6 @@ __kernel void MatSign(
     // Do the operation
     if((globalRow <= Mdim) && (globalCol <= Pdim)){
         
-        B[globalRow * MdimPad + globalCol] = sign(A[globalRow * MdimPad + globalCol];
+        B[globalRow * MdimPad + globalCol] = sign(A[globalRow * MdimPad + globalCol]);
     }
 }
