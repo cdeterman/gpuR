@@ -95,6 +95,42 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_vclMatrix_pmax
+void cpp_vclMatrix_pmax(SEXP ptrA, const bool AisVCL, SEXP ptrB, const bool BisVCL, SEXP value, SEXP sourceCode, int max_local_size, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_vclMatrix_pmax(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP valueSEXP, SEXP sourceCodeSEXP, SEXP max_local_sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_vclMatrix_pmax(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclVector_pmax
+void cpp_vclVector_pmax(SEXP ptrA, const bool AisVCL, SEXP ptrB, const bool BisVCL, SEXP value, SEXP sourceCode, int max_local_size, const int type_flag, const int ctx_id);
+RcppExport SEXP gpuR_cpp_vclVector_pmax(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP valueSEXP, SEXP sourceCodeSEXP, SEXP max_local_sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_vclVector_pmax(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_deviceType
 SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_);
 RcppExport SEXP gpuR_cpp_deviceType(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
@@ -3238,6 +3274,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"gpuR_cpp_setContext", (DL_FUNC) &gpuR_cpp_setContext, 1},
     {"gpuR_cpp_vclMatrix_sign", (DL_FUNC) &gpuR_cpp_vclMatrix_sign, 8},
     {"gpuR_cpp_vclVector_sign", (DL_FUNC) &gpuR_cpp_vclVector_sign, 8},
+    {"gpuR_cpp_vclMatrix_pmax", (DL_FUNC) &gpuR_cpp_vclMatrix_pmax, 9},
+    {"gpuR_cpp_vclVector_pmax", (DL_FUNC) &gpuR_cpp_vclVector_pmax, 9},
     {"gpuR_cpp_deviceType", (DL_FUNC) &gpuR_cpp_deviceType, 2},
     {"gpuR_cpp_detectGPUs", (DL_FUNC) &gpuR_cpp_detectGPUs, 1},
     {"gpuR_cpp_gpuInfo", (DL_FUNC) &gpuR_cpp_gpuInfo, 2},
