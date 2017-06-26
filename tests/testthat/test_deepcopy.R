@@ -22,6 +22,7 @@ test_that("Check Integer gpuVector deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, "igpuVector")
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[],
@@ -41,6 +42,7 @@ test_that("Check Single Precision gpuVector deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[], tolerance=1e-07, 
                  info="float deepcopy gpuVector elements not equivalent")  
@@ -60,6 +62,7 @@ test_that("Check Double Precision gpuVector deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[], tolerance=.Machine$double.eps ^ 0.5, 
                  info="fgpuVector deepcopy elements not equivalent")  
@@ -78,6 +81,7 @@ test_that("Check Integer gpuMatrix deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, "igpuMatrix")
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[],
@@ -97,6 +101,7 @@ test_that("Check Single Precision gpuMatrix deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[], tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
@@ -116,6 +121,7 @@ test_that("Check Double Precision gpuMatrix deepcopy", {
     # deepcopy
     gpuB <- deepcopy(gpuA)
     
+    expect_equal(gpuA, gpuB)
     expect_is(gpuB, class(gpuA))
     expect_equal(gpuA[], gpuB[], tolerance=.Machine$double.eps ^ 0.5, 
                  info="float matrix elements not equivalent")  
@@ -134,6 +140,7 @@ test_that("Check Integer vclVector deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, "ivclVector")
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[],
@@ -153,6 +160,7 @@ test_that("Check Single Precision vclVector deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[], tolerance=1e-07, 
                  info="float deepcopy vclVector elements not equivalent")  
@@ -172,6 +180,7 @@ test_that("Check Double Precision vclVector deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[], tolerance=.Machine$double.eps ^ 0.5, 
                  info="fvclVector deepcopy elements not equivalent")  
@@ -190,6 +199,7 @@ test_that("Check Integer vclMatrix deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)    
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, "ivclMatrix")
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[],
@@ -209,6 +219,7 @@ test_that("Check Single Precision vclMatrix deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[], tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
@@ -228,6 +239,7 @@ test_that("Check Double Precision vclMatrix deepcopy", {
     # deepcopy
     vclB <- deepcopy(vclA)
     
+    expect_equal(vclA, vclB)
     expect_is(vclB, class(vclA))
     expect_equal(vclA[], vclB[], tolerance=.Machine$double.eps ^ 0.5, 
                  info="float matrix elements not equivalent")  
