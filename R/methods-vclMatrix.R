@@ -471,11 +471,82 @@ setMethod("%*%", signature(x="vclMatrix", y = "vclVector"),
           valueClass = "vclVector"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclMatrix", y = "matrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              return(vclMatMult(x, y))
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="matrix", y = "vclMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              return(vclMatMult(x, y))
+          },
+          valueClass = "vclMatrix"
+)
+
 #' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
           function(e1, e2)
           {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMat_axpy(1, e1, e2),
+                     `-` = vclMat_axpy(-1, e2, e1),
+                     `*` = vclMatElemMult(e1, e2),
+                     `/` = vclMatElemDiv(e1,e2),
+                     `^` = vclMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="matrix"),
+          function(e1, e2)
+          {
+              
+              e2 <- vclMatrix(e2, type = typeof(e1), ctx_id = e1@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMat_axpy(1, e1, e2),
+                     `-` = vclMat_axpy(-1, e2, e1),
+                     `*` = vclMatElemMult(e1, e2),
+                     `/` = vclMatElemDiv(e1,e2),
+                     `^` = vclMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="matrix", e2="vclMatrix"),
+          function(e1, e2)
+          {
+              e1 <- vclMatrix(e1, type = typeof(e2), ctx_id = e2@.context_index)
+              
               op = .Generic[[1]]
               
               switch(op,
@@ -715,6 +786,24 @@ setMethod("crossprod",
 #' @rdname vclMatrix-crossprod
 #' @export
 setMethod("crossprod",
+          signature(x = "vclMatrix", y = "matrix"),
+          function(x, y){
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              vcl_crossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "matrix", y = "vclMatrix"),
+          function(x, y){
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              vcl_crossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
           signature(x = "vclMatrix", y = "vclVector"),
           function(x, y){
               vcl_mat_vec_crossprod(x, y)
@@ -743,6 +832,24 @@ setMethod("tcrossprod",
 setMethod("tcrossprod",
           signature(x = "vclMatrix", y = "vclMatrix"),
           function(x, y){
+              vcl_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "matrix", y = "vclMatrix"),
+          function(x, y){
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              vcl_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclMatrix", y = "matrix"),
+          function(x, y){
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
               vcl_tcrossprod(x, y)
           })
 

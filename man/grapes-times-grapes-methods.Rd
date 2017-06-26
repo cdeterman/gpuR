@@ -6,6 +6,8 @@
 \alias{\%*\%,gpuVector,gpuVector-method}
 \alias{\%*\%,vclMatrix,vclMatrix-method}
 \alias{\%*\%,vclMatrix,vclVector-method}
+\alias{\%*\%,vclMatrix,matrix-method}
+\alias{\%*\%,matrix,vclMatrix-method}
 \alias{\%*\%,vclVector,vclVector-method}
 \alias{\%*\%,vclVector,vclMatrix-method}
 \alias{\%*\%,gpuMatrix,gpuMatrix-method}
@@ -16,6 +18,10 @@
 \S4method{\%*\%}{vclMatrix,vclMatrix}(x, y)
 
 \S4method{\%*\%}{vclMatrix,vclVector}(x, y)
+
+\S4method{\%*\%}{vclMatrix,matrix}(x, y)
+
+\S4method{\%*\%}{matrix,vclMatrix}(x, y)
 
 \S4method{\%*\%}{vclVector,vclVector}(x, y)
 
