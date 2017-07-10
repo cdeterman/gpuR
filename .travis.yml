@@ -24,6 +24,8 @@ sudo: required
 group: edge
 warnings_are_errors: false
 
+filter_secrets: false
+
 env:
   global:
     - POCL_LLVM_VERSION=3.8
