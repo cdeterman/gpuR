@@ -84,9 +84,9 @@ cpp_vclMatrix_custom_chol(
     
     // execute kernels
     for(unsigned int k=0; k < M; k++){
-        viennacl::ocl::enqueue(update_kk(*vcl_B.get(), M_internal, k));
-        viennacl::ocl::enqueue(update_k(*vcl_B.get(), upper, M, M_internal, k));
-        viennacl::ocl::enqueue(update_block(*vcl_B.get(), upper, M, M_internal, k));
+        viennacl::ocl::enqueue(update_kk(*vcl_B, M_internal, k));
+        viennacl::ocl::enqueue(update_k(*vcl_B, upper, M, M_internal, k));
+        viennacl::ocl::enqueue(update_block(*vcl_B, upper, M, M_internal, k));
     }
     
     if(!BisVCL){
