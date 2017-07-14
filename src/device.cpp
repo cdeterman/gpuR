@@ -41,7 +41,7 @@ SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_)
     
     // Get device
     viennacl::ocl::device working_device;
-    working_device = platforms[plat_idx].devices()[gpu_idx];
+    working_device = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL)[gpu_idx];
 
     cl_device_type check = working_device.type(); 
 
@@ -77,7 +77,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
     if(Rf_isNull(platform_idx)){
         for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
             
-            devices = platforms[plat_idx].devices();
+            devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
             for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
                 if(devices[device_idx].type() & CL_DEVICE_TYPE_GPU){
                     device_count++;
@@ -88,7 +88,7 @@ SEXP cpp_detectGPUs(SEXP platform_idx)
         // subtract one for zero indexing
         unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
         
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
         for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
             if(devices[device_idx].type() & CL_DEVICE_TYPE_GPU){
                 device_count++;
@@ -122,7 +122,7 @@ List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_)
     
     // Get device
     viennacl::ocl::device working_device;
-    working_device = platforms[plat_idx].devices()[gpu_idx];
+    working_device = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL)[gpu_idx];
     
     std::string deviceName = working_device.name();
     std::string deviceVendor = working_device.vendor();
@@ -181,7 +181,7 @@ List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_)
     
     // Get device
     viennacl::ocl::device working_device;
-    working_device = platforms[plat_idx].devices()[cpu_idx];
+    working_device = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL)[cpu_idx];
     
     if(working_device.type() & CL_DEVICE_TYPE_CPU){
 	// do nothing
@@ -395,7 +395,7 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
     if(Rf_isNull(platform_idx)){
         for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
             
-            devices = platforms[plat_idx].devices();
+            devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
             for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
                 if(devices[device_idx].type() & CL_DEVICE_TYPE_CPU){
                     device_count++;
@@ -406,7 +406,7 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
         // subtract one for zero indexing
         unsigned int plat_idx = as<unsigned int>(platform_idx) - 1;
         
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
         for(unsigned int device_idx=0; device_idx < devices.size(); device_idx++){
             if(devices[device_idx].type() & CL_DEVICE_TYPE_CPU){
                 device_count++;
@@ -561,4 +561,55 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
 //    return double_check;
 //}
 
+#include "gpuR/windows_check.hpp"
+
+#include <RcppEigen.h>
+
+#include "viennacl/ocl/backend.hpp"
+
+#include "gpuR/utils.hpp"
+
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+int
+preferred_wg_size(
+    SEXP sourceCode_,
+    std::string kernel_name,
+    const int ctx_id)
+{
+    unsigned int max_local_size;
     
+    // get kernel
+    std::string my_kernel = as<std::string>(sourceCode_);
+    
+    // get context
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    // add kernel to program
+    viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
+    
+    // device type check
+    cl_device_type type_check = ctx.current_device().type();
+    
+    if(type_check & CL_DEVICE_TYPE_CPU){
+        max_local_size = 1;
+    }else{
+        cl_device_id raw_device = ctx.current_device().id();
+        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", kernel_name).handle().get();
+        size_t preferred_work_group_size_multiple;
+        
+        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
+                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
+                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        if(err != CL_SUCCESS){
+            Rcpp::stop("clGetKernelWorkGroupInfo failed");
+        }
+        
+        max_local_size = preferred_work_group_size_multiple;
+    }
+    
+    return max_local_size;
+}
+

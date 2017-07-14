@@ -31,7 +31,7 @@ void initContexts(){
         Rcpp::Rcout << "- platform: " << platforms[plat_idx].info() << std::endl;
     
         std::vector< viennacl::ocl::device > devices;
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
     
         for(unsigned int gpu_idx = 0; gpu_idx < devices.size(); gpu_idx++) {
             
@@ -115,7 +115,7 @@ listContexts()
     // for each platform    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
         
-        num_contexts += platforms[plat_idx].devices().size();
+        num_contexts += platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL).size();
 //        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
 //            num_contexts++;
 //        }
@@ -137,7 +137,7 @@ listContexts()
     for(unsigned int plat_idx = 0; plat_idx < platforms.size(); plat_idx++) {
         
         std::vector< viennacl::ocl::device > devices;
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
         
         for(unsigned int gpu_idx = 0; gpu_idx < devices.size(); gpu_idx++) {
         
