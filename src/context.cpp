@@ -222,4 +222,13 @@ cpp_setContext(int id)
     viennacl::ocl::switch_context(id - 1);
 }
 
+// [[Rcpp::export]]
+SEXP
+getContextPtr(const int ctx_id){
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    Rcpp::XPtr<viennacl::ocl::context> ptrctx(&ctx);
+    return ptrctx;
+}
+
 

@@ -1,5 +1,5 @@
-__kernel void iMatMult(const int Mdim, const int MdimPad, 
-                       const int Pdim, const int PdimPad,
+__kernel void iMatMult(const int A_size2, const int C_size2, 
+                       const int B_size1, const int C_size1,
                        __global const int *A, __global const int *B, __global int *C) {
     
     // Get the index of the elements to be processed
@@ -8,12 +8,12 @@ __kernel void iMatMult(const int Mdim, const int MdimPad,
     int tmp = 0;
     
     // Do the operation
-    if((globalRow <= Mdim) && (globalCol <= Pdim)){
+    if((globalRow <= A_size2) && (globalCol <= B_size1)){
         
-        for(int k=0; k < Pdim; k++){
-            tmp += A[globalRow * MdimPad + k] * B[globalCol+PdimPad*k];
+        for(int k=0; k < B_size1; k++){
+            tmp += A[globalRow * C_size2 + k] * B[globalCol+C_size1*k];
         }
         
-        C[globalCol+MdimPad*globalRow] = tmp;
+        C[globalCol+C_size2*globalRow] = tmp;
     }
 }

@@ -61,6 +61,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// getContextPtr
+SEXP getContextPtr(const int ctx_id);
+RcppExport SEXP gpuR_getContextPtr(SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(getContextPtr(ctx_id));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_vclMatrix_sign
 void cpp_vclMatrix_sign(SEXP ptrA, const bool AisVCL, SEXP ptrB, const bool BisVCL, SEXP sourceCode, int max_local_size, const int type_flag, const int ctx_id);
 RcppExport SEXP gpuR_cpp_vclMatrix_sign(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP sourceCodeSEXP, SEXP max_local_sizeSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
@@ -196,6 +207,19 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type platform_idx(platform_idxSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_detectCPUs(platform_idx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// preferred_wg_size
+int preferred_wg_size(SEXP sourceCode_, std::string kernel_name, const int ctx_id);
+RcppExport SEXP gpuR_preferred_wg_size(SEXP sourceCode_SEXP, SEXP kernel_nameSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< std::string >::type kernel_name(kernel_nameSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(preferred_wg_size(sourceCode_, kernel_name, ctx_id));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -3272,6 +3296,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"gpuR_listContexts", (DL_FUNC) &gpuR_listContexts, 0},
     {"gpuR_currentContext", (DL_FUNC) &gpuR_currentContext, 0},
     {"gpuR_cpp_setContext", (DL_FUNC) &gpuR_cpp_setContext, 1},
+    {"gpuR_getContextPtr", (DL_FUNC) &gpuR_getContextPtr, 1},
     {"gpuR_cpp_vclMatrix_sign", (DL_FUNC) &gpuR_cpp_vclMatrix_sign, 8},
     {"gpuR_cpp_vclVector_sign", (DL_FUNC) &gpuR_cpp_vclVector_sign, 8},
     {"gpuR_cpp_vclMatrix_pmax", (DL_FUNC) &gpuR_cpp_vclMatrix_pmax, 9},
@@ -3282,6 +3307,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"gpuR_cpp_cpuInfo", (DL_FUNC) &gpuR_cpp_cpuInfo, 2},
     {"gpuR_currentDevice", (DL_FUNC) &gpuR_currentDevice, 0},
     {"gpuR_cpp_detectCPUs", (DL_FUNC) &gpuR_cpp_detectCPUs, 1},
+    {"gpuR_preferred_wg_size", (DL_FUNC) &gpuR_preferred_wg_size, 3},
     {"gpuR_cpp_deepcopy_gpuMatrix", (DL_FUNC) &gpuR_cpp_deepcopy_gpuMatrix, 2},
     {"gpuR_cpp_cbind_gpuMatrix", (DL_FUNC) &gpuR_cpp_cbind_gpuMatrix, 3},
     {"gpuR_cpp_rbind_gpuMatrix", (DL_FUNC) &gpuR_cpp_rbind_gpuMatrix, 3},

@@ -36,6 +36,10 @@ cpp_setContext <- function(id) {
     invisible(.Call('gpuR_cpp_setContext', PACKAGE = 'gpuR', id))
 }
 
+getContextPtr <- function(ctx_id) {
+    .Call('gpuR_getContextPtr', PACKAGE = 'gpuR', ctx_id)
+}
+
 cpp_vclMatrix_sign <- function(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id) {
     invisible(.Call('gpuR_cpp_vclMatrix_sign', PACKAGE = 'gpuR', ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, type_flag, ctx_id))
 }
@@ -81,6 +85,10 @@ currentDevice <- function() {
 
 cpp_detectCPUs <- function(platform_idx) {
     .Call('gpuR_cpp_detectCPUs', PACKAGE = 'gpuR', platform_idx)
+}
+
+preferred_wg_size <- function(sourceCode_, kernel_name, ctx_id) {
+    .Call('gpuR_preferred_wg_size', PACKAGE = 'gpuR', sourceCode_, kernel_name, ctx_id)
 }
 
 cpp_deepcopy_gpuMatrix <- function(ptrA, type_flag) {

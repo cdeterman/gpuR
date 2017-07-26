@@ -38,7 +38,8 @@ setMethod('vclMatrix',
               device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
               
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
-              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) + 1L else device$device_index + 1L
+              context_ptr <- getContextPtr(context_index - 1L)
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
               
               platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
               platform_name <- platformInfo(platform_index)$platformName
@@ -47,10 +48,10 @@ setMethod('vclMatrix',
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
                                         platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index + 1L))$deviceName,
                                     "cpu" = cpuInfo(
                                         platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index + 1L))$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -62,7 +63,8 @@ setMethod('vclMatrix',
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name)
+                                    .device = device_name,
+                                    .context = context_ptr)
                             },
                             float = {
                                 new("fvclMatrix", 
@@ -71,7 +73,8 @@ setMethod('vclMatrix',
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name)
+                                    .device = device_name,
+                                    .context = context_ptr)
                             },
                             double = {
                                 assert_has_double(platform_index, device_index)
@@ -81,7 +84,8 @@ setMethod('vclMatrix',
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name)
+                                    .device = device_name,
+                                    .context = context_ptr)
                             },
                             fcomplex = {
                                 new("cvclMatrix", 
@@ -121,7 +125,7 @@ setMethod('vclMatrix',
               device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
 
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
-              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) + 1L else device$device_index + 1L
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
               
               platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
               platform_name <- platformInfo(platform_index)$platformName
