@@ -1,9 +1,5 @@
 
 
-
-kernel <- system.file("CL", "dcholesky.cl", package = "gpuR")
-kernel <- system.file("CL", "basic_gemm.cl", package = "gpuR")
-
 splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 
 #' @title Setup OpenCL Arguments
@@ -77,10 +73,11 @@ custom_opencl <- function(kernel, cl_args, type){
     type <- if(type == "integer") "int" else type
 
     # copy base_base_custom_opencl.cpp to tmp directory
-    # using cwd for development paste0(getwd(), "/salamander.cpp")) - tempfile()
+    # using cwd for development paste0(getwd(), "/salamander.cpp") - tempfile()
     
     ocl_shell <- system.file("src", package = "gpuR")
     ocl_file <- paste0(tempfile(), '.cpp')
+    # ocl_file <- paste0(getwd(), "/salamander.cpp")
     tryCatch({
         invisible(
             file.copy(paste0(ocl_shell, '/base_custom_opencl.cpp'),
@@ -102,14 +99,15 @@ custom_opencl <- function(kernel, cl_args, type){
         if(cl_args[x,"object"] != "scalar"){
             paste0("SEXP ptr", id, suffix)
         }else{
-            paste0("SEXP scalar", id, suffix)
+            paste0("SEXP ", id, suffix)
         }
 
     })
 
     # list of input objects for later use
     input_objs <- sapply(input_args, function(x){
-        unlist(lapply(strsplit(x, " "), function(y) substr(y[[length(y)]], 1, nchar(y[[length(y)]])-1)))
+        # y <- unlist(strsplit(input_args[3], " "))
+        unlist(lapply(strsplit(x, " "), function(y) substr(y[[length(y)]], 0, nchar(y[[length(y)]])-1)))
     }, USE.NAMES = FALSE)
 
     # context index
@@ -192,10 +190,13 @@ custom_opencl <- function(kernel, cl_args, type){
                "scalar" = {
                    id <- cl_args[x,"map"]
                    paste0(type,
-                          " value = as<",
+                          " ",
+                          id,
+                          "= as<",
                           type,
                           ">(",
                           id,
+                          "_ ",
                           ");")
                }
         )
@@ -271,7 +272,9 @@ custom_opencl <- function(kernel, cl_args, type){
     })
 
     dim_objs <- sapply(import_dims, function(x){
-        unlist(lapply(strsplit(x, " "), function(y) y[[3]]))
+        if(!is.null(x)){
+            unlist(lapply(strsplit(x, " "), function(y) y[[3]]))    
+        }
     })
 
     # read in kernel
@@ -413,8 +416,8 @@ custom_opencl <- function(kernel, cl_args, type){
     # viennacl::ocl::enqueue(my_kernel(*vcl_A, *vcl_B, value, M, P, M_internal));
     k_args <- lapply(kernel_args, function(x) unlist(strsplit(x, ",")))
     k_args <- lapply(k_args, function(x) {
-        unlist(lapply(strsplit(x, " "), function(y){
-            y[[length(y)]]
+        unlist(lapply(strsplit(x, "double|float|int"), function(y){
+            gsub(" ", "", y[[length(y)]])
         }))
     })
 
@@ -440,14 +443,15 @@ custom_opencl <- function(kernel, cl_args, type){
         objects_in_kernel <- cl_args[which(sapply(cl_args[, "queues"], function(q) grepl(knames[k], q))),]
         cpp_objs <- paste0("*vcl_", objects_in_kernel[objects_in_kernel[,"object"] != "scalar","map"])
         cl_objs <- paste0("*", objects_in_kernel[objects_in_kernel[,"object"] != "scalar","map"])
+        cl_objs <- c(cl_objs, objects_in_kernel[objects_in_kernel[,"object"] == "scalar","map"])
         # cpp_non_cl_objs <-
         internal_cpp_objs <- non_cl_objs[[k]]
-
-
+        
+        my_objs <- c(cpp_objs, internal_cpp_objs)
+        
         paste0("viennacl::ocl::enqueue(", knames[k], "(",
                paste(
-                   paste(internal_cpp_objs,collapse=","),
-                   paste(cpp_objs[match(ptr_args[[k]], cl_objs)], collapse = ","),
+                   paste(my_objs[match(c(ptr_args[[k]],internal_cpp_objs), cl_objs)], collapse = ","),
                    sep = ","),
                "));")
     })

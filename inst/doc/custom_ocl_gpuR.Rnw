@@ -1,0 +1,126 @@
+% \VignetteIndexEntry{ Custom OpenCL Kernels }
+% \VignettePackage{gpuR}
+% \VignetteEngine{knitr::knitr}
+
+% To compile this document
+% library('knitr'); rm(list=ls()); knit('custom_ocl_gpuR.Rnw')
+
+\documentclass[12pt]{article}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+\renewcommand{\pkg}[1]{{\textsf{#1}}}
+
+\newcommand{\Rpackage}[1]{\textsl{#1}}
+\newcommand\CRANpkg[1]{%
+  {\href{http://cran.fhcrc.org/web/packages/#1/index.html}%
+    {\Rpackage{#1}}}}
+\newcommand\Githubpkg[1]{\GithubSplit#1\relax}
+\def\GithubSplit#1/#2\relax{{\href{https://github.com/#1/#2}%
+    {\Rpackage{#2}}}}
+
+\newcommand{\Rcode}[1]{\texttt{#1}}
+\newcommand{\Rfunction}[1]{\Rcode{#1}}
+\newcommand{\Robject}[1]{\Rcode{#1}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_chunk$set(
+concordance=TRUE
+)
+@
+
+\title{Custom OpenCL Kernels}
+\author{Dr. Charles Determan Jr. PhD\footnote{cdetermanjr@gmail.com}}
+\newpage
+
+\maketitle
+\section{Introduction}
+At the heart of portable GPU computing is the use of OpenCL kernel files.
+Essentially, these files contain routines/functions that are compiled for use
+on different devices (e.g. CPU, GPU, FPGA, etc.).  One example is the SAXPY
+function
+
+<<kernel_example, eval = FALSE>>=
+__kernel void SAXPY(__global float* x, __global float* y, float a)
+{
+    const int i = get_global_id (0);
+
+    y [i] += a * x [i];
+}
+@
+
+The exact definitions and specifications of OpenCL kernels is beyond the scope
+of this vignette and the interested user is recommended to consult additional
+resource.
+
+Now, to compile a function to use the OpenCL kernel requires the definition of 
+OpenCL contexts, buffers, defining global/local sizes, enqueuing operations, and 
+managing data memory copies.  The intent here is to make the use of a custom OpenCL
+kernel as seamless as possible within the \Rpackage{gpuR} package.
+
+\newpage
+\maketitle
+\section{Demo}
+
+In order to create the dynamic functions to leverage the OpenCL kernels,
+the user should be able to say what the purpose of each argument is.
+Taking the SAXPY example above, the user must know which arguments are device
+objects (i.e. OpenCL buffers) and which aren't.  In this case, the first two
+arguments I will denote as \Rfunction{vclVector} objects and the third as a scalar
+argument.  Likewise, they are denoted by the objects intent, which kernel they
+will be passed to (only relevant when more than one kernel function), and the
+corresponding argument name in the OpenCL kernel function.  The setup call would
+look like the following.
+
+<<cl_setup, eval=FALSE>>=
+cl_args <- setup_opencl(objects = c("vclVector", "vclVector", "scalar"),
+                        intents = c("IN", "OUT", "IN"),
+                        queues = list("SAXPY", "SAXPY", "SAXPY"),
+                        kernel_maps = c("x", "y", "a"))
+@
+
+Once the argument definitions are setup, the kernel file and argument definitions 
+can be passed to the \Rfunction{custom\_opencl} function which also takes one additional 
+argument.  OpenCL is a typed language and thefore the user must denote the precision.
+
+<<compile, eval=FALSE>>=
+custom_opencl("saxpy.cl", cl_args, "float")
+@
+
+You will notice that there is no assignment set during this call.  The internal
+function is compiled and exported to the current global environment with the name
+of the kernel file (prior to the extension).
+
+The function can then be called as a normal function on the respective objects.
+
+<<example, eval=FALSE>>=
+
+a <- rnorm(16)
+b <- rnorm(16)
+gpuA <- vclVector(a, type = "float")
+gpuB <- vclVector(b, type = "float")
+scalar <- 2
+
+# apply custom function
+# equivalent to - scalar*a + b
+saxpy(gpuA, gpuB, scalar)
+@
+
+\end{document}
