@@ -74,6 +74,7 @@ before_install:
     make
     sudo make install
   - cd $HOMEDIR
+  - sudo ldconfig
   - export CXX="g++-4.8"
 
 after_success:
