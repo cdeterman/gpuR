@@ -149,7 +149,7 @@ vclVector_unary_axpy <- function(A){
 
 
 # GPU Element-Wise Multiplication
-vclVecElemMult <- function(A, B){
+vclVecElemMult <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -159,7 +159,11 @@ vclVecElemMult <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {

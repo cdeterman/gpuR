@@ -128,7 +128,7 @@ gpuVecOuterProd <- function(A, B, C){
 }
 
 # GPU Element-Wise Multiplication
-gpuVecElemMult <- function(A, B){
+gpuVecElemMult <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -138,7 +138,11 @@ gpuVecElemMult <- function(A, B){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -163,11 +167,15 @@ gpuVecElemMult <- function(A, B){
 }
 
 # GPU Scalar Element-Wise Multiplication
-gpuVecScalarMult <- function(A, B){
+gpuVecScalarMult <- function(A, B, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- deepcopy(A)
+    if(inplace){
+        C <- A
+    }else{
+        C <- deepcopy(A)
+    }
     
     switch(type,
            integer = {
@@ -234,7 +242,12 @@ gpuVecScalarDiv <- function(A, B, order){
     
     switch(type,
            integer = {
-               stop("integer not currently implemented")
+               # stop("integer not currently implemented")
+               cpp_gpuVector_scalar_div(C@address,
+                                        B,
+                                        order,
+                                        4L,
+                                        A@.context_index - 1)
            },
            float = {cpp_gpuVector_scalar_div(C@address,
                                              B,

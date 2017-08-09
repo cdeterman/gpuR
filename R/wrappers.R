@@ -67,11 +67,15 @@ gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE){
 }
 
 # GPU axpy wrapper
-gpuMatrix_unary_axpy <- function(A){
+gpuMatrix_unary_axpy <- function(A, inplace = FALSE){
     
     type = typeof(A)
     
-    Z <- deepcopy(A)
+    if(inplace){
+        Z <- A
+    }else{
+        Z <- deepcopy(A)
+    }
     
     switch(type,
            integer = {
@@ -93,13 +97,17 @@ gpuMatrix_unary_axpy <- function(A){
 }
 
 # GPU Matrix Multiplication
-gpu_Mat_mult <- function(A, B){
+gpu_Mat_mult <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(B), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -147,7 +155,7 @@ gpu_Mat_mult <- function(A, B){
 }
 
 # GPU Element-Wise Multiplication
-gpuMatElemMult <- function(A, B){
+gpuMatElemMult <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -157,7 +165,11 @@ gpuMatElemMult <- function(A, B){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -713,11 +725,15 @@ gpuMatElemLog10 <- function(A){
 }
 
 # GPU Element-Wise Exponential
-gpuMatElemExp <- function(A){
+gpuMatElemExp <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1038,11 +1054,15 @@ gpuMatrix_peuclidean <- function(A, B, D, squareDist){
 }
 
 # GPU Element-Wise Absolute Value
-gpuMatElemAbs <- function(A){
+gpuMatElemAbs <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
