@@ -126,7 +126,7 @@ test_that("CPU inplace gpuMatrix Subtraction", {
     inplace(`-`, fgpuA, fgpuB)
     
     expect_equal(fgpuA[,], C, tolerance=1e-07, 
-                 info="float matrix elements not equivalent")  s
+                 info="float matrix elements not equivalent")
     
     fgpuA <- gpuMatrix(A, type="double")
     fgpuB <- gpuMatrix(B, type="double")
