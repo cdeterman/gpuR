@@ -6,7 +6,7 @@ Description: Provides GPU enabled functions for R objects in a simple and
     wrap typical R objects (e.g. vector, matrix), in both host and device
     spaces, to mirror typical R syntax without the need to know OpenCL.
 Version: 1.2.3
-Date: 2017-01-05
+Date: 2017-08-09
 Author: Charles Determan Jr.
 Maintainer: Charles Determan Jr. <cdetermanjr@gmail.com>
 VignetteBuilder: knitr

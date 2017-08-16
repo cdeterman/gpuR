@@ -1147,4 +1147,11 @@ setMethod("diag<-", c(x = "gpuMatrix", value = "gpuVector"),
           }
 )
 
-
+#' @rdname det-methods
+#' @aliases det,vclMatrix
+#' @export
+setMethod("det", c(x = "gpuMatrix"),
+          function(x){
+              return(gpuMat_det(x))
+          }
+)

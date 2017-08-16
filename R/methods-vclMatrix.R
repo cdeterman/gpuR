@@ -1423,4 +1423,19 @@ identity_matrix <- function(x, type = NULL){
 }
 
 
+#' @title Calculate Determinant of a Matrix on GPU
+#' @description \code{det} calculates the determinant of a matrix.
+#' @param x A gpuR matrix object
+#' @return The determine of \code{x}
+#' @note This function uses an LU decomposition and the \code{det} 
+#' function is simply a wrapper returning the determinant product
+#' @author Charles Determan Jr.
+#' @rdname det-methods
+#' @aliases det,vclMatrix
+#' @export
+setMethod("det", c(x = "vclMatrix"),
+          function(x){
+              return(gpuMat_det(x))
+          }
+)
 

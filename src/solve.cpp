@@ -28,36 +28,20 @@ T cpp_gpuMatrix_det(
     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    viennacl::matrix<T> vcl_B = viennacl::identity_matrix<T>(vcl_A->size1(), ctx);
 
-    Eigen::Matrix<T, Eigen::Dynamic, 1> A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(vcl_B.size1());
-    Eigen::Matrix<T, Eigen::Dynamic, 1> B = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(vcl_B.size1());
+    Eigen::Matrix<T, Eigen::Dynamic, 1> A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(vcl_A->size1());
     
     
     // solution of a full system right into the load vector vcl_rhs:
     viennacl::linalg::lu_factorize(*vcl_A);
-    // viennacl::linalg::lu_substitute(*vcl_A, vcl_B);
-    
-    // solution of an upper triangular system:
-    // viennacl::matrix<T> vcl_U = solve(*vcl_A, vcl_B, viennacl::linalg::upper_tag());
-    //solution of a lower triangular system:
-    // viennacl::matrix<T> vcl_L = solve(*vcl_A, vcl_B, viennacl::linalg::lower_tag());
     
     std::cout << *vcl_A << std::endl;
-    // std::cout << vcl_U << std::endl;
-    // std::cout << vcl_L << std::endl;
     
     viennacl::vector<T> vA = viennacl::diag(*vcl_A);
-    viennacl::vector<T> vB = viennacl::diag(*vcl_A);
     
     viennacl::fast_copy(vA.begin(), vA.end(), &(A[0]));
-    viennacl::fast_copy(vB.begin(), vB.end(), &(B[0]));
     
-    std::cout << "check eigen vectors" << std::endl;
-    std::cout << A << std::endl;
-    std::cout << B << std::endl;
-    
-    T det = A.prod() * B.prod();
+    T det = A.prod();
     
     if(!AisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);

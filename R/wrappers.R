@@ -1165,4 +1165,31 @@ gpuMat_gpuVec_set_diag <- function(x, value){
     return(invisible(x))
 }
 
+# GPU Determinant
+gpuMat_det <- function(A){
+    
+    type <- typeof(A)
+    
+    B <- deepcopy(A)
+    
+    result <- switch(type,
+                     integer = {
+                         stop("integer not currently implemented")
+                         # cpp_gpuMatrix_det(B@address, value@address, 4L)
+                     },
+                     float = {
+                         cpp_gpuMatrix_det(B@address, 
+                                           inherits(B, "vclMatrix"), 
+                                           6L, 
+                                           B@.context_index - 1L)},
+                     double = {
+                         cpp_gpuMatrix_det(B@address, 
+                                           inherits(B, "vclMatrix"), 
+                                           8L, 
+                                           B@.context_index - 1L)},
+                     stop("type not recognized")
+    )
+    
+    return(result)
+}
 
