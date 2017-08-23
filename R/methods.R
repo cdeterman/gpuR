@@ -87,6 +87,49 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
 
 #' @rdname Arith-methods
 #' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="matrix"),
+          function(e1, e2)
+          {
+              
+              e2 <- gpuMatrix(e2, type = typeof(e1), ctx_id = e1@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="matrix", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              e1 <- gpuMatrix(e1, type = typeof(e2), ctx_id = e2@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
 setMethod("Arith", c(e1="gpuMatrix", e2="numeric"),
           function(e1, e2)
           {
@@ -675,6 +718,25 @@ setMethod("crossprod",
           })
 
 #' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "gpuMatrix", y = "matrix"),
+          function(x, y){
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              gpu_crossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "matrix", y = "gpuMatrix"),
+          function(x, y){
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              gpu_crossprod(x, y)
+          })
+
+
+#' @rdname gpuMatrix-crossprod
 setMethod("tcrossprod",
           signature(x = "gpuMatrix", y = "missing"),
           function(x, y){
@@ -687,6 +749,24 @@ setMethod("tcrossprod",
 setMethod("tcrossprod",
           signature(x = "gpuMatrix", y = "gpuMatrix"),
           function(x, y){
+              gpu_tcrossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "matrix", y = "gpuMatrix"),
+          function(x, y){
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              gpu_tcrossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "gpuMatrix", y = "matrix"),
+          function(x, y){
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
               gpu_tcrossprod(x, y)
           })
 

@@ -644,8 +644,8 @@ test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
     
-    Apow <- matrix(seq.int(9), ncol=3, nrow=3)
-    Bpow <- matrix(2, ncol = 3, nrow = 3)
+    Apow <- matrix(seq.int(16), ncol=4, nrow=4)
+    Bpow <- matrix(2, ncol = 4, nrow = 4)
     C <- Apow ^ Bpow
     
     fgpuA <- gpuMatrix(Apow, type="integer")
@@ -657,13 +657,13 @@ test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- Aint ^ fgpuB
+    fgpuC <- Apow ^ fgpuB
     
     expect_is(fgpuC, "igpuMatrix")
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- fgpuA ^ Bint
+    fgpuC <- fgpuA ^ Bpow
     
     expect_is(fgpuC, "igpuMatrix")
     expect_equal(fgpuC[,], C,
@@ -698,6 +698,10 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     
     has_cpu_skip()
     
+    if(!deviceHasDouble()){
+        contexts <- listContexts()
+        setContext(contexts[contexts$device_type == "cpu","context"])
+    }
     
     C <- A %*% B
     
@@ -727,6 +731,10 @@ test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
     
     has_cpu_skip()
     
+    if(!deviceHasDouble()){
+        contexts <- listContexts()
+        setContext(contexts[contexts$device_type == "cpu","context"])
+    }
     
     C <- A - B
     
@@ -758,6 +766,10 @@ test_that("CPU gpuMatrix Double Precision Matrix Addition", {
     
     has_cpu_skip()
     
+    if(!deviceHasDouble()){
+        contexts <- listContexts()
+        setContext(contexts[contexts$device_type == "cpu","context"])
+    }
     
     C <- A + B
     
