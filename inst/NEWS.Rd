@@ -7,6 +7,20 @@
         \itemize {
             \item deviceType, gpuInfo, cpuInfo not longer accepts 'platform_idx' parameter as OpenCL contexts cannot contain more than one platform.
         }
+        \item New Features:
+        \itemize {
+            \item Allow for creating custom OpenCL functions from user kernels
+            \item Added `synchronize` function to assure completion of device calls (necessary for benchmarking)
+            \item Added determinant function (det)
+            \item Allow for gpuR object - base object interaction (e.g. vclMatrix * matrix)
+            \item Added `inplace` function for 'inplace' operations
+            \item Added `sqrt`, `sum`, `sign`,`pmin`, and `pmax` functions
+        }
+        \item Bug Fixes:
+        \itemize {
+            \item Fixed incorrect device info when using different contexts
+            \item Fixed Integer Matrix Multiplication
+        }
     }
 }
 
