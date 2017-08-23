@@ -29,6 +29,36 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           valueClass = "gpuMatrix"
 )
 
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="gpuMatrix", y = "matrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              return(gpu_Mat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="matrix", y = "gpuMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              return(gpu_Mat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @title Arith methods
 #' @description Methods for the base Arith methods \link[methods]{S4groupGeneric}
 #' @param e1 A gpuR object
