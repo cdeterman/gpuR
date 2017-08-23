@@ -1,6 +1,14 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
 
+\section{Version 2.0.0}{
+    \itemize{
+        \item API Changes:
+        \itemize {
+            \item deviceType, gpuInfo, cpuInfo not longer accepts 'platform_idx' parameter as OpenCL contexts cannot contain more than one platform.
+        }
+    }
+}
 
 \section{Version 1.2.0}{
     \itemize{

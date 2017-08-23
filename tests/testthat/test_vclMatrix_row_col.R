@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix Row and Column Methods")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -451,3 +453,4 @@ test_that("vclMatrix Double Precision Block Row Means",
                  info="double rowMeans not equivalent")  
 })
 
+setContext(current_context)

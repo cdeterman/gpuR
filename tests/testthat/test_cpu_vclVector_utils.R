@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclVector Utility Functions")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -176,3 +178,5 @@ test_that("CPU vclVector set vclVector access", {
     expect_equal(gpuF[], gpuDF[], tolerance=1e-07,
                  info = "updated fvclVector not equivalent to assigned base vclVector")
 })
+
+setContext(current_context)

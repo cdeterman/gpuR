@@ -1,6 +1,8 @@
 library(gpuR)
 context("Switching GPUs vclMatrix algebra")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -910,3 +912,5 @@ test_that("Switching GPUs vclMatrix Double Precision transpose", {
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
+
+setContext(current_context)

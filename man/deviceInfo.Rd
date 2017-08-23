@@ -5,14 +5,14 @@
 \alias{cpuInfo}
 \title{Device Information}
 \usage{
-gpuInfo(platform_idx = NULL, device_idx = NULL)
+gpuInfo(device_idx = NULL, context_idx = currentContext())
 
-cpuInfo(platform_idx = NULL, device_idx = NULL)
+cpuInfo(device_idx = NULL, context_idx = currentContext())
 }
 \arguments{
-\item{platform_idx}{An integer value indicating which platform to query.}
-
 \item{device_idx}{An integer value indicating which device to query.}
+
+\item{device_idx}{An integer value indicating which context to query.}
 }
 \value{
 \item{deviceName}{Device Name}

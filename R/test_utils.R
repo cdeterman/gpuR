@@ -103,3 +103,20 @@ has_multiple_double_skip <- function() {
         testthat::skip("Less than 2 GPUs with double precision")
     }
 }
+
+
+set_device_context <- function(type){
+    
+    current_context <- currentContext()
+    if(deviceType() != "cpu"){
+        contexts <- listContexts()
+        cpus <- contexts[contexts$device_type == type,"context"]
+        if(length(cpus) == 0){
+            skip("No CPUs available")
+        }else{
+            
+        }
+        setContext(head(cpus, 1))
+    }
+    return(current_context)
+}

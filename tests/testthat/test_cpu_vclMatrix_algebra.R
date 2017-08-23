@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrix algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -657,13 +659,13 @@ test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Power", {
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- Aint ^ fgpuB
+    fgpuC <- Apow ^ fgpuB
     
     expect_is(fgpuC, "ivclMatrix")
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- fgpuA ^ Bint
+    fgpuC <- fgpuA ^ Bpow
     
     expect_is(fgpuC, "ivclMatrix")
     expect_equal(fgpuC[,], C,
@@ -1107,3 +1109,6 @@ test_that("CPU vclMatrix Diagonal access", {
     expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
                  info="set double matrix diagonal elements not equivalent") 
 })
+
+setContext(current_context)
+

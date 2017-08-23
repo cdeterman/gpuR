@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix qr decomposition")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -61,3 +63,5 @@ test_that("gpuMatrix Double Precision Matrix QR Decomposition",
               expect_error(qr(fgpuA), "non-square matrix not currently supported for 'qr'",
                            info = "qr shouldn't accept non-square matrices")
           })
+
+setContext(current_context)

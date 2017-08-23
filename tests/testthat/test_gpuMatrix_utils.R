@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix Utility Functions")
 
+current_context <- set_device_context("gpu")
+
 set.seed(123)
 A <- matrix(sample(seq.int(100), 100), 10)
 D <- matrix(sample(rnorm(100), 100), 10)
@@ -258,3 +260,5 @@ test_that("gpuMatrix colnames methods", {
     expect_equal(colnames(dgpu), cnames,
                  info = "double colnames don't reflect assigned names")
 })
+
+setContext(current_context)

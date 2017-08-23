@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix math operations")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -389,3 +391,5 @@ test_that("gpuMatrix Double Precision Matrix sign", {
                  info="sign double matrix elements not equivalent",
                  check.attributes=FALSE)  
 })
+
+setContext(current_context)

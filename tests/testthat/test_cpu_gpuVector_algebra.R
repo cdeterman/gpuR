@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuVector algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -584,3 +586,5 @@ test_that("CPU gpuVector double precision outer product", {
     expect_equal(gpuC2[], C2, tolerance=.Machine$double.eps^0.5,
                  info="double vector outer product elements not equivalent")
 })
+
+setContext(current_context)

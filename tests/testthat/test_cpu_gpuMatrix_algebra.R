@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -698,11 +700,6 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     
     has_cpu_skip()
     
-    if(!deviceHasDouble()){
-        contexts <- listContexts()
-        setContext(contexts[contexts$device_type == "cpu","context"])
-    }
-    
     C <- A %*% B
     
     dgpuA <- gpuMatrix(A, type="double")
@@ -730,11 +727,6 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
 test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
     
     has_cpu_skip()
-    
-    if(!deviceHasDouble()){
-        contexts <- listContexts()
-        setContext(contexts[contexts$device_type == "cpu","context"])
-    }
     
     C <- A - B
     
@@ -765,11 +757,6 @@ test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
 test_that("CPU gpuMatrix Double Precision Matrix Addition", {
     
     has_cpu_skip()
-    
-    if(!deviceHasDouble()){
-        contexts <- listContexts()
-        setContext(contexts[contexts$device_type == "cpu","context"])
-    }
     
     C <- A + B
     
@@ -1134,3 +1121,6 @@ test_that("CPU gpuMatrix Diagonal access", {
     expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
                  info="set double matrix diagonal elements not equivalent") 
 })
+
+setContext(current_context)
+

@@ -36,11 +36,11 @@ setMethod('gpuVector',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -68,7 +68,7 @@ setMethod('gpuVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuVector",
                                     address = sexpVecToEigenVecXptr(data,
                                                                     length(data),
@@ -110,11 +110,11 @@ setMethod('gpuVector',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -138,7 +138,7 @@ setMethod('gpuVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuVector",
                                     address = emptyEigenVecXptr(length, 8L),
                                     .context_index = context_index,

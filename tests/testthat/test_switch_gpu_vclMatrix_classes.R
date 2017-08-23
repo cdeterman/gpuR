@@ -1,6 +1,8 @@
 library(gpuR)
 context("Switching GPUs vclMatrix classes")
 
+current_context <- set_device_context("gpu")
+
 set.seed(123)
 A <- matrix(seq.int(100), nrow=5)
 D <- matrix(rnorm(100), nrow=5)
@@ -218,3 +220,5 @@ test_that("Switching GPUs vclMatrix double scalar initializers", {
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
+
+setContext(current_context)

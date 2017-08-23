@@ -1,5 +1,7 @@
 library(gpuR)
-context("CPU Inplace Operations")
+context("Inplace Operations")
+
+current_context <- set_device_context("gpu")
 
 # set seed
 set.seed(123)
@@ -330,3 +332,5 @@ test_that("inplace vclVector Elementwise Multiplication", {
                  info="double matrix elements not equivalent")  
     
 })
+
+setContext(current_context)

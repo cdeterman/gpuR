@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix eigen decomposition")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -110,4 +112,4 @@ test_that("gpuMatrix Symmetric Double Precision Matrix Eigen Decomposition",
 #                  info="float eigenvectors not equivalent")  
 # })
 
-
+setContext(current_context)

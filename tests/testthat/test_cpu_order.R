@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU Ordering Methods")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -32,3 +34,5 @@ test_that("CPU vclMatrix permute",
               expect_equal(gpuC[], C, tolerance=.Machine$double.eps^0.5, 
                            info="double row permutations not equivalent")  
           })
+
+setContext(current_context)

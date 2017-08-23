@@ -2,6 +2,8 @@ library(gpuR)
 context("CPU gpuMatrix math operations")
 options(warn=-1)
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -401,3 +403,5 @@ test_that("CPU gpuMatrix Double Precision Matrix sign", {
 })
 
 options(warn=0)
+
+setContext(current_context)

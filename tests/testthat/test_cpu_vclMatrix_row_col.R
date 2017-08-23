@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrix Row and Column Methods")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -404,3 +406,5 @@ test_that("CPU vclMatrix Double Precision Block Row Means",
     expect_equal(gpuC[], RMS, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double rowMeans not equivalent")  
 })
+
+setContext(current_context)

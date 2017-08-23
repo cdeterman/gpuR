@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix classes")
 
+current_context <- set_device_context("gpu")
+
 set.seed(123)
 A <- matrix(seq.int(100), nrow=5)
 D <- matrix(rnorm(100), nrow=5)
@@ -186,3 +188,4 @@ test_that("vclMatrix double scalar initializers", {
     expect_is(vclA, "dvclMatrix")
 })
 
+setContext(current_context)

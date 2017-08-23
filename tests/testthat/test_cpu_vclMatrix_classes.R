@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrix classes")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 A <- matrix(seq.int(100), nrow=5)
 D <- matrix(rnorm(100), nrow=5)
@@ -180,3 +182,5 @@ test_that("CPU vclMatrix double scalar initializers", {
                       info = "scalar double dimensions not equivalent")
     expect_is(vclA, "dvclMatrix")
 })
+
+setContext(current_context)

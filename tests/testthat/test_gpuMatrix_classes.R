@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix classes")
 
+current_context <- set_device_context("gpu")
+
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
 D <- matrix(rnorm(100), 10)
@@ -248,3 +250,5 @@ test_that("dgpuMatrixBlock class present", {
     expect_equal(dim(gpuA), dim(A), 
                  info = "source dgpuMatrix dimensions been changed")
 })
+
+setContext(current_context)

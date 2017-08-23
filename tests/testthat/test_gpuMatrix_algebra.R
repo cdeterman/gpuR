@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix algebra")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -1127,3 +1129,5 @@ test_that("gpuMatrix Diagonal access", {
     expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
                  info="set double matrix diagonal elements not equivalent") 
 })
+
+setContext(current_context)

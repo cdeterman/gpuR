@@ -4,12 +4,12 @@
 \alias{deviceType}
 \title{Check device type}
 \usage{
-deviceType(platform_idx = 1L, device_idx = 1L)
+deviceType(device_idx = NULL, context_idx = currentContext())
 }
 \arguments{
-\item{platform_idx}{An integer value indicating which platform to query.}
-
 \item{device_idx}{An integer value indicating which device to query.}
+
+\item{context_idx}{An integer value indicating which context to query.}
 }
 \value{
 A character string indicating the device type

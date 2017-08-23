@@ -52,11 +52,11 @@ setMethod('gpuMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -89,7 +89,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuMatrix",
                                     address = getRmatEigenAddress(data, 
                                                               nrow(data),
@@ -116,7 +116,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             dcomplex = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("zgpuMatrix",
                                     address = getRmatEigenAddress(data, 
                                                                   nrow(data),
@@ -160,11 +160,11 @@ setMethod('gpuMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -188,7 +188,7 @@ setMethod('gpuMatrix',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuMatrix",
                                     address = emptyEigenXptr(nrow, ncol, 8L, context_index - 1L),
                                     .context_index = context_index,
@@ -229,11 +229,11 @@ setMethod('gpuMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -250,7 +250,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
-                                    assert_has_double(platform_index, device_index)
+                                    assert_has_double(device_index, context_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L, context_index - 1L),
                                         .context_index = context_index,
@@ -275,7 +275,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
-                                    assert_has_double(platform_index, device_index)
+                                    assert_has_double(device_index, context_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L, context_index - 1L),
                                         .context_index = context_index,
@@ -316,11 +316,11 @@ setMethod('gpuMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -345,7 +345,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
-                                    assert_has_double(platform_index, device_index)
+                                    assert_has_double(device_index, context_index)
                                     new("dgpuMatrix",
                                         address = sexpVecToEigenXptr(data, nrow, ncol, 8L, context_index - 1L),
                                         .context_index = context_index,
@@ -378,7 +378,7 @@ setMethod('gpuMatrix',
                                         .device = device_name)
                                 },
                                 double = {
-                                    assert_has_double(platform_index, device_index)
+                                    assert_has_double(device_index, context_index)
                                     new("dgpuMatrix",
                                         address = initScalarEigenXptr(data, nrow, ncol, 8L, context_index - 1L),
                                         .context_index = context_index,

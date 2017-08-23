@@ -46,11 +46,11 @@ setMethod('vclMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -62,8 +62,7 @@ setMethod('vclMatrix',
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name,
-                                    .context = context_ptr)
+                                    .device = device_name)
                             },
                             float = {
                                 new("fvclMatrix", 
@@ -72,19 +71,17 @@ setMethod('vclMatrix',
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name,
-                                    .context = context_ptr)
+                                    .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclMatrix",
                                     address = cpp_sexp_mat_to_vclMatrix(data, 8L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
                                     .device_index = device_index,
-                                    .device = device_name,
-                                    .context = context_ptr)
+                                    .device = device_name)
                             },
                             fcomplex = {
                                 new("cvclMatrix", 
@@ -96,7 +93,7 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             dcomplex = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("zvclMatrix",
                                     address = cpp_sexp_mat_to_vclMatrix(data, 12L, context_index - 1),
                                     .context_index = context_index,
@@ -132,11 +129,11 @@ setMethod('vclMatrix',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -160,7 +157,7 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclMatrix",
                                     address = cpp_zero_vclMatrix(nrow, ncol, 8L, context_index - 1),
                                     .context_index = context_index,

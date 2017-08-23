@@ -13,11 +13,11 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           "cpu" = cpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           stop("Unrecognized device type")
     )
     
@@ -35,7 +35,7 @@ vclMatInitNumVec <- function(data, nrow, ncol, type, ctx_id){
                           .device = device_name)
                   },
                   double = {
-                      assert_has_double(platform_index, device_index)
+                      assert_has_double(device_index, context_index)
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
@@ -67,11 +67,11 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           "cpu" = cpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           stop("Unrecognized device type")
     )
     
@@ -92,7 +92,7 @@ vclMatInitNumScalar <- function(data, nrow, ncol, type, ctx_id){
                       )
                   },
                   double = {
-                      assert_has_double(platform_index, device_index)
+                      assert_has_double(device_index, context_index)
                       new("dvclMatrix",
                           address = 
                               cpp_scalar_vclMatrix(
@@ -127,11 +127,11 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           "cpu" = cpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           stop("Unrecognized device type")
     )
     
@@ -159,7 +159,7 @@ vclMatInitIntVec <- function(data, nrow, ncol, type, ctx_id){
                           .device = device_name)
                   },
                   double = {
-                      assert_has_double(platform_index, device_index)
+                      assert_has_double(device_index, context_index)
                       new("dvclMatrix",
                           address = vectorToMatVCL(data, 
                                                    nrow, ncol, 
@@ -191,11 +191,11 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
     device_type <- device$device_type
     device_name <- switch(device_type,
                           "gpu" = gpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           "cpu" = cpuInfo(
-                              platform_idx = platform_index,
-                              device_idx = as.integer(device_index))$deviceName,
+                              device_idx = as.integer(device_index),
+                              context_idx = context_index)$deviceName,
                           stop("Unrecognized device type")
     )
     
@@ -229,7 +229,7 @@ vclMatInitIntScalar <- function(data, nrow, ncol, type, ctx_id){
                       )
                   },
                   double = {
-                      assert_has_double(platform_index, device_index)
+                      assert_has_double(device_index, context_index)
                       new("dvclMatrix",
                           address = 
                               cpp_scalar_vclMatrix(

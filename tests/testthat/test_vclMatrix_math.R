@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix math operations")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -391,5 +393,5 @@ test_that("vclMatrix Double Precision Matrix sign", {
                  check.attributes=FALSE)  
 })
 
-
+setContext(current_context)
 

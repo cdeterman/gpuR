@@ -41,11 +41,11 @@ setMethod('vclVector',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -69,7 +69,7 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclVector",
                                     address = vectorToVCL(data, 8L, context_index - 1),
                                     .context_index = context_index,
@@ -108,11 +108,11 @@ setMethod('vclVector',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -136,7 +136,7 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclVector",
                                     address = emptyVecVCL(length, 8L, context_index - 1),
                                     .context_index = context_index,
@@ -175,11 +175,11 @@ setMethod('vclVector',
               device_type <- device$device_type
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               
@@ -203,7 +203,7 @@ setMethod('vclVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclVector",
                                     address = cpp_scalar_vclVector(data, length, 8L, context_index - 1),
                                     .context_index = context_index,
@@ -251,11 +251,11 @@ setMethod('vclVector',
               device_type <- deviceType(platform_index, device_index)
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     "cpu" = cpuInfo(
-                                        platform_idx = platform_index,
-                                        device_idx = as.integer(device_index))$deviceName,
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
               platform_name <- platformInfo(platform_index)$platformName

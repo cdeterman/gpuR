@@ -1,6 +1,8 @@
 library(gpuR)
 context("deepcopy")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -269,3 +271,4 @@ test_that("Check Single Precision vclMatrix deepcopy from block source", {
                  info = "float deepcopy not distinct from source")
 })
 
+setContext(current_context)
