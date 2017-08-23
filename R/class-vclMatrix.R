@@ -46,8 +46,7 @@ setClass('vclMatrix',
                    .platform_index = "integer",
                    .platform = "character",
                    .device_index = "integer",
-                   .device = "character",
-                   .context = "externalptr"))
+                   .device = "character"))
 
 
 #' @title ivclMatrix Class
