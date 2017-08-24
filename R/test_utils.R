@@ -105,6 +105,7 @@ has_multiple_double_skip <- function() {
 }
 
 
+#' @export
 set_device_context <- function(type){
     
     current_context <- currentContext()
