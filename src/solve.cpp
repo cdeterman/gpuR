@@ -35,8 +35,6 @@ T cpp_gpuMatrix_det(
     // solution of a full system right into the load vector vcl_rhs:
     viennacl::linalg::lu_factorize(*vcl_A);
     
-    std::cout << *vcl_A << std::endl;
-    
     viennacl::vector<T> vA = viennacl::diag(*vcl_A);
     
     viennacl::fast_copy(vA.begin(), vA.end(), &(A[0]));
