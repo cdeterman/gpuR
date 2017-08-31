@@ -67,7 +67,7 @@ before_install:
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
   - |
     cd ..
-    git clone -b release_0_14 https://github.com/pocl/pocl.git pocl
+    git clone https://github.com/pocl/pocl.git pocl
     cd pocl
     mkdir build
     cd build
