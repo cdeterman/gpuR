@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -400,6 +402,20 @@ test_that("CPU gpuMatrix Single Precision transpose", {
                  info="transposed float matrix elements not equivalent") 
 })
 
+test_that("CPU gpuMatrix Single Precision determinant", {
+    
+    has_cpu_skip()
+    
+    d <- det(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpud <- det(fgpuA)
+    
+    expect_is(fgpud, "numeric")
+    expect_equal(fgpud, d, tolerance=1e-07, 
+                 info="float determinants not equivalent") 
+})
+
 # Integer tests
 
 test_that("CPU gpuMatrix Integer Matrix multiplication", {
@@ -644,8 +660,8 @@ test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
     
-    Apow <- matrix(seq.int(9), ncol=3, nrow=3)
-    Bpow <- matrix(2, ncol = 3, nrow = 3)
+    Apow <- matrix(seq.int(16), ncol=4, nrow=4)
+    Bpow <- matrix(2, ncol = 4, nrow = 4)
     C <- Apow ^ Bpow
     
     fgpuA <- gpuMatrix(Apow, type="integer")
@@ -657,13 +673,13 @@ test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- Aint ^ fgpuB
+    fgpuC <- Apow ^ fgpuB
     
     expect_is(fgpuC, "igpuMatrix")
     expect_equal(fgpuC[,], C,
                  info="integer matrix elements not equivalent")
     
-    fgpuC <- fgpuA ^ Bint
+    fgpuC <- fgpuA ^ Bpow
     
     expect_is(fgpuC, "igpuMatrix")
     expect_equal(fgpuC[,], C,
@@ -698,7 +714,6 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     
     has_cpu_skip()
     
-    
     C <- A %*% B
     
     dgpuA <- gpuMatrix(A, type="double")
@@ -726,7 +741,6 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
 test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
     
     has_cpu_skip()
-    
     
     C <- A - B
     
@@ -757,7 +771,6 @@ test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {
 test_that("CPU gpuMatrix Double Precision Matrix Addition", {
     
     has_cpu_skip()
-    
     
     C <- A + B
     
@@ -1122,3 +1135,20 @@ test_that("CPU gpuMatrix Diagonal access", {
     expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
                  info="set double matrix diagonal elements not equivalent") 
 })
+
+test_that("CPU gpuMatrix Double Precision determinant", {
+    
+    has_cpu_skip()
+    
+    d <- det(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    fgpud <- det(fgpuA)
+    
+    expect_is(fgpud, "numeric")
+    expect_equal(fgpud, d, tolerance=.Machine$double.eps^0.5, 
+                 info="double determinants not equivalent") 
+})
+
+setContext(current_context)
+

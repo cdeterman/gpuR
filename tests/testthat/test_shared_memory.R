@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclVector shared memory")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -65,3 +67,5 @@ test_that("Non-Shared memory between vclMatrix & vclVector", {
                  info="double elements not equivalent")
     expect_equivalent(length(gpuB), length(gpuA))
 })
+
+setContext(current_context)

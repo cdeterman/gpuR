@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrixBlock algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -665,3 +667,4 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
     expect_error(crossprod(dvclXS, dvclZS))
 })
 
+setContext(current_context)

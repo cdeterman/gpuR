@@ -1,6 +1,8 @@
 library(gpuR)
 context("Switching GPU vclMatrix Distance Computations")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -288,3 +290,4 @@ test_that("Switching GPU vclMatrix Double Precision Pairwise Squared Euclidean D
                  info = "context index has been change unintentionally")
 })
 
+setContext(current_context)

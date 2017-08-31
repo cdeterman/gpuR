@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuVector algebra")
 
+current_context <- set_device_context("gpu")
+
 set.seed(123)
 ORDER <- 4
 Aint <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -579,3 +581,5 @@ test_that("gpuVector Double precision comparison operator", {
     expect_true(all(gpuA == A), 
                 info = "gpuVector/vector == operator not working correctly")
 })
+
+setContext(current_context)

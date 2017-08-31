@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU Inplace Operations")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -307,3 +309,5 @@ test_that("CPU inplace vclVector Elementwise Multiplication", {
     
 })
 
+
+setContext(current_context)

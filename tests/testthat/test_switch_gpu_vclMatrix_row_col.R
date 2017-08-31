@@ -1,6 +1,8 @@
 library(gpuR)
 context("Switching GPU vclMatrix Row and Column Methods")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -547,3 +549,5 @@ test_that("Switching GPU vclMatrix Double Precision Block Row Means",
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
+
+setContext(current_context)

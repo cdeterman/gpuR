@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrixBlock algebra")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -678,3 +680,5 @@ test_that("gpuMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dgpuXS, dgpuZS))
 })
+
+setContext(current_context)

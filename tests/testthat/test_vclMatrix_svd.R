@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix svd decomposition")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -69,3 +71,5 @@ test_that("vclMatrix Double Precision Matrix SVD Decomposition",
               expect_error(svd(fgpuA), "non-square matrix not currently supported for 'svd'",
                            info = "svd shouldn't accept non-square matrices")
           })
+
+setContext(current_context)

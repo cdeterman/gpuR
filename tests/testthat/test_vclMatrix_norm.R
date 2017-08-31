@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix norm")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -105,3 +107,5 @@ test_that("CPU vclMatrix Double Precision Matrix Norms",
               # expect_equal(gs_norm_nsq, s_norm_nsq, tolerance=.Machine$double.eps^0.5, 
               #              info="double matrix spectral norm not equivalent") 
           })
+
+setContext(current_context)

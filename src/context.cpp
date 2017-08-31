@@ -35,7 +35,7 @@ void initContexts(){
     
         for(unsigned int gpu_idx = 0; gpu_idx < devices.size(); gpu_idx++) {
             
-            Rcpp::Rcout << "  - gpu index: " << gpu_idx << std::endl;
+            Rcpp::Rcout << "  - context device index: " << gpu_idx << std::endl;
             viennacl::ocl::set_context_platform_index(id, plat_idx);
             viennacl::ocl::setup_context(id, devices[gpu_idx]);
             Rcpp::Rcout << "    - " << devices[gpu_idx].name() << std::endl;
@@ -161,7 +161,7 @@ listContexts()
 ////            Rcout << "switched device successfully" << std::endl;
             
             // Get device info
-            device_index[id] = gpu_idx;
+            device_index[id] = 0;
             device_name[id] = devices[gpu_idx].name();
             // device_name[id] = viennacl::ocl::current_device().name();
             

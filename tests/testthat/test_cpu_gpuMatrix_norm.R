@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix norm")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 

@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix classes")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
 D <- matrix(rnorm(100), 10)
@@ -190,3 +192,5 @@ test_that("CPU gpuMatrix double scalar initializers", {
     expect_is(vclA, "dgpuMatrix")
     expect_is(ivclA, "dgpuMatrix")
 })
+
+setContext(current_context)

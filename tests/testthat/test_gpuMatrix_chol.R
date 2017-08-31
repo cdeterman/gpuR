@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix chol decomposition")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -48,3 +50,5 @@ test_that("gpuMatrix Double Precision Matrix Cholesky Decomposition",
               expect_error(chol(fgpuA), "'x' must be a square matrix",
                            info = "chol shouldn't accept non-square matrices")
           })
+
+setContext(current_context)

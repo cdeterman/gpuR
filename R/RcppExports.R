@@ -56,20 +56,20 @@ cpp_vclVector_pmax <- function(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, ma
     invisible(.Call('_gpuR_cpp_vclVector_pmax', PACKAGE = 'gpuR', ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, type_flag, ctx_id))
 }
 
-cpp_deviceType <- function(platform_idx_, gpu_idx_) {
-    .Call('_gpuR_cpp_deviceType', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
+cpp_deviceType <- function(gpu_idx_, ctx_idx) {
+    .Call('_gpuR_cpp_deviceType', PACKAGE = 'gpuR', gpu_idx_, ctx_idx)
 }
 
 cpp_detectGPUs <- function(platform_idx) {
     .Call('_gpuR_cpp_detectGPUs', PACKAGE = 'gpuR', platform_idx)
 }
 
-cpp_gpuInfo <- function(platform_idx_, gpu_idx_) {
-    .Call('_gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', platform_idx_, gpu_idx_)
+cpp_gpuInfo <- function(gpu_idx_, ctx_idx) {
+    .Call('_gpuR_cpp_gpuInfo', PACKAGE = 'gpuR', gpu_idx_, ctx_idx)
 }
 
-cpp_cpuInfo <- function(platform_idx_, cpu_idx_) {
-    .Call('_gpuR_cpp_cpuInfo', PACKAGE = 'gpuR', platform_idx_, cpu_idx_)
+cpp_cpuInfo <- function(cpu_idx_, ctx_idx) {
+    .Call('_gpuR_cpp_cpuInfo', PACKAGE = 'gpuR', cpu_idx_, ctx_idx)
 }
 
 #' @title Current Device Information

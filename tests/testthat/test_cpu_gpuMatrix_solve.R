@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix solve")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -168,3 +170,5 @@ test_that("CPU gpuMatrix Integer Inversion not supported",
               expect_error(solve(fgpuX, iMat), "Integer solve not implemented",
                            info = "solve shouldn't accept integer matrices")
           })
+
+setContext(current_context)

@@ -143,14 +143,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_deviceType
-SEXP cpp_deviceType(SEXP platform_idx_, SEXP gpu_idx_);
-RcppExport SEXP _gpuR_cpp_deviceType(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
+SEXP cpp_deviceType(SEXP gpu_idx_, int ctx_idx);
+RcppExport SEXP _gpuR_cpp_deviceType(SEXP gpu_idx_SEXP, SEXP ctx_idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_deviceType(platform_idx_, gpu_idx_));
+    Rcpp::traits::input_parameter< int >::type ctx_idx(ctx_idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_deviceType(gpu_idx_, ctx_idx));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -166,26 +166,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_gpuInfo
-List cpp_gpuInfo(SEXP platform_idx_, SEXP gpu_idx_);
-RcppExport SEXP _gpuR_cpp_gpuInfo(SEXP platform_idx_SEXP, SEXP gpu_idx_SEXP) {
+List cpp_gpuInfo(SEXP gpu_idx_, int ctx_idx);
+RcppExport SEXP _gpuR_cpp_gpuInfo(SEXP gpu_idx_SEXP, SEXP ctx_idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type gpu_idx_(gpu_idx_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_gpuInfo(platform_idx_, gpu_idx_));
+    Rcpp::traits::input_parameter< int >::type ctx_idx(ctx_idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_gpuInfo(gpu_idx_, ctx_idx));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_cpuInfo
-List cpp_cpuInfo(SEXP platform_idx_, SEXP cpu_idx_);
-RcppExport SEXP _gpuR_cpp_cpuInfo(SEXP platform_idx_SEXP, SEXP cpu_idx_SEXP) {
+List cpp_cpuInfo(SEXP cpu_idx_, int ctx_idx);
+RcppExport SEXP _gpuR_cpp_cpuInfo(SEXP cpu_idx_SEXP, SEXP ctx_idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type platform_idx_(platform_idx_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type cpu_idx_(cpu_idx_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_cpuInfo(platform_idx_, cpu_idx_));
+    Rcpp::traits::input_parameter< int >::type ctx_idx(ctx_idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_cpuInfo(cpu_idx_, ctx_idx));
     return rcpp_result_gen;
 END_RCPP
 }

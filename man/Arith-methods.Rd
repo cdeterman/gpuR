@@ -25,6 +25,8 @@
 \alias{Arith,vclVector,vclMatrix-method}
 \alias{Arith,gpuMatrix,gpuMatrix-method}
 \alias{Arith-gpuR-method}
+\alias{Arith,gpuMatrix,matrix-method}
+\alias{Arith,matrix,gpuMatrix-method}
 \alias{Arith,gpuMatrix,numeric-method}
 \alias{Arith,numeric,gpuMatrix-method}
 \alias{Arith,gpuMatrix,missing-method}
@@ -63,6 +65,10 @@
 \S4method{Arith}{vclVector,vclMatrix}(e1, e2)
 
 \S4method{Arith}{gpuMatrix,gpuMatrix}(e1, e2)
+
+\S4method{Arith}{gpuMatrix,matrix}(e1, e2)
+
+\S4method{Arith}{matrix,gpuMatrix}(e1, e2)
 
 \S4method{Arith}{gpuMatrix,numeric}(e1, e2)
 

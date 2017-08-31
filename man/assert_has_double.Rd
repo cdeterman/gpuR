@@ -4,13 +4,13 @@
 \alias{assert_has_double}
 \title{Does device have 'double' support?}
 \usage{
-assert_has_double(plat_idx, device_idx,
+assert_has_double(device_idx, context_idx,
   severity = getOption("assertive.severity", "stop"))
 }
 \arguments{
-\item{plat_idx}{An integer indicating which platform to query}
-
 \item{device_idx}{An integer indicating which device to query}
+
+\item{context_idx}{An integer indicating which context to query}
 
 \item{severity}{How severe should the consequences of the assertion be?}
 }

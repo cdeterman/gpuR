@@ -3,18 +3,21 @@
 
 #' @title Check device type
 #' @description Check what type a device is given platform and device indices
-#' @param platform_idx An integer value indicating which platform to query.
 #' @param device_idx An integer value indicating which device to query.
+#' @param context_idx An integer value indicating which context to query.
 #' @return A character string indicating the device type
 #' @export
-deviceType <- function(platform_idx = 1L, device_idx = 1L)
+deviceType <- function(device_idx = NULL,
+                       context_idx = currentContext())
 {
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
-    assert_is_integer(device_idx)
-    assert_all_are_positive(device_idx)
+    assert_is_integer(context_idx)
     
-    out <- cpp_deviceType(platform_idx, device_idx)
+    if(!is.null(device_idx)){
+        assert_is_integer(device_idx)
+        assert_all_are_positive(device_idx)
+    }
+    
+    out <- cpp_deviceType(device_idx, context_idx - 1L)
     
     return(out)
 }
@@ -116,8 +119,8 @@ detectGPUs <- function(platform_idx=NULL){
 
 #' @title Device Information
 #' @description Get basic information about selected device (e.g. GPU)
-#' @param platform_idx An integer value indicating which platform to query.
 #' @param device_idx An integer value indicating which device to query.
+#' @param device_idx An integer value indicating which context to query.
 #' @return \item{deviceName}{Device Name}
 #' @return \item{deviceVendor}{Device Vendor}
 #' @return \item{numberOfCores}{Number of Computing Units 
@@ -142,54 +145,52 @@ detectGPUs <- function(platform_idx=NULL){
 #' @rdname deviceInfo
 #' @aliases gpuInfo
 #' @export
-gpuInfo <- function(platform_idx=NULL, device_idx=NULL){
+gpuInfo <- function(device_idx=NULL,
+                    context_idx = currentContext()){
     
-    if(detectGPUs(platform_idx) == 0){
-        stop("No GPUs found on platform")
+    ctxs <- listContexts()
+    if(nrow(ctxs[ctxs$context == context_idx & ctxs$device_type == "gpu",]) == 0){
+        stop("No GPUs found in context")
     }
     
-    if(!is.null(platform_idx) && !is.null(device_idx)){
-        assert_is_integer(platform_idx)
-        assert_all_are_positive(platform_idx)
+    if(!is.null(device_idx)){
         assert_is_integer(device_idx)
         assert_all_are_positive(device_idx)
         
-        if(device_idx - 1L > detectGPUs(platform_idx)){
-            stop("Device index out of range on platform")
+        if(device_idx > 1L){
+            stop("multiple devices on contexts not currently supported")
         }
-        
     }else{
         contexts <- listContexts()
         idx <- which(contexts$device_type == 'gpu')
         if(length(idx) == 0){
             stop("No GPUs found in intialized contexts")
         }else{
-            platform_idx <- contexts$platform_index[idx[1]] + 1L
             device_idx <- contexts$device_index[idx[1]] + 1L
         }
     }
     
-    out <- cpp_gpuInfo(platform_idx, device_idx)
+    out <- cpp_gpuInfo(device_idx, context_idx - 1L)
     return(out)
 }
 
 #' @rdname deviceInfo
 #' @aliases cpuInfo
 #' @export
-cpuInfo <- function(platform_idx=NULL, device_idx=NULL){
+cpuInfo <- function(device_idx=NULL,
+                    context_idx = currentContext()){
     
-    if(detectCPUs(platform_idx) == 0){
-        stop("No CPUs found on platform")
+    ctxs <- listContexts()
+    if(nrow(ctxs[ctxs$context == context_idx & ctxs$device_type == "cpu",]) == 0){
+        stop("No CPUs found in context")
     }
     
-    if(!is.null(platform_idx) && !is.null(device_idx)){
-        assert_is_integer(platform_idx)
-        assert_all_are_positive(platform_idx)
+    if(!is.null(device_idx)){
         assert_is_integer(device_idx)
         assert_all_are_positive(device_idx)
         
-        if(device_idx - 1L > detectCPUs(platform_idx)){
-            stop("Device index out of range on platform")
+        if(device_idx > 1L){
+            stop("multiple devices on contexts not currently supported")
         }
         
     }else{
@@ -203,7 +204,7 @@ cpuInfo <- function(platform_idx=NULL, device_idx=NULL){
         }
     }
     
-    out <- cpp_cpuInfo(platform_idx, device_idx)
+    out <- cpp_cpuInfo(device_idx, context_idx - 1L)
     
     if(Sys.info()["sysname"]=='Darwin'){
         out$maxWorkGroupSize <- 1
@@ -233,24 +234,23 @@ platformInfo <- function(platform_idx=1L){
 #' @title Check GPU double precision support
 #' @description This function checks the GPU device extensions for the
 #' variable cl_khr_fp64 which means the device supports double precision.
-#' @param platform_idx An integer value indicating which platform to query.
 #' @param gpu_idx An integer value indicating which gpu to query.
+#' @param context_idx An integer value indicating which context to query.
 #' @return A boolean designating whether the device supports double precision
 #' @seealso \link{gpuInfo}
 #' @export
-deviceHasDouble <- function(platform_idx=1L, gpu_idx=1L){
-    assert_is_integer(platform_idx)
-    assert_all_are_positive(platform_idx)
+deviceHasDouble <- function(gpu_idx=currentDevice()$device_index,
+                            context_idx = currentContext()){
     assert_is_integer(gpu_idx)
     assert_all_are_positive(gpu_idx)
     
-    device_type <- deviceType(platform_idx, gpu_idx)
+    device_type <- deviceType(gpu_idx, context_idx)
     
     out <- switch(device_type,
-                  "gpu" = gpuInfo(platform_idx = as.integer(platform_idx),
-                                  device_idx = as.integer(gpu_idx))$double_support,
-                  "cpu" = cpuInfo(platform_idx = as.integer(platform_idx),
-                                  device_idx = as.integer(gpu_idx))$double_support,
+                  "gpu" = gpuInfo(device_idx = as.integer(gpu_idx),
+                                  context_idx = context_idx)$double_support,
+                  "cpu" = cpuInfo(device_idx = as.integer(gpu_idx),
+                                  context_idx = context_idx)$double_support,
                   stop("Unrecognized device type")
     )
     

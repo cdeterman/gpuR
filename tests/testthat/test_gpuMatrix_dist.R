@@ -1,6 +1,8 @@
 library(gpuR)
 context("gpuMatrix Distance Computations")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -315,3 +317,4 @@ test_that("gpuMatrix Integer Precision Pairwise Squared Euclidean Distance",
           })
 
 
+setContext(current_context)

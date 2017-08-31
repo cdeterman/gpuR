@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuVector Utility Functions")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -131,3 +133,4 @@ test_that("gpuVector as.vector method", {
               info = "integer as.vector not producing 'vector' class")
 })
 
+setContext(current_context)

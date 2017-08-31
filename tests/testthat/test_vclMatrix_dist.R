@@ -1,6 +1,8 @@
 library(gpuR)
 context("vclMatrix Distance Computations")
 
+current_context <- set_device_context("gpu")
+
 # set seed
 set.seed(123)
 
@@ -315,4 +317,6 @@ test_that("vclMatrix Integer Precision Pairwise Squared Euclidean Distance",
               #              info="integer squared euclidean pairwise distances not equivalent",
               #              check.attributes=FALSE) 
           })
+
+setContext(current_context)
 

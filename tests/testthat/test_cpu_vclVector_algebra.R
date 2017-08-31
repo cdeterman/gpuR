@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclVector algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -495,3 +497,5 @@ test_that("CPU vclVector Double Precision Outer Product ", {
     expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps^0.5,
                  info="double vcl vector elements not equivalent")
 })
+
+setContext(current_context)
