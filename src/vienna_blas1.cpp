@@ -340,6 +340,8 @@ void cpp_gpuVector_elem_pow(
     
     vcl_C = viennacl::linalg::element_pow(vcl_A, vcl_B);
     
+    std::cout << vcl_C << std::endl;
+    
     // viennacl::copy(vcl_C, Cm);
     viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
 }
