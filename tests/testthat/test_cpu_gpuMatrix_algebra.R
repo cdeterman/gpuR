@@ -402,6 +402,20 @@ test_that("CPU gpuMatrix Single Precision transpose", {
                  info="transposed float matrix elements not equivalent") 
 })
 
+test_that("CPU gpuMatrix Single Precision determinant", {
+    
+    has_cpu_skip()
+    
+    d <- det(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpud <- det(fgpuA)
+    
+    expect_is(fgpud, "numeric")
+    expect_equal(fgpud, d, tolerance=1e-07, 
+                 info="float determinants not equivalent") 
+})
+
 # Integer tests
 
 test_that("CPU gpuMatrix Integer Matrix multiplication", {
@@ -1120,6 +1134,20 @@ test_that("CPU gpuMatrix Diagonal access", {
     
     expect_equal(fgpuA[,], A, tolerance=.Machine$double.eps^0.5, 
                  info="set double matrix diagonal elements not equivalent") 
+})
+
+test_that("CPU gpuMatrix Double Precision determinant", {
+    
+    has_cpu_skip()
+    
+    d <- det(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    fgpud <- det(fgpuA)
+    
+    expect_is(fgpud, "numeric")
+    expect_equal(fgpud, d, tolerance=.Machine$double.eps^0.5, 
+                 info="double determinants not equivalent") 
 })
 
 setContext(current_context)
