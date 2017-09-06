@@ -290,7 +290,7 @@ test_that("CPU gpuMatrix Single Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0)
     fgpu_min <- pmin(fgpuA, 0)
     
-    expect_is(fgpu_max, "numeric")
+    expect_is(fgpu_max, "gpuMatrix")
     expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
                  info="max float matrix element not equivalent")  
     expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
@@ -303,7 +303,7 @@ test_that("CPU gpuMatrix Single Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0, 1)
     fgpu_min <- pmin(fgpuA, 0, 1)
     
-    expect_is(fgpu_max, "numeric")
+    expect_is(fgpu_max, "gpuMatrix")
     expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
                  info="max float matrix element not equivalent")  
     expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
@@ -322,7 +322,7 @@ test_that("CPU gpuMatrix Double Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0)
     fgpu_min <- pmin(fgpuA, 0)
     
-    expect_is(fgpu_max, "numeric")
+    expect_is(fgpu_max, "gpuMatrix")
     expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
                  info="max double matrix element not equivalent") 
     expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
@@ -335,7 +335,7 @@ test_that("CPU gpuMatrix Double Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0, 1)
     fgpu_min <- pmin(fgpuA, 0, 1)
     
-    expect_is(fgpu_max, "numeric")
+    expect_is(fgpu_max, "gpuMatrix")
     expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
                  info="max double matrix element not equivalent") 
     expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
