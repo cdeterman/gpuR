@@ -4,7 +4,12 @@ gpuMatSign <- function(A){
     
     type <- typeof(A)
     
-    B <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclMatrix")){
+        B <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }else{
+        B <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
+    
     
     maxWorkGroupSize <- 
         switch(deviceType(B@.platform_index, B@.device_index),
@@ -78,7 +83,12 @@ gpuVecSign <- function(A){
     
     type <- typeof(A)
     
-    B <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)
+    if(is(B, "vclVector")){
+        B <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)    
+    }else{
+        B <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }
+    
     
     maxWorkGroupSize <- 
         switch(deviceType(B@.platform_index, B@.device_index),
