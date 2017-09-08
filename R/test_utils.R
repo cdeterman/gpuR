@@ -129,7 +129,8 @@ pocl_check <- function(){
     
     if(grepl('pocl', p$platformName)){
         v <- p$platformVersion
-        version <- as.numeric(regmatches(v, regexpr("[1-9]\\d*(\\.\\d+)?", v)))
+        v_split <- unlist(strsplit(v, "pocl"))
+        version <- as.numeric(regmatches(v_split[length(v_split)], regexpr("[1-9]\\d*(\\.\\d+)?", v)))
         
         print(paste0("My platform version is: ", version))
         
