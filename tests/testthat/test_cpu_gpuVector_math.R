@@ -111,6 +111,7 @@ test_that("CPU gpuVector Double Precision Matrix Element-Wise Trignometry", {
 test_that("CPU gpuVector Single Precision Element-Wise Logs", {
     
     has_cpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -136,6 +137,7 @@ test_that("CPU gpuVector Single Precision Element-Wise Logs", {
 test_that("CPU gpuVector Double Precision Element-Wise Logs", {
     
     has_cpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))

@@ -121,3 +121,19 @@ set_device_context <- function(type){
     }
     return(current_context)
 }
+
+
+#' @export
+pocl_check <- function(){
+    p <- platformInfo()
+    
+    if(grepl('pocl', p$platformName)){
+        v <- p$platformVersion
+        version <- as.numeric(regmatches(v, regexpr("[1-9]\\d*(\\.\\d+)?", v)))
+        
+        if(version <= 0.15){
+            testthat::skip("pocl version too old")
+        }
+    }
+    
+}

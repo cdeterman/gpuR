@@ -266,6 +266,7 @@ test_that("CPU gpuVector Single Precision Scalar Division", {
 test_that("CPU gpuVector Single Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -513,6 +514,7 @@ test_that("CPU gpuVector Double Precision Scalar Division", {
 test_that("CPU gpuVector Double Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
