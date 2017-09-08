@@ -131,6 +131,8 @@ pocl_check <- function(){
         v <- p$platformVersion
         version <- as.numeric(regmatches(v, regexpr("[1-9]\\d*(\\.\\d+)?", v)))
         
+        print(paste0("My platform version is: ", version))
+        
         if(version <= 0.15){
             testthat::skip("pocl version too old")
         }
