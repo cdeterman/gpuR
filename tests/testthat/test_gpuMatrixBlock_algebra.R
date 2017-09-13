@@ -238,6 +238,7 @@ test_that("gpuMatrix Single Precision Scalar Matrix Division", {
 test_that("gpuMatrix Single Precision Matrix Element-Wise Power", {
     
     has_gpu_skip()
+    pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
@@ -575,6 +576,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Power", {
     
     has_gpu_skip()
 	has_double_skip()
+	pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
