@@ -83,7 +83,7 @@ gpuVecSign <- function(A){
     
     type <- typeof(A)
     
-    if(is(B, "vclVector")){
+    if(is(A, "vclVector")){
         B <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)    
     }else{
         B <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
