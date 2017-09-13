@@ -127,7 +127,7 @@ set_device_context <- function(type){
 pocl_check <- function(){
     p <- platformInfo()
     
-    if(grepl('pocl', p$platformName)){
+    if(p$platformName == "Portable Computing Language"){
         v <- p$platformVersion
         v_split <- unlist(strsplit(v, "pocl"))
         v_sub <- v_split[length(v_split)]
