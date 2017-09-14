@@ -38,7 +38,7 @@ class dynEigenMat {
         
     public:
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A;
-        viennacl::matrix<T> *vclA;
+        // viennacl::matrix<T> *vclA;
         // Eigen::Block<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block;
         
         
@@ -268,7 +268,7 @@ class dynEigenMat {
             return vclMat;
         };
         viennacl::matrix<T> getDeviceData(){
-            return *vclA;
+            return *shptr.get();
         };
         
         // copy to device (w/in class)
@@ -285,8 +285,8 @@ class dynEigenMat {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            vclA = new viennacl::matrix<T>(K, M, ctx=ctx);
-            shptr.reset(vclA);
+            std::shared_ptr<viennacl::matrix<T> > vclA = std::make_shared<viennacl::matrix<T> >(K, M, ctx=ctx);
+            shptr.reset(vclA.get());
             
             viennacl::copy(block, *shptr.get());
         };
@@ -305,8 +305,8 @@ class dynEigenMat {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            vclA = new viennacl::matrix<T>(K, M, ctx=ctx);
-            shptr.reset(vclA);
+            std::shared_ptr<viennacl::matrix<T> > vclA = std::make_shared<viennacl::matrix<T> >(K, M, ctx=ctx);
+            shptr.reset(vclA.get());
             
             viennacl::copy(block, *shptr.get());
         };

@@ -31,6 +31,7 @@ class dynEigenVec {
         // viennacl::vector_base<T> *vclA = new viennacl::vector_base<T>();
         
         dynEigenVec() { } // private default constructor
+        ~dynEigenVec() { } // private default destructor
         dynEigenVec(SEXP A_){
             A = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
             size = A.size();
@@ -73,12 +74,10 @@ class dynEigenVec {
         //     ptr = dynVec->getPtr();
         // }
         
-        // T* getPtr() { return A.data(); }
-        
         // pointer access
-        Eigen::Matrix<T, Eigen::Dynamic, 1>* getPtr(){
-            return ptr.get();
-        };
+        // Eigen::Matrix<T, Eigen::Dynamic, 1>* getPtr(){
+        //     return ptr.get();
+        // };
         std::shared_ptr<Eigen::Matrix<T, Eigen::Dynamic, 1> > getHostPtr(){
             return ptr;
         };
@@ -128,7 +127,7 @@ class dynEigenVec {
             return vec;
         }
 
-	// copy back to host
+	    // copy back to host
         void to_host(){
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
@@ -142,7 +141,7 @@ class dynEigenVec {
 	        viennacl::fast_copy(vclVec.begin(), vclVec.end(), &(block[0]));
 	    }
         
-	// copy to device (w/in class)
+	    // copy to device (w/in class)
         void to_device(long ctx_in){
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > temp(ptr.get()->data(), size, 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > block(&temp(begin-1), last - begin + 1);
