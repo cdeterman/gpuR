@@ -285,8 +285,7 @@ class dynEigenMat {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            std::shared_ptr<viennacl::matrix<T> > vclA = std::make_shared<viennacl::matrix<T> >(K, M, ctx=ctx);
-            shptr.reset(vclA.get());
+            shptr.reset(new viennacl::matrix<T>(K, M, ctx=ctx));
             
             viennacl::copy(block, *shptr.get());
         };
@@ -305,8 +304,7 @@ class dynEigenMat {
             
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            std::shared_ptr<viennacl::matrix<T> > vclA = std::make_shared<viennacl::matrix<T> >(K, M, ctx=ctx);
-            shptr.reset(vclA.get());
+            shptr.reset(new viennacl::matrix<T>(K, M, ctx=ctx));
             
             viennacl::copy(block, *shptr.get());
         };
