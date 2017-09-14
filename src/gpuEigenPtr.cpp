@@ -24,8 +24,8 @@ template <typename T>
 SEXP 
 sexpVecToEigenVecXptr(SEXP A, const int size)
 {
-    dynEigenVec<T> *vec = new dynEigenVec<T>(A);
-    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    std::shared_ptr<dynEigenVec<T> > vec = std::make_shared<dynEigenVec<T> >(A);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec.get());
     return pVec;
 }
 
