@@ -266,6 +266,7 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Division", {
 test_that("CPU vclMatrix Single Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -660,6 +661,7 @@ test_that("CPU vclMatrix Integer Precision Scalar Matrix Division", {
 test_that("CPU vclMatrix Integer Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     Apow <- matrix(seq.int(9), ncol=3, nrow=3)
     Bpow <- matrix(2, ncol = 3, nrow = 3)
@@ -967,7 +969,7 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Division", {
 test_that("CPU vclMatrix Double Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
-    
+    pocl_check()
     
     C <- A ^ B
     

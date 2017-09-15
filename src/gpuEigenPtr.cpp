@@ -24,7 +24,7 @@ template <typename T>
 SEXP 
 sexpVecToEigenVecXptr(SEXP A, const int size)
 {
-    dynEigenVec<T> *vec = new dynEigenVec<T>(A);
+    dynEigenVec<T> *vec =  new dynEigenVec<T>(A);
     Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
     return pVec;
 }
@@ -188,7 +188,7 @@ sliceGPUvec(const SEXP ptrA, int start, int end)
 {
     XPtr<dynEigenVec<T> > pA(ptrA);
     dynEigenVec<T> *vec = new dynEigenVec<T>();
-    vec->setPtr(pA->getPtr());
+    vec->setHostPtr(pA->getHostPtr());
     vec->setRange(start, end);
     vec->updateSize();
     

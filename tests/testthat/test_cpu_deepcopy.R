@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU deepcopy")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -243,3 +245,5 @@ test_that("CPU Check Double Precision vclMatrix deepcopy", {
     expect_false(isTRUE(all.equal(vclA[], vclB[], tolerance = .Machine$double.eps ^ 0.5)),
                  info = "double deepcopy not distinct from source")
 })
+
+setContext(current_context)

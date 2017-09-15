@@ -266,6 +266,7 @@ test_that("CPU gpuMatrix Single Precision Scalar Matrix Division", {
 test_that("CPU gpuMatrix Single Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -659,6 +660,7 @@ test_that("CPU gpuMatrix Integer Precision Scalar Matrix Division", {
 test_that("CPU gpuMatrix Integer Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     Apow <- matrix(seq.int(16), ncol=4, nrow=4)
     Bpow <- matrix(2, ncol = 4, nrow = 4)
@@ -963,6 +965,7 @@ test_that("CPU gpuMatrix Double Precision Scalar Matrix Division", {
 test_that("CPU gpuMatrix Double Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     
     C <- A ^ B

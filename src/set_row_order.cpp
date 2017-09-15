@@ -31,8 +31,8 @@ cpp_vclVector_permute(
     viennacl::vector<int> vcl_I(indices.size());
     viennacl::copy(indices, vcl_I);
     
-    std::cout << vcl_A.size() << std::endl;
-    std::cout << vcl_A.internal_size() << std::endl;
+    // std::cout << vcl_A.size() << std::endl;
+    // std::cout << vcl_A.internal_size() << std::endl;
         
     // // add kernel to program
     // viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");

@@ -756,11 +756,11 @@ vclFillVectorSliceScalar(
         
         size = ceil((pMat->length() - i)/newdata.size());
         
-        std::cout << i % newdata.size() << std::endl;
+        // std::cout << i % newdata.size() << std::endl;
         
         viennacl::slice s(start[i], stride * newdata.size(), size);
         
-        std::cout << newdata[start[i % newdata.size()]] << std::endl;
+        // std::cout << newdata[start[i % newdata.size()]] << std::endl;
         
         pMat->fill(s, newdata[start[i % newdata.size()]]);    
     }

@@ -115,6 +115,7 @@ test_that("vclVector Double Precision Matrix Element-Wise Trignometry", {
 test_that("vclVector Single Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -141,6 +142,7 @@ test_that("vclVector Double Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
     has_double_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -277,23 +279,23 @@ test_that("vclVector Single Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0)
     fgpu_min <- pmin(fgpuA, 0)
     
-    expect_is(fgpu_max, "numeric")
-    expect_equal(fgpu_max, R_max, tolerance=1e-07, 
+    expect_is(fgpu_max, "fvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
                  info="max float vector element not equivalent")  
-    expect_equal(fgpu_min, R_min, tolerance=1e-07, 
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
                  info="min float vector element not equivalent")  
     
     # multiple operations
-    R_max <- pmax(A, 0, .05)
+    R_max <- pmax(A, 0, .5)
     R_min <- pmin(A, 0, -.2)
     
     fgpu_max <- pmax(fgpuA, 0, 0.5)
     fgpu_min <- pmin(fgpuA, 0, -.2)
     
-    expect_is(fgpu_max, "numeric")
-    expect_equal(fgpu_max, R_max, tolerance=1e-07, 
+    expect_is(fgpu_max, "fvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
                  info="max float vector element not equivalent")  
-    expect_equal(fgpu_min, R_min, tolerance=1e-07, 
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
                  info="min float vector element not equivalent") 
 })
 
@@ -310,24 +312,24 @@ test_that("vclVector Double Precision pmax/pmin", {
     fgpu_max <- pmax(fgpuA, 0)
     fgpu_min <- pmin(fgpuA, 0)
     
-    expect_is(fgpu_max, "numeric")
-    expect_equal(fgpu_max, R_max, tolerance=.Machine$double.eps^0.5, 
+    expect_is(fgpu_max, "dvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
                  info="max double vector element not equivalent") 
-    expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
     
     
     # multiple operations
-    R_max <- pmax(A, 0, .05)
+    R_max <- pmax(A, 0, .5)
     R_min <- pmin(A, 0, -.2)
     
     fgpu_max <- pmax(fgpuA, 0, 0.5)
     fgpu_min <- pmin(fgpuA, 0, -.2)
     
-    expect_is(fgpu_max, "numeric")
-    expect_equal(fgpu_max, R_max, tolerance=.Machine$double.eps^0.5, 
+    expect_is(fgpu_max, "dvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
                  info="max double vector element not equivalent") 
-    expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
 })
 
