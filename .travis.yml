@@ -1,49 +1,43 @@
-#whitelist branches
-branches:
-  only:
-    - master
-    - macosx
-    - develop
-
-language: r
+language: objective-c
+osx_image: xcode8
 
 sudo: required
-warnings_are_errors: false
 
 compiler:
   - g++
 
-r_build_args: --no-build-vignettes --no-manual --no-resave-data
-r_check_args: --no-build-vignettes --no-manual
+env:
+  global:
+    - R_BUILD_ARGS="--no-build-vignettes --no-manual --no-resave-data"
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual"
+    - OPENCL_INC="/Users/travis/build/cdeterman/gpuR/opencl_headers"
 
-r_binary_packages:
-  - devtools
-  - Rcpp
-  - RcppEigen
-  - roxygen2
-  - stringi
-
-r_packages:
-  - assertive
-
-r_github_packages:
-  - cdeterman/RViennaCL
-  - jimhester/covr
-  
 before_install:
+  - brew update
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
-  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update || true
-  - sudo apt-get install -qq mesa-common-dev fglrx fglrx-dev opencl-headers
-  - sudo apt-get install -qq g++-4.8
-  - export CXX="g++-4.8"
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+  - clang -v
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - wget https://www.khronos.org/registry/cl/api/2.1/cl.hpp
+  - pwd
+  - mkdir opencl_headers
+  - mkdir opencl_headers/OpenCL
+  - cp /System/Library/Frameworks/OpenCL.framework/Headers/* opencl_headers/OpenCL/
+  - mv cl.hpp opencl_headers/OpenCL/
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
 
-after_success:
-  - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
-  - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls(line_exclusions = "inst/include/CL/cl.hpp");codecov(line_exclusions = "inst/include/CL/cl.hpp")'
+install:
+  - ./travis-tool.sh install_github cdeterman/RViennaCL
+  - ./travis-tool.sh install_deps 
+
+before_script:
+  - R CMD INSTALL .
+
+script:
+  - ./travis-tool.sh run_tests
+
+after_failure:
+  - ./travis-tool.sh dump_logs
 
 notifications:
   email:
