@@ -11,58 +11,181 @@
 
 
 # GPU axpy wrapper
-gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE){
+gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScalar = FALSE){
     
-    assert_are_identical(A@.context_index, B@.context_index)
-    
-    nrA = nrow(A)
-    ncA = ncol(A)
-    nrB = nrow(B)
-    ncB = ncol(B)
-    
-    type <- typeof(A)
-    
-    if(inplace){
-        Z <- B
+    if(inherits(A, 'gpuMatrix') & inherits(B, 'gpuMatrix')){
+        assert_are_identical(A@.context_index, B@.context_index)
+        
+        # nrA = nrow(A)
+        # ncA = ncol(A)
+        # nrB = nrow(B)
+        # ncB = ncol(B)
+        
+        type <- typeof(A)
+        
     }else{
-        Z <- gpuMatrix(nrow=nrB, ncol=ncA, type=type, ctx_id = A@.context_index)
-        if(!missing(B))
-        {
-            if(length(B) != length(A)) stop("Lengths of matrices must match")
-            Z <- deepcopy(B)
+        if(inherits(A, 'gpuMatrix')){
+            type <- typeof(A)
+        }else{
+            type <- typeof(B)
         }
     }
     
-    switch(type,
-           integer = {
-               # stop("integer not currently implemented")
-               # cpp_gpuMatrix_iaxpy(alpha, 
-               #                     A@address,
-               #                     Z@address, 
-               #                     kernel,
-               #                     device_flag)
-               cpp_gpuMatrix_axpy(alpha, 
-                                  A@address, 
-                                  Z@address, 
-                                  4L)
-           },
-           float = {cpp_gpuMatrix_axpy(alpha, 
-                                       A@address, 
-                                       Z@address, 
-                                       6L)
-           },
-           double = {cpp_gpuMatrix_axpy(alpha, 
-                                        A@address,
-                                        Z@address,
-                                        8L)
-           },
-           stop("type not recognized")
-    )
+    if(inplace){
+        if(!AisScalar && !BisScalar){
+            Z <- B
+        }else{
+            if(inherits(A, 'gpuMatrix')){
+                Z <- A
+            }else{
+                Z <- B
+            }
+            # if(AisScalar){
+            #     Z <- B    
+            # }else{
+            #     Z <- A
+            # }    
+        }
+    }else{
+        if(!AisScalar && !BisScalar){
+            if(!missing(B))
+            {
+                if(length(B[]) != length(A[])){
+                    stop("Lengths of matrices must match")
+                }
+                Z <- deepcopy(B)
+            }   
+        }else{
+            if(AisScalar){
+                if(!missing(B))
+                {
+                    if(inherits(A, 'gpuMatrix')){
+                        if(length(B[]) != length(A[])){
+                            stop("Lengths of matrices must match")
+                        }
+                    }
+                    Z <- deepcopy(B)
+                }
+            }else{
+                if(!missing(A))
+                {
+                    if(inherits(B, 'gpuMatrix')){
+                        if(length(B[]) != length(A[])){
+                            stop("Lengths of matrices must match")
+                        }
+                    }
+                    Z <- deepcopy(A)
+                }     
+            }
+        }
+        
+        
+    }
+    
+    if(AisScalar || BisScalar){
+        
+        scalar <- if(AisScalar) A else B
+        order <- if(AisScalar) 0L else 1L
+        
+        # print(scalar)
+        # print(alpha)
+        # print(head(Z[]))
+        
+        maxWorkGroupSize <- 
+            switch(deviceType(Z@.platform_index, Z@.device_index),
+                   "gpu" = gpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+                   stop("unrecognized device type")
+            )
+        
+        switch(type,
+               integer = {
+                   file <- system.file("CL", "iScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_axpy(alpha, 
+                                             scalar, 
+                                             Z@address,
+                                             order,
+                                             sqrt(maxWorkGroupSize),
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             4L)
+               },
+               float = {
+                   
+                   file <- system.file("CL", "fScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_axpy(alpha, 
+                                             scalar, 
+                                             Z@address,
+                                             order,
+                                             sqrt(maxWorkGroupSize),
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             6L)
+               },
+               double = {
+                   
+                   file <- system.file("CL", "dScalarAXPY.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_axpy(alpha, 
+                                             scalar,
+                                             Z@address,
+                                             order,
+                                             sqrt(maxWorkGroupSize),
+                                             kernel,
+                                             Z@.context_index - 1,
+                                             8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        
+        # print('default axpy')
+        switch(type,
+               integer = {
+                   # stop("OpenCL integer GEMM not currently
+                   #      supported for viennacl matrices")
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      A@address, 
+                                      Z@address,
+                                      4L)
+               },
+               float = {
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      A@address, 
+                                      Z@address,
+                                      6L)
+               },
+               double = {
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      A@address,
+                                      Z@address,
+                                      8L)
+               },
+               stop("type not recognized")
+        )
+    }
     
     if(inplace){
         return(invisible(Z))
     }else{
-        return(Z)    
+        return(Z)   
     }
 }
 
@@ -197,11 +320,15 @@ gpuMatElemMult <- function(A, B, inplace = FALSE){
 }
 
 # GPU Scalar Element-Wise Multiplication
-gpuMatScalarMult <- function(A, B){
+gpuMatScalarMult <- function(A, B, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- deepcopy(A)
+    if(inplace){
+        C <- A
+    }else{
+        C <- deepcopy(A)    
+    }
     
     switch(type,
            integer = {
@@ -225,7 +352,7 @@ gpuMatScalarMult <- function(A, B){
 }
 
 # GPU Element-Wise Division
-gpuMatElemDiv <- function(A, B){
+gpuMatElemDiv <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -235,7 +362,11 @@ gpuMatElemDiv <- function(A, B){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -262,31 +393,108 @@ gpuMatElemDiv <- function(A, B){
 }
 
 # GPU Scalar Element-Wise Division
-gpuMatScalarDiv <- function(A, B){
+gpuMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
     
-    type <- typeof(A)
+    if(AisScalar){
+        type <- typeof(B)
+        scalar <- A
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)    
+        }
+        
+        maxWorkGroupSize <- 
+            switch(deviceType(C@.platform_index, C@.device_index),
+                   "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   stop("unrecognized device type")
+            )
+        
+        switch(type,
+               integer = {
+                   src <- file <- system.file("CL", "iScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              sqrt(maxWorkGroupSize),
+                                              kernel,
+                                              C@.context_index - 1,
+                                              4L)
+               },
+               float = {
+                   src <- file <- system.file("CL", "fScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              sqrt(maxWorkGroupSize),
+                                              kernel,
+                                              C@.context_index - 1,
+                                              6L)
+               },
+               double = {
+                   src <- file <- system.file("CL", "dScalarElemDiv.cl", package = "gpuR")
+                   
+                   if(!file_test("-f", file)){
+                       stop("kernel file does not exist")
+                   }
+                   kernel <- readChar(file, file.info(file)$size)
+                   
+                   cpp_gpuMatrix_scalar_div_2(C@address,
+                                              scalar,
+                                              sqrt(maxWorkGroupSize),
+                                              kernel,
+                                              C@.context_index - 1,
+                                              8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        type <- typeof(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)
+        }
+        
+        scalar <- B
+        
+        switch(type,
+               integer = {
+                   cpp_gpuMatrix_scalar_div(C@address,
+                                            scalar,
+                                            4L)
+               },
+               float = {cpp_gpuMatrix_scalar_div(C@address,
+                                                 scalar,
+                                                 6L)
+               },
+               double = {
+                   cpp_gpuMatrix_scalar_div(C@address,
+                                            scalar,
+                                            8L)
+               },
+               stop("type not recognized")
+        )
+    }
     
-    C <- deepcopy(A)
-    
-    switch(type,
-           integer = {
-               # stop("integer not currently implemented")
-               cpp_gpuMatrix_scalar_div(C@address,
-                                        B,
-                                        4L)
-           },
-           float = {cpp_gpuMatrix_scalar_div(C@address,
-                                             B,
-                                             6L)
-           },
-           double = {
-               cpp_gpuMatrix_scalar_div(C@address,
-                                        B,
-                                        8L)
-           },
-           stop("type not recognized")
-    )
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Power
@@ -327,7 +535,7 @@ gpuMatElemPow <- function(A, B){
 }
 
 # GPU Element-Wise Power
-gpuMatScalarPow <- function(A, B){
+gpuMatScalarPow <- function(A, B, inplace = TRUE){
     
     type <- typeof(A)
     

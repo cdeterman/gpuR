@@ -155,3 +155,69 @@ setMethod('gpuVector',
           },
           valueClass = "gpuVector"
 )
+
+
+#' @rdname gpuVector-methods
+#' @aliases gpuVector,vector
+setMethod('gpuVector', 
+          signature(data = 'numeric', length = 'numericOrInt'),
+          function(data, length, type=NULL, ctx_id = NULL){
+              
+              if (is.null(type)) type <- typeof(data)
+              
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
+              
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
+              
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    stop("Unrecognized device type")
+              )
+              
+              data = switch(type,
+                            integer = {
+                                new("igpuVector", 
+                                    address=cpp_scalar_gpuVector(data, length, 4L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            float = {
+                                new("fgpuVector", 
+                                    address=cpp_scalar_gpuVector(data, length, 6L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            double = {
+                                assert_has_double(device_index, context_index)
+                                new("dgpuVector",
+                                    address = cpp_scalar_gpuVector(data, length, 8L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            stop("this is an unrecognized 
+                                 or unimplemented data type")
+                            )
+              
+              return(data)
+          },
+          valueClass = "gpuVector")
+

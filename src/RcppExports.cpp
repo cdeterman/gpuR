@@ -422,6 +422,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_scalar_gpuVector
+SEXP cpp_scalar_gpuVector(SEXP scalar, const int size, const int type_flag);
+RcppExport SEXP _gpuR_cpp_scalar_gpuVector(SEXP scalarSEXP, SEXP sizeSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< const int >::type size(sizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_scalar_gpuVector(scalar, size, type_flag));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sexpVecToEigenXptr
 SEXP sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag, const int ctx_id);
 RcppExport SEXP _gpuR_sexpVecToEigenXptr(SEXP ptrASEXP, SEXP nrSEXP, SEXP ncSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
@@ -1552,6 +1565,21 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuMatrix_scalar_div_2
+void cpp_gpuMatrix_scalar_div_2(SEXP ptrC, SEXP scalar, int max_local_size, SEXP sourceCode_, const int ctx_id, const int type_flag);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_scalar_div_2(SEXP ptrCSEXP, SEXP scalarSEXP, SEXP max_local_sizeSEXP, SEXP sourceCode_SEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode_(sourceCode_SEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMatrix_scalar_div_2(ptrC, scalar, max_local_size, sourceCode_, ctx_id, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_gpuMatrix_elem_div
 void cpp_gpuMatrix_elem_div(SEXP ptrA, SEXP ptrB, SEXP ptrC, const int type_flag);
 RcppExport SEXP _gpuR_cpp_gpuMatrix_elem_div(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP) {
@@ -1796,6 +1824,23 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuMatrix_scalar_axpy
+void cpp_gpuMatrix_scalar_axpy(SEXP alpha, SEXP scalar, SEXP ptrB, const int order, int max_local_size, SEXP sourceCode, const int ctx_id, const int type_flag);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_scalar_axpy(SEXP alphaSEXP, SEXP scalarSEXP, SEXP ptrBSEXP, SEXP orderSEXP, SEXP max_local_sizeSEXP, SEXP sourceCodeSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type order(orderSEXP);
+    Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMatrix_scalar_axpy(alpha, scalar, ptrB, order, max_local_size, sourceCode, ctx_id, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_vclMatrix_axpy
 void cpp_vclMatrix_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int type_flag);
 RcppExport SEXP _gpuR_cpp_vclMatrix_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
@@ -1810,18 +1855,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vclMatrix_scalar_axpy
-void cpp_vclMatrix_scalar_axpy(SEXP alpha, SEXP scalar, SEXP ptrB, int max_local_size, SEXP sourceCode, const int ctx_id, const int type_flag);
-RcppExport SEXP _gpuR_cpp_vclMatrix_scalar_axpy(SEXP alphaSEXP, SEXP scalarSEXP, SEXP ptrBSEXP, SEXP max_local_sizeSEXP, SEXP sourceCodeSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
+void cpp_vclMatrix_scalar_axpy(SEXP alpha, SEXP scalar, SEXP ptrB, const int order, int max_local_size, SEXP sourceCode, const int ctx_id, const int type_flag);
+RcppExport SEXP _gpuR_cpp_vclMatrix_scalar_axpy(SEXP alphaSEXP, SEXP scalarSEXP, SEXP ptrBSEXP, SEXP orderSEXP, SEXP max_local_sizeSEXP, SEXP sourceCodeSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type order(orderSEXP);
     Rcpp::traits::input_parameter< int >::type max_local_size(max_local_sizeSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sourceCode(sourceCodeSEXP);
     Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_vclMatrix_scalar_axpy(alpha, scalar, ptrB, max_local_size, sourceCode, ctx_id, type_flag);
+    cpp_vclMatrix_scalar_axpy(alpha, scalar, ptrB, order, max_local_size, sourceCode, ctx_id, type_flag);
     return R_NilValue;
 END_RCPP
 }
@@ -2135,16 +2181,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_gpuVector_axpy
-void cpp_gpuVector_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int type_flag, int ctx_id);
-RcppExport SEXP _gpuR_cpp_gpuVector_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+void cpp_gpuVector_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int order, const int type_flag, int ctx_id);
+RcppExport SEXP _gpuR_cpp_gpuVector_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP orderSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type order(orderSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
-    cpp_gpuVector_axpy(alpha, ptrA, ptrB, type_flag, ctx_id);
+    cpp_gpuVector_axpy(alpha, ptrA, ptrB, order, type_flag, ctx_id);
     return R_NilValue;
 END_RCPP
 }
@@ -2482,15 +2529,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vclVector_axpy
-void cpp_vclVector_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int type_flag);
-RcppExport SEXP _gpuR_cpp_vclVector_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP) {
+void cpp_vclVector_axpy(SEXP alpha, SEXP ptrA, SEXP ptrB, const int order, const int type_flag);
+RcppExport SEXP _gpuR_cpp_vclVector_axpy(SEXP alphaSEXP, SEXP ptrASEXP, SEXP ptrBSEXP, SEXP orderSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const int >::type order(orderSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_vclVector_axpy(alpha, ptrA, ptrB, type_flag);
+    cpp_vclVector_axpy(alpha, ptrA, ptrB, order, type_flag);
     return R_NilValue;
 END_RCPP
 }
@@ -2570,14 +2618,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_vclVector_scalar_div
-void cpp_vclVector_scalar_div(SEXP ptrC, SEXP scalar, const int type_flag);
-RcppExport SEXP _gpuR_cpp_vclVector_scalar_div(SEXP ptrCSEXP, SEXP scalarSEXP, SEXP type_flagSEXP) {
+void cpp_vclVector_scalar_div(SEXP ptrC, SEXP scalar, const int order, const int type_flag, const int ctx_id);
+RcppExport SEXP _gpuR_cpp_vclVector_scalar_div(SEXP ptrCSEXP, SEXP scalarSEXP, SEXP orderSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
     Rcpp::traits::input_parameter< SEXP >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< const int >::type order(orderSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_vclVector_scalar_div(ptrC, scalar, type_flag);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_vclVector_scalar_div(ptrC, scalar, order, type_flag, ctx_id);
     return R_NilValue;
 END_RCPP
 }
@@ -3337,6 +3387,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_GetMatCol", (DL_FUNC) &_gpuR_GetMatCol, 3},
     {"_gpuR_GetMatElement", (DL_FUNC) &_gpuR_GetMatElement, 4},
     {"_gpuR_sexpVecToEigenVecXptr", (DL_FUNC) &_gpuR_sexpVecToEigenVecXptr, 3},
+    {"_gpuR_cpp_scalar_gpuVector", (DL_FUNC) &_gpuR_cpp_scalar_gpuVector, 3},
     {"_gpuR_sexpVecToEigenXptr", (DL_FUNC) &_gpuR_sexpVecToEigenXptr, 5},
     {"_gpuR_initScalarEigenXptr", (DL_FUNC) &_gpuR_initScalarEigenXptr, 5},
     {"_gpuR_getRmatEigenAddress", (DL_FUNC) &_gpuR_getRmatEigenAddress, 5},
@@ -3423,6 +3474,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_gpuMatrix_elem_prod", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_prod, 4},
     {"_gpuR_cpp_gpuMatrix_scalar_prod", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_prod, 3},
     {"_gpuR_cpp_gpuMatrix_scalar_div", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_div, 3},
+    {"_gpuR_cpp_gpuMatrix_scalar_div_2", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_div_2, 6},
     {"_gpuR_cpp_gpuMatrix_elem_div", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_div, 4},
     {"_gpuR_cpp_gpuMatrix_elem_pow", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_pow, 4},
     {"_gpuR_cpp_gpuMatrix_scalar_pow", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_pow, 4},
@@ -3443,8 +3495,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_gpuMatrix_elem_abs", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_abs, 3},
     {"_gpuR_cpp_gpuMatrix_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_axpy, 4},
     {"_gpuR_cpp_gpuMatrix_unary_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_unary_axpy, 2},
+    {"_gpuR_cpp_gpuMatrix_scalar_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_axpy, 8},
     {"_gpuR_cpp_vclMatrix_axpy", (DL_FUNC) &_gpuR_cpp_vclMatrix_axpy, 4},
-    {"_gpuR_cpp_vclMatrix_scalar_axpy", (DL_FUNC) &_gpuR_cpp_vclMatrix_scalar_axpy, 7},
+    {"_gpuR_cpp_vclMatrix_scalar_axpy", (DL_FUNC) &_gpuR_cpp_vclMatrix_scalar_axpy, 8},
     {"_gpuR_cpp_vclMatrix_unary_axpy", (DL_FUNC) &_gpuR_cpp_vclMatrix_unary_axpy, 3},
     {"_gpuR_cpp_vclMatrix_elem_prod", (DL_FUNC) &_gpuR_cpp_vclMatrix_elem_prod, 4},
     {"_gpuR_cpp_vclMatrix_scalar_prod", (DL_FUNC) &_gpuR_cpp_vclMatrix_scalar_prod, 3},
@@ -3470,7 +3523,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclMatrix_elem_abs", (DL_FUNC) &_gpuR_cpp_vclMatrix_elem_abs, 3},
     {"_gpuR_cpp_vclMatrix_max", (DL_FUNC) &_gpuR_cpp_vclMatrix_max, 2},
     {"_gpuR_cpp_vclMatrix_min", (DL_FUNC) &_gpuR_cpp_vclMatrix_min, 2},
-    {"_gpuR_cpp_gpuVector_axpy", (DL_FUNC) &_gpuR_cpp_gpuVector_axpy, 5},
+    {"_gpuR_cpp_gpuVector_axpy", (DL_FUNC) &_gpuR_cpp_gpuVector_axpy, 6},
     {"_gpuR_cpp_gpuVector_unary_axpy", (DL_FUNC) &_gpuR_cpp_gpuVector_unary_axpy, 3},
     {"_gpuR_cpp_gpuVector_inner_prod", (DL_FUNC) &_gpuR_cpp_gpuVector_inner_prod, 4},
     {"_gpuR_cpp_gpuVector_outer_prod", (DL_FUNC) &_gpuR_cpp_gpuVector_outer_prod, 5},
@@ -3496,14 +3549,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_gpuVector_elem_exp", (DL_FUNC) &_gpuR_cpp_gpuVector_elem_exp, 4},
     {"_gpuR_cpp_gpuVector_elem_abs", (DL_FUNC) &_gpuR_cpp_gpuVector_elem_abs, 4},
     {"_gpuR_cpp_gpuVector_min", (DL_FUNC) &_gpuR_cpp_gpuVector_min, 3},
-    {"_gpuR_cpp_vclVector_axpy", (DL_FUNC) &_gpuR_cpp_vclVector_axpy, 4},
+    {"_gpuR_cpp_vclVector_axpy", (DL_FUNC) &_gpuR_cpp_vclVector_axpy, 5},
     {"_gpuR_cpp_vclVector_unary_axpy", (DL_FUNC) &_gpuR_cpp_vclVector_unary_axpy, 2},
     {"_gpuR_cpp_vclVector_inner_prod", (DL_FUNC) &_gpuR_cpp_vclVector_inner_prod, 3},
     {"_gpuR_cpp_vclVector_outer_prod", (DL_FUNC) &_gpuR_cpp_vclVector_outer_prod, 4},
     {"_gpuR_cpp_vclVector_elem_prod", (DL_FUNC) &_gpuR_cpp_vclVector_elem_prod, 4},
     {"_gpuR_cpp_vclVector_scalar_prod", (DL_FUNC) &_gpuR_cpp_vclVector_scalar_prod, 3},
     {"_gpuR_cpp_vclVector_elem_div", (DL_FUNC) &_gpuR_cpp_vclVector_elem_div, 4},
-    {"_gpuR_cpp_vclVector_scalar_div", (DL_FUNC) &_gpuR_cpp_vclVector_scalar_div, 3},
+    {"_gpuR_cpp_vclVector_scalar_div", (DL_FUNC) &_gpuR_cpp_vclVector_scalar_div, 5},
     {"_gpuR_cpp_vclVector_elem_pow", (DL_FUNC) &_gpuR_cpp_vclVector_elem_pow, 4},
     {"_gpuR_cpp_vclVector_scalar_pow", (DL_FUNC) &_gpuR_cpp_vclVector_scalar_pow, 4},
     {"_gpuR_cpp_vclVector_sqrt", (DL_FUNC) &_gpuR_cpp_vclVector_sqrt, 3},

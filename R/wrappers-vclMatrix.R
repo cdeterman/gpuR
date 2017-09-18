@@ -473,11 +473,6 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
             if(AisScalar){
                 if(!missing(B))
                 {
-                    if(inherits(A, 'vclMatrix')){
-                        if(length(B[]) != length(A[])){
-                            stop("Lengths of matrices must match")
-                        }
-                    }
                     Z <- deepcopy(B)
                 }
             }else{
@@ -488,7 +483,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                             stop("Lengths of matrices must match")
                         }
                     }
-                    Z <- deepcopy(A)
+                    Z <- deepcopy(B)
                 }     
             }
         }
@@ -499,6 +494,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
     if(AisScalar || BisScalar){
         
         scalar <- if(AisScalar) A else B
+        order <- if(AisScalar) 0L else 1L
         
         # print(scalar)
         # print(alpha)
@@ -523,6 +519,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -540,6 +537,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -557,6 +555,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar,
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -1137,7 +1136,13 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
         )
     }else{
         type <- typeof(A)
-        C <- deepcopy(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)    
+        }
+        
         scalar <- B
         
         switch(type,

@@ -1,5 +1,5 @@
 __kernel void scalar_axpy(
-    __global double *A, const double scalar, const double alpha,
+    __global double *A, const double scalar, const double alpha, const int order,
     const int Mdim, const int Pdim, const int MdimPad) {
     
     // Get the index of the elements to be processed
@@ -9,6 +9,11 @@ __kernel void scalar_axpy(
     // Do the operation
     if((globalRow <= Mdim) && (globalCol <= Pdim)){
         
-        A[globalRow * MdimPad + globalCol] = alpha * A[globalRow * MdimPad + globalCol] + scalar;
+        if(order == 0){
+            A[globalRow * MdimPad + globalCol] = alpha * A[globalRow * MdimPad + globalCol] + scalar;
+        }else{
+            A[globalRow * MdimPad + globalCol] = A[globalRow * MdimPad + globalCol] + alpha * scalar;
+        }
+        
     }
 }

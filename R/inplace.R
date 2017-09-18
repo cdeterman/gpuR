@@ -24,6 +24,7 @@ setMethod("inplace",
                      `+` = vclMat_axpy(1, y, x, inplace = TRUE),
                      `-` = vclMat_axpy(-1, y, x, inplace = TRUE),
                      `*` = vclMatElemMult(x, y, inplace = TRUE),
+                     `/` = vclMatElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -64,12 +65,24 @@ setMethod("inplace",
 
               switch(deparse(substitute(f)),
                      `+` = vclMat_axpy(1, x, y, inplace = TRUE, AisScalar = TRUE),
-                     `-` = vclMat_axpy(-1, y, x, inplace = TRUE, BisScalar = TRUE),
-                     `/` = {
-                         # x = vclMatrix(x, ncol=ncol(y), nrow=nrow(y), type=typeof(y), ctx_id = y@.context_index)
-                         vclMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE)
-                     },
+                     `-` = vclMat_axpy(-1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `/` = vclMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE),
                      `*` = vclMatScalarMult(y, x, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "vclMatrix", "numeric"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `+` = vclMat_axpy(1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `-` = vclMat_axpy(-1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `/` = vclMatScalarDiv(x, y, inplace = TRUE),
+                     `*` = vclMatScalarMult(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -84,6 +97,7 @@ setMethod("inplace",
                      `+` = gpu_Mat_axpy(1, y, x, inplace = TRUE),
                      `-` = gpu_Mat_axpy(-1, y, x, inplace = TRUE),
                      `*` = gpuMatElemMult(x, y, inplace = TRUE),
+                     `/` = gpuMatElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -103,6 +117,36 @@ setMethod("inplace",
               )
           })
 
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "numeric", "gpuMatrix"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `+` = gpu_Mat_axpy(1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `-` = gpu_Mat_axpy(-1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `/` = gpuMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE),
+                     `*` = gpuMatScalarMult(y, x, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "gpuMatrix", "numeric"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `+` = gpu_Mat_axpy(1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `-` = gpu_Mat_axpy(-1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `/` = gpuMatScalarDiv(x, y, inplace = TRUE),
+                     `*` = gpuMatScalarMult(x, y, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
 
 #' @rdname inplace-methods
 #' @export
@@ -114,6 +158,7 @@ setMethod("inplace",
                      `+` = vclVec_axpy(1, y, x, inplace = TRUE),
                      `-` = vclVec_axpy(-1, y, x, inplace = TRUE),
                      `*` = vclVecElemMult(x, y, inplace = TRUE),
+                     `/` = vclVecElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -146,10 +191,32 @@ setMethod("inplace",
 		  	           z <- vclVector(rep(y, length(x)), type=typeof(x), ctx_id = x@.context_index)
 		  	           vclVec_axpy(-1, z, x, inplace = TRUE)
 		  	       },
-		  		   `*` = vclVecScalarMult(x, y, TRUE),
+		  	       `*` = vclVecScalarMult(x, y, inplace = TRUE),
+		  	       `/` = vclVecScalarDiv(x, y, inplace = TRUE),
 		  		   stop("undefined operation")
 		  	)
 		  })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "numeric", "vclVector"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `+` = {
+                         z <- vclVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
+                         vclVec_axpy(1, z, y, inplace = TRUE)
+                     },
+                     `-` = {
+                         z <- vclVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
+                         vclVec_axpy(-1, z, y, inplace = TRUE, order = 1)
+                     },
+                     `*` = vclVecScalarMult(x, y, inplace = TRUE),
+                     `/` = vclVecScalarDiv(x, y, 1, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
 
 #' @rdname inplace-methods
 #' @export
@@ -161,6 +228,7 @@ setMethod("inplace",
                      `+` = gpuVec_axpy(1, y, x, inplace = TRUE),
                      `-` = gpuVec_axpy(-1, y, x, inplace = TRUE),
                      `*` = gpuVecElemMult(x, y, inplace = TRUE),
+                     `/` = gpuVecElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -174,14 +242,37 @@ setMethod("inplace",
               
               switch(deparse(substitute(f)),
                      `+` = {
-                         z <- gpuVector(y, type=typeof(x), ctx_id = x@.context_index)
+                         z <- gpuVector(y, length = length(x), type=typeof(x), ctx_id = x@.context_index)
                          gpuVec_axpy(1, z, x, inplace = TRUE)
                      },
                      `-` = {
-                         z <- gpuVector(y, type=typeof(x), ctx_id = x@.context_index)
+                         z <- gpuVector(y, length = length(x), type=typeof(x), ctx_id = x@.context_index)
                          gpuVec_axpy(-1, z, x, inplace = TRUE)
                      },
-                     `*` = gpuVecScalarMult(x, y, TRUE),
+                     `*` = gpuVecScalarMult(x, y, inplace = TRUE),
+                     `/` = gpuVecScalarDiv(x, y, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "numeric", "gpuVector"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `+` = {
+                         z <- gpuVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
+                         gpuVec_axpy(1, z, y, inplace = TRUE)
+                     },
+                     `-` = {
+                         z <- gpuVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
+                         gpuVec_axpy(-1, z, y, inplace = TRUE, order = 1)
+                     },
+                     `*` = gpuVecScalarMult(x, y, inplace = TRUE),
+                     `/` = gpuVecScalarDiv(x, y, 1, inplace = TRUE),
                      stop("undefined operation")
               )
           })

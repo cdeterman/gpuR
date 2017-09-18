@@ -76,7 +76,7 @@ vclVecOuter <- function(A, B){
 
 
 # vclVector AXPY
-vclVec_axpy <- function(alpha, A, B, inplace = FALSE){
+vclVec_axpy <- function(alpha, A, B, inplace = FALSE, order = 0){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -105,12 +105,14 @@ vclVec_axpy <- function(alpha, A, B, inplace = FALSE){
            float = {cpp_vclVector_axpy(alpha, 
                                        A@address, 
                                        Z@address,
+                                       order,
                                        6L)
            },
            double = {
                cpp_vclVector_axpy(alpha, 
                                   A@address,
                                   Z@address,
+                                  order,
                                   8L)
            },
            stop("type not recognized")
@@ -183,19 +185,38 @@ vclVecElemMult <- function(A, B, inplace = FALSE){
            stop("type not recognized")
            )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Scalar Element-Wise Multiplication
 vclVecScalarMult <- function(A, B, inplace = FALSE){
     
-    type <- typeof(A)
-    
-    if(inplace){
-        C <- A
+    # quick class check when scalars are passed
+    if(inherits(A, "vclVector")){
+        
+        type <- typeof(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)
+        }    
+        Z <- B
     }else{
-        C <- deepcopy(A)
+        
+        type <- typeof(B)
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)
+        }
+        Z <- A
     }
     
     
@@ -204,12 +225,12 @@ vclVecScalarMult <- function(A, B, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_vclVector_scalar_prod(C@address,
-                                              B,
+                                              Z,
                                               6L)
            },
            double = {
                cpp_vclVector_scalar_prod(C@address,
-                                         B,
+                                         Z,
                                          8L)
            },
            stop("type not recognized")
@@ -224,7 +245,7 @@ vclVecScalarMult <- function(A, B, inplace = FALSE){
 
 
 # GPU Element-Wise Division
-vclVecElemDiv <- function(A, B){
+vclVecElemDiv <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -234,7 +255,11 @@ vclVecElemDiv <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -253,33 +278,66 @@ vclVecElemDiv <- function(A, B){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Scalar Element-Wise Division
-vclVecScalarDiv <- function(A, B){
+vclVecScalarDiv <- function(A, B, order = 0, inplace = FALSE){
     
-    type <- typeof(A)
-    
-    C <- deepcopy(A)
+    # quick class check when scalars are passed
+    if(inherits(A, "vclVector")){
+        
+        type <- typeof(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)
+        }    
+        Z <- B
+    }else{
+        
+        type <- typeof(B)
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)
+        }
+        Z <- A
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_vclVector_scalar_div(C@address,
-                                             B,
-                                             6L)
+                                             Z,
+                                             order,
+                                             6L,
+                                             C@.context_index - 1)
            },
            double = {
                cpp_vclVector_scalar_div(C@address,
-                                        B,
-                                        8L)
+                                        Z,
+                                        order,
+                                        8L,
+                                        C@.context_index - 1)
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 

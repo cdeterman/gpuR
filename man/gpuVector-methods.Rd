@@ -7,6 +7,8 @@
 \alias{gpuVector,vector}
 \alias{gpuVector,missingOrNULL,ANY-method}
 \alias{gpuVector,missingOrNULL}
+\alias{gpuVector,numeric,numericOrInt-method}
+\alias{gpuVector,vector}
 \title{Construct a gpuVector}
 \usage{
 gpuVector(data, length, type = NULL, ...)
@@ -14,6 +16,9 @@ gpuVector(data, length, type = NULL, ...)
 \S4method{gpuVector}{vector,missing}(data, type = NULL, ctx_id = NULL)
 
 \S4method{gpuVector}{missingOrNULL,ANY}(data, length, type = NULL,
+  ctx_id = NULL)
+
+\S4method{gpuVector}{numeric,numericOrInt}(data, length, type = NULL,
   ctx_id = NULL)
 }
 \arguments{
