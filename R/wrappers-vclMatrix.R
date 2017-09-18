@@ -1271,11 +1271,16 @@ vclMatSqrt <- function(A){
 }
 
 # GPU Element-Wise Sine
-vclMatElemSin <- function(A){
+vclMatElemSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
+    
     
     switch(type,
            integer = {
@@ -1295,15 +1300,23 @@ vclMatElemSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Sine
-vclMatElemArcSin <- function(A){
+vclMatElemArcSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1323,15 +1336,23 @@ vclMatElemArcSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Sine
-vclMatElemHypSin <- function(A){
+vclMatElemHypSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A   
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1352,15 +1373,23 @@ vclMatElemHypSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Cos
-vclMatElemCos <- function(A){
+vclMatElemCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1380,15 +1409,23 @@ vclMatElemCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Cos
-vclMatElemArcCos <- function(A){
+vclMatElemArcCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1408,15 +1445,23 @@ vclMatElemArcCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Cos
-vclMatElemHypCos <- function(A){
+vclMatElemHypCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1436,15 +1481,23 @@ vclMatElemHypCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Tan
-vclMatElemTan <- function(A){
+vclMatElemTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1464,15 +1517,24 @@ vclMatElemTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Tan
-vclMatElemArcTan <- function(A){
+vclMatElemArcTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
+    
     
     switch(type,
            integer = {
@@ -1492,15 +1554,24 @@ vclMatElemArcTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Tan
-vclMatElemHypTan <- function(A){
+vclMatElemHypTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
+    
     
     switch(type,
            integer = {
@@ -1520,7 +1591,11 @@ vclMatElemHypTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Natural Log

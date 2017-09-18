@@ -39,6 +39,15 @@ setMethod("inplace",
                      `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
                      `exp` = vclMatElemExp(x, inplace = TRUE),
                      `abs` = vclMatElemAbs(x, inplace = TRUE),
+                     `sin` = vclMatElemSin(x, inplace = TRUE),
+                     `asin` = vclMatElemArcSin(x, inplace = TRUE),
+                     `sinh` = vclMatElemHypSin(x, inplace = TRUE),
+                     `cos` = vclMatElemCos(x, inplace = TRUE),
+                     `acos` = vclMatElemArcCos(x, inplace = TRUE),
+                     `cosh` = vclMatElemHypCos(x, inplace = TRUE),
+                     `tan` = vclMatElemTan(x, inplace = TRUE),
+                     `atan` = vclMatElemArcTan(x, inplace = TRUE),
+                     `tanh` = vclMatElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -113,6 +122,15 @@ setMethod("inplace",
                      `-` = gpuMatrix_unary_axpy(x, inplace = TRUE),
                      `exp` = gpuMatElemExp(x, inplace = TRUE),
                      `abs` = gpuMatElemAbs(x, inplace = TRUE),
+                     `sin` = gpuMatElemSin(x, inplace = TRUE),
+                     `asin` = gpuMatElemArcSin(x, inplace = TRUE),
+                     `sinh` = gpuMatElemHypSin(x, inplace = TRUE),
+                     `cos` = gpuMatElemCos(x, inplace = TRUE),
+                     `acos` = gpuMatElemArcCos(x, inplace = TRUE),
+                     `cosh` = gpuMatElemHypCos(x, inplace = TRUE),
+                     `tan` = gpuMatElemTan(x, inplace = TRUE),
+                     `atan` = gpuMatElemArcTan(x, inplace = TRUE),
+                     `tanh` = gpuMatElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -172,6 +190,15 @@ setMethod("inplace",
               
               switch(deparse(substitute(f)),
                      `abs` = vclVecElemAbs(x, inplace = TRUE),
+                     `sin` = vclVecElemSin(x, inplace = TRUE),
+                     `asin` = vclVecElemArcSin(x, inplace = TRUE),
+                     `sinh` = vclVecElemHypSin(x, inplace = TRUE),
+                     `cos` = vclVecElemCos(x, inplace = TRUE),
+                     `acos` = vclVecElemArcCos(x, inplace = TRUE),
+                     `cosh` = vclVecElemHypCos(x, inplace = TRUE),
+                     `tan` = vclVecElemTan(x, inplace = TRUE),
+                     `atan` = vclVecElemArcTan(x, inplace = TRUE),
+                     `tanh` = vclVecElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -229,6 +256,27 @@ setMethod("inplace",
                      `-` = gpuVec_axpy(-1, y, x, inplace = TRUE),
                      `*` = gpuVecElemMult(x, y, inplace = TRUE),
                      `/` = gpuVecElemDiv(x, y, inplace = TRUE),
+                     stop("undefined operation")
+              )
+          })
+
+#' @rdname inplace-methods
+#' @export
+setMethod("inplace",
+          signature = c("function", "gpuVector", "missing"),
+          function(f, x, y){
+              
+              switch(deparse(substitute(f)),
+                     `abs` = gpuVecElemAbs(x, inplace = TRUE),
+                     `sin` = gpuVecElemSin(x, inplace = TRUE),
+                     `asin` = gpuVecElemArcSin(x, inplace = TRUE),
+                     `sinh` = gpuVecElemHypSin(x, inplace = TRUE),
+                     `cos` = gpuVecElemCos(x, inplace = TRUE),
+                     `acos` = gpuVecElemArcCos(x, inplace = TRUE),
+                     `cosh` = gpuVecElemHypCos(x, inplace = TRUE),
+                     `tan` = gpuVecElemTan(x, inplace = TRUE),
+                     `atan` = gpuVecElemArcTan(x, inplace = TRUE),
+                     `tanh` = gpuVecElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })

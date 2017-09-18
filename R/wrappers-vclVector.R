@@ -429,11 +429,15 @@ vclVecSqrt <- function(A){
 }
 
 # GPU Element-Wise Sine
-vclVecElemSin <- function(A){
+vclVecElemSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -450,16 +454,25 @@ vclVecElemSin <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Sine
-vclVecElemArcSin <- function(A){
+vclVecElemArcSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
-    
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -476,16 +489,25 @@ vclVecElemArcSin <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Sine
-vclVecElemHypSin <- function(A){
+vclVecElemHypSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -503,16 +525,25 @@ vclVecElemHypSin <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 
 # GPU Element-Wise Cos
-vclVecElemCos <- function(A){
+vclVecElemCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -529,16 +560,25 @@ vclVecElemCos <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Cos
-vclVecElemArcCos <- function(A){
+vclVecElemArcCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -555,16 +595,25 @@ vclVecElemArcCos <- function(A){
            },           
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Cos
-vclVecElemHypCos <- function(A){
+vclVecElemHypCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -579,19 +628,27 @@ vclVecElemHypCos <- function(A){
                                        C@address,
                                        8L)
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 
 # GPU Element-Wise Tan
-vclVecElemTan <- function(A){
+vclVecElemTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -606,19 +663,27 @@ vclVecElemTan <- function(A){
                                              C@address,
                                              8L)
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Tan
-vclVecElemArcTan <- function(A){
+vclVecElemArcTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+       C <- A 
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -635,16 +700,25 @@ vclVecElemArcTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Tan
-vclVecElemHypTan <- function(A){
+vclVecElemHypTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -661,7 +735,12 @@ vclVecElemHypTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 

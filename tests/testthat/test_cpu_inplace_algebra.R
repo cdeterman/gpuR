@@ -1,5 +1,5 @@
 library(gpuR)
-context("CPU Inplace Operations")
+context("CPU Inplace Algebra Operations")
 
 current_context <- set_device_context("cpu")
 

@@ -419,11 +419,15 @@ gpuVecSqrt <- function(A){
 }
 
 # GPU Element-Wise Sine
-gpuVecElemSin <- function(A){
+gpuVecElemSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -443,15 +447,24 @@ gpuVecElemSin <- function(A){
            {
                stop("type not recognized")
            })
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 # GPU Element-Wise Arc Sine
-gpuVecElemArcSin <- function(A){
+gpuVecElemArcSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -470,15 +483,23 @@ gpuVecElemArcSin <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Sine
-gpuVecElemHypSin <- function(A){
+gpuVecElemHypSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -497,15 +518,24 @@ gpuVecElemHypSin <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)   
+    }
 }
 
 # GPU Element-Wise Sine
-gpuVecElemCos <- function(A){
+gpuVecElemCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -524,15 +554,24 @@ gpuVecElemCos <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Sine
-gpuVecElemArcCos <- function(A){
+gpuVecElemArcCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -551,15 +590,24 @@ gpuVecElemArcCos <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Sine
-gpuVecElemHypCos <- function(A){
+gpuVecElemHypCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -578,15 +626,24 @@ gpuVecElemHypCos <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Sine
-gpuVecElemTan <- function(A){
+gpuVecElemTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -605,15 +662,24 @@ gpuVecElemTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Sine
-gpuVecElemArcTan <- function(A){
+gpuVecElemArcTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -632,15 +698,24 @@ gpuVecElemArcTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
-# GPU Element-Wise Hyperbolic Sine
-gpuVecElemHypTan <- function(A){
+# GPU Element-Wise Hyperbolic Tan
+gpuVecElemHypTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -659,7 +734,12 @@ gpuVecElemHypTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Log10

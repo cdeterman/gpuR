@@ -16,6 +16,7 @@
 \alias{inplace,function,vclVector,numeric-method}
 \alias{inplace,function,numeric,vclVector-method}
 \alias{inplace,function,gpuVector,gpuVector-method}
+\alias{inplace,function,gpuVector,missing-method}
 \alias{inplace,function,gpuVector,numeric-method}
 \alias{inplace,function,numeric,gpuVector-method}
 \title{Inplace Function Wrapper}
@@ -47,6 +48,8 @@ inplace(f, x, y)
 \S4method{inplace}{`function`,numeric,vclVector}(f, x, y)
 
 \S4method{inplace}{`function`,gpuVector,gpuVector}(f, x, y)
+
+\S4method{inplace}{`function`,gpuVector,missing}(f, x, y)
 
 \S4method{inplace}{`function`,gpuVector,numeric}(f, x, y)
 

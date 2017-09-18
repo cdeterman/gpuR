@@ -109,7 +109,7 @@ has_multiple_double_skip <- function() {
 set_device_context <- function(type){
     
     current_context <- currentContext()
-    if(deviceType() != "cpu"){
+    if(deviceType() != type){
         contexts <- listContexts()
         cpus <- contexts[contexts$device_type == type,"context"]
         if(length(cpus) == 0){
