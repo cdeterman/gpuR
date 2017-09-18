@@ -1,7 +1,11 @@
 library(gpuR)
 context("vclVector classes")
 
-current_context <- set_device_context("gpu")
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
 
 set.seed(123)
 A <- seq.int(10)

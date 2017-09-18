@@ -1,7 +1,12 @@
 library(gpuR)
 context("Utility Functions")
 
-current_context <- set_device_context("gpu")
+
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
 
 test_that("detectGPUs() accepts appropriate input", {
     

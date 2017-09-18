@@ -1,7 +1,11 @@
 library(gpuR)
 context("gpuMatrix Utility Functions")
 
-current_context <- set_device_context("gpu")
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
 
 set.seed(123)
 A <- matrix(sample(seq.int(100), 100), 10)
