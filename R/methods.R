@@ -660,7 +660,7 @@ setMethod("rowMeans",
 #' @title Covariance (gpuR)
 #' @description Compute covariance values
 #' @param x A gpuR object
-#' @param y Not used
+#' @param y A gpuR object
 #' @param use Not used
 #' @param method Character string indicating with covariance to be computed.
 #' @return A gpuMatrix/vclMatrix containing the symmetric covariance values.
@@ -680,7 +680,29 @@ setMethod("cov",
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x, y))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "character"),
           function(x, y = NULL, use = NULL, method = "pearson") {
               if(method != "pearson"){
                   stop("Only pearson covariance implemented")

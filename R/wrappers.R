@@ -1186,28 +1186,54 @@ gpu_rowMeans <- function(A){
 }
 
 # GPU Pearson Covariance
-gpu_pmcc <- function(A){
+gpu_pmcc <- function(A, B){
     
     type <- typeof(A)
     
-    B <- gpuMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+    if(missing(B)){
+        B <- gpuMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = {
+                   stop("integer type not currently implemented")
+                   # cpp_gpuMatrix_pmcc(A@address, 
+                   #                    B@address, 
+                   #                    4L)
+               },
+               "float" = cpp_gpuMatrix_pmcc(A@address, 
+                                            B@address, 
+                                            6L),
+               "double" = cpp_gpuMatrix_pmcc(A@address, 
+                                             B@address, 
+                                             8L)
+        )
+        
+        return(B)
+    }else{
+        assert_are_identical(A@.context_index, B@.context_index)
+        
+        C <- gpuMatrix(nrow = ncol(A), ncol = ncol(B), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = {
+                   stop("integer type not currently implemented")
+                   # cpp_gpuMatrix_pmcc(A@address, 
+                   #                    B@address, 
+                   #                    4L)
+               },
+               "float" = cpp_gpuMatrix_pmcc2(A@address, 
+                                             B@address, 
+                                             C@address,
+                                             6L),
+               "double" = cpp_gpuMatrix_pmcc2(A@address, 
+                                              B@address,
+                                              C@address,
+                                              8L)
+        )
+        
+        return(C)
+    }
     
-    switch(type,
-           "integer" = {
-               stop("integer type not currently implemented")
-               # cpp_gpuMatrix_pmcc(A@address, 
-               #                    B@address, 
-               #                    4L)
-           },
-           "float" = cpp_gpuMatrix_pmcc(A@address, 
-                                        B@address, 
-                                        6L),
-           "double" = cpp_gpuMatrix_pmcc(A@address, 
-                                         B@address, 
-                                         8L)
-    )
-    
-    return(B)
 }
 
 # GPU crossprod

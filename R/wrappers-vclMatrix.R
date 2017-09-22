@@ -1840,26 +1840,51 @@ vclMatrix_rowMeans <- function(A){
 }
 
 # GPU Pearson Covariance
-vclMatrix_pmcc <- function(A){
+vclMatrix_pmcc <- function(A, B){
     
     type <- typeof(A)
     
-    B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+    if(missing(B)){
+        B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = stop("integer type not currently implemented"),
+               "float" = cpp_vclMatrix_pmcc(A@address, 
+                                            B@address, 
+                                            6L,
+                                            A@.context_index - 1),
+               "double" = cpp_vclMatrix_pmcc(A@address, 
+                                             B@address,
+                                             8L,
+                                             A@.context_index - 1),
+               stop("unsupported matrix type")
+        )
+        
+        return(B)
+    }else{
+        
+        assert_are_identical(A@.context_index, B@.context_index)
+        
+        C <- vclMatrix(nrow = ncol(A), ncol = ncol(B), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = stop("integer type not currently implemented"),
+               "float" = cpp_vclMatrix_pmcc2(A@address, 
+                                            B@address, 
+                                            C@address,
+                                            6L,
+                                            A@.context_index - 1),
+               "double" = cpp_vclMatrix_pmcc2(A@address, 
+                                             B@address,
+                                             C@address,
+                                             8L,
+                                             A@.context_index - 1),
+               stop("unsupported matrix type")
+        )
+        
+        return(C)
+    }
     
-    switch(type,
-           "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_vclMatrix_pmcc(A@address, 
-                                        B@address, 
-                                        6L,
-                                        A@.context_index - 1),
-           "double" = cpp_vclMatrix_pmcc(A@address, 
-                                         B@address,
-                                         8L,
-                                         A@.context_index - 1),
-           stop("unsupported matrix type")
-    )
-    
-    return(B)
 }
 
 # GPU Euclidean Distance
