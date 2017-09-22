@@ -265,6 +265,62 @@ cpp_gpuMatrix_pmcc(
 
 template <typename T>
 void 
+cpp_gpuMatrix_pmcc2(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_)
+{
+    
+    Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynEigenMat<T> > ptrC(ptrC_);
+    
+    viennacl::matrix<T> vcl_A = ptrA->device_data();
+    viennacl::matrix<T> vcl_B = ptrB->device_data();
+    
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
+    
+    const int M = vcl_A.size2();
+    const int M2 = vcl_B.size2();
+    const int K = vcl_A.size1();
+    
+    // viennacl::vector_base<T> ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx=ctx));
+    viennacl::vector_base<T> ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::linalg::vector_assign(ones, (T)(1));
+    
+    viennacl::vector_base<T> vcl_meanVec(M, ctx=ctx);
+    viennacl::vector_base<T> vclB_meanVec(M2, ctx=ctx);
+    viennacl::matrix<T> vclA_meanMat(K,M, ctx=ctx);
+    viennacl::matrix<T> vclB_meanMat(K,M2, ctx=ctx);
+    
+    // matrix A
+    // vector of column means
+    vcl_meanVec = viennacl::linalg::column_sum(vcl_A);
+    vcl_meanVec *= (T)(1)/(T)(K);
+    
+    // matrix of means
+    vclA_meanMat = viennacl::linalg::outer_prod(ones, vcl_meanVec);
+    
+    // matrix B
+    // vector of column means
+    vclB_meanVec = viennacl::linalg::column_sum(vcl_B);
+    vclB_meanVec *= (T)(1)/(T)(K);
+    
+    // matrix of means
+    vclB_meanMat = viennacl::linalg::outer_prod(ones, vclB_meanVec);
+    
+    viennacl::matrix<T> tmp = vcl_A - vclA_meanMat;
+    viennacl::matrix<T> tmp2 = vcl_B - vclB_meanMat;
+    
+    // calculate pearson covariance
+    viennacl::matrix<T> vcl_C = viennacl::linalg::prod(trans(tmp), tmp2);
+    vcl_C *= (T)(1)/(T)(K-1);
+    
+    ptrC->to_host(vcl_C);
+}
+
+template <typename T>
+void 
 cpp_vclMatrix_pmcc(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -303,6 +359,61 @@ cpp_vclMatrix_pmcc(
     vcl_B *= (T)(1)/(T)(K-1);
 }
 
+template <typename T>
+void 
+cpp_vclMatrix_pmcc2(
+    SEXP ptrA_, 
+    SEXP ptrB_,
+    SEXP ptrC_,
+    int ctx_id)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_B = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > vcl_C = ptrC->data();
+    
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    const int M = vcl_A.size2();
+    const int M2 = vcl_B.size2();
+    const int K = vcl_A.size1();
+    
+    // viennacl::vector_base<T> ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx=ctx));
+    viennacl::vector_base<T> ones = viennacl::vector_base<T>(K, ctx = ctx);
+    viennacl::linalg::vector_assign(ones, (T)(1));
+    
+    viennacl::vector_base<T> vcl_meanVec(M, ctx=ctx);
+    viennacl::vector_base<T> vclB_meanVec(M2, ctx=ctx);
+    viennacl::matrix<T> vclA_meanMat(K,M, ctx=ctx);
+    viennacl::matrix<T> vclB_meanMat(K,M2, ctx=ctx);
+    
+    // matrix A
+    // vector of column means
+    vcl_meanVec = viennacl::linalg::column_sum(vcl_A);
+    vcl_meanVec *= (T)(1)/(T)(K);
+    
+    // matrix of means
+    vclA_meanMat = viennacl::linalg::outer_prod(ones, vcl_meanVec);
+    
+    // matrix B
+    // vector of column means
+    vclB_meanVec = viennacl::linalg::column_sum(vcl_B);
+    vclB_meanVec *= (T)(1)/(T)(K);
+    
+    // matrix of means
+    vclB_meanMat = viennacl::linalg::outer_prod(ones, vclB_meanVec);
+    
+    viennacl::matrix<T> tmp = vcl_A - vclA_meanMat;
+    viennacl::matrix<T> tmp2 = vcl_B - vclB_meanMat;
+    
+    // calculate pearson covariance
+    vcl_C = viennacl::linalg::prod(trans(tmp), tmp2);
+    vcl_C *= (T)(1)/(T)(K-1);
+}
 
 template <typename T>
 void 
@@ -611,6 +722,28 @@ cpp_gpuMatrix_pmcc(
 
 // [[Rcpp::export]]
 void
+cpp_gpuMatrix_pmcc2(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int type_flag)
+{
+    
+    switch(type_flag) {
+        case 4:
+            cpp_gpuMatrix_pmcc2<int>(ptrA, ptrB, ptrC);
+            return;
+        case 6:
+            cpp_gpuMatrix_pmcc2<float>(ptrA, ptrB, ptrC);
+            return;
+        case 8:
+            cpp_gpuMatrix_pmcc2<double>(ptrA, ptrB, ptrC);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
 cpp_vclMatrix_pmcc(
     SEXP ptrA, SEXP ptrB,
     const int type_flag,
@@ -632,7 +765,28 @@ cpp_vclMatrix_pmcc(
     }
 }
 
-
+// [[Rcpp::export]]
+void
+cpp_vclMatrix_pmcc2(
+    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+    const int type_flag,
+    int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        cpp_vclMatrix_pmcc2<int>(ptrA, ptrB, ptrC, ctx_id);
+        return;
+    case 6:
+        cpp_vclMatrix_pmcc2<float>(ptrA, ptrB, ptrC, ctx_id);
+        return;
+    case 8:
+        cpp_vclMatrix_pmcc2<double>(ptrA, ptrB, ptrC, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 
 // [[Rcpp::export]]

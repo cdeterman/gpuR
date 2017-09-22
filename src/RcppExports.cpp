@@ -3135,6 +3135,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// cpp_gpuMatrix_pmcc2
+void cpp_gpuMatrix_pmcc2(SEXP ptrA, SEXP ptrB, SEXP ptrC, const int type_flag);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_pmcc2(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    cpp_gpuMatrix_pmcc2(ptrA, ptrB, ptrC, type_flag);
+    return R_NilValue;
+END_RCPP
+}
 // cpp_vclMatrix_pmcc
 void cpp_vclMatrix_pmcc(SEXP ptrA, SEXP ptrB, const int type_flag, int ctx_id);
 RcppExport SEXP _gpuR_cpp_vclMatrix_pmcc(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
@@ -3145,6 +3158,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
     cpp_vclMatrix_pmcc(ptrA, ptrB, type_flag, ctx_id);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_vclMatrix_pmcc2
+void cpp_vclMatrix_pmcc2(SEXP ptrA, SEXP ptrB, SEXP ptrC, const int type_flag, int ctx_id);
+RcppExport SEXP _gpuR_cpp_vclMatrix_pmcc2(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
+    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
+    cpp_vclMatrix_pmcc2(ptrA, ptrB, ptrC, type_flag, ctx_id);
     return R_NilValue;
 END_RCPP
 }
@@ -3596,7 +3623,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_gpuR_qr", (DL_FUNC) &_gpuR_cpp_gpuR_qr, 4},
     {"_gpuR_cpp_recover_qr", (DL_FUNC) &_gpuR_cpp_recover_qr, 9},
     {"_gpuR_cpp_gpuMatrix_pmcc", (DL_FUNC) &_gpuR_cpp_gpuMatrix_pmcc, 3},
+    {"_gpuR_cpp_gpuMatrix_pmcc2", (DL_FUNC) &_gpuR_cpp_gpuMatrix_pmcc2, 4},
     {"_gpuR_cpp_vclMatrix_pmcc", (DL_FUNC) &_gpuR_cpp_vclMatrix_pmcc, 4},
+    {"_gpuR_cpp_vclMatrix_pmcc2", (DL_FUNC) &_gpuR_cpp_vclMatrix_pmcc2, 5},
     {"_gpuR_cpp_vclMatrix_eucl", (DL_FUNC) &_gpuR_cpp_vclMatrix_eucl, 5},
     {"_gpuR_cpp_vclMatrix_peucl", (DL_FUNC) &_gpuR_cpp_vclMatrix_peucl, 6},
     {"_gpuR_cpp_gpuMatrix_eucl", (DL_FUNC) &_gpuR_cpp_gpuMatrix_eucl, 4},

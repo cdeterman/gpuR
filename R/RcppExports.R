@@ -1010,8 +1010,16 @@ cpp_gpuMatrix_pmcc <- function(ptrA, ptrB, type_flag) {
     invisible(.Call('_gpuR_cpp_gpuMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag))
 }
 
+cpp_gpuMatrix_pmcc2 <- function(ptrA, ptrB, ptrC, type_flag) {
+    invisible(.Call('_gpuR_cpp_gpuMatrix_pmcc2', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag))
+}
+
 cpp_vclMatrix_pmcc <- function(ptrA, ptrB, type_flag, ctx_id) {
     invisible(.Call('_gpuR_cpp_vclMatrix_pmcc', PACKAGE = 'gpuR', ptrA, ptrB, type_flag, ctx_id))
+}
+
+cpp_vclMatrix_pmcc2 <- function(ptrA, ptrB, ptrC, type_flag, ctx_id) {
+    invisible(.Call('_gpuR_cpp_vclMatrix_pmcc2', PACKAGE = 'gpuR', ptrA, ptrB, ptrC, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_eucl <- function(ptrA, ptrD, squareDist, type_flag, ctx_id) {
