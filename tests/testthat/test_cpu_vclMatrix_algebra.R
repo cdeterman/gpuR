@@ -905,7 +905,7 @@ test_that("CPU vclMatrix Double Precision Matrix/Vector Addition", {
     fgpuC <- fgpuA + fgpuB
     
     expect_is(fgpuC, "dvclMatrix")
-    expect_equal(fgpuC[,], C2, tolerance=.Machine$double.eps^0.5, 
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps^0.5, 
                  info="double matrix elements not equivalent")  
     
 })
