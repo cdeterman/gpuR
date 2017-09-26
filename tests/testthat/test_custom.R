@@ -4,10 +4,7 @@ context("Custom OpenCL")
 current_context <- set_device_context("cpu")
 
 library(Rcpp)
-Sys.setenv(PKG_LIBS="-LC:/Users/y66534/Documents/R_projects/gpuR/inst/include/loader/x64 -lOpenCL -Wl,-rpath,C:/Users/y66534/Documents/R_projects/gpuR/inst/include/loader/x64")
-Sys.setenv(PKG_CPPFLAGS="-IC:/Users/y66534/Documents/R_projects/gpuR/inst/include")
 
-# setContext(2L)
 set.seed(123)
 
 ORDER <- 4
@@ -24,7 +21,7 @@ igpuC <- vclMatrix(0L, 4, 4, type="integer")
 
 test_that("Custom OpenCL GEMM Kernel", {
     
-    has_gpu_skip()
+    has_cpu_skip()
     
     Cint <- Aint %*% Bint
     
