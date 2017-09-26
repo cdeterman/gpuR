@@ -1199,7 +1199,7 @@ setMethod("cbind2",
                   stop("number of rows of matrices must match")
               }
               
-              print('cbind called')
+              # print('cbind called')
               assert_are_identical(x@.context_index, y@.context_index)
               
               z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + 1, type = typeof(y), ctx_id = y@.context_index)
@@ -1209,9 +1209,9 @@ setMethod("cbind2",
               
               # cbind_wrapper2(x,y,z, FALSE)
               
-              print(z[])
-              
-              print('cbind complete')
+              # print(z[])
+              # 
+              # print('cbind complete')
               
               return(z)
           })

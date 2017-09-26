@@ -620,7 +620,7 @@ vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
             
             # this is not efficient as pulling vector data from GPU and putting back
             if(AisVec){
-                print("A is vector")
+                # print("A is vector")
                 Y <- vclMatrix(A[], 
                                nrow = nrow(B), 
                                ncol = ncol(B), 
@@ -628,7 +628,7 @@ vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
                                ctx_id = B@.context_index)   
                 Z <- deepcopy(B)
             }else{
-                print("B is vector")
+                # print("B is vector")
                 Z <- vclMatrix(B[],
                                nrow = nrow(A), 
                                ncol = ncol(A), 
@@ -645,8 +645,8 @@ vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
     AisVec <- inherits(Y, "vclVector")
     BisVec <- inherits(Z, "vclVector")
     
-    print(Y[])
-    print(Z[])
+    # print(Y[])
+    # print(Z[])
     
     # if neither vectors, then do matrix operations
     if(!AisVec & !BisVec){
