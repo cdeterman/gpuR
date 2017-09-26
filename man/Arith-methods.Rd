@@ -11,6 +11,7 @@
 \alias{Arith-gpuVector-numeric-method}
 \alias{Arith,gpuVector,missing-method}
 \alias{Arith-gpuVector-missing-method}
+\alias{Arith,gpuVector,gpuMatrix-method}
 \alias{Arith,vclMatrix,vclMatrix-method}
 \alias{Arith,vclMatrix,matrix-method}
 \alias{Arith,matrix,vclMatrix-method}
@@ -30,6 +31,7 @@
 \alias{Arith,gpuMatrix,numeric-method}
 \alias{Arith,numeric,gpuMatrix-method}
 \alias{Arith,gpuMatrix,missing-method}
+\alias{Arith,gpuMatrix,gpuVector-method}
 \title{Arith methods}
 \usage{
 \S4method{Arith}{gpuVector,gpuVector}(e1, e2)
@@ -39,6 +41,8 @@
 \S4method{Arith}{gpuVector,numeric}(e1, e2)
 
 \S4method{Arith}{gpuVector,missing}(e1, e2)
+
+\S4method{Arith}{gpuVector,gpuMatrix}(e1, e2)
 
 \S4method{Arith}{vclMatrix,vclMatrix}(e1, e2)
 
@@ -75,6 +79,8 @@
 \S4method{Arith}{numeric,gpuMatrix}(e1, e2)
 
 \S4method{Arith}{gpuMatrix,missing}(e1, e2)
+
+\S4method{Arith}{gpuMatrix,gpuVector}(e1, e2)
 }
 \arguments{
 \item{e1}{A gpuR object}

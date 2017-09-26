@@ -200,6 +200,23 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
           valueClass = "gpuMatrix"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="gpuVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @title gpuR Math methods
 #' @description Methods for the base Math methods \link[methods]{S4groupGeneric}
 #' @param x A gpuR object

@@ -78,8 +78,6 @@ gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisSca
                 }     
             }
         }
-        
-        
     }
     
     if(AisScalar || BisScalar){
@@ -186,6 +184,117 @@ gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisSca
         return(invisible(Z))
     }else{
         return(Z)   
+    }
+}
+
+# need API for matrix-vector Arith methods
+# can convert vector to 'dummy' matrix
+# but the 'dummy' matrix can't be used by vclMatrix
+# need to 'copy' the matrix for now because of the padding
+# waiting on viennacl issues #217 & #219
+
+gpuMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
+    
+    assert_are_identical(A@.context_index, B@.context_index)
+    
+    type <- typeof(A)
+    
+    AisVec <- inherits(A, "gpuVector")
+    BisVec <- inherits(B, "gpuVector")
+    
+    if(inplace){
+        Z <- B
+    }else{
+        
+        if(AisVec != BisVec){
+            
+            # this is not efficient as pulling vector data from GPU and putting back
+            if(AisVec){
+                Y <- gpuMatrix(A[], 
+                               nrow = nrow(B), 
+                               ncol = ncol(B), 
+                               type = type,
+                               ctx_id = B@.context_index)   
+                Z <- deepcopy(B)
+            }else{
+                Z <- gpuMatrix(B[],
+                               nrow = nrow(A), 
+                               ncol = ncol(A), 
+                               type = type,
+                               ctx_id = A@.context_index)    
+                Y <- A
+            }
+        }else{
+            # not currently used until matrix padding issue can be resolved
+            stop("direct matrix-vector not used until matrix padding issue can be resolved")
+            # Y <- A
+            # Z <- deepcopy(B)     
+        }
+    }
+    
+    AisVec <- inherits(Y, "gpuVector")
+    BisVec <- inherits(Z, "gpuVector")
+    
+    # if neither vectors, then do matrix operations
+    if(!AisVec & !BisVec){
+        switch(type,
+               integer = {
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      4L)
+               },
+               float = {
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      6L)
+               },
+               double = {
+                   cpp_gpuMatrix_axpy(alpha, 
+                                      Y@address,
+                                      Z@address,
+                                      8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        # switch(type,
+        #        integer = {
+        #            cpp_gpuMatVec_axpy(alpha, 
+        #                               Y@address, 
+        #                               AisVec,
+        #                               Z@address,
+        #                               BisVec,
+        #                               4L,
+        #                               Y@.context_index)
+        #        },
+        #        float = {
+        #            cpp_gpuMatVec_axpy(alpha, 
+        #                               Y@address, 
+        #                               AisVec,
+        #                               Z@address,
+        #                               BisVec,
+        #                               6L,
+        #                               Y@.context_index)
+        #        },
+        #        double = {
+        #            cpp_gpuMatVec_axpy(alpha, 
+        #                               Y@address, 
+        #                               AisVec,
+        #                               Z@address,
+        #                               BisVec,
+        #                               8L,
+        #                               Y@.context_index)
+               # },
+               # stop("type not recognized")
+        # )   
+    }
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
     }
 }
 

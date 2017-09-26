@@ -487,8 +487,6 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                 }     
             }
         }
-        
-        
     }
     
     if(AisScalar || BisScalar){
@@ -601,55 +599,116 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
 
 # need API for matrix-vector Arith methods
 # can convert vector to 'dummy' matrix
-# not sure about the vector-matrix methods
-# may need to 'copy' the matrix for now because of the padding
+# but the 'dummy' matrix can't be used by vclMatrix
+# need to 'copy' the matrix for now because of the padding
+# waiting on viennacl issues #217 & #219
 
 vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
  
+    assert_are_identical(A@.context_index, B@.context_index)
+    
     type <- typeof(A)
-    
-    if(inplace){
-        Z <- B
-    }else{
-        Z <- deepcopy(B) 
-    }
-    
     
     AisVec <- inherits(A, "vclVector")
     BisVec <- inherits(B, "vclVector")
     
-    switch(type,
-           integer = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  4L,
-                                  A@.context_index)
-           },
-           float = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  6L,
-                                  A@.context_index)
-           },
-           double = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  8L,
-                                  A@.context_index)
-           },
-           stop("type not recognized")
-    )   
+    if(inplace){
+        Z <- B
+    }else{
+        
+        if(AisVec != BisVec){
+            
+            # this is not efficient as pulling vector data from GPU and putting back
+            if(AisVec){
+                print("A is vector")
+                Y <- vclMatrix(A[], 
+                               nrow = nrow(B), 
+                               ncol = ncol(B), 
+                               type = type,
+                               ctx_id = B@.context_index)   
+                Z <- deepcopy(B)
+            }else{
+                print("B is vector")
+                Z <- vclMatrix(B[],
+                               nrow = nrow(A), 
+                               ncol = ncol(A), 
+                               type = type,
+                               ctx_id = A@.context_index)    
+                Y <- A
+            }
+        }else{
+            Y <- A
+            Z <- deepcopy(B)     
+        }
+    }
     
-    return(Z)
+    AisVec <- inherits(Y, "vclVector")
+    BisVec <- inherits(Z, "vclVector")
+    
+    print(Y[])
+    print(Z[])
+    
+    # if neither vectors, then do matrix operations
+    if(!AisVec & !BisVec){
+        switch(type,
+               integer = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      4L)
+               },
+               float = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      6L)
+               },
+               double = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address,
+                                      Z@address,
+                                      8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        switch(type,
+               integer = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      4L,
+                                      Y@.context_index)
+               },
+               float = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      6L,
+                                      Y@.context_index)
+               },
+               double = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      8L,
+                                      Y@.context_index)
+               },
+               stop("type not recognized")
+        )   
+    }
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
 }
 
 
