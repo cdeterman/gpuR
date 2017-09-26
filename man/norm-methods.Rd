@@ -12,6 +12,20 @@ norm(x, type = "O")
 
 \method{norm}{gpuMatrix}(x, type = "O")
 }
+\arguments{
+\item{x}{A gpuR matrix object}
+
+\item{type}{character string, specifying the type of matrix norm to be computed.}
+}
+\value{
+The matrix norm, a non-negative number
+}
+\description{
+Computes a matrix norm of x. The norm can be the one \("O"\) norm, 
+the infinity \("I"\) norm, the Frobenius \("F"\) norm, the maximum modulus \("M"\) 
+among elements of a matrix, or the “spectral” or "2"-norm, as determined by 
+the value of type.
+}
 \seealso{
 \link[base]{norm}
 }

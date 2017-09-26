@@ -879,45 +879,44 @@ vclVecElemAbs <- function(A, inplace = FALSE){
     return(C)
 }
 
-#' #' @export
-#' vclVecElemAbs2 <- function(A){
-#'     
-#'     type <- typeof(A)
-#'     
-#'     switch(type,
-#'            integer = {
-#'                stop("integer not currently implemented")
-#'            },
-#'            float = {
-#'                file <- system.file("CL", "fabs.cl", package = "gpuR")
-#'                
-#'                if(!file_test("-f", file)){
-#'                    stop("kernel file does not exist")
-#'                }
-#'                kernel <- readChar(file, file.info(file)$size)
-#'                
-#'                cpp_vclVector_elem_abs2(A@address,
-#'                                            kernel,
-#'                                             A@.context_index - 1,
-#'                                            6L)
-#'            },
-#'            double = {
-#'                file <- system.file("CL", "dabs.cl", package = "gpuR")
-#'                
-#'                if(!file_test("-f", file)){
-#'                    stop("kernel file does not exist")
-#'                }
-#'                kernel <- readChar(file, file.info(file)$size)
-#'                
-#'                cpp_vclVector_elem_abs2(A@address,
-#'                                        kernel,
-#'                                        A@.context_index - 1,
-#'                                       8L)
-#'            },
-#'            stop("type not recognized")
-#'     )
-#'     return(invisible(A))
-#' }
+# vclVecElemAbs2 <- function(A){
+# 
+#     type <- typeof(A)
+# 
+#     switch(type,
+#            integer = {
+#                stop("integer not currently implemented")
+#            },
+#            float = {
+#                file <- system.file("CL", "fabs.cl", package = "gpuR")
+# 
+#                if(!file_test("-f", file)){
+#                    stop("kernel file does not exist")
+#                }
+#                kernel <- readChar(file, file.info(file)$size)
+# 
+#                cpp_vclVector_elem_abs2(A@address,
+#                                            kernel,
+#                                             A@.context_index - 1,
+#                                            6L)
+#            },
+#            double = {
+#                file <- system.file("CL", "dabs.cl", package = "gpuR")
+# 
+#                if(!file_test("-f", file)){
+#                    stop("kernel file does not exist")
+#                }
+#                kernel <- readChar(file, file.info(file)$size)
+# 
+#                cpp_vclVector_elem_abs2(A@address,
+#                                        kernel,
+#                                        A@.context_index - 1,
+#                                       8L)
+#            },
+#            stop("type not recognized")
+#     )
+#     return(invisible(A))
+# }
 
 # GPU Element-Wise Absolute Value
 vclVecElemMaxAbs <- function(A){

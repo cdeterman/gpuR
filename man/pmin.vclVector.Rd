@@ -7,6 +7,11 @@ setGeneric("pmax", signature = "...")}
 \usage{
 \method{pmin}{vclVector}(..., na.rm = FALSE)
 }
+\arguments{
+\item{...}{a vclVector object}
+
+\item{na.rm}{a logical indicating whether missing values should be removed.}
+}
 \description{
 # @rdname 
 #' @method pmax vclVector

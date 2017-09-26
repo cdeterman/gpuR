@@ -277,7 +277,8 @@ pmax.gpuMatrix <- function(..., na.rm = FALSE){
 #'           })
 
 
-
+#' @param ... a vclVector object
+#' @param na.rm a logical indicating whether missing values should be removed. 
 #' @export
 pmin.vclVector <- function(..., na.rm = FALSE){
     gpuVecpmax(..., order = -1L)

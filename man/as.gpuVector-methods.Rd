@@ -15,7 +15,7 @@ as.gpuVector(object, type)
 \item{object}{An object that is or can be converted to a 
 \code{vector} object}
 
-\item{type}{A character string specifying the type of gpuMatrix.  Default
+\item{type}{A character string specifying the type of gpuVector.  Default
 is NULL where type is inherited from the source data type.}
 }
 \value{

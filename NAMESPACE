@@ -2,7 +2,6 @@
 
 S3method(as.matrix,gpuMatrix)
 S3method(as.matrix,vclMatrix)
-S3method(as.vclVector,vclMatrix)
 S3method(as.vector,gpuVector)
 S3method(as.vector,vclVector)
 S3method(chol,gpuMatrix)

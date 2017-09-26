@@ -12,7 +12,7 @@ cpuInfo(device_idx = NULL, context_idx = currentContext())
 \arguments{
 \item{device_idx}{An integer value indicating which device to query.}
 
-\item{device_idx}{An integer value indicating which context to query.}
+\item{context_idx}{An integer value indicating which context to query.}
 }
 \value{
 \item{deviceName}{Device Name}

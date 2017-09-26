@@ -9,6 +9,7 @@ splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 #' @param intents character vector specifying 'intent' of gpuR objects.
 #' options include \code{"IN"},\code{"OUT"},\code{"INOUT"}
 #' @param queues list of equal length to \code{"objects"} where each element
+#' @param kernel_maps The corresponding arguments names in the provided OpenCL kernel
 #' corresponds to the gpuR objects passed and contains a character vector of
 #' which kernels the object will be enqueued.
 #' @importFrom assertive assert_is_character assert_all_are_same_length assert_is_list

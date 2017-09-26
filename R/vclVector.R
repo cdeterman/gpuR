@@ -222,6 +222,8 @@ setMethod('vclVector',
 
 
 #' @rdname vclVector-methods
+#' @param col index of column to extract from \code{vclMatrix}
+#' @param row index of row to extract from \code{vclMatrix}
 #' @aliases vclVector,vector
 setMethod('vclVector', 
           signature(data = 'vclMatrix', length = 'missing'),
