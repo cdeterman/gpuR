@@ -15,6 +15,9 @@
             \item Allow for gpuR object - base object interaction (e.g. vclMatrix * matrix)
             \item Added `inplace` function for 'inplace' operations.  These operations include `+`, `-`, `*`, `/`, `sin`, `asin`, `sinh`, `cos`, `acos`, `cosh`, `tan`, `atan`, `tanh`.
             \item Added `sqrt`, `sum`, `sign`,`pmin`, and `pmax` functions
+            \item Methods to pass two gpuR matrix objects to `cov`
+            \item Added `norm` method
+            \item Added gpuRmatrix/gpuRvector Arith `+`,`-` methods
         }
         \item Bug Fixes:
         \itemize{
@@ -27,6 +30,9 @@
             \item Parallel GPU functionality
             \item Implementing 'complex' data type
             \item Additional indexing functionality
+            \item Additional correlation methods
+            \item Additional gpuR - `base R` methods
+            \item gpu-vcl object methods
         }
     }
 }
