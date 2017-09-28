@@ -516,10 +516,10 @@ custom_opencl <- function(kernel, cl_args, type){
                Sys.setenv(PKG_LIBS=LIBS)
            },
            "Darwin" = {
-               warning("not currently tested")
+               Sys.setenv(PKG_LIBS="-lOpenCL")
            },
            {
-               warning("not currently tested")
+               Sys.setenv(PKG_LIBS="-lOpenCL")
            })
     
     sourceCpp(ocl_file)
