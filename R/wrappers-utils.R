@@ -271,7 +271,6 @@ setContext <- function(id = 1L){
 }
 
 
-#' @export
 cbind_wrapper <- function(x, y, z){
     switch(typeof(x),
            "integer" = {
@@ -301,7 +300,7 @@ cbind_wrapper <- function(x, y, z){
     return(invisible(z))
 }
 
-#' @export
+
 cbind_wrapper2 <- function(x, y, z, order = TRUE){
     switch(typeof(x),
            "integer" = {

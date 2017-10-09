@@ -11,18 +11,8 @@
 #' @rdname norm-methods
 #' @seealso \link[base]{norm}
 #' @export
-norm <- function(x, type = "O") UseMethod("norm")
-
-# add base method
-#' @export
-norm.default <- base::norm
-
-# GPU norm
-
-#' @rdname norm-methods
-#' @export
-norm.vclMatrix <- 
-    function(x, type = "O"){
+setMethod("norm", signature(x = "vclMatrix", type = "character"),
+    function(x, type){
         
         mtype <- typeof(x)
         
@@ -35,12 +25,31 @@ norm.vclMatrix <-
         
         return(result)
     }
-
+)
 
 #' @rdname norm-methods
 #' @export
-norm.gpuMatrix <- 
-    function(x, type = "O"){
+setMethod("norm", signature(x = "vclMatrix", type = "missing"),
+          function(x, type){
+              
+              mtype <- typeof(x)
+              type <- "O"
+              
+              result <- switch(mtype,
+                               integer = {cpp_vclMatrix_norm(x@address, type, 4L)},
+                               float = {cpp_vclMatrix_norm(x@address, type, 6L)},
+                               double = {cpp_vclMatrix_norm(x@address, type, 8L)},
+                               stop("type not recognized")
+              )
+              
+              return(result)
+          }
+)
+
+#' @rdname norm-methods
+#' @export
+setMethod("norm", signature(x = "gpuMatrix", type = "character"),
+    function(x, type){
         
         mtype <- typeof(x)
         
@@ -53,5 +62,26 @@ norm.gpuMatrix <-
         
         return(result)
     }
+)
+
+#' @rdname norm-methods
+#' @export
+setMethod("norm", signature(x = "gpuMatrix", type = "missing"),
+          function(x, type){
+              
+              mtype <- typeof(x)
+              type <- "O"
+              
+              result <- switch(mtype,
+                               integer = {cpp_gpuMatrix_norm(x@address, type, 4L)},
+                               float = {cpp_gpuMatrix_norm(x@address, type, 6L)},
+                               double = {cpp_gpuMatrix_norm(x@address, type, 8L)},
+                               stop("type not recognized")
+              )
+              
+              return(result)
+          }
+)
+
 
 

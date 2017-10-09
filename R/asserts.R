@@ -15,10 +15,10 @@ assert_has_double <-
              severity = getOption("assertive.severity", "stop"))
     {
         msg <- gettextf(
-            "The device %s on platform %s does not support double.
+            "The device %s on context %s does not support double.
             Try setting type = 'float' or change device if multiple available.",
             get_name_in_parent(device_idx),
-            get_name_in_parent(plat_idx),
+            get_name_in_parent(context_idx),
             domain = "R-assertive.base"
         )
         assert_engine(

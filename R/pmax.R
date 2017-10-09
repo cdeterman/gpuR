@@ -210,11 +210,19 @@ gpuVecpmax <- function(..., order){
 }
 
 
+#' @title 'Parallel' Maxima and Minima
+#' @description \code{pmax} and \code{pmin} take one or more
+#' vectors as arguments and returna single vector giving the 'parallel'
+#' maxima (or minima) of the argument vectors
+#' @param ... gpuR or numeric arguments
+#' @seealso \link[base]{pmax} \link[base]{pmin}
+#' @rdname pmax
 #' @export
 pmax <- function(...){ UseMethod("pmax") }
 #' @export
 pmax.default <- function(..., na.rm=FALSE){ base::pmax(..., na.rm=FALSE) }
 
+#' @rdname pmax
 #' @export
 pmin <- function(...){ UseMethod("pmin") }
 #' @export

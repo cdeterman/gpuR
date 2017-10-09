@@ -1,6 +1,6 @@
 
 
-#' @useDynLib gpuR
+#' @useDynLib gpuR, .registration = TRUE
 #' @importFrom Rcpp evalCpp
 
 

@@ -854,11 +854,15 @@ gpuVecElemExp <- function(A){
 }
 
 # GPU Element-Wise Absolute Value
-gpuVecElemAbs <- function(A){
+gpuVecElemAbs <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -877,7 +881,12 @@ gpuVecElemAbs <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Vector maximum
