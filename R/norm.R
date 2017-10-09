@@ -83,5 +83,18 @@ setMethod("norm", signature(x = "gpuMatrix", type = "missing"),
           }
 )
 
+#' @rdname norm-methods
+#' @export
+setMethod("norm", signature(x = "ANY", type = "missing"),
+          function(x, type){
+              base::norm(x, type = "O")
+          }
+)
 
-
+#' @rdname norm-methods
+#' @export
+setMethod("norm", signature(x = "ANY", type = "character"),
+          function(x, type){
+              base::norm(x, type = type)
+          }
+)

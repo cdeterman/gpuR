@@ -6,6 +6,8 @@
 \alias{norm,vclMatrix,missing-method}
 \alias{norm,gpuMatrix,character-method}
 \alias{norm,gpuMatrix,missing-method}
+\alias{norm,ANY,missing-method}
+\alias{norm,ANY,character-method}
 \title{Compute the Norm of a Matrix}
 \usage{
 \S4method{norm}{vclMatrix,character}(x, type)
@@ -15,6 +17,10 @@
 \S4method{norm}{gpuMatrix,character}(x, type)
 
 \S4method{norm}{gpuMatrix,missing}(x, type)
+
+\S4method{norm}{ANY,missing}(x, type)
+
+\S4method{norm}{ANY,character}(x, type)
 }
 \arguments{
 \item{x}{A gpuR matrix object}
