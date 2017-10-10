@@ -604,7 +604,7 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
                      `-` = {
                          # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
                          # vclMat_axpy(-1, e2, e1)
-                         vclMat_axpy(-1, e2, e1, BisScalar = TRUE)
+                         vclMat_axpy(-1, e1, e2, AisScalar = TRUE)
                      },
                      `*` = vclMatScalarMult(e2, e1),
                      `/` = {
@@ -883,12 +883,34 @@ setMethod("cov",
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
+          signature(x = "vclMatrix", y = "vclMatrix", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x, y))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
           signature(x = "vclMatrix", y = "missing", use = "missing", method = "character"),
           function(x, y = NULL, use = NULL, method = "pearson") {
               if(method != "pearson"){
                   stop("Only pearson covariance implemented")
               }
               return(vclMatrix_pmcc(x))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
+          signature(x = "vclMatrix", y = "vclMatrix", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x, y))
           })
 
 #' @title Row and Column Sums and Means of vclMatrix
@@ -1177,7 +1199,7 @@ setMethod("cbind2",
                   stop("number of rows of matrices must match")
               }
               
-              print('cbind called')
+              # print('cbind called')
               assert_are_identical(x@.context_index, y@.context_index)
               
               z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + 1, type = typeof(y), ctx_id = y@.context_index)
@@ -1187,9 +1209,9 @@ setMethod("cbind2",
               
               # cbind_wrapper2(x,y,z, FALSE)
               
-              print(z[])
-              
-              print('cbind complete')
+              # print(z[])
+              # 
+              # print('cbind complete')
               
               return(z)
           })

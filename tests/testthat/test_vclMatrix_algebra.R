@@ -1,7 +1,11 @@
 library(gpuR)
 context("vclMatrix algebra")
 
-current_context <- set_device_context("gpu")
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
 
 # set seed
 set.seed(123)
@@ -79,6 +83,33 @@ test_that("vclMatrix Single Precision Matrix Subtraction", {
                  info="float matrix elements not equivalent")  
 })
 
+test_that("vclMatrix Single Precision Matrix/Vector Subtraction", {
+    
+    has_gpu_skip()
+    
+    C <- A - c(B)
+    C2 <- c(A) - B
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuB <- vclVector(c(B), type="float")
+    
+    fgpuC <- fgpuA - fgpuB
+    
+    expect_is(fgpuC, "fvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    
+    fgpuA <- vclVector(c(A), type="float")
+    fgpuB <- vclMatrix(B, type="float")
+    
+    fgpuC <- fgpuA - fgpuB
+    
+    expect_is(fgpuC, "fvclMatrix")
+    expect_equal(fgpuC[,], C2, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    
+})
+
 test_that("vclMatrix Single Precision Scalar Matrix Subtraction", {
     
     has_gpu_skip()
@@ -142,6 +173,32 @@ test_that("vclMatrix Single Precision Matrix Addition", {
     expect_is(fgpuC, "fvclMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Single Precision Matrix/Vector Addition", {
+    
+    has_gpu_skip()
+    
+    C <- A + c(B)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuB <- vclVector(c(B), type="float")
+    
+    fgpuC <- fgpuA + fgpuB
+    
+    expect_is(fgpuC, "fvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    
+    fgpuA <- vclVector(c(A), type="float")
+    fgpuB <- vclMatrix(B, type="float")
+    
+    fgpuC <- fgpuA + fgpuB
+    
+    expect_is(fgpuC, "fvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    
 })
 
 test_that("vclMatrix Single Precision Scalar Matrix Addition", {
@@ -774,6 +831,34 @@ test_that("vclMatrix Double Precision Matrix Subtraction", {
                  info="double matrix elements not equivalent")  
 })
 
+test_that("vclMatrix Double Precision Matrix/Vector Subtraction", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A - c(B)
+    C2 <- c(A) - B
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuB <- vclVector(c(B), type="double")
+    
+    fgpuC <- fgpuA - fgpuB
+    
+    expect_is(fgpuC, "dvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix elements not equivalent")  
+    
+    fgpuA <- vclVector(c(A), type="double")
+    fgpuB <- vclMatrix(B, type="double")
+    
+    fgpuC <- fgpuA - fgpuB
+    
+    expect_is(fgpuC, "dvclMatrix")
+    expect_equal(fgpuC[,], C2, tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix elements not equivalent")  
+    
+})
+
 test_that("vclMatrix Double Precision Matrix Addition", {
     
     has_gpu_skip()
@@ -803,6 +888,33 @@ test_that("vclMatrix Double Precision Matrix Addition", {
     expect_is(dgpuC, "dvclMatrix")
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Matrix/Vector Addition", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A + c(B)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuB <- vclVector(c(B), type="double")
+    
+    fgpuC <- fgpuA + fgpuB
+    
+    expect_is(fgpuC, "dvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix elements not equivalent")  
+    
+    fgpuA <- vclVector(c(A), type="double")
+    fgpuB <- vclMatrix(B, type="double")
+    
+    fgpuC <- fgpuA + fgpuB
+    
+    expect_is(fgpuC, "dvclMatrix")
+    expect_equal(fgpuC[,], C, tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix elements not equivalent")  
+    
 })
 
 test_that("vclMatrix Double Precision Scalar Matrix Addition", {

@@ -9,6 +9,7 @@ splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 #' @param intents character vector specifying 'intent' of gpuR objects.
 #' options include \code{"IN"},\code{"OUT"},\code{"INOUT"}
 #' @param queues list of equal length to \code{"objects"} where each element
+#' @param kernel_maps The corresponding arguments names in the provided OpenCL kernel
 #' corresponds to the gpuR objects passed and contains a character vector of
 #' which kernels the object will be enqueued.
 #' @importFrom assertive assert_is_character assert_all_are_same_length assert_is_list
@@ -416,7 +417,7 @@ custom_opencl <- function(kernel, cl_args, type){
     # viennacl::ocl::enqueue(my_kernel(*vcl_A, *vcl_B, value, M, P, M_internal));
     k_args <- lapply(kernel_args, function(x) unlist(strsplit(x, ",")))
     k_args <- lapply(k_args, function(x) {
-        unlist(lapply(strsplit(x, "double|float|int"), function(y){
+        unlist(lapply(strsplit(x, "\\bdouble|\\bfloat|\\bint"), function(y){
             gsub(" ", "", y[[length(y)]])
         }))
     })
@@ -444,14 +445,16 @@ custom_opencl <- function(kernel, cl_args, type){
         cpp_objs <- paste0("*vcl_", objects_in_kernel[objects_in_kernel[,"object"] != "scalar","map"])
         cl_objs <- paste0("*", objects_in_kernel[objects_in_kernel[,"object"] != "scalar","map"])
         cl_objs <- c(cl_objs, objects_in_kernel[objects_in_kernel[,"object"] == "scalar","map"])
-        # cpp_non_cl_objs <-
+        
         internal_cpp_objs <- non_cl_objs[[k]]
         
-        my_objs <- c(cpp_objs, internal_cpp_objs)
+        # my_objs <- c(cpp_objs, internal_cpp_objs)
+        my_vcl_objs <- c(cpp_objs, internal_cpp_objs)
+        my_objs <- c(cl_objs, internal_cpp_objs)
         
         paste0("viennacl::ocl::enqueue(", knames[k], "(",
                paste(
-                   paste(my_objs[match(c(ptr_args[[k]],internal_cpp_objs), cl_objs)], collapse = ","),
+                   paste(my_vcl_objs[match(k_args[[k]], my_objs)], collapse = ","),
                    sep = ","),
                "));")
     })
@@ -513,10 +516,10 @@ custom_opencl <- function(kernel, cl_args, type){
                Sys.setenv(PKG_LIBS=LIBS)
            },
            "Darwin" = {
-               warning("not currently tested")
+               Sys.setenv(PKG_LIBS="-lOpenCL")
            },
            {
-               warning("not currently tested")
+               Sys.setenv(PKG_LIBS="-lOpenCL")
            })
     
     sourceCpp(ocl_file)

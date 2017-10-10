@@ -473,11 +473,6 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
             if(AisScalar){
                 if(!missing(B))
                 {
-                    if(inherits(A, 'vclMatrix')){
-                        if(length(B[]) != length(A[])){
-                            stop("Lengths of matrices must match")
-                        }
-                    }
                     Z <- deepcopy(B)
                 }
             }else{
@@ -488,17 +483,16 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                             stop("Lengths of matrices must match")
                         }
                     }
-                    Z <- deepcopy(A)
+                    Z <- deepcopy(B)
                 }     
             }
         }
-        
-        
     }
     
     if(AisScalar || BisScalar){
         
         scalar <- if(AisScalar) A else B
+        order <- if(AisScalar) 0L else 1L
         
         # print(scalar)
         # print(alpha)
@@ -523,6 +517,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -540,6 +535,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar, 
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -557,6 +553,7 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
                    cpp_vclMatrix_scalar_axpy(alpha, 
                                              scalar,
                                              Z@address,
+                                             order,
                                              sqrt(maxWorkGroupSize),
                                              kernel,
                                              Z@.context_index - 1,
@@ -602,55 +599,116 @@ vclMat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisScal
 
 # need API for matrix-vector Arith methods
 # can convert vector to 'dummy' matrix
-# not sure about the vector-matrix methods
-# may need to 'copy' the matrix for now because of the padding
+# but the 'dummy' matrix can't be used by vclMatrix
+# need to 'copy' the matrix for now because of the padding
+# waiting on viennacl issues #217 & #219
 
 vclMatVec_axpy <- function(alpha, A, B, inplace = FALSE){
  
+    assert_are_identical(A@.context_index, B@.context_index)
+    
     type <- typeof(A)
-    
-    if(inplace){
-        Z <- B
-    }else{
-        Z <- deepcopy(B) 
-    }
-    
     
     AisVec <- inherits(A, "vclVector")
     BisVec <- inherits(B, "vclVector")
     
-    switch(type,
-           integer = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  4L,
-                                  A@.context_index)
-           },
-           float = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  6L,
-                                  A@.context_index)
-           },
-           double = {
-               cpp_vclMatVec_axpy(alpha, 
-                                  A@address, 
-                                  AisVec,
-                                  Z@address,
-                                  BisVec,
-                                  8L,
-                                  A@.context_index)
-           },
-           stop("type not recognized")
-    )   
+    if(inplace){
+        Z <- B
+    }else{
+        
+        if(AisVec != BisVec){
+            
+            # this is not efficient as pulling vector data from GPU and putting back
+            if(AisVec){
+                # print("A is vector")
+                Y <- vclMatrix(A[], 
+                               nrow = nrow(B), 
+                               ncol = ncol(B), 
+                               type = type,
+                               ctx_id = B@.context_index)   
+                Z <- deepcopy(B)
+            }else{
+                # print("B is vector")
+                Z <- vclMatrix(B[],
+                               nrow = nrow(A), 
+                               ncol = ncol(A), 
+                               type = type,
+                               ctx_id = A@.context_index)    
+                Y <- A
+            }
+        }else{
+            Y <- A
+            Z <- deepcopy(B)     
+        }
+    }
     
-    return(Z)
+    AisVec <- inherits(Y, "vclVector")
+    BisVec <- inherits(Z, "vclVector")
+    
+    # print(Y[])
+    # print(Z[])
+    
+    # if neither vectors, then do matrix operations
+    if(!AisVec & !BisVec){
+        switch(type,
+               integer = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      4L)
+               },
+               float = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address, 
+                                      Z@address,
+                                      6L)
+               },
+               double = {
+                   cpp_vclMatrix_axpy(alpha, 
+                                      Y@address,
+                                      Z@address,
+                                      8L)
+               },
+               stop("type not recognized")
+        )
+    }else{
+        switch(type,
+               integer = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      4L,
+                                      Y@.context_index)
+               },
+               float = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      6L,
+                                      Y@.context_index)
+               },
+               double = {
+                   cpp_vclMatVec_axpy(alpha, 
+                                      Y@address, 
+                                      AisVec,
+                                      Z@address,
+                                      BisVec,
+                                      8L,
+                                      Y@.context_index)
+               },
+               stop("type not recognized")
+        )   
+    }
+    
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)    
+    }
 }
 
 
@@ -1137,7 +1195,13 @@ vclMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
         )
     }else{
         type <- typeof(A)
-        C <- deepcopy(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)    
+        }
+        
         scalar <- B
         
         switch(type,
@@ -1266,11 +1330,16 @@ vclMatSqrt <- function(A){
 }
 
 # GPU Element-Wise Sine
-vclMatElemSin <- function(A){
+vclMatElemSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
+    
     
     switch(type,
            integer = {
@@ -1290,15 +1359,23 @@ vclMatElemSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Sine
-vclMatElemArcSin <- function(A){
+vclMatElemArcSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1318,15 +1395,23 @@ vclMatElemArcSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Sine
-vclMatElemHypSin <- function(A){
+vclMatElemHypSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A   
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1347,15 +1432,23 @@ vclMatElemHypSin <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Cos
-vclMatElemCos <- function(A){
+vclMatElemCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1375,15 +1468,23 @@ vclMatElemCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Cos
-vclMatElemArcCos <- function(A){
+vclMatElemArcCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1403,15 +1504,23 @@ vclMatElemArcCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Cos
-vclMatElemHypCos <- function(A){
+vclMatElemHypCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1431,15 +1540,23 @@ vclMatElemHypCos <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Tan
-vclMatElemTan <- function(A){
+vclMatElemTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
     
     switch(type,
            integer = {
@@ -1459,15 +1576,24 @@ vclMatElemTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Arc Tan
-vclMatElemArcTan <- function(A){
+vclMatElemArcTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)    
+    }
+    
     
     switch(type,
            integer = {
@@ -1487,15 +1613,24 @@ vclMatElemArcTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Hyperbolic Tan
-vclMatElemHypTan <- function(A){
+vclMatElemHypTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
+    
     
     switch(type,
            integer = {
@@ -1515,7 +1650,11 @@ vclMatElemHypTan <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Natural Log
@@ -1760,26 +1899,51 @@ vclMatrix_rowMeans <- function(A){
 }
 
 # GPU Pearson Covariance
-vclMatrix_pmcc <- function(A){
+vclMatrix_pmcc <- function(A, B){
     
     type <- typeof(A)
     
-    B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+    if(missing(B)){
+        B <- vclMatrix(nrow = ncol(A), ncol = ncol(A), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = stop("integer type not currently implemented"),
+               "float" = cpp_vclMatrix_pmcc(A@address, 
+                                            B@address, 
+                                            6L,
+                                            A@.context_index - 1),
+               "double" = cpp_vclMatrix_pmcc(A@address, 
+                                             B@address,
+                                             8L,
+                                             A@.context_index - 1),
+               stop("unsupported matrix type")
+        )
+        
+        return(B)
+    }else{
+        
+        assert_are_identical(A@.context_index, B@.context_index)
+        
+        C <- vclMatrix(nrow = ncol(A), ncol = ncol(B), type = type, ctx_id = A@.context_index)
+        
+        switch(type,
+               "integer" = stop("integer type not currently implemented"),
+               "float" = cpp_vclMatrix_pmcc2(A@address, 
+                                            B@address, 
+                                            C@address,
+                                            6L,
+                                            A@.context_index - 1),
+               "double" = cpp_vclMatrix_pmcc2(A@address, 
+                                             B@address,
+                                             C@address,
+                                             8L,
+                                             A@.context_index - 1),
+               stop("unsupported matrix type")
+        )
+        
+        return(C)
+    }
     
-    switch(type,
-           "integer" = stop("integer type not currently implemented"),
-           "float" = cpp_vclMatrix_pmcc(A@address, 
-                                        B@address, 
-                                        6L,
-                                        A@.context_index - 1),
-           "double" = cpp_vclMatrix_pmcc(A@address, 
-                                         B@address,
-                                         8L,
-                                         A@.context_index - 1),
-           stop("unsupported matrix type")
-    )
-    
-    return(B)
 }
 
 # GPU Euclidean Distance

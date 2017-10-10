@@ -29,6 +29,20 @@ sexpVecToEigenVecXptr(SEXP A, const int size)
     return pVec;
 }
 
+// scalar initialized ViennaCL vector
+template <typename T>
+SEXP 
+cpp_scalar_gpuVector(
+    SEXP scalar_, 
+    int size)
+{
+    const T scalar = as<T>(scalar_);
+    
+    dynEigenVec<T> *vec = new dynEigenVec<T>(size, scalar);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
+
 // convert an XPtr back to a MapVec object to ultimately 
 // be returned as a SEXP object
 template <typename T>
@@ -591,6 +605,26 @@ SEXP sexpVecToEigenVecXptr(SEXP ptrA, const int size, const int type_flag)
             return sexpVecToEigenVecXptr<double>(ptrA, size);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
+    }
+}
+
+// convert scalar to eigen vector
+// [[Rcpp::export]]
+SEXP
+cpp_scalar_gpuVector(
+    SEXP scalar, 
+    const int size, 
+    const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        return cpp_scalar_gpuVector<int>(scalar, size);
+    case 6:
+        return cpp_scalar_gpuVector<float>(scalar, size);
+    case 8:
+        return cpp_scalar_gpuVector<double>(scalar, size);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 

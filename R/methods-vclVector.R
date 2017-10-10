@@ -5,42 +5,97 @@ as.vector.vclVector <- function(x, mode = "any"){
     return(out)
 }
 
-#' @rdname vclVector-methods
-#' @param shared Logical indicating if memory should be shared with \code{x}
-#' @export
-as.vclVector <- function (data, shared, ...) {
-    UseMethod("as.vclVector", data)
-}
+#' #' @rdname as.vclVector-methods
+#' #' @param shared Logical indicating if memory should be shared with \code{x}
+#' #' @export
+#' as.vclVector <- function (data, shared, ...) {
+#'     UseMethod("as.vclVector", data)
+#' }
 
-#' @export
-as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
-    
-    ctx_id <- data@.context_index - 1
-    
-    switch(typeof(data),
-           "integer" = return(new("ivclVector", 
-                                  address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
-                                  .context_index = data@.context_index,
-                                  .platform_index = data@.platform_index,
-                                  .platform = data@.platform,
-                                  .device_index = data@.device_index,
-                                  .device = data@.device)),
-           "float" = return(new("fvclVector", 
-                                address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
-                                .context_index = data@.context_index,
-                                .platform_index = data@.platform_index,
-                                .platform = data@.platform,
-                                .device_index = data@.device_index,
-                                .device = data@.device)),
-           "double" = return(new("dvclVector", 
-                                 address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
-                                 .context_index = data@.context_index,
-                                 .platform_index = data@.platform_index,
-                                 .platform = data@.platform,
-                                 .device_index = data@.device_index,
-                                 .device = data@.device))
-    )
-}
+#' @rdname as.vclVector-methods
+#' @aliases as.vclVector,vector
+setMethod('as.vclVector', 
+          signature(object = 'vector'),
+          function(object, type=NULL){
+              if(!typeof(object) %in% c('integer', 'double')){
+                  stop("unrecognized data type")
+              }
+              
+              vclVector(object, type = type)
+          },
+          valueClass = "vclVector")
+
+#' @rdname as.vclVector-methods
+#' @param shared Logical indicating if memory should be shared with \code{x}
+#' @aliases as.vclVector,vclMatrix
+setMethod('as.vclVector', 
+          signature(object = 'vclMatrix'),
+          function(object, shared, type=NULL){
+              if(!typeof(object) %in% c('integer', 'float', 'double')){
+                  stop("unrecognized data type")
+              }
+              
+              ctx_id <- object@.context_index - 1
+              
+              out <- switch(typeof(object),
+                     "integer" = return(new("ivclVector", 
+                                            address=vclMatTovclVec(object@address, shared, ctx_id, 4L),
+                                            .context_index = object@.context_index,
+                                            .platform_index = object@.platform_index,
+                                            .platform = object@.platform,
+                                            .device_index = object@.device_index,
+                                            .device = object@.device)),
+                     "float" = return(new("fvclVector", 
+                                          address=vclMatTovclVec(object@address, shared, ctx_id, 6L),
+                                          .context_index = object@.context_index,
+                                          .platform_index = object@.platform_index,
+                                          .platform = object@.platform,
+                                          .device_index = object@.device_index,
+                                          .device = object@.device)),
+                     "double" = return(new("dvclVector", 
+                                           address=vclMatTovclVec(object@address, shared, ctx_id, 8L),
+                                           .context_index = object@.context_index,
+                                           .platform_index = object@.platform_index,
+                                           .platform = object@.platform,
+                                           .device_index = object@.device_index,
+                                           .device = object@.device))
+              )
+              return(out)
+          },
+          valueClass = "vclVector")
+
+#' #' @rdname as.vclVector-methods
+#' #' @param shared Logical indicating if memory should be shared with \code{x}
+#' #' @aliases as.gpuVector,matrix
+#' #' @export
+#' as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+#'     
+#'     ctx_id <- data@.context_index - 1
+#'     
+#'     switch(typeof(data),
+#'            "integer" = return(new("ivclVector", 
+#'                                   address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+#'                                   .context_index = data@.context_index,
+#'                                   .platform_index = data@.platform_index,
+#'                                   .platform = data@.platform,
+#'                                   .device_index = data@.device_index,
+#'                                   .device = data@.device)),
+#'            "float" = return(new("fvclVector", 
+#'                                 address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+#'                                 .context_index = data@.context_index,
+#'                                 .platform_index = data@.platform_index,
+#'                                 .platform = data@.platform,
+#'                                 .device_index = data@.device_index,
+#'                                 .device = data@.device)),
+#'            "double" = return(new("dvclVector", 
+#'                                  address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+#'                                  .context_index = data@.context_index,
+#'                                  .platform_index = data@.platform_index,
+#'                                  .platform = data@.platform,
+#'                                  .device_index = data@.device_index,
+#'                                  .device = data@.device))
+#'     )
+#' }
 
 
 #' @rdname extract-methods

@@ -120,7 +120,7 @@ detectGPUs <- function(platform_idx=NULL){
 #' @title Device Information
 #' @description Get basic information about selected device (e.g. GPU)
 #' @param device_idx An integer value indicating which device to query.
-#' @param device_idx An integer value indicating which context to query.
+#' @param context_idx An integer value indicating which context to query.
 #' @return \item{deviceName}{Device Name}
 #' @return \item{deviceVendor}{Device Vendor}
 #' @return \item{numberOfCores}{Number of Computing Units 
@@ -271,7 +271,6 @@ setContext <- function(id = 1L){
 }
 
 
-#' @export
 cbind_wrapper <- function(x, y, z){
     switch(typeof(x),
            "integer" = {
@@ -301,7 +300,7 @@ cbind_wrapper <- function(x, y, z){
     return(invisible(z))
 }
 
-#' @export
+
 cbind_wrapper2 <- function(x, y, z, order = TRUE){
     switch(typeof(x),
            "integer" = {

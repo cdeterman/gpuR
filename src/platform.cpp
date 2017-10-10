@@ -109,24 +109,43 @@ List cpp_platformInfo(SEXP platform_idx_)
                             platformName,
                             NULL
     );
+    
+    if(err != CL_SUCCESS){
+        Rcpp::stop("Acquiring platform ID failed");
+    }
+    
     err = clGetPlatformInfo(platform_id, 
                             CL_PLATFORM_VENDOR,
                             sizeof(platformName),
                             platformVendor,
                             NULL
     );
+    
+    if(err != CL_SUCCESS){
+        Rcpp::stop("Acquiring platform vendor failed");
+    }
+    
     err = clGetPlatformInfo(platform_id, 
                             CL_PLATFORM_VERSION,
                             sizeof(platformName),
                             platformVersion,
                             NULL
     );
+    
+    if(err != CL_SUCCESS){
+        Rcpp::stop("Acquiring platform version failed");
+    }
+    
     err = clGetPlatformInfo(platform_id, 
                             CL_PLATFORM_EXTENSIONS,
                             sizeof(platformName),
                             platformExtensions,
                             NULL
     );
+    
+    if(err != CL_SUCCESS){
+        Rcpp::stop("Acquiring platform extensions failed");
+    }
     
     // Convert char arrays to string
     std::string platformNameStr(platformName);

@@ -364,7 +364,7 @@ class dynVCLVec {
             Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
             Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
             
-            for(unsigned int i = 0; i < idx.size(); i++) {
+            for(int i = 0; i < idx.size(); i++) {
                 v_sub(idx[i]) = Am(i);
             }
         }

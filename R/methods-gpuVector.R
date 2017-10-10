@@ -135,6 +135,23 @@ setMethod("Arith", c(e1="gpuVector", e2="missing"),
           valueClass = "gpuVector"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuVector", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="gpuVector"),

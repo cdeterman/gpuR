@@ -125,6 +125,10 @@ cpp_vclMatrix_set_row_order(
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
         
+        if(err != CL_SUCCESS){
+            Rcpp::stop("Acquiring kernel work group info failed");
+        }
+        
         max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
     

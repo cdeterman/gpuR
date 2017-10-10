@@ -53,8 +53,15 @@ class dynEigenVec {
         //     last = size;
         //     ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
         // }
-        dynEigenVec(int size_in){
+        dynEigenVec(const int size_in){
             A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(size_in);
+            size = size_in;
+            begin = 1;
+            last = size;
+            ptr = std::make_shared<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
+        }
+        dynEigenVec(const int size_in, T scalar){
+            A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Constant(size_in, scalar);
             size = size_in;
             begin = 1;
             last = size;

@@ -5,6 +5,7 @@
 #include <RcppEigen.h>
 
 // #include "gpuR/dynEigenMat.hpp"
+// #include "gpuR/dynEigenVec.hpp"
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
@@ -211,7 +212,55 @@ void cpp_vclMatVec_axpy(
     }
 }
 
-
+// template <typename T>
+// void cpp_gpuMatVec_axpy(
+//         SEXP alpha_,
+//         SEXP ptrA_, 
+//         const bool AisVec,
+//         SEXP ptrB_,
+//         const bool BisVec,
+//         const int ctx_id)
+// {
+//     
+//     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+//     
+//     const T alpha = as<T>(alpha_);
+//     
+//     if(AisVec){
+//         Rcpp::XPtr<dynEigenVec<T> > ptrA(ptrA_);
+//         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+//         
+//         viennacl::vector<T> A = ptrA->data();
+//         viennacl::matrix<T> vcl_B = ptrB->data();
+//         
+//         viennacl::matrix_base<T> vcl_A = viennacl::matrix_base<T>(A.handle(),
+//                                                                   vcl_B.size2(), 0, 1, vcl_B.size2(),   //row layout
+//                                                                   vcl_B.size1(), 0, 1, vcl_B.size1(),   //column layout
+//                                                                   true); // row-major
+//         vcl_B += alpha * trans(vcl_A);
+//         ptrB->to_host();
+//         
+//     }else{
+//         if(BisVec){
+//             Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+//             Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
+//             
+//             viennacl::matrix<T> vcl_A = ptrA->data();
+//             viennacl::vector<T> B = ptrB->data();
+//             
+//             viennacl::matrix_base<T> vcl_B = viennacl::matrix_base<T>(B.handle(),
+//                                                                       vcl_A.size2(), 0, 1, vcl_A.size2(),   //row layout
+//                                                                       vcl_A.size1(), 0, 1, vcl_A.size1(),   //column layout
+//                                                                       true); // row-major
+//             
+//             vcl_B += alpha * trans(vcl_A);
+//             ptrB->to_host(vcl_B);
+//             
+//         }else{
+//             throw Rcpp::exception("one of the objects must be a vector");
+//         }
+//     }
+// }
 
 // [[Rcpp::export]]
 void

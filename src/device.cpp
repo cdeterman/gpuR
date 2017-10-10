@@ -307,7 +307,7 @@ preferred_wg_size(
         max_local_size = 1;
     }else{
         cl_device_id raw_device = ctx.current_device().id();
-        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", kernel_name).handle().get();
+        cl_kernel raw_kernel = my_prog.get_kernel(kernel_name).handle().get();
         size_t preferred_work_group_size_multiple;
         
         cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 

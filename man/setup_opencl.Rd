@@ -12,7 +12,9 @@ setup_opencl(objects, intents, queues, kernel_maps = NULL)
 \item{intents}{character vector specifying 'intent' of gpuR objects.
 options include \code{"IN"},\code{"OUT"},\code{"INOUT"}}
 
-\item{queues}{list of equal length to \code{"objects"} where each element
+\item{queues}{list of equal length to \code{"objects"} where each element}
+
+\item{kernel_maps}{The corresponding arguments names in the provided OpenCL kernel
 corresponds to the gpuR objects passed and contains a character vector of
 which kernels the object will be enqueued.}
 }

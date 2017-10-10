@@ -199,6 +199,23 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
           valueClass = "gpuMatrix"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="gpuVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @title gpuR Math methods
 #' @description Methods for the base Math methods \link[methods]{S4groupGeneric}
 #' @param x A gpuR object
@@ -659,7 +676,7 @@ setMethod("rowMeans",
 #' @title Covariance (gpuR)
 #' @description Compute covariance values
 #' @param x A gpuR object
-#' @param y Not used
+#' @param y A gpuR object
 #' @param use Not used
 #' @param method Character string indicating with covariance to be computed.
 #' @return A gpuMatrix/vclMatrix containing the symmetric covariance values.
@@ -679,7 +696,29 @@ setMethod("cov",
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x, y))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "character"),
           function(x, y = NULL, use = NULL, method = "pearson") {
               if(method != "pearson"){
                   stop("Only pearson covariance implemented")

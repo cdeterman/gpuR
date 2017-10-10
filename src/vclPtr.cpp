@@ -752,7 +752,7 @@ vclFillVectorSliceScalar(
     
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     
-    for(unsigned int i = 0; i < newdata.size(); i++){
+    for(int i = 0; i < newdata.size(); i++){
         
         size = ceil((pMat->length() - i)/newdata.size());
         
