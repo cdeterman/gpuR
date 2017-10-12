@@ -27,17 +27,13 @@ cpp_gpuMatrix_custom_igemm(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    viennacl::matrix<int> *vcl_A;
-    viennacl::matrix<int> *vcl_B;
-    viennacl::matrix<int> *vcl_C;
+    std::shared_ptr<viennacl::matrix<int> > vcl_A = getVCLptr<int>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<int> > vcl_B = getVCLptr<int>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<int> > vcl_C = getVCLptr<int>(ptrC_, CisVCL, ctx_id);
     
-    vcl_A = getVCLptr<int>(ptrA_, AisVCL, ctx_id);
-    vcl_B = getVCLptr<int>(ptrB_, BisVCL, ctx_id);
-    vcl_C = getVCLptr<int>(ptrC_, CisVCL, ctx_id);
-    
-    int M = vcl_A->size1();
+    int M = vcl_A->size2();
     // int N = vcl_B.size1();
-    int P = vcl_B->size2();
+    int P = vcl_B->size1();
     int M_internal = vcl_C->internal_size2();
     int P_internal = vcl_C->internal_size1();
     
@@ -59,6 +55,10 @@ cpp_gpuMatrix_custom_igemm(
         cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        if(err != CL_SUCCESS){
+            Rcpp::stop("Acquiring kernel work group info failed");
+        }
         
         max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }

@@ -14,12 +14,12 @@ representation.
      \item{\code{address}:}{Pointer to a double type matrix}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{vclMatrix-class}}, 
 \code{\link{ivclMatrix-class}},
 \code{\link{fvclMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

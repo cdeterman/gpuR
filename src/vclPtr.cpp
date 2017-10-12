@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 
 //#include "gpuR/vcl_helpers.hpp"
 #include "gpuR/dynVCLMat.hpp"
@@ -55,6 +55,122 @@ using namespace Rcpp;
 //     }
 // }
 
+
+template<typename T>
+void
+vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
+    
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    XPtr<dynVCLVec<T> > ptrV(ptrV_);
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+    
+    int start = 0;
+    int end = 0;
+    
+    // std::cout << "start loop" << std::endl;
+    for(int i = 0; i < mylist.size(); i++){
+        
+        S4 tmp = mylist[i];
+        SEXP tmp_address = tmp.slot("address");
+        XPtr<dynVCLMat<T> > tmpPtr(tmp_address);
+        viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+        
+        viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+        
+        viennacl::matrix_base<T> dummy(A.handle(),
+                                       mat.size1(), 0, 1, mat.size1(),   //row layout
+                                       mat.size2(), 0, 1, mat.size2(),   //column layout
+                                       true); // row-major
+        
+        
+        dummy = mat;
+        
+        end += A.size();
+        
+        // std::cout << "start: " << start << std::endl;
+        // std::cout << "end: " << end << std::endl;
+        
+        viennacl::range r(start, end);
+        viennacl::vector_range<viennacl::vector_base<T> > vsub(V, r);
+        
+        vsub = A;
+        
+        start += A.size();
+    }
+}
+
+
+template<typename T>
+void
+assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
+    
+    // viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    // ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    XPtr<dynVCLMat<T> > ptrM(ptrM_);
+    XPtr<dynVCLVec<T> > ptrV(ptrV_);
+    viennacl::matrix_range<viennacl::matrix<T> > M = ptrM->data();
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+    
+    // viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+    
+    // viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+    
+    // std::cout << "matrix?" << std::endl;
+    // std::cout << M << std::endl;
+    // 
+    // std::cout << "vector?" << std::endl;
+    // std::cout << V << std::endl;
+    
+    viennacl::vector_base<T> tmp = V;
+    
+    // int start = ptrV->begin - 1;
+    
+    viennacl::matrix_base<T> dummy(tmp.handle(),
+                                   M.size1(), 0, 1, M.size1(),   //row layout
+                                   M.size2(), 0, 1, M.size2(),   //column layout
+                                   true); // row-major
+    
+    // std::cout << "dummy mat" << std::endl;
+    // std::cout << dummy << std::endl;
+    
+    M = dummy;
+}
+
+
+template<typename T>
+void
+assignVectorToCol(SEXP ptrM_, SEXP ptrV_, const int index){
+    
+    // viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    // ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    XPtr<dynVCLMat<T> > ptrM(ptrM_);
+    XPtr<dynVCLVec<T> > ptrV(ptrV_);
+    viennacl::matrix_range<viennacl::matrix<T> > M = ptrM->data();
+    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+    
+    viennacl::range r(0, M.size1());
+    viennacl::range c(index, index+1);
+    
+    viennacl::matrix_range<viennacl::matrix<T> > M_sub(M, r, c);
+    
+    viennacl::matrix_base<T> dummy(V.handle(),
+                                   M_sub.size1(), 0, 1, M_sub.size1(),   //row layout
+                                   M_sub.size2(), 0, 1, M_sub.size2(),   //column layout
+                                   true); // row-major
+    
+    
+    M_sub = dummy;
+}
 
 template <typename T>
 void
@@ -166,7 +282,8 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
     Rcpp::XPtr<dynVCLVec<T> > pVec(ptrA_);
     
     dynVCLVec<T> *vec = new dynVCLVec<T>();
-    vec->setPtr(pVec->getPtr());
+    // vec->setPtr(pVec->getPtr());
+    vec->setSharedPtr(pVec->sharedPtr());
     vec->setRange(start, end);
     vec->updateSize();
     
@@ -176,8 +293,8 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
 
 //cbind two vclMatrix objects
 template <typename T>
-SEXP
-cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int ctx_id)
+void
+cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const int ctx_id)
 {        
     viennacl::context ctx;
     
@@ -186,24 +303,62 @@ cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int ctx_id)
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
     viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<T> > pB  = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > pC  = ptrC->data();
     
-    viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2(), ctx);
+    // viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2(), ctx);
     
-    viennacl::matrix_range<viennacl::matrix<T> > C_right(C, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + pB.size2()));
-    viennacl::matrix_range<viennacl::matrix<T> > C_left(C, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
+    viennacl::matrix_range<viennacl::matrix<T> > C_right(pC, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + pB.size2()));
+    viennacl::matrix_range<viennacl::matrix<T> > C_left(pC, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
     
     C_right = pB;
     C_left = pA;
     
-    dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1(), pA.size2() + pB.size2(), ctx_id);
-    mat->setMatrix(C);
-    mat->setDims(pA.size1(), pA.size2() + pB.size2());
-    mat->setRange(0, pA.size1(), 0, pA.size2() + pB.size2());
+    // dynVCLMat<T> *mat = new dynVCLMat<T>(pA.size1(), pA.size2() + pB.size2(), ctx_id);
+    // mat->setMatrix(C);
+    // mat->setDims(pA.size1(), pA.size2() + pB.size2());
+    // mat->setRange(0, pA.size1(), 0, pA.size2() + pB.size2());
     
-    Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
-    return pMat;
+    // Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
+    // return pMat;
+}
+
+//cbind two vclMatrix objects
+template <typename T>
+void
+cpp_cbind_vclMat_vclVec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const bool order, const int ctx_id)
+{        
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+    Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = ptrA->data();
+    viennacl::vector_range<viennacl::vector_base<T> > pB  = ptrB->data();
+    viennacl::matrix_range<viennacl::matrix<T> > pC  = ptrC->data();
+    
+    // viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2(), ctx);
+    
+    if(order){
+        viennacl::matrix_range<viennacl::matrix<T> > C_right(pC, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + 1));
+        viennacl::vector<T> C_left = viennacl::column(pC, 0);
+        
+        C_left = pB;
+        C_right = pA;
+    }else{
+        viennacl::matrix_range<viennacl::matrix<T> > C_left(pC, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
+        viennacl::vector<T> C_right = viennacl::column(pC, 0);
+        
+        // std::cout << C_right << std::end;
+        
+        C_right = pB;
+        C_left = pA;   
+    }
 }
 
 //rbind two vclMatrix objects
@@ -246,8 +401,11 @@ cpp_vclMatrix_block(
 {
     XPtr<dynVCLMat<T> > pA(ptrA);
     dynVCLMat<T> *mat = new dynVCLMat<T>();
-    // mat->setPtr(pA->getPtr());
+    
     mat->setSharedPtr(pA->sharedPtr());
+    // set old range
+    mat->setRange(pA->row_range(), pA->col_range());
+    // add new indices
     mat->setRange(rowStart, rowEnd, colStart, colEnd);
     mat->setDims(pA->nrow(), pA->ncol());
     
@@ -263,13 +421,12 @@ VCLtoVecSEXP(SEXP A_)
     Rcpp::XPtr<dynVCLVec<T> > ptrA(A_);
     
     viennacl::vector_range<viennacl::vector_base<T> > tempA = ptrA->data();
-
+    
     viennacl::vector_base<T> pA = static_cast<viennacl::vector_base<T> >(tempA);
     int M = pA.size();
     
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am(M);
     
-    // viennacl::copy(pA, Am); 
     viennacl::fast_copy(pA.begin(), pA.end(), &(Am[0]));
     
     return Am;
@@ -312,6 +469,21 @@ sexpVecToVCL(
     return pVec;
 }
 
+// scalar initialized ViennaCL vector
+template <typename T>
+SEXP 
+cpp_scalar_vclVector(
+    SEXP scalar_, 
+    int size, 
+    int ctx_id)
+{
+    const T scalar = as<T>(scalar_);
+    
+    dynVCLVec<T> *vec = new dynVCLVec<T>(size, scalar, ctx_id);
+    Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
+    return pVec;
+}
+
 // convert SEXP Matrix to ViennaCL matrix
 template <typename T>
 SEXP cpp_sexp_mat_to_vclMatrix(
@@ -320,6 +492,7 @@ SEXP cpp_sexp_mat_to_vclMatrix(
 {
     dynVCLMat<T> *mat = new dynVCLMat<T>(A, ctx_id);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
+    
     return pMat;
 }
 
@@ -341,9 +514,93 @@ VCLtoSEXP(SEXP A)
     int nr = pA.size1();
     int nc = pA.size2();
     
+    // std::cout << pA << std::endl;
+    
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am(nr, nc);
     
     viennacl::copy(pA, Am); 
+    
+    return Am;
+}
+
+template <>
+Eigen::Matrix<std::complex<float>, Eigen::Dynamic, Eigen::Dynamic> 
+VCLtoSEXP(SEXP A)
+{
+    Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(A);
+    viennacl::matrix_range<viennacl::matrix<float> > tempA  = ptrA->data();
+    
+    viennacl::matrix<float> pA = static_cast<viennacl::matrix<float> >(tempA);
+    const int nr = pA.size1();
+    const int nc = pA.size2() / 2;
+    
+    Eigen::MatrixXcf Am = Eigen::MatrixXcf::Zero(nr, nc);
+    
+    // assign real elements
+    // assign existing matrix with new data
+    viennacl::matrix_slice<viennacl::matrix<float> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+    
+    // other attempts for more direct copy
+    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+    // std::cout << "try copy" << std::endl;
+    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+    
+    Eigen::MatrixXf pAm(Am.real());
+    viennacl::copy(A_sub, pAm);
+    Am.real() = pAm;
+    
+    // assign imaginary elements
+    A_sub = viennacl::matrix_slice<viennacl::matrix<float> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+    
+    pAm = Am.imag();
+    viennacl::copy(A_sub, pAm);
+    Am.imag() = pAm;
+    
+    return Am;
+}
+
+template <>
+Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> 
+VCLtoSEXP(SEXP A)
+{
+    Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(A);
+    viennacl::matrix_range<viennacl::matrix<double> > tempA  = ptrA->data();
+    
+    viennacl::matrix<double> pA = static_cast<viennacl::matrix<double> >(tempA);
+    const int nr = pA.size1();
+    const int nc = pA.size2() / 2;
+    
+    Eigen::MatrixXcd Am = Eigen::MatrixXcd::Zero(nr, nc);
+    
+    // assign real elements
+    // assign existing matrix with new data
+    viennacl::matrix_slice<viennacl::matrix<double> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+    
+    // other attempts for more direct copy
+    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+    // std::cout << "try copy" << std::endl;
+    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+    
+    Eigen::MatrixXd pAm(Am.real());
+    viennacl::copy(A_sub, pAm);
+    Am.real() = pAm;
+    
+    // assign imaginary elements
+    A_sub = viennacl::matrix_slice<viennacl::matrix<double> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+
+    pAm = Am.imag();
+    viennacl::copy(A_sub, pAm);
+    Am.imag() = pAm;
     
     return Am;
 }
@@ -379,32 +636,21 @@ vectorToMatVCL(SEXP A, int nr, int nc, int ctx_id)
 // convert ViennaCL matrix to ViennaCL vector (shared memory)
 template <typename T>
 SEXP
-vclMatTovclVec(SEXP ptrA_){
+vclMatTovclVec(SEXP ptrA_, const bool shared, const int ctx_id){
     
     XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    viennacl::matrix<T>* ptr = ptrA->getPtr();
     
-    // std::cout << ptr << std::endl;
+    dynVCLVec<T> *vec;
     
-    // viennacl::vector_base<T> v(ptr->handle(), ptr->internal_size(), 0, 1);
-    
-    // std::cout << "outside ptr" << std::endl;
-    // std::cout << &v << std::endl;
-    
-    // std::cout << "initialized vector base" << std::endl;
-    // dynVCLVec<T> *vec = new dynVCLVec<T>();
-    // vec->setPtr(&v);
-    // vec->setRange(0, v.internal_size());
-    // vec->updateSize();
-    
-    // dynVCLVec<T> *vec = new dynVCLVec<T>(static_cast<viennacl::vector<T> >(v));
-    dynVCLVec<T> *vec = new dynVCLVec<T>(ptr);
-    
-    // std::cout << "initialized vcl vector" << std::endl;
+    if(shared){
+        viennacl::matrix<T>* ptr = ptrA->getPtr();
+        vec = new dynVCLVec<T>(ptr);
+    }else{
+        viennacl::matrix_range<viennacl::matrix<T> > mat = ptrA->data();
+        vec = new dynVCLVec<T>(mat, ctx_id);
+    }
     
     Rcpp::XPtr<dynVCLVec<T> > pVec(vec);
-    
-    // std::cout << "xptr" << std::endl;
     
     return pVec;    
 }
@@ -452,7 +698,7 @@ vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
 //    A(idx-1) = as<T>(newdata);
 }
 
-// update viennacl matrix with R vector
+// update viennacl vector with R vector
 template <typename T>
 void
 vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
@@ -468,6 +714,68 @@ vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+    
+    delete mat;
+}
+
+// update viennacl vector with R scalar
+template <typename T>
+void
+vclFillVectorScalar(SEXP data, T newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    pMat->fill(newdata);
+}
+
+// update viennacl vector range with R scalar
+template <typename T>
+void
+vclFillVectorRangeScalar(SEXP data, T newdata, const int start, const int end, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    viennacl::range r(start, end);
+    
+    pMat->fill(r, newdata);
+}
+
+// update viennacl vector slice with R scalar
+template <typename T>
+void
+vclFillVectorSliceScalar(
+    SEXP data, const NumericVector newdata, 
+    const IntegerVector start, const int stride,
+    const int ctx_id)
+{
+    int size;
+    //int start_pt;
+    
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    for(int i = 0; i < newdata.size(); i++){
+        
+        size = ceil((pMat->length() - i)/newdata.size());
+        
+        // std::cout << i % newdata.size() << std::endl;
+        
+        viennacl::slice s(start[i], stride * newdata.size(), size);
+        
+        // std::cout << newdata[start[i % newdata.size()]] << std::endl;
+        
+        pMat->fill(s, newdata[start[i % newdata.size()]]);    
+    }
+}
+
+template <typename T>
+void
+vclFillVectorElementwise(
+    SEXP data, SEXP newdata, 
+    const IntegerVector elems, 
+    const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    
+    pMat->fill(elems, newdata);
 }
 
 // update viennacl matrix with another viennacl vector
@@ -482,6 +790,89 @@ vclSetVCLVector(SEXP data, SEXP newdata)
     
     // assign existing matrix with new data
     A = A_new;
+}
+
+// update viennacl vector with another viennacl vector
+template <typename T>
+void
+vclSetVCLVectorRange(SEXP data, SEXP newdata, const int start, const int end)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    Rcpp::XPtr<dynVCLVec<T> > pMatNew(newdata);
+    viennacl::vector_range<viennacl::vector_base<T> > A  = pMat->data();
+    viennacl::vector_range<viennacl::vector_base<T> > A_new  = pMatNew->data();
+    
+    viennacl::range r(start, end);
+    
+    viennacl::vector_range<viennacl::vector_base<T> > A_sub(A, r);
+    
+    // std::cout << A_sub << std::endl;
+    // 
+    // std::cout << A_new << std::endl;
+    
+    // assign existing vector with new data
+    A_sub = A_new;
+    
+    // std::cout << A << std::endl;
+}
+
+
+// update viennacl vector with another viennacl matrix
+template <typename T>
+void
+vclVecSetVCLMatrix(SEXP data, SEXP newdata)
+{
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
+    viennacl::vector_range<viennacl::vector_base<T> > A  = pMat->data();
+    viennacl::matrix_range<viennacl::matrix<T> > mat  = pMatNew->data();
+    
+    // viennacl::vector_base<T> tmp = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx);
+    
+    viennacl::matrix_base<T> dummy(A.handle(),
+                                   mat.size1(), 0, 1, mat.size1(),   //row layout
+                                   mat.size2(), 0, 1, mat.size2(),   //column layout
+                                   true); // row-major
+    
+    // update vector with matrix elements
+    dummy = mat;
+}
+
+
+// update viennacl vector with another viennacl matrix
+template <typename T>
+void
+vclSetVCLMatrixRange(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
+{
+    viennacl::context ctx;
+    
+    // explicitly pull context for thread safe forking
+    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+    
+    Rcpp::XPtr<dynVCLVec<T> > pMat(data);
+    Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
+    viennacl::vector_range<viennacl::vector_base<T> > A  = pMat->data();
+    viennacl::matrix_range<viennacl::matrix<T> > mat  = pMatNew->data();
+    
+    viennacl::range r(start, end);
+    
+    viennacl::vector_range<viennacl::vector_base<T> > A_sub(A, r);
+    
+    // viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+    
+    viennacl::vector_base<T> tmp = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx);
+    
+    viennacl::matrix_base<T> dummy(tmp.handle(),
+                                   mat.size1(), 0, 1, mat.size1(),   //row layout
+                                   mat.size2(), 0, 1, mat.size2(),   //column layout
+                                   true); // row-major
+    
+    // update vector with matrix elements
+    dummy = mat;
+    
+    // unfortunate copy because can't index a range
+    A_sub = tmp;
+    
 }
 
 /*** vclMatrix setting elements ***/
@@ -509,6 +900,21 @@ vclSetCol(SEXP data, SEXP newdata, const int nc)
 //    for(unsigned int i = 0; i < A.size1(); i++){
 //        A(i, nc-1) = Am(i);
 //    } 
+}
+
+// update viennacl matrix with a scalar
+template <typename T>
+void
+vclFillCol(SEXP data, SEXP newdata, const int nc, const int ctx_id)
+{
+    T fill_data = as<T>(newdata);
+	Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+	viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+	
+	viennacl::matrix_range<viennacl::matrix<T> > C(A, viennacl::range(0, A.size1()), viennacl::range(nc - 1, nc));
+	
+	// assign existing matrix with new data
+	viennacl::linalg::matrix_assign(C, fill_data);
 }
 
 // update viennacl row elements
@@ -565,6 +971,8 @@ vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+    
+    delete mat;
 }
 
 // update viennacl matrix with another viennacl matrix
@@ -579,6 +987,31 @@ vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
     
     // assign existing matrix with new data
     A = A_new;
+}
+
+template <typename T>
+void
+vclMatSetVCLCols(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
+    viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+    viennacl::matrix_range<viennacl::matrix<T> > A_new  = pMatNew->data();
+    
+    viennacl::matrix_range<viennacl::matrix<T> > C(A, viennacl::range(0, A.size1()), viennacl::range(start, end));
+    
+    // assign existing matrix with new data
+    C = A_new;
+}
+
+// update viennacl matrix with a scalar
+template <typename T>
+void
+vclFillVCLMatrix(SEXP data, T newdata, const int ctx_id)
+{
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
+    viennacl::linalg::matrix_assign(A, newdata);
 }
 
 /*** vclMatrix get elements ***/
@@ -629,6 +1062,58 @@ vclGetRow(
     // copy(static_cast<viennacl::vector<T> >(vcl_A), Am);
     viennacl::fast_copy(vcl_A.begin(), vcl_A.end(), &(Am[0]));
     return(Am);
+}
+
+
+template <typename T>
+SEXP
+extractRow(
+    SEXP &data, 
+    const int row_idx,
+    const int ctx_id)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
+    
+    // viennacl::vector_base<T> vec;
+    // viennacl::vector_base<T> vec = viennacl::vector_base<T>(pA.size1() * pA.size2(), ctx_id);
+    // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
+    // viennacl::vector_range<viennacl::vector_base<T> > v = vec->data();
+    
+    viennacl::vector<T> vec = viennacl::row(pA, row_idx);
+    dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    
+    Rcpp::XPtr<dynVCLVec<T> > pVec(v);
+    return pVec;
+}
+
+template <typename T>
+SEXP
+extractCol(
+    SEXP &data, 
+    const int col_idx,
+    const int ctx_id)
+{
+    
+    Rcpp::XPtr<dynVCLMat<T> > pMat(data);
+    viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
+    
+    // dynVCLVec<T> *vec = new dynVCLVec<T>(pA.size1() * pA.size2(), ctx_id);
+    
+    // viennacl::vector<T> vec = viennacl::column(pA, col_idx);
+    
+    int start = pMat->row_range().start() * pA.internal_size2() + col_idx;
+    
+    // std::cout << "start point" << std::endl;
+    // std::cout << start << std::endl;
+    
+    // viennacl::vector_base<T> vec(pA.handle(), pA.size1(), start, pA.internal_size2());
+    // dynVCLVec<T> *v = new dynVCLVec<T>(vec, ctx_id);
+    dynVCLVec<T> *v = new dynVCLVec<T>(pMat->getPtr(), false, start);
+    
+    Rcpp::XPtr<dynVCLVec<T> > pVec(v);
+    return pVec;
 }
 
 // Get viennacl row elements
@@ -792,22 +1277,51 @@ cpp_vclMatrix_block(
 
 /*** vclMatrix cbind ***/
 // [[Rcpp::export]]
-SEXP
+void
 cpp_cbind_vclMatrix(
     SEXP ptrA, 
     SEXP ptrB,
-    int type_flag,
-    int ctx_id)
+    SEXP ptrC,
+    const int type_flag,
+    const int ctx_id)
 {    
     switch(type_flag) {
         case 4:
-            return cpp_cbind_vclMatrix<int>(ptrA, ptrB, ctx_id);
+            cpp_cbind_vclMatrix<int>(ptrA, ptrB, ptrC, ctx_id);
+            return;
         case 6:
-            return cpp_cbind_vclMatrix<float>(ptrA, ptrB, ctx_id);
+            cpp_cbind_vclMatrix<float>(ptrA, ptrB, ptrC, ctx_id);
+            return;
         case 8:
-            return cpp_cbind_vclMatrix<double>(ptrA, ptrB, ctx_id);
+            cpp_cbind_vclMatrix<double>(ptrA, ptrB, ptrC, ctx_id);
+            return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+    
+// [[Rcpp::export]]
+void
+cpp_cbind_vclMat_vclVec(
+    SEXP ptrA, 
+    SEXP ptrB,
+    SEXP ptrC,
+    const bool order,
+    const int type_flag,
+    const int ctx_id)
+{    
+    switch(type_flag) {
+    case 4:
+        cpp_cbind_vclMat_vclVec<int>(ptrA, ptrB, ptrC, order, ctx_id);
+        return;
+    case 6:
+        cpp_cbind_vclMat_vclVec<float>(ptrA, ptrB, ptrC, order, ctx_id);
+        return;
+    case 8:
+        cpp_cbind_vclMat_vclVec<double>(ptrA, ptrB, ptrC, order, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -848,6 +1362,10 @@ cpp_sexp_mat_to_vclMatrix(
             return cpp_sexp_mat_to_vclMatrix<float>(ptrA, ctx_id);
         case 8:
             return cpp_sexp_mat_to_vclMatrix<double>(ptrA, ctx_id);
+        case 10:
+            return cpp_sexp_mat_to_vclMatrix<std::complex<float> >(ptrA, ctx_id);
+        case 12:
+            return cpp_sexp_mat_to_vclMatrix<std::complex<double> >(ptrA, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -869,6 +1387,10 @@ VCLtoMatSEXP(
             return wrap(VCLtoSEXP<float>(ptrA));
         case 8:
             return wrap(VCLtoSEXP<double>(ptrA));
+        case 10:
+            return wrap(VCLtoSEXP<std::complex<float> >(ptrA));
+        case 12:
+            return wrap(VCLtoSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -936,6 +1458,26 @@ vclSetCol(SEXP ptrA, const int nc, SEXP newdata, const int type_flag)
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
+}
+
+// [[Rcpp::export]]
+void
+vclFillCol(SEXP ptrA, const int nc, SEXP newdata, 
+           const int ctx_id, const int type_flag){
+	
+	switch(type_flag) {
+		case 4:
+			vclFillCol<int>(ptrA, newdata, nc, ctx_id);
+			return;
+		case 6:
+			vclFillCol<float>(ptrA, newdata, nc, ctx_id);
+			return;
+		case 8:
+			vclFillCol<double>(ptrA, newdata, nc, ctx_id);
+			return;
+		default:
+			throw Rcpp::exception("unknown type detected for vclMatrix object!");
+	}
 }
 
 // [[Rcpp::export]]
@@ -1014,6 +1556,45 @@ vclSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
     }
 }
 
+
+// [[Rcpp::export]]
+void
+vclMatSetVCLCols(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclMatSetVCLCols<int>(ptrA, newdata, start, end, ctx_id);
+        return;
+    case 6:
+        vclMatSetVCLCols<float>(ptrA, newdata, start, end, ctx_id);
+        return;
+    case 8:
+        vclMatSetVCLCols<double>(ptrA, newdata, start, end, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclFillVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVCLMatrix<int>(ptrA, as<int>(newdata), ctx_id);
+        return;
+    case 6:
+        vclFillVCLMatrix<float>(ptrA, as<float>(newdata), ctx_id);
+        return;
+    case 8:
+        vclFillVCLMatrix<double>(ptrA, as<double>(newdata), ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
 /*** get matrix elements ***/
 
 // [[Rcpp::export]]
@@ -1045,6 +1626,38 @@ vclGetRow(SEXP ptrA, const int nr, const int type_flag, int ctx_id)
             return wrap(vclGetRow<double>(ptrA, nr, ctx_id));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+extractRow(SEXP ptrA, const int row_idx, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return wrap(extractRow<int>(ptrA, row_idx, ctx_id));
+    case 6:
+        return wrap(extractRow<float>(ptrA, row_idx, ctx_id));
+    case 8:
+        return wrap(extractRow<double>(ptrA, row_idx, ctx_id));
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
+extractCol(SEXP ptrA, const int col_idx, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return wrap(extractCol<int>(ptrA, col_idx, ctx_id));
+    case 6:
+        return wrap(extractCol<float>(ptrA, col_idx, ctx_id));
+    case 8:
+        return wrap(extractCol<double>(ptrA, col_idx, ctx_id));
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
@@ -1120,6 +1733,92 @@ vclSetVector(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
     }
 }
 
+// [[Rcpp::export]]
+void
+vclFillVectorScalar(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorScalar<int>(ptrA, as<int>(newdata), ctx_id);
+        return;
+    case 6:
+        vclFillVectorScalar<float>(ptrA, as<float>(newdata), ctx_id);
+        return;
+    case 8:
+        vclFillVectorScalar<double>(ptrA, as<double>(newdata), ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclFillVectorRangeScalar(
+    SEXP ptrA, SEXP newdata, 
+    const int start, const int end,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorRangeScalar<int>(ptrA, as<int>(newdata), start, end, ctx_id);
+        return;
+    case 6:
+        vclFillVectorRangeScalar<float>(ptrA, as<float>(newdata), start, end, ctx_id);
+        return;
+    case 8:
+        vclFillVectorRangeScalar<double>(ptrA, as<double>(newdata), start, end, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+    
+// [[Rcpp::export]]
+void
+vclFillVectorSliceScalar(
+    SEXP ptrA, const NumericVector newdata, 
+    const IntegerVector start, const int stride,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorSliceScalar<int>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    case 6:
+        vclFillVectorSliceScalar<float>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    case 8:
+        vclFillVectorSliceScalar<double>(ptrA, newdata, start, stride, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+vclFillVectorElementwise(
+    SEXP ptrA, SEXP newdata, 
+    const IntegerVector start,
+    const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclFillVectorElementwise<int>(ptrA, newdata, start, ctx_id);
+        return;
+    case 6:
+        vclFillVectorElementwise<float>(ptrA, newdata, start, ctx_id);
+        return;
+    case 8:
+        vclFillVectorElementwise<double>(ptrA, newdata, start, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
 
 // [[Rcpp::export]]
 void
@@ -1139,6 +1838,65 @@ vclSetVCLVector(SEXP ptrA, SEXP newdata, const int type_flag)
         throw Rcpp::exception("unknown type detected for vclVector object!");
     }
 }
+
+
+// [[Rcpp::export]]
+void
+vclSetVCLVectorRange(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetVCLVectorRange<int>(ptrA, newdata, start, end);
+        return;
+    case 6:
+        vclSetVCLVectorRange<float>(ptrA, newdata, start, end);
+        return;
+    case 8:
+        vclSetVCLVectorRange<double>(ptrA, newdata, start, end);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclVecSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        vclVecSetVCLMatrix<int>(ptrA, newdata);
+        return;
+    case 6:
+        vclVecSetVCLMatrix<float>(ptrA, newdata);
+        return;
+    case 8:
+        vclVecSetVCLMatrix<double>(ptrA, newdata);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+void
+vclSetVCLMatrixRange(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag, const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        vclSetVCLMatrixRange<int>(ptrA, newdata, start, end, ctx_id);
+        return;
+    case 6:
+        vclSetVCLMatrixRange<float>(ptrA, newdata, start, end, ctx_id);
+        return;
+    case 8:
+        vclSetVCLMatrixRange<double>(ptrA, newdata, start, end, ctx_id);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclVector object!");
+    }
+}
+
 
 /*** vector imports ***/
 
@@ -1187,20 +1945,41 @@ vectorToMatVCL(
 SEXP
 vclMatTovclVec(
     SEXP ptrA, 
-    int type_flag)
+    const int shared,
+    const int ctx_id,
+    const int type_flag)
 {
     switch(type_flag) {
     case 4:
-        return vclMatTovclVec<int>(ptrA);
+        return vclMatTovclVec<int>(ptrA, shared, ctx_id);
     case 6:
-        return vclMatTovclVec<float>(ptrA);
+        return vclMatTovclVec<float>(ptrA, shared, ctx_id);
     case 8:
-        return vclMatTovclVec<double>(ptrA);
+        return vclMatTovclVec<double>(ptrA, shared, ctx_id);
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
 }
 
+// [[Rcpp::export]]
+SEXP
+cpp_scalar_vclVector(
+    SEXP scalar, 
+    const int size, 
+    const int type_flag,
+    const int ctx_id)
+{
+    switch(type_flag) {
+    case 4:
+        return cpp_scalar_vclVector<int>(scalar, size, ctx_id);
+    case 6:
+        return cpp_scalar_vclVector<float>(scalar, size, ctx_id);
+    case 8:
+        return cpp_scalar_vclVector<double>(scalar, size, ctx_id);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
 
 /*** Vector exports ***/
 
@@ -1296,3 +2075,62 @@ getVCLcols(SEXP ptrA, const int type_flag)
 //         throw Rcpp::exception("unknown type detected for vclMatrix object");
 //     }
 // }
+
+
+// [[Rcpp::export]]
+void
+vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
+{
+    switch(type_flag){
+        case 4:
+            vectorizeList<int>(mylist, ptrV, ctx_id);
+            return;
+        case 6:
+            vectorizeList<float>(mylist, ptrV, ctx_id);
+            return;
+        case 8:
+            vectorizeList<double>(mylist, ptrV, ctx_id);
+            return;
+        default:
+            throw Rcpp::exception("unknown type detected for vclMatrix");
+    }
+}
+
+
+// [[Rcpp::export]]
+void
+assignVectorToMat(SEXP ptrM, SEXP ptrV, const int type_flag)
+{
+    switch(type_flag){
+    case 4:
+        assignVectorToMat<int>(ptrM, ptrV);
+        return;
+    case 6:
+        assignVectorToMat<float>(ptrM, ptrV);
+        return;
+    case 8:
+        assignVectorToMat<double>(ptrM, ptrV);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix");
+    }
+}
+
+// [[Rcpp::export]]
+void
+assignVectorToCol(SEXP ptrM, SEXP ptrV, const int index, const int type_flag)
+{
+    switch(type_flag){
+    case 4:
+        assignVectorToCol<int>(ptrM, ptrV, index);
+        return;
+    case 6:
+        assignVectorToCol<float>(ptrM, ptrV, index);
+        return;
+    case 8:
+        assignVectorToCol<double>(ptrM, ptrV, index);
+        return;
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix");
+    }
+}

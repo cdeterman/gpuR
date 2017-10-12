@@ -5,7 +5,7 @@
 \alias{fgpuMatrix-class}
 \title{fgpuMatrix Class}
 \description{
-An integer type matrix in the S4 \code{gpuMatrix}
+A float type matrix in the S4 \code{gpuMatrix}
 representation.
 }
 \section{Slots}{
@@ -14,12 +14,12 @@ representation.
      \item{\code{address}:}{Pointer to a float matrix.}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{gpuMatrix-class}}, 
 \code{\link{igpuMatrix-class}},
 \code{\link{dgpuMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

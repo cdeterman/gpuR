@@ -103,3 +103,49 @@ has_multiple_double_skip <- function() {
         testthat::skip("Less than 2 GPUs with double precision")
     }
 }
+
+
+#' @title Set Context for Specific Device Type
+#' @description This function find the first context
+#' that contains a device of the specified type.
+#' @param type A character vector specifying device type
+#' @return An integer indicating previous context index
+#' @importFrom utils head
+#' @export
+set_device_context <- function(type){
+    
+    current_context <- currentContext()
+    if(deviceType() != type){
+        contexts <- listContexts()
+        cpus <- contexts[contexts$device_type == type,"context"]
+        if(length(cpus) == 0){
+            testthat::skip("No CPUs available")
+        }else{
+            
+        }
+        setContext(head(cpus, 1))
+    }
+    return(current_context)
+}
+
+
+#' @title POCL Version Check
+#' @description Versions of POCL up to 0.15-pre have a bug
+#' which results in values being returned when NA values
+#' should be (e.g. fractional powers of negative values)
+#' @export
+pocl_check <- function(){
+    p <- platformInfo()
+    
+    if(p$platformName == "Portable Computing Language"){
+        v <- p$platformVersion
+        v_split <- unlist(strsplit(v, "pocl"))
+        v_sub <- v_split[length(v_split)]
+        version <- as.numeric(regmatches(v_sub, regexpr("[0-9]\\d*(\\.\\d+)?", v_sub)))
+        
+        if(version <= 0.15){
+            testthat::skip("pocl version too old")
+        }
+    }
+    
+}

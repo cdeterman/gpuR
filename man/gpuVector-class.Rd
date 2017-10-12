@@ -26,10 +26,10 @@ to the particular data type contained.  These include
      \item{\code{.device}:}{Name of active device}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{igpuVector-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

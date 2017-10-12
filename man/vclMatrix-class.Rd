@@ -41,12 +41,12 @@ May also remove the type slot
      \item{\code{.device}:}{Name of active device}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{ivclMatrix-class}}, 
 \code{\link{fvclMatrix-class}},
 \code{\link{dvclMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

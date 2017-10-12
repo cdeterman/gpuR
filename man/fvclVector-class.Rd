@@ -14,10 +14,10 @@ representation.
      \item{\code{address}:}{Pointer to a float typed vector}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{vclVector-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

@@ -64,14 +64,12 @@ setMethod("eigen", signature(x="gpuMatrix"),
                                              Q@address, 
                                              V@address,
                                              symmetric,
-                                             6L,
-                                             x@.context_index - 1),
+                                             6L),
                      "double" = cpp_gpu_eigen(x@address,
                                               Q@address, 
                                               V@address, 
                                               symmetric,
-                                              8L,
-                                              x@.context_index - 1),
+                                              8L),
                      stop("type not currently supported")
                      )
               

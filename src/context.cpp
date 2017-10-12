@@ -31,11 +31,11 @@ void initContexts(){
         Rcpp::Rcout << "- platform: " << platforms[plat_idx].info() << std::endl;
     
         std::vector< viennacl::ocl::device > devices;
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
     
         for(unsigned int gpu_idx = 0; gpu_idx < devices.size(); gpu_idx++) {
             
-            Rcpp::Rcout << "  - gpu index: " << gpu_idx << std::endl;
+            Rcpp::Rcout << "  - context device index: " << gpu_idx << std::endl;
             viennacl::ocl::set_context_platform_index(id, plat_idx);
             viennacl::ocl::setup_context(id, devices[gpu_idx]);
             Rcpp::Rcout << "    - " << devices[gpu_idx].name() << std::endl;
@@ -115,7 +115,7 @@ listContexts()
     // for each platform    
     for(unsigned int plat_idx=0; plat_idx < platforms.size(); plat_idx++){
         
-        num_contexts += platforms[plat_idx].devices().size();
+        num_contexts += platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL).size();
 //        for(unsigned int gpu_idx=0; gpu_idx < platforms[plat_idx].devices().size(); gpu_idx++){
 //            num_contexts++;
 //        }
@@ -137,7 +137,7 @@ listContexts()
     for(unsigned int plat_idx = 0; plat_idx < platforms.size(); plat_idx++) {
         
         std::vector< viennacl::ocl::device > devices;
-        devices = platforms[plat_idx].devices();
+        devices = platforms[plat_idx].devices(CL_DEVICE_TYPE_ALL);
         
         for(unsigned int gpu_idx = 0; gpu_idx < devices.size(); gpu_idx++) {
         
@@ -161,7 +161,7 @@ listContexts()
 ////            Rcout << "switched device successfully" << std::endl;
             
             // Get device info
-            device_index[id] = gpu_idx;
+            device_index[id] = 0;
             device_name[id] = devices[gpu_idx].name();
             // device_name[id] = viennacl::ocl::current_device().name();
             
@@ -196,7 +196,8 @@ listContexts()
                   Rcpp::Named("platform_index") = platform_index,
 				  Rcpp::Named("device") = device_name,
                   Rcpp::Named("device_index") = device_index,
-                  Rcpp::Named("device_type") = device_type);
+                  Rcpp::Named("device_type") = device_type,
+                  _["stringsAsFactors"] = false );
 }
 
 
@@ -219,6 +220,15 @@ cpp_setContext(int id)
         stop("Index cannot be 0 or less");
     }
     viennacl::ocl::switch_context(id - 1);
+}
+
+// [[Rcpp::export]]
+SEXP
+getContextPtr(const int ctx_id){
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    Rcpp::XPtr<viennacl::ocl::context> ptrctx(&ctx);
+    return ptrctx;
 }
 
 

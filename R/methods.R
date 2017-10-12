@@ -29,6 +29,36 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           valueClass = "gpuMatrix"
 )
 
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="gpuMatrix", y = "matrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              return(gpu_Mat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="matrix", y = "gpuMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              return(gpu_Mat_mult(x, y))
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @title Arith methods
 #' @description Methods for the base Arith methods \link[methods]{S4groupGeneric}
 #' @param e1 A gpuR object
@@ -48,6 +78,49 @@ setMethod("Arith", c(e1="gpuMatrix", e2="gpuMatrix"),
                      `-` = gpu_Mat_axpy(-1, e2, e1),
                      `*` = gpuMatElemMult(e1, e2),
                      `/` = gpuMatElemDiv(e1, e2),
+                     `^` = gpuMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="matrix"),
+          function(e1, e2)
+          {
+              
+              e2 <- gpuMatrix(e2, type = typeof(e1), ctx_id = e1@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="matrix", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              e1 <- gpuMatrix(e1, type = typeof(e2), ctx_id = e2@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
                      `^` = gpuMatElemPow(e1, e2),
                      stop("undefined operation")
               )
@@ -127,6 +200,23 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
           valueClass = "gpuMatrix"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuMatrix", e2="gpuVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @title gpuR Math methods
 #' @description Methods for the base Math methods \link[methods]{S4groupGeneric}
 #' @param x A gpuR object
@@ -134,7 +224,7 @@ setMethod("Arith", c(e1="gpuMatrix", e2="missing"),
 #' @details Currently implemented methods include:
 #' \itemize{
 #'  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh",
-#'  "log10", "exp", "abs"}
+#'  "log10", "exp", "abs", "sqrt", "sign"}
 #'  }
 #' @docType methods
 #' @rdname Math-methods
@@ -158,6 +248,8 @@ setMethod("Math", c(x="gpuMatrix"),
                      `log10` = gpuMatElemLog10(x),
                      `exp` = gpuMatElemExp(x),
                      `abs` = gpuMatElemAbs(x),
+                     `sqrt` = gpuMatSqrt(x),
+                     `sign` = gpuMatSign(x),
                      stop("undefined operation")
               )
           },
@@ -208,7 +300,9 @@ setMethod('nrow', signature(x="gpuMatrix"),
               switch(typeof(x),
                      "integer" = return(cpp_gpuMatrix_nrow(x@address, 4L)),
                      "float" = return(cpp_gpuMatrix_nrow(x@address, 6L)),
-                     "double" = return(cpp_gpuMatrix_nrow(x@address, 8L))
+                     "double" = return(cpp_gpuMatrix_nrow(x@address, 8L)),
+                     "fcomplex" = return(cpp_gpuMatrix_nrow(x@address, 10L)),
+                     "dcomplex" = return(cpp_gpuMatrix_nrow(x@address, 12L))
               )
           }
 )
@@ -220,7 +314,9 @@ setMethod('ncol', signature(x="gpuMatrix"),
               switch(typeof(x),
                      "integer" = return(cpp_gpuMatrix_ncol(x@address, 4L)),
                      "float" = return(cpp_gpuMatrix_ncol(x@address, 6L)),
-                     "double" = return(cpp_gpuMatrix_ncol(x@address, 8L))
+                     "double" = return(cpp_gpuMatrix_ncol(x@address, 8L)),
+                     "fcomplex" = return(cpp_gpuMatrix_ncol(x@address, 10L)),
+                     "dcomplex" = return(cpp_gpuMatrix_ncol(x@address, 12L))
               )
           }
 )
@@ -268,7 +364,10 @@ setMethod("[",
               switch(typeof(x),
                      "integer" = return(MatXptrToMatSEXP(x@address, 4L)),
                      "float" = return(MatXptrToMatSEXP(x@address, 6L)),
-                     "double" = return(MatXptrToMatSEXP(x@address, 8L))
+                     "double" = return(MatXptrToMatSEXP(x@address, 8L)),
+                     "fcomplex" = return(MatXptrToMatSEXP(x@address, 10L)),
+                     "dcomplex" = return(MatXptrToMatSEXP(x@address, 12L)),
+                     stop("type not recognized")
               )
           })
 
@@ -578,7 +677,7 @@ setMethod("rowMeans",
 #' @title Covariance (gpuR)
 #' @description Compute covariance values
 #' @param x A gpuR object
-#' @param y Not used
+#' @param y A gpuR object
 #' @param use Not used
 #' @param method Character string indicating with covariance to be computed.
 #' @return A gpuMatrix/vclMatrix containing the symmetric covariance values.
@@ -598,7 +697,29 @@ setMethod("cov",
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x, y))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
           signature(x = "gpuMatrix", y = "missing", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(gpu_pmcc(x))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
+          signature(x = "gpuMatrix", y = "gpuMatrix", use = "missing", method = "character"),
           function(x, y = NULL, use = NULL, method = "pearson") {
               if(method != "pearson"){
                   stop("Only pearson covariance implemented")
@@ -636,6 +757,25 @@ setMethod("crossprod",
           })
 
 #' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "gpuMatrix", y = "matrix"),
+          function(x, y){
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              gpu_crossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "matrix", y = "gpuMatrix"),
+          function(x, y){
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              gpu_crossprod(x, y)
+          })
+
+
+#' @rdname gpuMatrix-crossprod
 setMethod("tcrossprod",
           signature(x = "gpuMatrix", y = "missing"),
           function(x, y){
@@ -648,6 +788,24 @@ setMethod("tcrossprod",
 setMethod("tcrossprod",
           signature(x = "gpuMatrix", y = "gpuMatrix"),
           function(x, y){
+              gpu_tcrossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "matrix", y = "gpuMatrix"),
+          function(x, y){
+              x <- gpuMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              gpu_tcrossprod(x, y)
+          })
+
+#' @rdname gpuMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "gpuMatrix", y = "matrix"),
+          function(x, y){
+              y <- gpuMatrix(y, type = typeof(x), ctx_id = x@.context_index)
               gpu_tcrossprod(x, y)
           })
 
@@ -1089,6 +1247,7 @@ setMethod("Summary", c(x="gpuMatrix"),
               result <- switch(op,
                                `max` = gpuMatrix_max(x),
                                `min` = gpuMatrix_min(x),
+                               `sum` = gpuMatrix_sum(x),
                                stop("undefined operation")
               )
               return(result)
@@ -1137,4 +1296,11 @@ setMethod("diag<-", c(x = "gpuMatrix", value = "gpuVector"),
           }
 )
 
-
+#' @rdname det-methods
+#' @aliases det,vclMatrix
+#' @export
+setMethod("det", c(x = "gpuMatrix"),
+          function(x){
+              return(gpuMat_det(x))
+          }
+)

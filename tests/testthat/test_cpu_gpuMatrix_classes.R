@@ -1,10 +1,42 @@
 library(gpuR)
 context("CPU gpuMatrix classes")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 A <- matrix(seq.int(10000), 100)
 D <- matrix(rnorm(100), 10)
+Dc <- matrix(as.complex(D), nrow = 10)
 
+test_that("CPU gpuMatrix complex float class initializer" ,{
+    
+    has_cpu_skip()
+    
+    vclDc <- gpuMatrix(Dc, type="fcomplex")
+    
+    expect_is(vclDc, "cgpuMatrix")
+    expect_equal(vclDc[], Dc, tolerance=1e-07,
+                 info="vcl complex float matrix elements not equivalent")
+    expect_equal(dim(vclDc), dim(Dc))
+    expect_equal(ncol(vclDc), ncol(Dc))
+    expect_equal(nrow(vclDc), nrow(Dc))
+    expect_equal(typeof(vclDc), "fcomplex")
+})
+
+test_that("CPU gpuMatrix complex double class initializer" ,{
+    
+    has_cpu_skip()
+    
+    vclDc <- gpuMatrix(Dc, type = "dcomplex")
+    
+    expect_is(vclDc, "zgpuMatrix")
+    expect_equal(vclDc[], Dc, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="vcl complex Dcouble matrix elements not equivalent")
+    expect_equal(dim(vclDc), dim(Dc))
+    expect_equal(ncol(vclDc), ncol(Dc))
+    expect_equal(nrow(vclDc), nrow(Dc))
+    expect_equal(typeof(vclDc), "dcomplex")
+})
 
 test_that("CPU gpuMatrix class contains correct information", {
     
@@ -160,3 +192,5 @@ test_that("CPU gpuMatrix double scalar initializers", {
     expect_is(vclA, "dgpuMatrix")
     expect_is(ivclA, "dgpuMatrix")
 })
+
+setContext(current_context)

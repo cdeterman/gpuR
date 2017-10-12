@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix Row and Column Methods")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -414,3 +416,4 @@ test_that("CPU gpuMatrix Double Precision Block Row Means",
                  info="double rowMeans not equivalent")  
 })
 
+setContext(current_context)

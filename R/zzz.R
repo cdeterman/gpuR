@@ -8,7 +8,7 @@
 
 .onAttach <- function(libname, pkgname) {
     # Initialize all possible contexts
-    if (!identical(Sys.getenv("APPVEYOR"), "True") && !identical(Sys.getenv("TRAVIS"), "true")) {
+    if (!identical(Sys.getenv("APPVEYOR"), "True")) {
         # initialize contexts
         # default_device <- initContexts()
         initContexts()

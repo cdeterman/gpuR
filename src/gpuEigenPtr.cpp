@@ -1,10 +1,127 @@
 
 #include "gpuR/windows_check.hpp"
+
+#include "gpuR/dynEigenMat.hpp"
+#include "gpuR/dynEigenVec.hpp"
+
 #include <RcppEigen.h>
 
-#include "gpuR/eigen_helpers.hpp"
-
 using namespace Rcpp;
+
+
+// convert SEXP Matrix to Eigen matrix
+template <typename T>
+SEXP 
+getRmatEigenAddress(SEXP A, const int nr, const int nc, int ctx_id)
+{    
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A, ctx_id);
+    Rcpp::XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
+// convert SEXP Vector to Eigen Vector (i.e. 1 column matrix)
+template <typename T>
+SEXP 
+sexpVecToEigenVecXptr(SEXP A, const int size)
+{
+    dynEigenVec<T> *vec =  new dynEigenVec<T>(A);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
+
+// scalar initialized ViennaCL vector
+template <typename T>
+SEXP 
+cpp_scalar_gpuVector(
+    SEXP scalar_, 
+    int size)
+{
+    const T scalar = as<T>(scalar_);
+    
+    dynEigenVec<T> *vec = new dynEigenVec<T>(size, scalar);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
+
+// convert an XPtr back to a MapVec object to ultimately 
+// be returned as a SEXP object
+template <typename T>
+Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
+getEigenMatrix(SEXP ptrA_)
+{
+    Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA_);
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > MapVec = pVec->data();
+    return MapVec;
+}
+
+template <typename T>
+void
+SetMatRow(SEXP data, const int idx, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setRow(value, idx);
+}
+
+
+template <typename T>
+void
+SetMatCol(SEXP data, const int idx, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setCol(value, idx);
+}
+
+template <typename T>
+void
+SetMatElement(SEXP data, const int nr, const int nc, SEXP value)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    pMat->setElement(value, nr, nc);
+}
+
+template <typename T>
+SEXP
+GetMatRow(const SEXP data, const int idx)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getRow(idx)));
+}
+
+template <typename T>
+SEXP
+GetMatCol(const SEXP data, const int idx)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getCol(idx)));
+}
+
+template <typename T>
+SEXP
+GetMatElement(const SEXP data, const int nr, const int nc)
+{    
+    Rcpp::XPtr<dynEigenMat<T> > pMat(data);
+    return(wrap(pMat->getElement(nr, nc)));
+}
+
+// create an empty eigen matrix
+template <typename T>
+SEXP emptyEigenXptr(const int nr, const int nc, const int ctx_id)
+{
+    dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc, ctx_id);
+    //    std::cout << mat->data() << std::endl;
+    Rcpp::XPtr<dynEigenMat<T> > pMat(mat);
+    return pMat;
+}
+
+// create an empty eigen vector
+template <typename T>
+SEXP 
+emptyEigenVecXptr(const int size)
+{    
+    dynEigenVec<T> *vec = new dynEigenVec<T>(size);
+    Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
+    return pVec;
+}
 
 template <typename T>
 void
@@ -60,18 +177,9 @@ template <typename T>
 SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA_)
 {
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ptrA(ptrA_);
-//    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > A(ptrA->data(), ptrA->rows(), ptrA->cols());
-//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *C = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(ptrA->rows(), ptrA->cols());
-//    
-//    // assign pointer
-//    *C = A;
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(C);
-//    return pMat;
-    
     XPtr<dynEigenMat<T> > pA(ptrA_);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A = pA->data();
-    dynEigenMat<T> *mat = new dynEigenMat<T>(A);
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A, pA->getContext());
     XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
@@ -94,7 +202,7 @@ sliceGPUvec(const SEXP ptrA, int start, int end)
 {
     XPtr<dynEigenVec<T> > pA(ptrA);
     dynEigenVec<T> *vec = new dynEigenVec<T>();
-    vec->setPtr(pA->getPtr());
+    vec->setHostPtr(pA->getHostPtr());
     vec->setRange(start, end);
     vec->updateSize();
     
@@ -115,6 +223,7 @@ gpuMatBlock(
     mat->setRange(rowStart, rowEnd, colStart, colEnd);
     mat->setSourceDim(pA->nrow(), pA->ncol());
     mat->updateDim();
+    mat->setContext(pA->getContext());
     
     XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
@@ -134,7 +243,7 @@ cpp_cbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> C(A.rows(), A.cols() + B.cols());
     C << A,B;
     
-    dynEigenMat<T> *mat = new dynEigenMat<T>(C);
+    dynEigenMat<T> *mat = new dynEigenMat<T>(C, pA->getContext());
     XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
@@ -153,7 +262,7 @@ cpp_rbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> C(A.rows()+B.rows(), A.cols());
     C << A,B;
     
-    dynEigenMat<T> *mat = new dynEigenMat<T>(C);
+    dynEigenMat<T> *mat = new dynEigenMat<T>(C, pA->getContext());
     XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
@@ -181,16 +290,17 @@ template <typename T>
 T
 GetVecElement(const SEXP data, const int idx)
 {    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = EigenVecXPtrToMapEigenVec<T>(data);
-    return(A(idx-1));
+    XPtr<dynEigenVec<T> > pVec(data);
+    return(pVec->getElement(idx));
 }
 
 template <typename T>
 void
 SetVecElement(const SEXP data, const int idx, SEXP value)
 {    
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > A = EigenVecXPtrToMapEigenVec<T>(data);
-    A(idx-1) = as<T>(value);
+    XPtr<dynEigenVec<T> > pVec(data);
+    pVec->setElement(idx, value);
+    return;
 }
 
 
@@ -498,19 +608,32 @@ SEXP sexpVecToEigenVecXptr(SEXP ptrA, const int size, const int type_flag)
     }
 }
 
+// convert scalar to eigen vector
+// [[Rcpp::export]]
+SEXP
+cpp_scalar_gpuVector(
+    SEXP scalar, 
+    const int size, 
+    const int type_flag)
+{
+    switch(type_flag) {
+    case 4:
+        return cpp_scalar_gpuVector<int>(scalar, size);
+    case 6:
+        return cpp_scalar_gpuVector<float>(scalar, size);
+    case 8:
+        return cpp_scalar_gpuVector<double>(scalar, size);
+    default:
+        throw Rcpp::exception("unknown type detected for vclMatrix object!");
+    }
+}
+
 
 // convert SEXP Vector to Eigen matrix
 template <typename T>
-SEXP sexpVecToEigenXptr(SEXP A, int nr, int nc)
+SEXP sexpVecToEigenXptr(SEXP A, const int nr, const int nc, const int ctx_id)
 {
-//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> *eigen_mat = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(nr, nc);
-//    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
-//    temp.resize(nr, nc);
-//    *eigen_mat = temp;
-//    XPtr<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > pMat(eigen_mat);
-//    return pMat;
-    
-    dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc);
+    dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc, ctx_id);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
     temp.resize(nr, nc);
     mat->setMatrix(temp);
@@ -520,24 +643,24 @@ SEXP sexpVecToEigenXptr(SEXP A, int nr, int nc)
 
 // convert SEXP Vector to Eigen matrix
 template <typename T>
-SEXP initScalarEigenXptr(T A, int nr, int nc)
+SEXP initScalarEigenXptr(T A, const int nr, const int nc, const int ctx_id)
 {    
-    dynEigenMat<T> *mat = new dynEigenMat<T>(A, nr, nc);
+    dynEigenMat<T> *mat = new dynEigenMat<T>(A, nr, nc, ctx_id);
     XPtr<dynEigenMat<T> > pMat(mat);
     return pMat;
 }
 
 // [[Rcpp::export]]
 SEXP
-sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
+sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            return sexpVecToEigenXptr<int>(ptrA, nr, nc);
+            return sexpVecToEigenXptr<int>(ptrA, nr, nc, ctx_id);
         case 6:
-            return sexpVecToEigenXptr<float>(ptrA, nr, nc);
+            return sexpVecToEigenXptr<float>(ptrA, nr, nc, ctx_id);
         case 8:
-            return sexpVecToEigenXptr<double>(ptrA, nr, nc);
+            return sexpVecToEigenXptr<double>(ptrA, nr, nc, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -546,15 +669,15 @@ sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag)
+initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            return initScalarEigenXptr<int>(as<int>(scalar), nr, nc);
+            return initScalarEigenXptr<int>(as<int>(scalar), nr, nc, ctx_id);
         case 6:
-            return initScalarEigenXptr<float>(as<float>(scalar), nr, nc);
+            return initScalarEigenXptr<float>(as<float>(scalar), nr, nc, ctx_id);
         case 8:
-            return initScalarEigenXptr<double>(as<double>(scalar), nr, nc);
+            return initScalarEigenXptr<double>(as<double>(scalar), nr, nc, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -567,15 +690,20 @@ SEXP
 getRmatEigenAddress(SEXP ptrA, 
     const int nr,
     const int nc, 
-    const int type_flag)
+    const int type_flag,
+    int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            return getRmatEigenAddress<int>(ptrA, nr, nc);
+            return getRmatEigenAddress<int>(ptrA, nr, nc, ctx_id);
         case 6:
-            return getRmatEigenAddress<float>(ptrA, nr, nc);
+            return getRmatEigenAddress<float>(ptrA, nr, nc, ctx_id);
         case 8:
-            return getRmatEigenAddress<double>(ptrA, nr, nc);
+            return getRmatEigenAddress<double>(ptrA, nr, nc, ctx_id);
+        case 10:
+            return getRmatEigenAddress<std::complex<float> >(ptrA, nr, nc, ctx_id);
+        case 12:
+            return getRmatEigenAddress<std::complex<double> >(ptrA, nr, nc, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -585,15 +713,15 @@ getRmatEigenAddress(SEXP ptrA,
 
 // [[Rcpp::export]]
 SEXP
-EigenVecXPtrToMapEigenVec(SEXP ptrA, const int type_flag)
+getEigenMatrix(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
         case 4:
-            return wrap(EigenVecXPtrToMapEigenVec<int>(ptrA));
+            return wrap(getEigenMatrix<int>(ptrA));
         case 6:
-            return wrap(EigenVecXPtrToMapEigenVec<float>(ptrA));
+            return wrap(getEigenMatrix<float>(ptrA));
         case 8:
-            return wrap(EigenVecXPtrToMapEigenVec<double>(ptrA));
+            return wrap(getEigenMatrix<double>(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -621,6 +749,10 @@ MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
             return(MatXptrToMatSEXP<float>(ptrA));
         case 8:
             return(MatXptrToMatSEXP<double>(ptrA));
+        case 10:
+            return(MatXptrToMatSEXP<std::complex<float> >(ptrA));
+        case 12:
+            return(MatXptrToMatSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -649,15 +781,15 @@ emptyEigenVecXptr(const int size, const int type_flag)
 
 // [[Rcpp::export]]
 SEXP
-emptyEigenXptr(const int nr, const int nc, const int type_flag)
+emptyEigenXptr(const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
         case 4:
-            return emptyEigenXptr<int>(nr, nc);;
+            return emptyEigenXptr<int>(nr, nc, ctx_id);;
         case 6:
-            return emptyEigenXptr<float>(nr, nc);
+            return emptyEigenXptr<float>(nr, nc, ctx_id);
         case 8:
-            return emptyEigenXptr<double>(nr, nc);
+            return emptyEigenXptr<double>(nr, nc, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

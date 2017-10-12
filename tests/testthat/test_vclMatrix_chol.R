@@ -1,6 +1,12 @@
 library(gpuR)
 context("vclMatrix chol decomposition")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -50,3 +56,5 @@ test_that("vclMatrix Double Precision Matrix Cholesky Decomposition",
               expect_error(chol(fgpuA), "'x' must be a square matrix",
                            info = "chol shouldn't accept non-square matrices")
           })
+
+setContext(current_context)

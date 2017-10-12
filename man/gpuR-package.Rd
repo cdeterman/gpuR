@@ -2,8 +2,8 @@
 % Please edit documentation in R/hello-gpuR.R
 \docType{package}
 \name{gpuR-package}
-\alias{gpuR}
 \alias{gpuR-package}
+\alias{gpuR}
 \title{GPU functions for R Objects}
 \description{
 This package was developed to provide simple to use R functions
@@ -40,4 +40,3 @@ Charles Determan \email{cdetermanjr@gmail.com}
 
 Maintainer: Charles Determan \email{cdetermanjr@gmail.com}
 }
-

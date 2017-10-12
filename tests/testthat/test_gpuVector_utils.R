@@ -1,6 +1,12 @@
 library(gpuR)
 context("gpuVector Utility Functions")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -141,3 +147,5 @@ test_that("gpuVector as.vector method", {
     expect_is(as.vector(igpu), 'integer',
               info = "integer as.vector not producing 'vector' class")
 })
+
+setContext(current_context)

@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{nrow,vclMatrix-method}
-\alias{ncol,gpuMatrix-method}
+\alias{nrow,vclMatrix-method}
 \alias{ncol,vclMatrix-method}
 \alias{nrow,gpuMatrix-method}
-\alias{nrow,vclMatrix-method}
+\alias{ncol,gpuMatrix-method}
 \title{The Number of Rows/Columns of a gpuR matrix}
 \usage{
 \S4method{nrow}{vclMatrix}(x)
@@ -29,4 +29,3 @@ present in \code{x} respectively.
 \author{
 Charles Determan Jr.
 }
-

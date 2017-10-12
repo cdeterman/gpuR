@@ -2,8 +2,8 @@
 % Please edit documentation in R/qr.R
 \docType{methods}
 \name{qr.R,gpuQR-method}
-\alias{qr.Q,gpuQR-method}
 \alias{qr.R,gpuQR-method}
+\alias{qr.Q,gpuQR-method}
 \title{Reconstruct the Q or R Matrices form a gpuQR Object}
 \usage{
 \S4method{qr.R}{gpuQR}(qr, complete = FALSE)
@@ -22,10 +22,9 @@
 \description{
 Returns the components of the QR decomposition.
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \link[base]{qr.R}, \link[base]{qr.Q}
 }
-
+\author{
+Charles Determan Jr.
+}

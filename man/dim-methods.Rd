@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{dim,vclMatrix-method}
-\alias{dim,gpuMatrix-method}
 \alias{dim,vclMatrix-method}
-\alias{dim-gpuMatrix}
 \alias{dim-vclMatrix}
+\alias{dim,gpuMatrix-method}
+\alias{dim-gpuMatrix}
 \title{gpuMatrix/vclMatrix dim method}
 \usage{
 \S4method{dim}{vclMatrix}(x)
@@ -24,4 +24,3 @@ Retrieve dimension of object
 \author{
 Charles Determan Jr.
 }
-

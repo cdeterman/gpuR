@@ -1,6 +1,12 @@
 library(gpuR)
 context("vclVector Utility Functions")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 set.seed(123)
 ORDER <- 100
 A <- sample(seq.int(10), ORDER, replace = TRUE)
@@ -186,3 +192,5 @@ test_that("vclVector set vclVector access", {
     expect_equivalent(gpuA[], gpuD[], 
                       info = "updated dvclVector not equivalent to assigned vclVector")
 })
+
+setContext(current_context)

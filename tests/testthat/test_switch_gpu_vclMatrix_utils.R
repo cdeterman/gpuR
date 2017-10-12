@@ -1,6 +1,12 @@
 library(gpuR)
 context("Switching GPU vclMatrix Utility Functions")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
@@ -220,3 +226,5 @@ test_that("Switching GPU vclMatrix set element access", {
     expect_equal(currentContext(), 1L, 
                  info = "context index has been change unintentionally")
 })
+
+setContext(current_context)

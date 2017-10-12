@@ -32,6 +32,10 @@ setClass('vclVector',
                    .device_index = "integer",
                    .device = "character"))
 
+
+setClass("vclVectorSlice",
+				 contains = "vclVector")
+
 # setClass('vclVector',
 #          representation("VIRTUAL"),
 #          validity = function(object) {
@@ -119,13 +123,13 @@ setClass("dvclVector",
 
 # @export
 setClass("ivclVectorSlice", 
-         contains = "ivclVector")
+         contains = "vclVectorSlice")
 
 # @export
 setClass("fvclVectorSlice", 
-         contains = "fvclVector")
+         contains = "vclVectorSlice")
 
 # @export
 setClass("dvclVectorSlice", 
-         contains = "dvclVector")
+         contains = "vclVectorSlice")
 

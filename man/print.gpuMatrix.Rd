@@ -18,4 +18,3 @@
 \description{
 prints a gpuMatrix object that is truncated to fit the screen
 }
-

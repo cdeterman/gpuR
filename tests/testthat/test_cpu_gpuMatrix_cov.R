@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuMatrix Correlations")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -38,3 +40,5 @@ test_that("CPU gpuMatrix Double Precision Pearson Covariance",
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double colSums not equivalent")  
 })
+
+setContext(current_context)

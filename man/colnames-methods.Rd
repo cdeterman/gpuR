@@ -5,8 +5,8 @@
 \alias{colnames}
 \alias{colnames.default}
 \alias{colnames.gpuMatrix}
-\alias{colnames.vclMatrix}
 \alias{colnames<-,gpuMatrix-method}
+\alias{colnames.vclMatrix}
 \alias{colnames<-,vclMatrix-method}
 \title{Row and Column Names}
 \usage{
@@ -37,4 +37,3 @@ colnames(x, do.NULL, prefix)
 \description{
 Retrieve or set the row or column names of a gpuR matrix object
 }
-

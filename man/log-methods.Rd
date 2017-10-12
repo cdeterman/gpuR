@@ -3,10 +3,10 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{log,gpuVector-method}
-\alias{log,gpuMatrix-method}
 \alias{log,gpuVector-method}
 \alias{log,vclMatrix-method}
 \alias{log,vclVector-method}
+\alias{log,gpuMatrix-method}
 \alias{log-gpuR-method}
 \title{gpuR Logarithms and Exponentials}
 \usage{
@@ -35,4 +35,3 @@ and \code{log10} computes common (i.e. base 10) logarithms.  The general form
 
 \code{exp} computes the exponential function.
 }
-

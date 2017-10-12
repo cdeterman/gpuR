@@ -2,6 +2,8 @@
 library(gpuR)
 context("CPU vclVector math operations")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -110,6 +112,7 @@ test_that("CPU vclVector Double Precision Matrix Element-Wise Trignometry", {
 
 test_that("CPU vclVector Single Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -134,6 +137,7 @@ test_that("CPU vclVector Single Precision Matrix Element-Wise Logs", {
 
 test_that("CPU vclVector Double Precision Matrix Element-Wise Logs", {
     has_cpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -254,3 +258,131 @@ test_that("CPU vclVector Double Precision Maximum/Minimum", {
     expect_equal(fvcl_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
 })
+
+test_that("CPU vclVector Single Precision pmax/pmin", {
+    
+    has_cpu_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- vclVector(A, type="float")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "fvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent")  
+    
+    # multiple operations
+    R_max <- pmax(A, 0, .5)
+    R_min <- pmin(A, 0, -.2)
+    
+    fgpu_max <- pmax(fgpuA, 0, 0.5)
+    fgpu_min <- pmin(fgpuA, 0, -.2)
+    
+    expect_is(fgpu_max, "fvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent") 
+})
+
+test_that("CPU vclVector Double Precision pmax/pmin", {
+    
+    has_cpu_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- vclVector(A, type="double")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "dvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+    
+    
+    # multiple operations
+    R_max <- pmax(A, 0, .5)
+    R_min <- pmin(A, 0, -.2)
+    
+    fgpu_max <- pmax(fgpuA, 0, 0.5)
+    fgpu_min <- pmin(fgpuA, 0, -.2)
+    
+    expect_is(fgpu_max, "dvclVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+})
+
+test_that("CPU vclVector Single Precision sqrt", {
+    
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fvclA <- vclVector(abs(A), type="float")
+    
+    fvcl_sqrt <- sqrt(fvclA)
+    
+    expect_is(fvcl_sqrt, "fvclVector")
+    expect_equal(fvcl_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float vector elements not equivalent")  
+})
+
+test_that("CPU vclVector Double Precision sqrt", {
+    
+    has_cpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fvclA <- vclVector(abs(A), type="double")
+    
+    fvcl_sqrt <- sqrt(fvclA)
+    
+    expect_is(fvcl_sqrt, "dvclVector")
+    expect_equal(fvcl_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double vector elements not equivalent")  
+})
+
+
+test_that("CPU vclVector Single Precision Matrix sign", {
+    has_cpu_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- vclVector(A, type="float")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "fvclVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign float matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("CPU vclVector Double Precision Matrix sign", {
+    has_cpu_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- vclVector(A, type="double")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "dvclVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=.Machine$double.base^0.5, 
+                 info="sign double matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+setContext(current_context)

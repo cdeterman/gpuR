@@ -10,4 +10,3 @@ has_gpu_skip()
 Function to skip testthat tests
 if no valid GPU's are detected
 }
-

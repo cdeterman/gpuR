@@ -28,38 +28,37 @@ setMethod('vclMatrix',
           signature(data = 'matrix'),
           function(data, type=NULL, ctx_id=NULL){
               
-              if (is.null(type)) {
-                  type <- switch(typeof(data),
-                                 "integer" = "integer",
-                                 getOption("gpuR.default.type"))
-              }
-
-              if(is.null(ctx_id)){
-                  device <- currentDevice()
-                  
-                  context_index <- currentContext() 
-                  device_index <- as.integer(device$device_index)
-                  device_type <- device$device_type
-                  device_name <- switch(device_type,
-                                        "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                        "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                        stop("Unrecognized device type")
-                  )
-                  platform_index <- currentPlatform()$platform_index
-                  platform_name <- platformInfo(platform_index)$platformName
-              }else{
-                  context_index <- as.integer(ctx_id)
-                  
-                  context_info <- listContexts()
-                  context_info <- context_info[, context_info$context == ctx_id]
-                  
-                  device_name <- as.character(context_info$device)
-                  device_index <- context_info$device_index + 1L
-                  device_type <- context_info$device_type
-                  platform_index <- context_info$platform_index + 1L
-                  platform_name <- as.character(context_info$platform)
+              if (is.null(type)){
+                  if(typeof(data) == "integer") {
+                      type <- "integer"
+                  }else{
+                      type <- getOption("gpuR.default.type")    
+                  }
               }
               
+              if(type == "complex"){
+                  warning("default complex type is double (dcomplex)")
+                  type <- 'dcomplex'
+              }
+
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
+              
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
+              
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    stop("Unrecognized device type")
+              )
               
               data = switch(type,
                             integer = {
@@ -81,9 +80,28 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclMatrix",
                                     address = cpp_sexp_mat_to_vclMatrix(data, 8L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            fcomplex = {
+                                new("cvclMatrix", 
+                                    address=cpp_sexp_mat_to_vclMatrix(data, 10L, context_index - 1),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            dcomplex = {
+                                assert_has_double(device_index, context_index)
+                                new("zvclMatrix",
+                                    address = cpp_sexp_mat_to_vclMatrix(data, 12L, context_index - 1),
                                     .context_index = context_index,
                                     .platform_index = platform_index,
                                     .platform = platform_name,
@@ -93,7 +111,6 @@ setMethod('vclMatrix',
                             stop("this is an unrecognized 
                                  or unimplemented data type")
                             )
-              
               return(data)
           },
           valueClass = "vclMatrix")
@@ -106,33 +123,25 @@ setMethod('vclMatrix',
           function(data, nrow=NA, ncol=NA, type=NULL, ctx_id = NULL){
               
               if (is.null(type)) type <- getOption("gpuR.default.type")
-              #device_flag <- ifelse(options("gpuR.default.device.type") == "gpu", 0, 1)
+            
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
+
+              context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
               
-              if(is.null(ctx_id)){
-                  device <- currentDevice()
-                  
-                  context_index <- currentContext() 
-                  device_index <- as.integer(device$device_index)
-                  device_type <- device$device_type
-                  device_name <- switch(device_type,
-                                        "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                        "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                        stop("Unrecognized device type")
-                  )
-                  platform_index <- currentPlatform()$platform_index
-                  platform_name <- platformInfo(platform_index)$platformName
-              }else{
-                  context_index <- as.integer(ctx_id)
-                  
-                  context_info <- listContexts()
-                  context_info <- context_info[, context_info$context == ctx_id]
-                  
-                  device_name <- as.character(context_info$device)
-                  device_index <- context_info$device_index + 1L
-                  device_type <- context_info$device_type
-                  platform_index <- context_info$platform_index + 1L
-                  platform_name <- as.character(context_info$platform)
-              }
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    stop("Unrecognized device type")
+              )
               
               data = switch(type,
                             integer = {
@@ -154,7 +163,7 @@ setMethod('vclMatrix',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dvclMatrix",
                                     address = cpp_zero_vclMatrix(nrow, ncol, 8L, context_index - 1),
                                     .context_index = context_index,

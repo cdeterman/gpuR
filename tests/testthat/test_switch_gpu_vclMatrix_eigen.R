@@ -1,6 +1,12 @@
 library(gpuR)
 context("Switching GPU vclMatrix eigen decomposition")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -143,3 +149,5 @@ test_that("Switching GPU vclMatrix Symmetric Double Precision Matrix Eigen Decom
 #                  tolerance=.Machine$double.eps ^ 0.5, 
 #                  info="float eigenvectors not equivalent")  
 # })
+
+setContext(current_context)

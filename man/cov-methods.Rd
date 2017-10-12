@@ -2,28 +2,44 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{cov,vclMatrix,missing,missing,missing-method}
-\alias{cov,gpuMatrix,missing,missing,character-method}
-\alias{cov,gpuMatrix,missing,missing,missing-method}
-\alias{cov,vclMatrix,missing,missing,character-method}
 \alias{cov,vclMatrix,missing,missing,missing-method}
+\alias{cov,vclMatrix,vclMatrix,missing,missing-method}
+\alias{cov,vclMatrix,missing,missing,character-method}
+\alias{cov,vclMatrix,vclMatrix,missing,character-method}
+\alias{cov,gpuMatrix,missing,missing,missing-method}
+\alias{cov,gpuMatrix,gpuMatrix,missing,missing-method}
+\alias{cov,gpuMatrix,missing,missing,character-method}
+\alias{cov,gpuMatrix,gpuMatrix,missing,character-method}
 \title{Covariance (gpuR)}
 \usage{
 \S4method{cov}{vclMatrix,missing,missing,missing}(x, y = NULL, use = NULL,
   method = "pearson")
 
+\S4method{cov}{vclMatrix,vclMatrix,missing,missing}(x, y = NULL, use = NULL,
+  method = "pearson")
+
 \S4method{cov}{vclMatrix,missing,missing,character}(x, y = NULL, use = NULL,
   method = "pearson")
+
+\S4method{cov}{vclMatrix,vclMatrix,missing,character}(x, y = NULL,
+  use = NULL, method = "pearson")
 
 \S4method{cov}{gpuMatrix,missing,missing,missing}(x, y = NULL, use = NULL,
   method = "pearson")
 
+\S4method{cov}{gpuMatrix,gpuMatrix,missing,missing}(x, y = NULL, use = NULL,
+  method = "pearson")
+
 \S4method{cov}{gpuMatrix,missing,missing,character}(x, y = NULL, use = NULL,
   method = "pearson")
+
+\S4method{cov}{gpuMatrix,gpuMatrix,missing,character}(x, y = NULL,
+  use = NULL, method = "pearson")
 }
 \arguments{
 \item{x}{A gpuR object}
 
-\item{y}{Not used}
+\item{y}{A gpuR object}
 
 \item{use}{Not used}
 
@@ -38,4 +54,3 @@ Compute covariance values
 \author{
 Charles Determan Jr.
 }
-

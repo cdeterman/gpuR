@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrix Correlations")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -44,3 +46,4 @@ test_that("CPU vclMatrix Double Precision Pearson Covariance",
                  info="double colSums not equivalent")  
 })
 
+setContext(current_context)

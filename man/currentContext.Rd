@@ -12,4 +12,3 @@ An integer reflecting the context listed in \link{listContexts}
 \description{
 Get current context index
 }
-

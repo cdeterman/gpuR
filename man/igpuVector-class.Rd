@@ -14,10 +14,10 @@ representation.
      \item{\code{address}:}{An integer vector object}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{gpuVector-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

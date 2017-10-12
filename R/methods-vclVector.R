@@ -5,45 +5,97 @@ as.vector.vclVector <- function(x, mode = "any"){
     return(out)
 }
 
+#' #' @rdname as.vclVector-methods
+#' #' @param shared Logical indicating if memory should be shared with \code{x}
+#' #' @export
+#' as.vclVector <- function (data, shared, ...) {
+#'     UseMethod("as.vclVector", data)
+#' }
 
-#' @rdname vclVector-methods
+#' @rdname as.vclVector-methods
+#' @aliases as.vclVector,vector
+setMethod('as.vclVector', 
+          signature(object = 'vector'),
+          function(object, type=NULL){
+              if(!typeof(object) %in% c('integer', 'double')){
+                  stop("unrecognized data type")
+              }
+              
+              vclVector(object, type = type)
+          },
+          valueClass = "vclVector")
+
+#' @rdname as.vclVector-methods
 #' @param shared Logical indicating if memory should be shared with \code{x}
-#' @export
-as.vclVector <- function (data, shared, ...) {
-    UseMethod("as.vclVector", data)
-}
+#' @aliases as.vclVector,vclMatrix
+setMethod('as.vclVector', 
+          signature(object = 'vclMatrix'),
+          function(object, shared, type=NULL){
+              if(!typeof(object) %in% c('integer', 'float', 'double')){
+                  stop("unrecognized data type")
+              }
+              
+              ctx_id <- object@.context_index - 1
+              
+              out <- switch(typeof(object),
+                     "integer" = return(new("ivclVector", 
+                                            address=vclMatTovclVec(object@address, shared, ctx_id, 4L),
+                                            .context_index = object@.context_index,
+                                            .platform_index = object@.platform_index,
+                                            .platform = object@.platform,
+                                            .device_index = object@.device_index,
+                                            .device = object@.device)),
+                     "float" = return(new("fvclVector", 
+                                          address=vclMatTovclVec(object@address, shared, ctx_id, 6L),
+                                          .context_index = object@.context_index,
+                                          .platform_index = object@.platform_index,
+                                          .platform = object@.platform,
+                                          .device_index = object@.device_index,
+                                          .device = object@.device)),
+                     "double" = return(new("dvclVector", 
+                                           address=vclMatTovclVec(object@address, shared, ctx_id, 8L),
+                                           .context_index = object@.context_index,
+                                           .platform_index = object@.platform_index,
+                                           .platform = object@.platform,
+                                           .device_index = object@.device_index,
+                                           .device = object@.device))
+              )
+              return(out)
+          },
+          valueClass = "vclVector")
 
-#' @export
-as.vclVector.vclMatrix <- function(data, shared = TRUE, ...){
-    if(shared){
-        
-        switch(typeof(data),
-               "integer" = return(new("ivclVector", 
-                                      address=vclMatTovclVec(data@address, 4L),
-                                      .context_index = data@.context_index,
-                                      .platform_index = data@.platform_index,
-                                      .platform = data@.platform,
-                                      .device_index = data@.device_index,
-                                      .device = data@.device)),
-               "float" = return(new("fvclVector", 
-                                    address=vclMatTovclVec(data@address, 6L),
-                                    .context_index = data@.context_index,
-                                    .platform_index = data@.platform_index,
-                                    .platform = data@.platform,
-                                    .device_index = data@.device_index,
-                                    .device = data@.device)),
-               "double" = return(new("dvclVector", 
-                                     address=vclMatTovclVec(data@address, 8L),
-                                     .context_index = data@.context_index,
-                                     .platform_index = data@.platform_index,
-                                     .platform = data@.platform,
-                                     .device_index = data@.device_index,
-                                     .device = data@.device))
-        )
-    }else{
-        stop("copy constructor not implemented yet")
-    }
-}
+#' #' @rdname as.vclVector-methods
+#' #' @param shared Logical indicating if memory should be shared with \code{x}
+#' #' @aliases as.gpuVector,matrix
+#' #' @export
+#' as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+#'     
+#'     ctx_id <- data@.context_index - 1
+#'     
+#'     switch(typeof(data),
+#'            "integer" = return(new("ivclVector", 
+#'                                   address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+#'                                   .context_index = data@.context_index,
+#'                                   .platform_index = data@.platform_index,
+#'                                   .platform = data@.platform,
+#'                                   .device_index = data@.device_index,
+#'                                   .device = data@.device)),
+#'            "float" = return(new("fvclVector", 
+#'                                 address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+#'                                 .context_index = data@.context_index,
+#'                                 .platform_index = data@.platform_index,
+#'                                 .platform = data@.platform,
+#'                                 .device_index = data@.device_index,
+#'                                 .device = data@.device)),
+#'            "double" = return(new("dvclVector", 
+#'                                  address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+#'                                  .context_index = data@.context_index,
+#'                                  .platform_index = data@.platform_index,
+#'                                  .platform = data@.platform,
+#'                                  .device_index = data@.device_index,
+#'                                  .device = data@.device))
+#'     )
+#' }
 
 
 #' @rdname extract-methods
@@ -79,17 +131,33 @@ setMethod("[",
 setMethod("[<-",
           signature(x = "vclVector", i = "numeric", j = "missing", value="numeric"),
           function(x, i, j, value) {
-              if(length(value) > 1){
+              
+              assert_all_are_positive(i)
+              
+              if(length(value) > 1 & length(value) != length(i)){
                   stop("number of items to replace is not a multiple of replacement length")
               }
               
-              assert_all_are_in_closed_range(i, lower = 1, upper = length(x))
+              if(length(value) == 1 & length(i) == 1){
+                  assert_all_are_in_closed_range(i, lower = 1, upper = length(x))
+                  
+                  switch(typeof(x),
+                         "float" = vclVecSetElement(x@address, i, value, 6L),
+                         "double" = vclVecSetElement(x@address, i, value, 8L),
+                         stop("type not recognized")
+                  )
+              }else{
+                  start <- head(i, 1) - 1
+                  end <- tail(i, 1)
+                  
+                  switch(typeof(x),
+                         "integer" = vclFillVectorRangeScalar(x@address, value, start-1, end, 4L, x@.context_index - 1),
+                         "float" = vclFillVectorRangeScalar(x@address, value, start-1, end, 6L, x@.context_index - 1),
+                         "double" = vclFillVectorRangeScalar(x@address, value, start-1, end, 8L, x@.context_index - 1),
+                         stop("unsupported matrix type")
+                  )
+              }
               
-              switch(typeof(x),
-                     "float" = vclVecSetElement(x@address, i, value, 6L),
-                     "double" = vclVecSetElement(x@address, i, value, 8L),
-                     stop("type not recognized")
-              )
               
               
               return(x)
@@ -116,18 +184,97 @@ setMethod("[<-",
 #' @rdname extract-methods
 #' @export
 setMethod("[<-",
-          signature(x = "vclVector", i = "missing", j = "missing", value="numeric"),
+          signature(x = "vclVector", i = "logical", j = "missing", value="numeric"),
           function(x, i, j, value) {
-              if(length(value) > length(x)){
-                  stop("number of items to replace is not a multiple of replacement length")
+              
+              f <- NULL
+              
+              # idx <- 
+              # if(length(i) != length(x)){
+              #     for(e in seq_along(i)){
+              #         seq(from = e, to = length(x), by = length(i)) - 1
+              #     }
+              # }
+              # start <- head(i, 1) - 1
+              # end <- tail(i, 1)
+              
+              if(length(value) == 1) f <- "scalar"
+              if(is.null(f)){
+                  if(length(value) > 1 && length(value) < length(x)){
+                      f <- "slice"
+                  }else{
+                      if(length(value) != length(i)){
+                          stop("number of items to replace is not a multiple of replacement length")
+                      }
+                      f <- "elementwise"
+                  }
               }
               
-              switch(typeof(x),
-                     "integer" = vclSetVector(x@address, value, 4L, x@.context_index - 1),
-                     "float" = vclSetVector(x@address, value, 6L, x@.context_index - 1),
-                     "double" = vclSetVector(x@address, value, 8L, x@.context_index - 1),
-                     stop("unsupported matrix type")
+              switch(f,
+                     "scalar" = {
+                         switch(typeof(x),
+                                "integer" = vclFillVectorScalar(x@address, value, 4L, x@.context_index - 1),
+                                "float" = vclFillVectorScalar(x@address, value, 6L, x@.context_index - 1),
+                                "double" = vclFillVectorScalar(x@address, value, 8L, x@.context_index - 1),
+                                stop("unsupported vector type")
+                         )
+                     },
+                     "slice" = {
+                         
+                         stop("not fully implemented yet")
+                         starts <- which(i)
+                         stride <- length(i)
+                         
+                         switch(typeof(x),
+                                "integer" = vclFillVectorSliceScalar(x@address, value, starts - 1L, stride, 4L, x@.context_index - 1L),
+                                "float" = vclFillVectorSliceScalar(x@address, value, starts - 1L, stride, 6L, x@.context_index - 1L),
+                                "double" = vclFillVectorSliceScalar(x@address, value, starts - 1L, stride, 8L, x@.context_index - 1L),
+                                stop("unsupported vector type")
+                         )
+                     },
+                     "elementwise" = {
+                         
+                         elems <- which(i) - 1L
+                            
+                         switch(typeof(x),
+                                "integer" = vclFillVectorElementwise(x@address, value, elems, 4L, x@.context_index - 1L),
+                                "float" = vclFillVectorElementwise(x@address, value, elems, 6L, x@.context_index - 1L),
+                                "double" = vclFillVectorElementwise(x@address, value, elems, 8L, x@.context_index - 1L),
+                                stop("unsupported vector type")
+                         )
+                     },
+                     stop("Internal Error: no replace logic selected")
               )
+              
+              return(x)
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "missing", j = "missing", value="numeric"),
+          function(x, i, j, value) {
+              
+              if(length(value) > 1){
+                  if(length(value) > length(x)){
+                      stop("number of items to replace is not a multiple of replacement length")
+                  }
+                  
+                  switch(typeof(x),
+                         "integer" = vclSetVector(x@address, value, 4L, x@.context_index - 1),
+                         "float" = vclSetVector(x@address, value, 6L, x@.context_index - 1),
+                         "double" = vclSetVector(x@address, value, 8L, x@.context_index - 1),
+                         stop("unsupported vector type")
+                  )
+              }else{
+                  switch(typeof(x),
+                         "integer" = vclFillVectorScalar(x@address, value, 4L, x@.context_index - 1),
+                         "float" = vclFillVectorScalar(x@address, value, 6L, x@.context_index - 1),
+                         "double" = vclFillVectorScalar(x@address, value, 8L, x@.context_index - 1),
+                         stop("unsupported vector type")
+                  )
+              }
+              
               
               return(x)
           })
@@ -150,6 +297,73 @@ setMethod("[<-",
           })
 
 
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "numeric", j = "missing", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              
+              start <- head(i, 1) - 1
+              end <- tail(i, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLVectorRange(x@address, value@address, start, end, 4L),
+                     "float" = vclSetVCLVectorRange(x@address, value@address, start, end, 6L),
+                     "double" = vclSetVCLVectorRange(x@address, value@address, start, end, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "missing", j = "missing", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              if(length(x) != length(value)){
+                  stop("lengths must match")
+              }
+              
+              switch(typeof(x),
+                     "integer" = vclVecSetVCLMatrix(x@address, value@address, 4L),
+                     "float" = vclVecSetVCLMatrix(x@address, value@address, 6L),
+                     "double" = vclVecSetVCLMatrix(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclVector", i = "numeric", j = "missing", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              if(length(i) != length(value)){
+                  stop("lengths must match")
+              }
+              
+              start <- head(i, 1) - 1
+              end <- tail(i, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclSetVCLMatrixRange(x@address, value@address, start, end, 4L, x@.context_index - 1L),
+                     "float" = vclSetVCLMatrixRange(x@address, value@address, start, end, 6L, x@.context_index - 1L),
+                     "double" = vclSetVCLMatrixRange(x@address, value@address, start, end, 8L, x@.context_index - 1L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
 #' @rdname grapes-times-grapes-methods
 #' @export
 setMethod("%*%", signature(x="vclVector", y = "vclVector"),
@@ -163,14 +377,26 @@ setMethod("%*%", signature(x="vclVector", y = "vclVector"),
           valueClass = "vclVector"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclVector", y = "vclMatrix"),
+          function(x,y)
+          {
+              # print(length(x))
+              # print(nrow(y))
+              if(length(x) != nrow(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "vclVector"
+)
+
 #' @rdname grapes-o-grapes-methods
 #' @export
 setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           function(X,Y)
           {
-              if( length(X) != length(Y)){
-                  stop("Non-conformant arguments")
-              }
               return(vclVecOuter(X, Y))
           },
           valueClass = "vclMatrix"
@@ -270,6 +496,22 @@ setMethod("Arith", c(e1="vclVector", e2="missing"),
           valueClass = "vclVector"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="vclVector", e2="vclMatrix"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMatVec_axpy(1, e1, e2),
+                     `-` = vclMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
 #' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="vclVector"),
@@ -289,6 +531,8 @@ setMethod("Math", c(x="vclVector"),
                      `log10` = vclVecElemLog10(x),
                      `exp` = vclVecElemExp(x),
                      `abs` = vclVecElemAbs(x),
+                     `sqrt` = vclVecSqrt(x),
+                     `sign` = gpuVecSign(x),
                      stop("undefined operation")
               )
           },

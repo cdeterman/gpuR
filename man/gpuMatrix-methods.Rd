@@ -3,14 +3,14 @@
 \docType{methods}
 \name{gpuMatrix}
 \alias{gpuMatrix}
-\alias{gpuMatrix,integer}
-\alias{gpuMatrix,integer-method}
-\alias{gpuMatrix,matrix}
 \alias{gpuMatrix,matrix-method}
-\alias{gpuMatrix,missing}
+\alias{gpuMatrix,matrix}
 \alias{gpuMatrix,missing-method}
-\alias{gpuMatrix,numeric}
+\alias{gpuMatrix,missing}
 \alias{gpuMatrix,numeric-method}
+\alias{gpuMatrix,numeric}
+\alias{gpuMatrix,integer-method}
+\alias{gpuMatrix,integer}
 \title{Construct a gpuMatrix}
 \usage{
 gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
@@ -49,4 +49,3 @@ from \code{gpuMatrix}
 \author{
 Charles Determan Jr.
 }
-

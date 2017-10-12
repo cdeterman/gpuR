@@ -17,6 +17,8 @@ setMethod("[",
                      "integer" = VCLtoMatSEXP(x@address, 4L),
                      "float" = VCLtoMatSEXP(x@address, 6L),
                      "double" = VCLtoMatSEXP(x@address, 8L),
+                     "fcomplex" = VCLtoMatSEXP(x@address, 10L),
+                     "dcomplex" = VCLtoMatSEXP(x@address, 12L),
                      stop("unsupported matrix type")
               )
               
@@ -154,19 +156,30 @@ setMethod("[<-",
           signature(x = "vclMatrix", i = "missing", j = "numeric", value = "numeric"),
           function(x, i, j, value) {
               
-              if(length(value) != nrow(x)){
-                  stop("number of items to replace is not a multiple of replacement length")
-              }
+          	if(j > ncol(x)){
+          		stop("column index exceeds number of columns")
+          	}
+          	
+          	if(length(value) > 1){
+          		
+          		if(length(value) != nrow(x)){
+          			stop("number of items to replace is not a multiple of replacement length")
+          		}
+          		
+          		switch(typeof(x),
+          					 "float" = vclSetCol(x@address, j, value, 6L),
+          					 "double" = vclSetCol(x@address, j, value, 8L),
+          					 stop("unsupported matrix type")
+          		)
+          		
+          	}else{
+          		switch(typeof(x),
+          			   "float" = vclFillCol(x@address, j, value, x@.context_index, 6L),
+          			   "double" = vclFillCol(x@address, j, value, x@.context_index, 8L),
+          			   stop("unsupported matrix type")
+          		)
+          	}
               
-              if(j > ncol(x)){
-                  stop("column index exceeds number of columns")
-              }
-
-              switch(typeof(x),
-                     "float" = vclSetCol(x@address, j, value, 6L),
-                     "double" = vclSetCol(x@address, j, value, 8L),
-                     stop("unsupported matrix type")
-              )
               
               return(x)
           })
@@ -361,6 +374,76 @@ setMethod("[<-",
               return(x)
           })
 
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", value = "vclMatrix"),
+          function(x, i, j, value) {
+              
+              start = head(j, 1) - 1
+              end = tail(j, 1)
+              
+              switch(typeof(x),
+                     "integer" = vclMatSetVCLCols(x@address, value@address, start, end, 4L, x@.context_index - 1),
+                     "float" = vclMatSetVCLCols(x@address, value@address, start, end, 6L, x@.context_index - 1),
+                     "double" = vclMatSetVCLCols(x@address, value@address, start, end, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "numeric"),
+          function(x, i, j, value) {
+              
+              assert_is_scalar(value)
+              
+              switch(typeof(x),
+                     "integer" = vclFillVCLMatrix(x@address, value, 4L, x@.context_index - 1),
+                     "float" = vclFillVCLMatrix(x@address, value, 6L, x@.context_index - 1),
+                     "double" = vclFillVCLMatrix(x@address, value, 8L, x@.context_index - 1),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "missing", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = assignVectorToMat(x@address, value@address, 4L),
+                     "float" = assignVectorToMat(x@address, value@address, 6L),
+                     "double" = assignVectorToMat(x@address, value@address, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
+
+#' @rdname extract-methods
+#' @export
+setMethod("[<-",
+          signature(x = "vclMatrix", i = "missing", j = "numeric", value = "vclVector"),
+          function(x, i, j, value) {
+              
+              switch(typeof(x),
+                     "integer" = assignVectorToCol(x@address, value@address, j-1, 4L),
+                     "float" = assignVectorToCol(x@address, value@address, j-1, 6L),
+                     "double" = assignVectorToCol(x@address, value@address, j-1, 8L),
+                     stop("unsupported matrix type")
+              )
+              
+              return(x)
+          })
 
 #' @rdname grapes-times-grapes-methods
 #' @export
@@ -375,12 +458,97 @@ setMethod("%*%", signature(x="vclMatrix", y = "vclMatrix"),
           valueClass = "vclMatrix"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclMatrix", y = "vclVector"),
+          function(x,y)
+          {
+              if( ncol(x) != length(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "vclVector"
+)
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="vclMatrix", y = "matrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              return(vclMatMult(x, y))
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="matrix", y = "vclMatrix"),
+          function(x,y)
+          {
+              if( dim(x)[2] != dim(y)[1]){
+                  stop("Non-conformant matrices")
+              }
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              return(vclMatMult(x, y))
+          },
+          valueClass = "vclMatrix"
+)
+
 #' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
           function(e1, e2)
           {
               op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMat_axpy(1, e1, e2),
+                     `-` = vclMat_axpy(-1, e2, e1),
+                     `*` = vclMatElemMult(e1, e2),
+                     `/` = vclMatElemDiv(e1,e2),
+                     `^` = vclMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="matrix"),
+          function(e1, e2)
+          {
+              
+              e2 <- vclMatrix(e2, type = typeof(e1), ctx_id = e1@.context_index)
+              
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMat_axpy(1, e1, e2),
+                     `-` = vclMat_axpy(-1, e2, e1),
+                     `*` = vclMatElemMult(e1, e2),
+                     `/` = vclMatElemDiv(e1,e2),
+                     `^` = vclMatElemPow(e1, e2),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="matrix", e2="vclMatrix"),
+          function(e1, e2)
+          {
+              e1 <- vclMatrix(e1, type = typeof(e2), ctx_id = e2@.context_index)
+              
+              op = .Generic[[1]]
+              
               switch(op,
                      `+` = vclMat_axpy(1, e1, e2),
                      `-` = vclMat_axpy(-1, e2, e1),
@@ -430,17 +598,18 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
               op = .Generic[[1]]
               switch(op,
                      `+` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMat_axpy(1, e1, e2)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         vclMat_axpy(1, e1, e2, AisScalar = TRUE)
                      },
                      `-` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMat_axpy(-1, e2, e1)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         # vclMat_axpy(-1, e2, e1)
+                         vclMat_axpy(-1, e1, e2, AisScalar = TRUE)
                      },
                      `*` = vclMatScalarMult(e2, e1),
                      `/` = {
-                         e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMatElemDiv(e1, e2)
+                         # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
+                         vclMatScalarDiv(e1, e2, AisScalar = TRUE)
                      },
                      `^` = {
                          e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
@@ -460,6 +629,22 @@ setMethod("Arith", c(e1="vclMatrix", e2="missing"),
               op = .Generic[[1]]
               switch(op,
                      `-` = vclMatrix_unary_axpy(e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "vclMatrix"
+)
+
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="vclMatrix", e2="vclVector"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = vclMatVec_axpy(1, e1, e2),
+                     `-` = vclMatVec_axpy(-1, e2, e1),
                      stop("undefined operation")
               )
           },
@@ -486,6 +671,8 @@ setMethod("Math", c(x="vclMatrix"),
                      `log10` = vclMatElemLog10(x),
                      `exp` = vclMatElemExp(x),
                      `abs` = vclMatElemAbs(x),
+                     `sqrt` = vclMatSqrt(x),
+                     `sign` = gpuMatSign(x),
                      stop("undefined operation")
               )
           },
@@ -516,9 +703,11 @@ setMethod('nrow', signature(x="vclMatrix"),
           function(x) {
               
               result <- switch(typeof(x),
-                     "integer" = vcl_inrow(x@address),
-                     "float" = vcl_fnrow(x@address),
-                     "double" = vcl_dnrow(x@address),
+                     "integer" = cpp_vcl_nrow(x@address, 4L),
+                     "float" = cpp_vcl_nrow(x@address, 6L),
+                     "double" = cpp_vcl_nrow(x@address, 8L),
+                     "fcomplex" = cpp_vcl_nrow(x@address, 10L),
+                     "dcomplex" = cpp_vcl_nrow(x@address, 12L),
                      stop("unsupported matrix type")
               )
               
@@ -532,9 +721,11 @@ setMethod('ncol', signature(x="vclMatrix"),
           function(x) {
               
               result <- switch(typeof(x),
-                     "integer" = vcl_incol(x@address),
-                     "float" = vcl_fncol(x@address),
-                     "double" = vcl_dncol(x@address),
+                     "integer" = cpp_vcl_ncol(x@address, 4L),
+                     "float" = cpp_vcl_ncol(x@address, 6L),
+                     "double" = cpp_vcl_ncol(x@address, 8L),
+                     "fcomplex" = cpp_vcl_ncol(x@address, 10L),
+                     "dcomplex" = cpp_vcl_ncol(x@address, 12L),
                      stop("unsupported matrix type")
               )
               
@@ -567,7 +758,7 @@ setMethod("length", signature(x="vclMatrix"),
 #' @title vclMatrix Crossproduct
 #' @description Return the matrix cross-product of two conformable
 #' matrices using a GPU.  This is equivalent to t(x) %*% y (crossprod)
-#' or x %*% t(t) (tcrossprod) but faster as no data transfer between
+#' or x %*% t(y) (tcrossprod) but faster as no data transfer between
 #' device and host is required.
 #' @param x A vclMatrix
 #' @param y A vclMatrix
@@ -592,6 +783,41 @@ setMethod("crossprod",
               vcl_crossprod(x, y)
           })
 
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "vclMatrix", y = "matrix"),
+          function(x, y){
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              vcl_crossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "matrix", y = "vclMatrix"),
+          function(x, y){
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              vcl_crossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y){
+              vcl_mat_vec_crossprod(x, y)
+          })
+
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("crossprod",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y){
+              vcl_mat_vec_crossprod(x, y)
+          })
+
 
 #' @rdname vclMatrix-crossprod
 setMethod("tcrossprod",
@@ -609,6 +835,40 @@ setMethod("tcrossprod",
               vcl_tcrossprod(x, y)
           })
 
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "matrix", y = "vclMatrix"),
+          function(x, y){
+              x <- vclMatrix(x, type = typeof(y), ctx_id = y@.context_index)
+              vcl_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclMatrix", y = "matrix"),
+          function(x, y){
+              y <- vclMatrix(y, type = typeof(x), ctx_id = x@.context_index)
+              vcl_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y){
+              vcl_mat_vec_tcrossprod(x, y)
+          })
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y){
+              vcl_mat_vec_tcrossprod(x, y)
+          })
+
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
@@ -623,12 +883,34 @@ setMethod("cov",
 #' @rdname cov-methods
 #' @export
 setMethod("cov",
+          signature(x = "vclMatrix", y = "vclMatrix", use = "missing", method = "missing"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x, y))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
           signature(x = "vclMatrix", y = "missing", use = "missing", method = "character"),
           function(x, y = NULL, use = NULL, method = "pearson") {
               if(method != "pearson"){
                   stop("Only pearson covariance implemented")
               }
               return(vclMatrix_pmcc(x))
+          })
+
+#' @rdname cov-methods
+#' @export
+setMethod("cov",
+          signature(x = "vclMatrix", y = "vclMatrix", use = "missing", method = "character"),
+          function(x, y = NULL, use = NULL, method = "pearson") {
+              if(method != "pearson"){
+                  stop("Only pearson covariance implemented")
+              }
+              return(vclMatrix_pmcc(x, y))
           })
 
 #' @title Row and Column Sums and Means of vclMatrix
@@ -687,6 +969,7 @@ setMethod("Summary", c(x="vclMatrix"),
               result <- switch(op,
                                `max` = vclMatMax(x),
                                `min` = vclMatMin(x),
+                               `sum` = vclMatSum(x),
                                stop("undefined operation")
               )
               return(result)
@@ -877,45 +1160,11 @@ setMethod("cbind2",
               
               assert_are_identical(x@.context_index, y@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L,
-                                                               x@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L,
-                                                               x@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device
-                                    )
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L,
-                                                               x@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + ncol(y), type = typeof(y), y@.context_index)
               
-              return(ptr)
+              cbind_wrapper(x,y,z)
+              
+              return(z)
           })
 
 setMethod("cbind2",
@@ -923,42 +1172,11 @@ setMethod("cbind2",
           function(x, y, ...){
               
               x <- vclMatrix(x, nrow=nrow(y), ncol=1, type=typeof(y), y@.context_index)
+              z <- vclMatrix(nrow = nrow(y), ncol = 1 + ncol(y), type = typeof(y), y@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, y@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, y@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, y@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              cbind_wrapper(x,y,z)
               
-              return(ptr)
+              return(z)
           })
 
 setMethod("cbind2",
@@ -966,43 +1184,55 @@ setMethod("cbind2",
           function(x, y, ...){
               
               y <- vclMatrix(y, nrow=nrow(x), ncol=1, type=typeof(x), x@.context_index)
+              z <- vclMatrix(nrow = nrow(x), ncol = 1 + ncol(x), type = typeof(x), ctx_id = x@.context_index)
               
-              ptr <- switch(typeof(x),
-                            "integer" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 4L, x@.context_index - 1)
-                                new("ivclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "float" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 6L, x@.context_index - 1)
-                                new("fvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            "double" = {
-                                address <- cpp_cbind_vclMatrix(x@address, y@address, 8L, x@.context_index - 1)
-                                new("dvclMatrix", 
-                                    address = address,
-                                    .context_index = x@.context_index,
-                                    .platform_index = x@.platform_index,
-                                    .platform = x@.platform,
-                                    .device_index = x@.device_index,
-                                    .device = x@.device)
-                            },
-                            stop("type not recognized")
-              )
+              cbind_wrapper(x,y,z)
               
-              return(ptr)
+              return(z)
           })
+
+
+setMethod("cbind2",
+          signature(x = "vclMatrix", y = "vclVector"),
+          function(x, y, ...){
+              if(nrow(x) != length(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              # print('cbind called')
+              assert_are_identical(x@.context_index, y@.context_index)
+              
+              z <- vclMatrix(nrow = nrow(x), ncol = ncol(x) + 1, type = typeof(y), ctx_id = y@.context_index)
+              
+              z[,1:(ncol(z) - 1)] <- x
+              z[,ncol(z)] <- y
+              
+              # cbind_wrapper2(x,y,z, FALSE)
+              
+              # print(z[])
+              # 
+              # print('cbind complete')
+              
+              return(z)
+          })
+
+
+setMethod("cbind2",
+          signature(x = "vclVector", y = "vclMatrix"),
+          function(x, y, ...){
+              if(length(x) != nrow(y)){
+                  stop("number of rows of matrices must match")
+              }
+              
+              assert_are_identical(x@.context_index, y@.context_index)
+              
+              z <- vclMatrix(nrow = nrow(y), ncol = 1 + ncol(y), type = typeof(y), ctx_id = y@.context_index)
+              
+              cbind_wrapper2(y,x,z, TRUE)
+              
+              return(z)
+          })
+
 
 setMethod("rbind2",
           signature(x = "vclMatrix", y = "vclMatrix"),
@@ -1215,4 +1445,19 @@ identity_matrix <- function(x, type = NULL){
 }
 
 
+#' @title Calculate Determinant of a Matrix on GPU
+#' @description \code{det} calculates the determinant of a matrix.
+#' @param x A gpuR matrix object
+#' @return The determine of \code{x}
+#' @note This function uses an LU decomposition and the \code{det} 
+#' function is simply a wrapper returning the determinant product
+#' @author Charles Determan Jr.
+#' @rdname det-methods
+#' @aliases det,vclMatrix
+#' @export
+setMethod("det", c(x = "vclMatrix"),
+          function(x){
+              return(gpuMat_det(x))
+          }
+)
 

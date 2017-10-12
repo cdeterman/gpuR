@@ -1,6 +1,13 @@
 library(gpuR)
 context("vclMatrixBlock algebra")
 
+
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -236,6 +243,7 @@ test_that("vclMatrix Single Precision Scalar Matrix Division", {
 test_that("vclMatrix Single Precision Matrix Element-Wise Power", {
     
     has_gpu_skip()
+    pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
@@ -573,6 +581,7 @@ test_that("vclMatrix Double Precision Matrix Element-Wise Power", {
     
     has_gpu_skip()
     has_double_skip()
+    pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
@@ -678,3 +687,5 @@ test_that("vclMatrix Double Precision tcrossprod", {
                  info="double matrix elements not equivalent") 
     expect_error(crossprod(dvclXS, dvclZS))
 })
+
+setContext(current_context)
