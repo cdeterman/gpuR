@@ -516,7 +516,7 @@ custom_opencl <- function(kernel, cl_args, type){
                Sys.setenv(PKG_LIBS=LIBS)
            },
            "Darwin" = {
-               Sys.setenv(PKG_LIBS="-lOpenCL")
+               Sys.setenv(PKG_LIBS="-framework OpenCL")
            },
            {
                Sys.setenv(PKG_LIBS="-lOpenCL")
