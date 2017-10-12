@@ -2,15 +2,15 @@
 % Please edit documentation in R/generics.R, R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{distance}
-\alias{dist,gpuMatrix}
-\alias{dist,gpuMatrix-method}
-\alias{dist,vclMatrix}
-\alias{dist,vclMatrix-method}
 \alias{distance}
-\alias{distance,gpuMatrix}
-\alias{distance,gpuMatrix,gpuMatrix-method}
-\alias{distance,vclMatrix}
+\alias{dist,vclMatrix-method}
+\alias{dist,vclMatrix}
 \alias{distance,vclMatrix,vclMatrix-method}
+\alias{distance,vclMatrix}
+\alias{dist,gpuMatrix-method}
+\alias{dist,gpuMatrix}
+\alias{distance,gpuMatrix,gpuMatrix-method}
+\alias{distance,gpuMatrix}
 \title{GPU Distance Matrix Computations}
 \usage{
 distance(x, y, method = "euclidean")
@@ -49,4 +49,3 @@ This function computes and returns the distance matrix
 computed by using the specified distance measure to compute the distances 
 between the rows of a data matrix.
 }
-

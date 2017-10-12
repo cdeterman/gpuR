@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrix Utility Functions")
 
+current_context <- set_device_context("cpu")
+
 set.seed(123)
 A <- matrix(seq.int(100), 10)
 D <- matrix(rnorm(100), 10)
@@ -271,3 +273,5 @@ test_that("CPU vclMatrix set vclMatrix access", {
     expect_equal(gpuF[], gpuDF[], tolerance=1e-07,
                  info = "updated fvclMatrix not equivalent to assigned base vclMatrix")
 })
+
+setContext(current_context)

@@ -3,39 +3,78 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{[,gpuVector,missing,missing,missing-method}
-\alias{[,gpuMatrix,missing,missing,missing-method}
-\alias{[,gpuMatrix,missing,numeric,missing-method}
-\alias{[,gpuMatrix,numeric,missing,missing-method}
-\alias{[,gpuMatrix,numeric,numeric,missing-method}
 \alias{[,gpuVector,missing,missing,missing-method}
 \alias{[,gpuVector,numeric,missing,missing-method}
+\alias{[<-,gpuVector,numeric,missing,numeric-method}
+\alias{[<-,gpuVector,numeric,missing,integer-method}
 \alias{[,vclMatrix,missing,missing,missing-method}
 \alias{[,vclMatrix,missing,numeric,missing-method}
 \alias{[,vclMatrix,numeric,missing,missing-method}
 \alias{[,vclMatrix,numeric,numeric,missing-method}
-\alias{[,vclVector,missing,missing,missing-method}
-\alias{[,vclVector,numeric,missing,missing-method}
-\alias{[<-,gpuMatrix,missing,numeric,numeric-method}
-\alias{[<-,gpuMatrix,numeric,missing,numeric-method}
-\alias{[<-,gpuMatrix,numeric,numeric,numeric-method}
-\alias{[<-,gpuVector,numeric,missing,integer-method}
-\alias{[<-,gpuVector,numeric,missing,numeric-method}
-\alias{[<-,igpuMatrix,missing,numeric,integer-method}
-\alias{[<-,igpuMatrix,numeric,missing,integer-method}
-\alias{[<-,igpuMatrix,numeric,numeric,integer-method}
+\alias{[<-,vclMatrix,missing,numeric,numeric-method}
 \alias{[<-,ivclMatrix,missing,numeric,integer-method}
+\alias{[<-,vclMatrix,numeric,missing,numeric-method}
 \alias{[<-,ivclMatrix,numeric,missing,integer-method}
+\alias{[<-,vclMatrix,numeric,numeric,numeric-method}
 \alias{[<-,ivclMatrix,numeric,numeric,integer-method}
-\alias{[<-,ivclVector,numeric,missing,integer-method}
 \alias{[<-,vclMatrix,missing,missing,matrix-method}
 \alias{[<-,vclMatrix,missing,missing,vclMatrix-method}
-\alias{[<-,vclMatrix,missing,numeric,numeric-method}
-\alias{[<-,vclMatrix,numeric,missing,numeric-method}
-\alias{[<-,vclMatrix,numeric,numeric,numeric-method}
+\alias{[<-,vclMatrix,missing,numeric,vclMatrix-method}
+\alias{[<-,vclMatrix,missing,missing,numeric-method}
+\alias{[<-,vclMatrix,missing,missing,vclVector-method}
+\alias{[<-,vclMatrix,missing,numeric,vclVector-method}
+\alias{[,vclVector,missing,missing,missing-method}
+\alias{[,vclVector,numeric,missing,missing-method}
+\alias{[<-,vclVector,numeric,missing,numeric-method}
+\alias{[<-,ivclVector,numeric,missing,integer-method}
+\alias{[<-,vclVector,logical,missing,numeric-method}
 \alias{[<-,vclVector,missing,missing,numeric-method}
 \alias{[<-,vclVector,missing,missing,vclVector-method}
-\alias{[<-,vclVector,numeric,missing,numeric-method}
-\title{Extract gpuR object elements}
+\alias{[<-,vclVector,numeric,missing,vclVector-method}
+\alias{[<-,vclVector,missing,missing,vclMatrix-method}
+\alias{[<-,vclVector,numeric,missing,vclMatrix-method}
+\alias{[,gpuMatrix,missing,missing,missing-method}
+\alias{[,gpuMatrix,missing,numeric,missing-method}
+\alias{[,gpuMatrix,numeric,missing,missing-method}
+\alias{[,gpuMatrix,numeric,numeric,missing-method}
+\alias{[<-,gpuMatrix,numeric,missing,numeric-method}
+\alias{[<-,igpuMatrix,numeric,missing,integer-method}
+\alias{[<-,gpuMatrix,missing,numeric,numeric-method}
+\alias{[<-,igpuMatrix,missing,numeric,integer-method}
+\alias{[<-,gpuMatrix,numeric,numeric,numeric-method}
+\alias{[<-,igpuMatrix,numeric,numeric,integer-method}
+\title{#' @rdname as.vclVector-methods
+#' @param shared Logical indicating if memory should be shared with \code{x}
+#' @aliases as.gpuVector,matrix
+#' @export
+as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+    
+    ctx_id <- data@.context_index - 1
+    
+    switch(typeof(data),
+           "integer" = return(new("ivclVector", 
+                                  address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+                                  .context_index = data@.context_index,
+                                  .platform_index = data@.platform_index,
+                                  .platform = data@.platform,
+                                  .device_index = data@.device_index,
+                                  .device = data@.device)),
+           "float" = return(new("fvclVector", 
+                                address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+                                .context_index = data@.context_index,
+                                .platform_index = data@.platform_index,
+                                .platform = data@.platform,
+                                .device_index = data@.device_index,
+                                .device = data@.device)),
+           "double" = return(new("dvclVector", 
+                                 address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+                                 .context_index = data@.context_index,
+                                 .platform_index = data@.platform_index,
+                                 .platform = data@.platform,
+                                 .device_index = data@.device_index,
+                                 .device = data@.device))
+    )
+}}
 \usage{
 \S4method{[}{gpuVector,missing,missing,missing}(x, i, j, drop)
 
@@ -69,6 +108,14 @@
 
 \S4method{[}{vclMatrix,missing,missing,vclMatrix}(x, i, j) <- value
 
+\S4method{[}{vclMatrix,missing,numeric,vclMatrix}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,missing,missing,numeric}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,missing,missing,vclVector}(x, i, j) <- value
+
+\S4method{[}{vclMatrix,missing,numeric,vclVector}(x, i, j) <- value
+
 \S4method{[}{vclVector,missing,missing,missing}(x, i, j, drop)
 
 \S4method{[}{vclVector,numeric,missing,missing}(x, i, j, drop)
@@ -77,9 +124,17 @@
 
 \S4method{[}{ivclVector,numeric,missing,integer}(x, i, j) <- value
 
+\S4method{[}{vclVector,logical,missing,numeric}(x, i, j) <- value
+
 \S4method{[}{vclVector,missing,missing,numeric}(x, i, j) <- value
 
 \S4method{[}{vclVector,missing,missing,vclVector}(x, i, j) <- value
+
+\S4method{[}{vclVector,numeric,missing,vclVector}(x, i, j) <- value
+
+\S4method{[}{vclVector,missing,missing,vclMatrix}(x, i, j) <- value
+
+\S4method{[}{vclVector,numeric,missing,vclMatrix}(x, i, j) <- value
 
 \S4method{[}{gpuMatrix,missing,missing,missing}(x, i, j, drop)
 
@@ -115,9 +170,41 @@
 \item{...}{Additional arguments}
 }
 \description{
+#' @rdname as.vclVector-methods
+#' @param shared Logical indicating if memory should be shared with \code{x}
+#' @aliases as.gpuVector,matrix
+#' @export
+as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+    
+    ctx_id <- data@.context_index - 1
+    
+    switch(typeof(data),
+           "integer" = return(new("ivclVector", 
+                                  address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+                                  .context_index = data@.context_index,
+                                  .platform_index = data@.platform_index,
+                                  .platform = data@.platform,
+                                  .device_index = data@.device_index,
+                                  .device = data@.device)),
+           "float" = return(new("fvclVector", 
+                                address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+                                .context_index = data@.context_index,
+                                .platform_index = data@.platform_index,
+                                .platform = data@.platform,
+                                .device_index = data@.device_index,
+                                .device = data@.device)),
+           "double" = return(new("dvclVector", 
+                                 address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+                                 .context_index = data@.context_index,
+                                 .platform_index = data@.platform_index,
+                                 .platform = data@.platform,
+                                 .device_index = data@.device_index,
+                                 .device = data@.device))
+    )
+}
+
 Operators to extract or replace elements
 }
 \author{
 Charles Determan Jr.
 }
-

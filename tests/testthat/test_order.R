@@ -34,3 +34,29 @@ test_that("vclMatrix permute",
   expect_equal(gpuC[], C, tolerance=.Machine$double.eps^0.5, 
                info="double row permutations not equivalent")  
 })
+
+test_that("vclBlockMatrix permute",
+{
+  has_gpu_skip()
+  
+  fgpuX <- vclMatrix(A, type="float")
+  blockX <- block(fgpuX, 1L, 4L, 1L, 3L)
+  
+  gpuC <- permute(blockX, order = idx)
+  
+  expect_is(gpuC, "fvclMatrixBlock")
+  expect_equal(gpuC[], C[,1:3], tolerance=1e-06, 
+               info="float block row permutations not equivalent")  
+  
+  has_double_skip()
+  
+  fgpuX <- vclMatrix(A, type="double")
+  blockX <- block(fgpuX, 1L, nrow(A), 1L, 3L)
+  
+  gpuC <- permute(blockX, order = idx)
+  
+  expect_is(gpuC, "dvclMatrixBlock")
+  expect_equal(gpuC[], C[,1:3], tolerance=.Machine$double.eps^0.5, 
+               info="double block row permutations not equivalent")  
+})
+

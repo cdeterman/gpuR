@@ -3,8 +3,6 @@ shallow_clone: true
 
 environment:
   global:
-    OPENCL_LIB: "C:/projects/AMD/2.9-1/bin/x86"
-    OPENCL_INC: "C:/projects/AMD/2.9-1/include"
     R_BUILD_ARGS: "--no-manual --keep-empty-dirs"
     R_CHECK_ARGS: "--no-multiarch --no-build-vignettes --no-manual --no-tests"
 
@@ -17,23 +15,8 @@ init:
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
 
-before_build:
-  - ps: cd ..
-  - ps: mkdir AMD
-  - ps: cd AMD
-  - cmd: curl -L -o AMD.zip https://www.dropbox.com/sh/08uojexqtp364l0/AAC2rMl2MbbV9H9yCUZp3ZDqa?dl=1
-  - ps: 7z x AMD.zip
-  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/System32
-  - ps: cp 2.9-1/bin/x86/OpenCL.dll C:/Windows/SysWOW64
-  - ps: cd ..
-  - ps: cd gpur
-
 install:
   - ps: Bootstrap
-  - echo Installing OpenCL
-  - echo %OPENCL_LIB%
-  - echo %OPENCL_INC%
-  - ps: ls
 
 # Adapt as necessary starting from here
 

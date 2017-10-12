@@ -24,4 +24,3 @@ Generate a perumutation of row or column indices
 \author{
 Charles Determan Jr.
 }
-

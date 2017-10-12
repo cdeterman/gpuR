@@ -1,6 +1,12 @@
 library(gpuR)
 context("gpuVector math operations")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -112,6 +118,7 @@ test_that("gpuVector Double Precision Element-Wise Trignometry", {
 test_that("gpuVector Single Precision Element-Wise Logs", {
     
     has_gpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -138,6 +145,7 @@ test_that("gpuVector Double Precision Element-Wise Logs", {
     
     has_gpu_skip()
     has_double_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -260,3 +268,133 @@ test_that("gpuVector Double Precision Maximum/Minimum", {
     expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double vector element not equivalent")  
 })
+
+test_that("gpuVector Single Precision pmax/pmin", {
+    
+    has_gpu_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "fgpuVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent")  
+    
+    # multiple operations
+    R_max <- pmax(A, 0, .5)
+    R_min <- pmin(A, 0, -.2)
+    
+    fgpu_max <- pmax(fgpuA, 0, 0.5)
+    fgpu_min <- pmin(fgpuA, 0, -.2)
+    
+    expect_is(fgpu_max, "fgpuVector")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float vector element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float vector element not equivalent") 
+})
+
+test_that("gpuVector Double Precision pmax/pmin", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "dgpuVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+    
+    
+    # multiple operations
+    R_max <- pmax(A, 0, .5)
+    R_min <- pmin(A, 0, -.2)
+    
+    fgpu_max <- pmax(fgpuA, 0, 0.5)
+    fgpu_min <- pmin(fgpuA, 0, -.2)
+    
+    expect_is(fgpu_max, "dgpuVector")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double vector element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double vector element not equivalent")  
+})
+
+test_that("gpuVector Single Precision sqrt", {
+    
+    has_gpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuVector(abs(A), type="float")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "fgpuVector")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float vector elements not equivalent")  
+})
+
+test_that("gpuVector Double Precision sqrt", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuVector(abs(A), type="double")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "dgpuVector")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double vector elements not equivalent")  
+})
+
+test_that("gpuVector Single Precision Matrix sign", {
+    has_gpu_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- gpuVector(A, type="float")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "fgpuVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign float matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("gpuVector Double Precision Matrix sign", {
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- gpuVector(A, type="double")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "dgpuVector")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=.Machine$double.base^0.5, 
+                 info="sign double matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+setContext(current_context)

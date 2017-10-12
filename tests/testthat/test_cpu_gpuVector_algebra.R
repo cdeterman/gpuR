@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU gpuVector algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -11,6 +13,7 @@ Aint <- sample(seq.int(10), ORDER, replace = TRUE)
 Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
+D <- rnorm(ORDER + 1)
 E <- rnorm(ORDER-1)
 
 # Integer Tests
@@ -53,6 +56,26 @@ test_that("CPU gpuVector integer subtraction", {
     expect_is(gpuC, "gpuVector", "following vector subtraction")
     expect_is(gpuC, "igpuVector", "following vector subtraction")
 })
+
+# test_that("CPU gpuVector Integer Precision Scalar Division", {
+#     
+#     has_cpu_skip()
+#     
+#     C <- A/2
+#     C2 <- 2/A
+#     
+#     dgpuA <- gpuVector(A, type="float")
+#     
+#     dgpuC <- dgpuA/2
+#     dgpuC2 <- 2/dgpuA
+#     
+#     expect_is(dgpuC, "fgpuVector")
+#     expect_equal(dgpuC[,], C, tolerance=1e-07, 
+#                  info="float vector elements not equivalent") 
+#     expect_is(dgpuC2, "fgpuVector")
+#     expect_equal(dgpuC2[,], C2, tolerance=1e-07, 
+#                  info="float vector elements not equivalent") 
+# })
 
 # Single Precision Tests
 
@@ -243,6 +266,7 @@ test_that("CPU gpuVector Single Precision Scalar Division", {
 test_that("CPU gpuVector Single Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -298,13 +322,20 @@ test_that("CPU gpuVector Single precision outer product", {
     has_cpu_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="float")
     gpuB <- gpuVector(B, type="float")
+    gpuD <- gpuVector(D, type="float")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "fgpuMatrix")
+    expect_is(gpuC2, "fgpuMatrix")
     expect_equal(gpuC[], C, tolerance=1e-06, 
+                 info="float vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=1e-06,
                  info="float vector outer product elements not equivalent")
 })
 
@@ -483,6 +514,7 @@ test_that("CPU gpuVector Double Precision Scalar Division", {
 test_that("CPU gpuVector Double Precision Vector Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -540,12 +572,21 @@ test_that("CPU gpuVector double precision outer product", {
     
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="double")
     gpuB <- gpuVector(B, type="double")
+    gpuD <- gpuVector(D, type="double")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "dgpuMatrix")
+    expect_is(gpuC2, "dgpuMatrix")
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double vector outer product elements not equivalent")
+    expect_equal(gpuC2[], C2, tolerance=.Machine$double.eps^0.5,
+                 info="double vector outer product elements not equivalent")
 })
+
+setContext(current_context)

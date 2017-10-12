@@ -1,12 +1,19 @@
 library(gpuR)
 context("gpuVector algebra")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 set.seed(123)
 ORDER <- 4
 Aint <- sample(seq.int(10), ORDER, replace = TRUE)
 Bint <- sample(seq.int(10), ORDER, replace = TRUE)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
+D <- rnorm(ORDER + 1)
 E <- rnorm(ORDER-1)
 
 
@@ -226,6 +233,7 @@ test_that("gpuVector Single Precision Scalar Division", {
 test_that("gpuVector Single Precision Vector Element-Wise Power", {
     
     has_gpu_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -281,13 +289,20 @@ test_that("gpuVector Single precision outer product", {
     has_gpu_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="float")
     gpuB <- gpuVector(B, type="float")
+    gpuD <- gpuVector(D, type="float")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "fgpuMatrix")
+    expect_is(gpuC2, "fgpuMatrix")
     expect_equal(gpuC[], C, tolerance=1e-06, 
+                 info="float vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=1e-06,
                  info="float vector outer product elements not equivalent")
 })
 
@@ -485,6 +500,7 @@ test_that("gpuVector Double Precision Vector Element-Wise Power", {
     
     has_gpu_skip()
     has_double_skip()
+    pocl_check()
     
     C <- A ^ B
     
@@ -543,13 +559,20 @@ test_that("gpuVector Double precision outer product", {
     has_double_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
+    
     gpuA <- gpuVector(A, type="double")
     gpuB <- gpuVector(B, type="double")
+    gpuD <- gpuVector(D, type="double")
     
     gpuC <- gpuA %o% gpuB
+    gpuC2 <- gpuA %o% gpuD
     
     expect_is(gpuC, "dgpuMatrix")
+    expect_is(gpuC2, "dgpuMatrix")
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=.Machine$double.eps^0.5,
                  info="double vector outer product elements not equivalent")
 })
 
@@ -564,3 +587,5 @@ test_that("gpuVector Double precision comparison operator", {
     expect_true(all(gpuA == A), 
                 info = "gpuVector/vector == operator not working correctly")
 })
+
+setContext(current_context)

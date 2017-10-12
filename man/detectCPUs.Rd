@@ -19,4 +19,3 @@ Find out how many CPUs available
 \seealso{
 \link{detectPlatforms} \link{detectGPUs}
 }
-

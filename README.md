@@ -12,7 +12,7 @@
 |                 | Build           | Dev             |
 |-----------------|-----------------|-----------------|
 | Linux x86_64    | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master)](https://travis-ci.org/cdeterman/gpuR)      | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=develop)](https://travis-ci.org/cdeterman/gpuR) |
-| OSX             | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=macosx)](https://travis-ci.org/cdeterman/gpuR)          | |
+| OSX             | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=master-macosx)](https://travis-ci.org/cdeterman/gpuR)   | [![Build Status](https://travis-ci.org/cdeterman/gpuR.png?branch=macosx)](https://travis-ci.org/cdeterman/gpuR) |
 | Windows x86     | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/cdeterman/gpuR?branch=master&svg=true)](https://ci.appveyor.com/project/cdeterman/gpuR)     | [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/cdeterman/gpuR?branch=develop&svg=true)](https://ci.appveyor.com/project/cdeterman/gpuR) |
 
 Test coverage: [![Coverage Status](https://coveralls.io/repos/cdeterman/gpuR/badge.svg)](https://coveralls.io/r/cdeterman/gpuR?branch=master)

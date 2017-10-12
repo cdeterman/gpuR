@@ -1,3 +1,15 @@
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+      env:
+        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+
 #whitelist branches
 branches:
   only:
@@ -7,11 +19,24 @@ branches:
 
 language: r
 
+dist: trusty
 sudo: required
+group: edge
 warnings_are_errors: false
+
+filter_secrets: false
+
+env:
+  global:
+    - POCL_LLVM_VERSION=3.8
+    - POCL_LLVM_CONFIG=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
+    - POCL_CXX_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang++
+    - POCL_C_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang
+    - OPENCL_LIB=/usr/local/lib
 
 compiler:
   - g++
+  
 
 r_build_args: --no-build-vignettes --no-manual --no-resave-data
 r_check_args: --no-build-vignettes --no-manual
@@ -32,17 +57,29 @@ r_github_packages:
   
 before_install:
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
+  - HOMEDIR="$PWD"
+  - eval "$(MATRIX_EVAL)"
   - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update || true
-  - sudo apt-get install -qq mesa-common-dev fglrx fglrx-dev opencl-headers
-  - sudo apt-get install -qq g++-4.8
-  - export CXX="g++-4.8"
+  - sudo apt-get update -qq || true
+  - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-3.8 lldb-3.8 libclang-3.8-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+  - |
+    cd ..
+    git clone https://github.com/pocl/pocl.git pocl
+    cd pocl
+    mkdir build
+    cd build
+    cmake -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} ..
+    make
+    sudo make install
+  - cd $HOMEDIR
+  - sudo ldconfig
+  - export CXX="g++-4.8"
 
 after_success:
-  - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
+#  - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
   - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls(line_exclusions = "inst/include/CL/cl.hpp");codecov(line_exclusions = "inst/include/CL/cl.hpp")'
 
 notifications:

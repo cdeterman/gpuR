@@ -3,8 +3,8 @@
 \docType{methods}
 \name{block}
 \alias{block}
-\alias{block,gpuMatrix,integer,integer,integer,integer-method}
 \alias{block,vclMatrix,integer,integer,integer,integer-method}
+\alias{block,gpuMatrix,integer,integer,integer,integer-method}
 \title{Matrix Blocks}
 \usage{
 block(object, rowStart, rowEnd, colStart, colEnd)
@@ -45,4 +45,3 @@ values in the source matrix.
 \author{
 Charles Determan Jr.
 }
-

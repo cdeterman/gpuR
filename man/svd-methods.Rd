@@ -2,8 +2,8 @@
 % Please edit documentation in R/svd.R
 \name{svd}
 \alias{svd}
-\alias{svd.gpuMatrix}
 \alias{svd.vclMatrix}
+\alias{svd.gpuMatrix}
 \title{Singular Value Decomposition of a gpuR matrix}
 \usage{
 svd(x, nu, nv, LINPACK)
@@ -39,10 +39,9 @@ Compute the singular-value decomposition of a gpuR matrix
 This an S3 generic of \link[base]{svd}.  The default continues
 to point to the default base function.
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \link[base]{svd}
 }
-
+\author{
+Charles Determan Jr.
+}

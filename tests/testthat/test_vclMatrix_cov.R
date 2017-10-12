@@ -1,6 +1,12 @@
 library(gpuR)
 context("vclMatrix Correlations")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -45,3 +51,5 @@ test_that("vclMatrix Double Precision Pearson Covariance",
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double colSums not equivalent")  
 })
+
+setContext(current_context)

@@ -23,24 +23,32 @@ setMethod('gpuVector',
           signature(data = 'vector', length = 'missing'),
           function(data, type=NULL, ctx_id = NULL){
               
-              if (is.null(type)) {
-                  type <- switch(typeof(data),
-                                 "integer" = "integer",
-                                 getOption("gpuR.default.type"))
+              if (is.null(type)){
+                  if(typeof(data) == "integer") {
+                      type <- "integer"
+                  }else{
+                      type <- getOption("gpuR.default.type")    
+                  }
               }
               
-              device <- currentDevice()
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
               
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
-              device_index <- as.integer(device$device_index)
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
+              
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
-              platform_index <- currentPlatform()$platform_index
-              platform_name <- platformInfo(platform_index)$platformName
               
               out = switch(type,
                             integer = {
@@ -66,7 +74,7 @@ setMethod('gpuVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuVector",
                                     address = sexpVecToEigenVecXptr(data,
                                                                     length(data),
@@ -97,18 +105,24 @@ setMethod('gpuVector',
               if (length <= 0) stop("length must be a positive integer")
               if (!is.integer(length)) stop("length must be a positive integer")
               
-              device <- currentDevice()
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
               
               context_index <- ifelse(is.null(ctx_id), currentContext(), as.integer(ctx_id))
-              device_index <- as.integer(device$device_index)
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
+              
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
               device_type <- device$device_type
               device_name <- switch(device_type,
-                                    "gpu" = gpuInfo(device_idx = as.integer(device_index))$deviceName,
-                                    "cpu" = cpuInfo(device_idx = as.integer(device_index))$deviceName,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
                                     stop("Unrecognized device type")
               )
-              platform_index <- currentPlatform()$platform_index
-              platform_name <- platformInfo(platform_index)$platformName
               
               out = switch(type,
                             integer = {
@@ -130,7 +144,7 @@ setMethod('gpuVector',
                                     .device = device_name)
                             },
                             double = {
-                                assert_has_double(platform_index, device_index)
+                                assert_has_double(device_index, context_index)
                                 new("dgpuVector",
                                     address = emptyEigenVecXptr(length, 8L),
                                     .context_index = context_index,
@@ -147,3 +161,69 @@ setMethod('gpuVector',
           },
           valueClass = "gpuVector"
 )
+
+
+#' @rdname gpuVector-methods
+#' @aliases gpuVector,vector
+setMethod('gpuVector', 
+          signature(data = 'numeric', length = 'numericOrInt'),
+          function(data, length, type=NULL, ctx_id = NULL){
+              
+              if (is.null(type)) type <- getOption("gpuR.default.type")
+              
+              device <- if(is.null(ctx_id)) currentDevice() else listContexts()[ctx_id,]
+              
+              context_index <- ifelse(is.null(ctx_id), currentContext(), ctx_id)
+              device_index <- if(is.null(ctx_id)) as.integer(device$device_index) else device$device_index + 1L
+              
+              platform_index <- if(is.null(ctx_id)) currentPlatform()$platform_index else device$platform_index + 1L
+              platform_name <- platformInfo(platform_index)$platformName
+              
+              device_type <- device$device_type
+              device_name <- switch(device_type,
+                                    "gpu" = gpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    "cpu" = cpuInfo(
+                                        device_idx = as.integer(device_index),
+                                        context_idx = context_index)$deviceName,
+                                    stop("Unrecognized device type")
+              )
+              
+              data = switch(type,
+                            integer = {
+                                new("igpuVector", 
+                                    address=cpp_scalar_gpuVector(data, length, 4L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            float = {
+                                new("fgpuVector", 
+                                    address=cpp_scalar_gpuVector(data, length, 6L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            double = {
+                                assert_has_double(device_index, context_index)
+                                new("dgpuVector",
+                                    address = cpp_scalar_gpuVector(data, length, 8L),
+                                    .context_index = context_index,
+                                    .platform_index = platform_index,
+                                    .platform = platform_name,
+                                    .device_index = device_index,
+                                    .device = device_name)
+                            },
+                            stop("this is an unrecognized 
+                                 or unimplemented data type")
+                            )
+              
+              return(data)
+          },
+          valueClass = "gpuVector")
+

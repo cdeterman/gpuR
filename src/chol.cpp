@@ -33,9 +33,7 @@ cpp_vclMatrix_custom_chol(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    viennacl::matrix<T> *vcl_B;
-    
-    vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();
@@ -51,6 +49,7 @@ cpp_vclMatrix_custom_chol(
     viennacl::ocl::kernel & update_kk = my_prog.get_kernel("update_kk");
     viennacl::ocl::kernel & update_k = my_prog.get_kernel("update_k");
     viennacl::ocl::kernel & update_block = my_prog.get_kernel("update_block");
+    
     cl_device_type type_check = ctx.current_device().type();
     
     if(type_check & CL_DEVICE_TYPE_CPU){
@@ -63,6 +62,10 @@ cpp_vclMatrix_custom_chol(
         cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
+        
+        if(err != CL_SUCCESS){
+            Rcpp::stop("clGetKernelWorkGroupInfo failed");
+        }
         
         max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
     }
@@ -90,7 +93,7 @@ cpp_vclMatrix_custom_chol(
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         
         // copy device data back to CPU
-        ptrB->to_host(*vcl_B);
+        ptrB->to_host(*vcl_B.get());
         ptrB->release_device();
     }
 }

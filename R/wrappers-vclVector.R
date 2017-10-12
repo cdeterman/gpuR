@@ -38,7 +38,7 @@ vclVecInner <- function(A, B){
 # vclVector Outer Product
 vclVecOuter <- function(A, B){
     
-    if(length(B) != length(A)) stop("Non conformant arguments")
+    # if(length(B) != length(A)) stop("Non conformant arguments")
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -76,17 +76,21 @@ vclVecOuter <- function(A, B){
 
 
 # vclVector AXPY
-vclVec_axpy <- function(alpha, A, B){
+vclVec_axpy <- function(alpha, A, B, inplace = FALSE, order = 0){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
     type <- typeof(A)
     
-    Z <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
-    if(!missing(B))
-    {
-        if(length(B) != length(A)) stop("Lengths of matrices must match")
-        Z <- deepcopy(B)
+    if(inplace){
+        Z <- B 
+    }else{
+        Z <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(!missing(B))
+        {
+            if(length(B) != length(A)) stop("Lengths of matrices must match")
+            Z <- deepcopy(B)
+        }   
     }
     
     switch(type,
@@ -101,18 +105,24 @@ vclVec_axpy <- function(alpha, A, B){
            float = {cpp_vclVector_axpy(alpha, 
                                        A@address, 
                                        Z@address,
+                                       order,
                                        6L)
            },
            double = {
                cpp_vclVector_axpy(alpha, 
                                   A@address,
                                   Z@address,
+                                  order,
                                   8L)
            },
            stop("type not recognized")
     )
     
-    return(Z)
+    if(inplace){
+        return(invisible(Z))
+    }else{
+        return(Z)
+    }
 }
 
 
@@ -141,7 +151,7 @@ vclVector_unary_axpy <- function(A){
 
 
 # GPU Element-Wise Multiplication
-vclVecElemMult <- function(A, B){
+vclVecElemMult <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -151,7 +161,11 @@ vclVecElemMult <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -171,38 +185,67 @@ vclVecElemMult <- function(A, B){
            stop("type not recognized")
            )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Scalar Element-Wise Multiplication
-vclVecScalarMult <- function(A, B){
+vclVecScalarMult <- function(A, B, inplace = FALSE){
     
-    type <- typeof(A)
+    # quick class check when scalars are passed
+    if(inherits(A, "vclVector")){
+        
+        type <- typeof(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)
+        }    
+        Z <- B
+    }else{
+        
+        type <- typeof(B)
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)
+        }
+        Z <- A
+    }
     
-    C <- deepcopy(A)
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_vclVector_scalar_prod(C@address,
-                                              B,
+                                              Z,
                                               6L)
            },
            double = {
                cpp_vclVector_scalar_prod(C@address,
-                                         B,
+                                         Z,
                                          8L)
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+    	return(invisible(C))
+    }else{
+    	return(C)	
+    }
 }
 
 
 # GPU Element-Wise Division
-vclVecElemDiv <- function(A, B){
+vclVecElemDiv <- function(A, B, inplace = FALSE){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
@@ -212,7 +255,11 @@ vclVecElemDiv <- function(A, B){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -231,33 +278,66 @@ vclVecElemDiv <- function(A, B){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Scalar Element-Wise Division
-vclVecScalarDiv <- function(A, B){
+vclVecScalarDiv <- function(A, B, order = 0, inplace = FALSE){
     
-    type <- typeof(A)
-    
-    C <- deepcopy(A)
+    # quick class check when scalars are passed
+    if(inherits(A, "vclVector")){
+        
+        type <- typeof(A)
+        
+        if(inplace){
+            C <- A
+        }else{
+            C <- deepcopy(A)
+        }    
+        Z <- B
+    }else{
+        
+        type <- typeof(B)
+        
+        if(inplace){
+            C <- B
+        }else{
+            C <- deepcopy(B)
+        }
+        Z <- A
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_vclVector_scalar_div(C@address,
-                                             B,
-                                             6L)
+                                             Z,
+                                             order,
+                                             6L,
+                                             C@.context_index - 1)
            },
            double = {
                cpp_vclVector_scalar_div(C@address,
-                                        B,
-                                        8L)
+                                        Z,
+                                        order,
+                                        8L,
+                                        C@.context_index - 1)
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
@@ -323,12 +403,41 @@ vclVecScalarPow <- function(A, B){
 }
 
 
-# GPU Element-Wise Sine
-vclVecElemSin <- function(A){
+# GPU Element-Wise sqrt
+vclVecSqrt <- function(A){
     
     type <- typeof(A)
     
     C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    
+    switch(type,
+           integer = {
+               stop("integer not currently implemented")
+           },
+           float = {cpp_vclVector_sqrt(A@address,
+                                       C@address,
+                                       6L)
+           },
+           double = {
+               cpp_vclVector_sqrt(A@address,
+                                  C@address,
+                                  8L)
+           },
+           stop("type not recognized")
+    )
+    return(C)
+}
+
+# GPU Element-Wise Sine
+vclVecElemSin <- function(A, inplace = FALSE){
+    
+    type <- typeof(A)
+    
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -345,16 +454,25 @@ vclVecElemSin <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Sine
-vclVecElemArcSin <- function(A){
+vclVecElemArcSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
-    
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -371,16 +489,25 @@ vclVecElemArcSin <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Sine
-vclVecElemHypSin <- function(A){
+vclVecElemHypSin <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -398,16 +525,25 @@ vclVecElemHypSin <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 
 # GPU Element-Wise Cos
-vclVecElemCos <- function(A){
+vclVecElemCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -424,16 +560,25 @@ vclVecElemCos <- function(A){
            },
            stop("type not recognized")
            )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Cos
-vclVecElemArcCos <- function(A){
+vclVecElemArcCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -450,16 +595,25 @@ vclVecElemArcCos <- function(A){
            },           
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Cos
-vclVecElemHypCos <- function(A){
+vclVecElemHypCos <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -474,19 +628,27 @@ vclVecElemHypCos <- function(A){
                                        C@address,
                                        8L)
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 
 # GPU Element-Wise Tan
-vclVecElemTan <- function(A){
+vclVecElemTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -501,19 +663,27 @@ vclVecElemTan <- function(A){
                                              C@address,
                                              8L)
            },
-{
-    stop("type not recognized")
-})
-return(C)
+           stop("type not recognized")
+    )
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Arc Tan
-vclVecElemArcTan <- function(A){
+vclVecElemArcTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+       C <- A 
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -530,16 +700,25 @@ vclVecElemArcTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
 # GPU Element-Wise Hyperbolic Tan
-vclVecElemHypTan <- function(A){
+vclVecElemHypTan <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -556,7 +735,12 @@ vclVecElemHypTan <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 
@@ -667,11 +851,15 @@ vclVecElemExp <- function(A){
 
 
 # GPU Element-Wise Absolute Value
-vclVecElemAbs <- function(A){
+vclVecElemAbs <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
@@ -691,6 +879,65 @@ vclVecElemAbs <- function(A){
     return(C)
 }
 
+# vclVecElemAbs2 <- function(A){
+# 
+#     type <- typeof(A)
+# 
+#     switch(type,
+#            integer = {
+#                stop("integer not currently implemented")
+#            },
+#            float = {
+#                file <- system.file("CL", "fabs.cl", package = "gpuR")
+# 
+#                if(!file_test("-f", file)){
+#                    stop("kernel file does not exist")
+#                }
+#                kernel <- readChar(file, file.info(file)$size)
+# 
+#                cpp_vclVector_elem_abs2(A@address,
+#                                            kernel,
+#                                             A@.context_index - 1,
+#                                            6L)
+#            },
+#            double = {
+#                file <- system.file("CL", "dabs.cl", package = "gpuR")
+# 
+#                if(!file_test("-f", file)){
+#                    stop("kernel file does not exist")
+#                }
+#                kernel <- readChar(file, file.info(file)$size)
+# 
+#                cpp_vclVector_elem_abs2(A@address,
+#                                        kernel,
+#                                        A@.context_index - 1,
+#                                       8L)
+#            },
+#            stop("type not recognized")
+#     )
+#     return(invisible(A))
+# }
+
+# GPU Element-Wise Absolute Value
+vclVecElemMaxAbs <- function(A){
+    
+    type <- typeof(A)
+    
+    out <- switch(type,
+                  integer = {
+                      stop("integer not currently implemented")
+                  },
+                  float = {cpp_vclVector_elem_max_abs(A@address,
+                                                      6L)
+                  },
+                  double = {
+                      cpp_vclVector_elem_max_abs(A@address,
+                                                 8L)
+                  },
+                  stop("type not recognized")
+    )
+    return(out)
+}
 
 # GPU Vector maximum
 vclVecMax <- function(A){

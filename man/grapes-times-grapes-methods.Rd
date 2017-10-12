@@ -3,19 +3,37 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{\%*\%,gpuVector,gpuVector-method}
-\alias{\%*\%,gpuMatrix,gpuMatrix-method}
 \alias{\%*\%,gpuVector,gpuVector-method}
 \alias{\%*\%,vclMatrix,vclMatrix-method}
+\alias{\%*\%,vclMatrix,vclVector-method}
+\alias{\%*\%,vclMatrix,matrix-method}
+\alias{\%*\%,matrix,vclMatrix-method}
 \alias{\%*\%,vclVector,vclVector-method}
+\alias{\%*\%,vclVector,vclMatrix-method}
+\alias{\%*\%,gpuMatrix,gpuMatrix-method}
+\alias{\%*\%,gpuMatrix,matrix-method}
+\alias{\%*\%,matrix,gpuMatrix-method}
 \title{Matrix Multiplication}
 \usage{
 \S4method{\%*\%}{gpuVector,gpuVector}(x, y)
 
 \S4method{\%*\%}{vclMatrix,vclMatrix}(x, y)
 
+\S4method{\%*\%}{vclMatrix,vclVector}(x, y)
+
+\S4method{\%*\%}{vclMatrix,matrix}(x, y)
+
+\S4method{\%*\%}{matrix,vclMatrix}(x, y)
+
 \S4method{\%*\%}{vclVector,vclVector}(x, y)
 
+\S4method{\%*\%}{vclVector,vclMatrix}(x, y)
+
 \S4method{\%*\%}{gpuMatrix,gpuMatrix}(x, y)
+
+\S4method{\%*\%}{gpuMatrix,matrix}(x, y)
+
+\S4method{\%*\%}{matrix,gpuMatrix}(x, y)
 }
 \arguments{
 \item{x}{A gpuR object}
@@ -29,4 +47,3 @@ are vectors of the same length, it will return the inner product (as a matrix).
 \author{
 Charles Determan Jr.
 }
-

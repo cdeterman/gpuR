@@ -118,11 +118,7 @@ case `uname` in
         
             # try searching for opencl library
             # if fails, build library from scratch
-
-            OPENCL_CHECK=`ldconfig -p | grep 'libOpenCL\|lOpenCL' | wc -l` 
-
-            if [ "$OPENCL_CHECK" -gt "0" ]; then
-
+            if [ `ldconfig -p | grep 'libOpenCL\|lOpenCL' | wc -l` > 0 ]; then
                 echo "found OpenCL library"
                 LIBS="PKG_LIBS=-lOpenCL"
                 

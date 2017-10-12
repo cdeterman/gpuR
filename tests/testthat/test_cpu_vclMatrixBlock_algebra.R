@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclMatrixBlock algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -236,6 +238,7 @@ test_that("CPU vclMatrix Single Precision Scalar Matrix Division", {
 test_that("CPU vclMatrix Single Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
@@ -562,6 +565,7 @@ test_that("CPU vclMatrix Double Precision Scalar Matrix Division", {
 test_that("CPU vclMatrix Double Precision Matrix Element-Wise Power", {
     
     has_cpu_skip()
+    pocl_check()
     
     AS = A[2:4, 2:4]
     BS = B[2:4, 2:4]
@@ -665,3 +669,4 @@ test_that("CPU vclMatrix Double Precision tcrossprod", {
     expect_error(crossprod(dvclXS, dvclZS))
 })
 
+setContext(current_context)

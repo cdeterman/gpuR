@@ -3,10 +3,10 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{Summary,gpuVector-method}
-\alias{Summary,gpuMatrix-method}
 \alias{Summary,gpuVector-method}
 \alias{Summary,vclMatrix-method}
 \alias{Summary,vclVector-method}
+\alias{Summary,gpuMatrix-method}
 \alias{Summary-gpuR-method}
 \title{gpuR Summary methods}
 \usage{
@@ -32,4 +32,3 @@ For \code{min} or \code{max}, a length-one vector
 \description{
 Methods for the base Summary methods \link[methods]{S4groupGeneric}
 }
-

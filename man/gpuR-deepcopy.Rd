@@ -4,10 +4,10 @@
 \docType{methods}
 \name{deepcopy}
 \alias{deepcopy}
-\alias{deepcopy,gpuMatrix-method}
 \alias{deepcopy,gpuVector-method}
 \alias{deepcopy,vclMatrix-method}
 \alias{deepcopy,vclVector-method}
+\alias{deepcopy,gpuMatrix-method}
 \title{Copy a "gpuR" object}
 \usage{
 deepcopy(object, ...)
@@ -40,10 +40,9 @@ This is needed to make a duplicate of a gpuR object
 \code{\link{vclMatrix}}, \code{\link{vclVector}} because
 the traditional syntax would only copy the pointer of the object.
 }
-\author{
-Charles Determan Jr.
-}
 \seealso{
 \code{\link{block}}
 }
-
+\author{
+Charles Determan Jr.
+}

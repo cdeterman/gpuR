@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-gpuVector.R
 \docType{methods}
 \name{Compare,vector,gpuVector-method}
-\alias{Compare,gpuVector,vector-method}
 \alias{Compare,vector,gpuVector-method}
-\alias{Compare-gpuVector-vector}
 \alias{Compare-vector-gpuVector}
+\alias{Compare,gpuVector,vector-method}
+\alias{Compare-gpuVector-vector}
 \title{Compare vector and gpuVector elements}
 \usage{
 \S4method{Compare}{vector,gpuVector}(e1, e2)
@@ -26,4 +26,3 @@ Methods for comparison operators
 \author{
 Charles Determan Jr.
 }
-

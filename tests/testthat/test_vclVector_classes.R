@@ -1,6 +1,12 @@
 library(gpuR)
 context("vclVector classes")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 set.seed(123)
 A <- seq.int(10)
 D <- rnorm(10)
@@ -104,3 +110,4 @@ test_that("dvclVectorSlice class present", {
                  info = "source dvclVector length has been changed")
 })
 
+setContext(current_context)

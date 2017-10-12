@@ -10,4 +10,3 @@ has_multiple_gpu_skip()
 Function to skip testthat tests
 if less than 2 valid GPU's are detected
 }
-

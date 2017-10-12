@@ -3,7 +3,7 @@
 #' from \code{gpuVector}
 #' @param object An object that is or can be converted to a 
 #' \code{vector} object
-#' @param type A character string specifying the type of gpuMatrix.  Default
+#' @param type A character string specifying the type of gpuVector.  Default
 #' is NULL where type is inherited from the source data type.
 #' @return A gpuVector object
 #' @docType methods
@@ -13,6 +13,24 @@
 setGeneric("as.gpuVector", function(object, type){
     standardGeneric("as.gpuVector")
 })
+
+#' @title Convert object to a vclVector
+#' @description Construct a vclVector of a class that inherits
+#' from \code{vclVector}
+#' @param object An object that is or can be converted to a 
+#' \code{vector} object
+#' @param type A character string specifying the type of vclVector.  Default
+#' is NULL where type is inherited from the source data type.
+#' @param ... Additional arguments to as.vclVector methods
+#' @return A vclVector object
+#' @docType methods
+#' @rdname as.vclVector-methods
+#' @author Charles Determan Jr.
+#' @export
+setGeneric("as.vclVector", function(object, type, ...){
+    standardGeneric("as.vclVector")
+})
+
 
 #' @title Convert object to a gpuMatrix
 #' @description Construct a gpuMatrix of a class that inherits

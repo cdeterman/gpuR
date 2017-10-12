@@ -40,10 +40,6 @@ setMethod("%*%", c(x="gpuVector", y="gpuVector"),
 #' @export
 setMethod("%o%", c(X="gpuVector", Y="gpuVector"),
           function(X, Y){
-              if(length(X) != length(Y)){
-                  stop("non-conformable arguments")
-              }
-              
               gpuVecOuterProd(X,Y)
           })
 
@@ -139,6 +135,23 @@ setMethod("Arith", c(e1="gpuVector", e2="missing"),
           valueClass = "gpuVector"
 )
 
+#' @rdname Arith-methods
+#' @export
+setMethod("Arith", c(e1="gpuVector", e2="gpuMatrix"),
+          function(e1, e2)
+          {
+              op = .Generic[[1]]
+              
+              switch(op,
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
+                     stop("undefined operation")
+              )
+          },
+          valueClass = "gpuMatrix"
+)
+
+
 #' @rdname Math-methods
 #' @export
 setMethod("Math", c(x="gpuVector"),
@@ -158,6 +171,8 @@ setMethod("Math", c(x="gpuVector"),
                      `log10` = gpuVecElemLog10(x),
                      `exp` = gpuVecElemExp(x),
                      `abs` = gpuVecElemAbs(x),
+                     `sqrt` = gpuVecSqrt(x),
+                     `sign` = gpuVecSign(x),
                      stop("undefined operation")
               )
           },
@@ -260,9 +275,9 @@ setMethod("[",
           signature(x = "gpuVector", i = "missing", j = "missing", drop = "missing"),
           function(x, i, j, drop) {
               switch(typeof(x),
-                     "integer" = return(EigenVecXPtrToMapEigenVec(x@address, 4L)),
-                     "float" = return(EigenVecXPtrToMapEigenVec(x@address, 6L)),
-                     "double" = return(EigenVecXPtrToMapEigenVec(x@address, 8L))
+                     "integer" = return(getEigenMatrix(x@address, 4L)),
+                     "float" = return(getEigenMatrix(x@address, 6L)),
+                     "double" = return(getEigenMatrix(x@address, 8L))
               )
           })
 
@@ -323,11 +338,23 @@ setMethod("slice",
           ptr <- switch(typeof(object),
                         "float" = {
                             address <- sliceGPUvec(object@address, start, end, 6L)
-                            new("fgpuVectorSlice", address = address)
+                            new("fgpuVectorSlice", 
+                                address = address,
+                                .context_index = object@.context_index,
+                                .platform_index = object@.platform_index,
+                                .platform = object@.platform,
+                                .device_index = object@.device_index,
+                                .device = object@.device)
                         },
                         "double" = {
                             address <- sliceGPUvec(object@address, start, end, 8L)
-                            new("dgpuVectorSlice", address = address)
+                            new("dgpuVectorSlice", 
+                                address = address,
+                                .context_index = object@.context_index,
+                                .platform_index = object@.platform_index,
+                                .platform = object@.platform,
+                                .device_index = object@.device_index,
+                                .device = object@.device)
                         },
                         stop("type not recognized")
           )
@@ -342,11 +369,29 @@ setMethod("deepcopy", signature(object ="gpuVector"),
               
               out <- switch(typeof(object),
                             "integer" = new("igpuVector",
-                                            address = cpp_deepcopy_gpuVector(object@address, 4L)),
+                                            address = cpp_deepcopy_gpuVector(
+                                                object@address, 4L),
+                                            .context_index = object@.context_index,
+                                            .platform_index = object@.platform_index,
+                                            .platform = object@.platform,
+                                            .device_index = object@.device_index,
+                                            .device = object@.device),
                             "float" = new("fgpuVector", 
-                                          address = cpp_deepcopy_gpuVector(object@address, 6L)),
+                                          address = cpp_deepcopy_gpuVector(
+                                              object@address, 6L),
+                                          .context_index = object@.context_index,
+                                          .platform_index = object@.platform_index,
+                                          .platform = object@.platform,
+                                          .device_index = object@.device_index,
+                                          .device = object@.device),
                             "double" = new("dgpuVector", 
-                                           address = cpp_deepcopy_gpuVector(object@address, 8L)),
+                                           address = cpp_deepcopy_gpuVector(
+                                               object@address, 8L),
+                                           .context_index = object@.context_index,
+                                           .platform_index = object@.platform_index,
+                                           .platform = object@.platform,
+                                           .device_index = object@.device_index,
+                                           .device = object@.device),
                             stop("unrecognized type")
               )
               return(out)

@@ -27,4 +27,3 @@ the copy from CPU to \code{gpuMatrix} is trivial using the base
 \author{
 Charles Determan Jr.
 }
-

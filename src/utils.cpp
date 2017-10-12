@@ -33,6 +33,34 @@ cpp_gpuVector_size(SEXP ptrA_)
 }
 
 template <typename T>
+T
+cpp_gpuVector_max(
+    SEXP ptrA_,
+    int ctx_id)
+{    
+    // viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
+    // T max;
+    
+    XPtr<dynEigenVec<T> > ptrA(ptrA_);
+    
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
+    
+    // const int M = Am.size();
+    // 
+    // viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+    // 
+    // // viennacl::copy(Am, vcl_A); 
+    // viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
+    // 
+    // max = viennacl::linalg::max(vcl_A);
+    
+    // max =;
+    
+    return Am.maxCoeff();
+}
+
+template <typename T>
 SEXP 
 cpp_gpuMatrix_max(SEXP ptrA_)
 {       
@@ -107,6 +135,26 @@ cpp_gpuVector_size(
 
 // [[Rcpp::export]]
 SEXP
+cpp_gpuVector_max(
+    SEXP ptrA,
+    const int type_flag,
+    int ctx_id)
+{
+    
+    switch(type_flag) {
+    case 4:
+        return wrap(cpp_gpuVector_max<int>(ptrA, ctx_id));
+    case 6:
+        return wrap(cpp_gpuVector_max<float>(ptrA, ctx_id));
+    case 8:
+        return wrap(cpp_gpuVector_max<double>(ptrA, ctx_id));
+    default:
+        throw Rcpp::exception("unknown type detected for gpuVector object!");
+    }
+}
+
+// [[Rcpp::export]]
+SEXP
 cpp_gpuMatrix_max(
     SEXP ptrA, 
     const int type_flag)
@@ -157,6 +205,10 @@ cpp_gpuMatrix_nrow(
         return wrap(cpp_nrow<float>(ptrA));
     case 8:
         return wrap(cpp_nrow<double>(ptrA));
+    case 10:
+        return wrap(cpp_nrow<std::complex<float> >(ptrA));
+    case 12:
+        return wrap(cpp_nrow<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -176,6 +228,10 @@ cpp_gpuMatrix_ncol(
         return wrap(cpp_ncol<float>(ptrA));
     case 8:
         return wrap(cpp_ncol<double>(ptrA));
+    case 10:
+        return wrap(cpp_ncol<std::complex<float> >(ptrA));
+    case 12:
+        return wrap(cpp_ncol<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

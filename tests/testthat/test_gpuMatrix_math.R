@@ -1,6 +1,12 @@
 library(gpuR)
 context("gpuMatrix math operations")
 
+if(detectGPUs() >= 1){
+    current_context <- set_device_context("gpu")    
+}else{
+    current_context <- currentContext()
+}
+
 # set seed
 set.seed(123)
 
@@ -113,6 +119,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Trignometry", {
 test_that("gpuMatrix Single Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -139,6 +146,7 @@ test_that("gpuMatrix Double Precision Matrix Element-Wise Logs", {
     
     has_gpu_skip()
     has_double_skip()
+    pocl_check()
     
     R_log <- suppressWarnings(log(A))
     R_log10 <- suppressWarnings(log10(A))
@@ -257,8 +265,137 @@ test_that("gpuMatrix Double Precision Maximum/Minimum", {
     fgpu_min <- min(fgpuA)
     
     expect_is(fgpu_max, "numeric")
-    expect_equal(fgpu_max, R_max, tolerance=.Machine$double.eps^0.5, 
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
                  info="max double matrix element not equivalent") 
-    expect_equal(fgpu_min, R_min, tolerance=.Machine$double.eps^0.5, 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
                  info="min double matrix element not equivalent")  
 })
+
+test_that("gpuMatrix Single Precision pmax/pmin", {
+    
+    has_gpu_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "fgpuMatrix")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float matrix element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float matrix element not equivalent")  
+    
+    # multiple operations
+    R_max <- pmax(A, 0, 1)
+    R_min <- pmin(A, 0, 1)
+    
+    fgpu_max <- pmax(fgpuA, 0, 1)
+    fgpu_min <- pmin(fgpuA, 0, 1)
+    
+    expect_is(fgpu_max, "fgpuMatrix")
+    expect_equal(fgpu_max[], R_max, tolerance=1e-07, 
+                 info="max float matrix element not equivalent")  
+    expect_equal(fgpu_min[], R_min, tolerance=1e-07, 
+                 info="min float matrix element not equivalent") 
+})
+
+test_that("gpuMatrix Double Precision pmax/pmin", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_max <- pmax(A, 0)
+    R_min <- pmin(A, 0)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_max <- pmax(fgpuA, 0)
+    fgpu_min <- pmin(fgpuA, 0)
+    
+    expect_is(fgpu_max, "dgpuMatrix")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double matrix element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double matrix element not equivalent")  
+    
+    # multiple operations
+    R_max <- pmax(A, 0, 1)
+    R_min <- pmin(A, 0, 1)
+    
+    fgpu_max <- pmax(fgpuA, 0, 1)
+    fgpu_min <- pmin(fgpuA, 0, 1)
+    
+    expect_is(fgpu_max, "dgpuMatrix")
+    expect_equal(fgpu_max[], R_max, tolerance=.Machine$double.eps^0.5, 
+                 info="max double matrix element not equivalent") 
+    expect_equal(fgpu_min[], R_min, tolerance=.Machine$double.eps^0.5, 
+                 info="min double matrix element not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision Matrix sqrt", {
+    
+    has_gpu_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuMatrix(abs(A), type="float")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "fgpuMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=1e-07, 
+                 info="sqrt float matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Double Precision Matrix sqrt", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sqrt <- sqrt(abs(A))
+    
+    fgpuA <- gpuMatrix(abs(A), type="double")
+    
+    fgpu_sqrt <- sqrt(fgpuA)
+    
+    expect_is(fgpu_sqrt, "dgpuMatrix")
+    expect_equal(fgpu_sqrt[,], R_sqrt, tolerance=.Machine$double.eps^0.5, 
+                 info="sqrt double matrix elements not equivalent")  
+})
+
+test_that("gpuMatrix Single Precision Matrix sign", {
+    has_gpu_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "fgpuMatrix")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=1e-07, 
+                 info="sign float matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+test_that("gpuMatrix Double Precision Matrix sign", {
+    has_gpu_skip()
+    has_double_skip()
+    
+    R_sign <- sign(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "dgpuMatrix")
+    expect_equal(fgpu_sign[,], R_sign, tolerance=.Machine$double.base^0.5, 
+                 info="sign double matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
+setContext(current_context)

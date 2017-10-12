@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-vclMatrix.R, R/methods.R
 \docType{methods}
 \name{t,vclMatrix-method}
-\alias{t,gpuMatrix}
-\alias{t,gpuMatrix-method}
-\alias{t,vclMatrix}
 \alias{t,vclMatrix-method}
+\alias{t,vclMatrix}
+\alias{t,gpuMatrix-method}
+\alias{t,gpuMatrix}
 \title{\code{gpuR} matrix transpose}
 \usage{
 \S4method{t}{vclMatrix}(x)
@@ -25,4 +25,3 @@ transpose of \code{x}
 \author{
 Charles Determan Jr.
 }
-

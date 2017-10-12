@@ -18,4 +18,3 @@ list containing
 \description{
 Check current device information
 }
-

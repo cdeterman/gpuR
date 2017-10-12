@@ -3,10 +3,10 @@
 %   R/methods-vclVector.R, R/methods.R
 \docType{methods}
 \name{Math,gpuVector-method}
-\alias{Math,gpuMatrix-method}
 \alias{Math,gpuVector-method}
 \alias{Math,vclMatrix-method}
 \alias{Math,vclVector-method}
+\alias{Math,gpuMatrix-method}
 \alias{Math-gpuR-method}
 \title{gpuR Math methods}
 \usage{
@@ -31,10 +31,9 @@ Methods for the base Math methods \link[methods]{S4groupGeneric}
 Currently implemented methods include:
 \itemize{
  \item{"sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh",
- "log10", "exp", "abs"}
+ "log10", "exp", "abs", "sqrt", "sign"}
  }
 }
 \author{
 Charles Determan Jr.
 }
-

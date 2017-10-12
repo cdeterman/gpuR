@@ -3,8 +3,8 @@
 \docType{methods}
 \name{as.gpuVector}
 \alias{as.gpuVector}
-\alias{as.gpuVector,vector}
 \alias{as.gpuVector,vector-method}
+\alias{as.gpuVector,vector}
 \title{Convert object to a gpuVector}
 \usage{
 as.gpuVector(object, type)
@@ -15,7 +15,7 @@ as.gpuVector(object, type)
 \item{object}{An object that is or can be converted to a 
 \code{vector} object}
 
-\item{type}{A character string specifying the type of gpuMatrix.  Default
+\item{type}{A character string specifying the type of gpuVector.  Default
 is NULL where type is inherited from the source data type.}
 }
 \value{
@@ -28,4 +28,3 @@ from \code{gpuVector}
 \author{
 Charles Determan Jr.
 }
-

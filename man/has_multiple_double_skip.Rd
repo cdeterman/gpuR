@@ -10,4 +10,3 @@ has_multiple_double_skip()
 Function to skip testthat tests
 if their aren't multiple detected GPU with double precision
 }
-

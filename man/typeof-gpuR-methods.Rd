@@ -26,4 +26,3 @@ gpuR object
 \author{
 Charles Determan Jr.
 }
-

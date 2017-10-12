@@ -89,8 +89,8 @@ permute.vclMatrix <- function(x, MARGIN = 1, order){
     type <- typeof(x)
     
     file <- switch(type,
-                   "float" = system.file("CL", "fset_row_order.cl", package = "gpuR"),
-                   "double" = system.file("CL", "dset_row_order.cl", package = "gpuR"),
+                   "float" = system.file("CL", "fset_row_order2.cl", package = "gpuR"),
+                   "double" = system.file("CL", "dset_row_order2.cl", package = "gpuR"),
                    stop("only float and double type currently supported")
     )
     
@@ -106,12 +106,10 @@ permute.vclMatrix <- function(x, MARGIN = 1, order){
                stop("unrecognized device type")
         )
     
-    Y <- vclMatrix(nrow = nrow(x), ncol = ncol(x), type = type, ctx_id = x@.context_index)
+    # Y <- vclMatrix(nrow = nrow(x), ncol = ncol(x), type = type, ctx_id = x@.context_index)
     
     switch(type,
            "float" = cpp_vclMatrix_set_row_order(x@address, 
-                                                 Y@address, 
-                                                 TRUE,
                                                  TRUE,
                                                  order - 1,
                                                  kernel,
@@ -119,8 +117,6 @@ permute.vclMatrix <- function(x, MARGIN = 1, order){
                                                  6L,
                                                  x@.context_index - 1),
            "double" = cpp_vclMatrix_set_row_order(x@address, 
-                                                  Y@address, 
-                                                  TRUE,
                                                   TRUE,
                                                   order - 1,
                                                   kernel,
@@ -130,11 +126,46 @@ permute.vclMatrix <- function(x, MARGIN = 1, order){
            stop("only float and double currently supported"))
     
     
-    return(Y)
+    return(invisible(x))
     
 }
 
 
+#'@export
+permute.vclVector <- function(x, MARGIN = 1, order){
+    assert_is_not_null(order)
+    
+    type <- typeof(x)
+    
+    file <- switch(type,
+                   "float" = system.file("CL", "fPermute.cl", package = "gpuR"),
+                   "double" = system.file("CL", "dPermute.cl", package = "gpuR"),
+                   stop("only float and double type currently supported")
+    )
+    
+    if(!file_test("-f", file)){
+        stop("kernel file does not exist")
+    }
+    kernel <- readChar(file, file.info(file)$size)
+    
+    ctx_id <- x@.context_index - 1
+    
+    switch(type,
+           "float" = cpp_vclVector_permute(x@address,
+                                           order - 1,
+                                           kernel,
+                                           6L,
+                                           ctx_id),
+           "double" = cpp_vclVector_permute(x@address,
+                                            order - 1,
+                                            kernel,
+                                            8L,
+                                            ctx_id),
+           stop("only float and double currently supported"))
+    
+    
+    return(invisible(x))
+}
 
 #' @title Row and Column Names
 #' @description Retrieve or set the row or column names of a gpuR matrix object

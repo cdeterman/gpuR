@@ -1,6 +1,41 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
 
+\section{Version 2.0.0}{
+    \itemize{
+        \item API Changes:
+        \itemize{
+            \item deviceType, gpuInfo, cpuInfo not longer accepts 'platform_idx' parameter as OpenCL contexts cannot contain more than one platform.
+        }
+        \item New Features:
+        \itemize{
+            \item Added functionality to create custom OpenCL functions from user provided kernels
+            \item Added `synchronize` function to assure completion of device calls (necessary for benchmarking)
+            \item Added determinant function (det)
+            \item Allow for gpuR object - base object interaction (e.g. vclMatrix * matrix)
+            \item Added `inplace` function for 'inplace' operations.  These operations include `+`, `-`, `*`, `/`, `sin`, `asin`, `sinh`, `cos`, `acos`, `cosh`, `tan`, `atan`, `tanh`.
+            \item Added `sqrt`, `sum`, `sign`,`pmin`, and `pmax` functions
+            \item Methods to pass two gpuR matrix objects to `cov`
+            \item Added `norm` method
+            \item Added gpuRmatrix/gpuRvector Arith `+`,`-` methods
+        }
+        \item Bug Fixes:
+        \itemize{
+            \item Fixed incorrect device info when using different contexts
+            \item Fixed Integer Matrix Multiplication
+            \item All OpenCL devices will be initialized on startup (previous version occasionally would omit some devices)
+        }
+        \item Features in Progress:
+        \itemize{
+            \item Parallel GPU functionality
+            \item Implementing 'complex' data type
+            \item Additional indexing functionality
+            \item Additional correlation methods
+            \item Additional gpuR - `base R` methods
+            \item gpu-vcl object methods
+        }
+    }
+}
 
 \section{Version 1.2.0}{
     \itemize{

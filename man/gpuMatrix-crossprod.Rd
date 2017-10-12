@@ -2,20 +2,32 @@
 % Please edit documentation in R/methods.R
 \docType{methods}
 \name{crossprod,gpuMatrix,missing-method}
+\alias{crossprod,gpuMatrix,missing-method}
 \alias{crossprod,gpuMatrix}
 \alias{crossprod,gpuMatrix,gpuMatrix-method}
-\alias{crossprod,gpuMatrix,missing-method}
-\alias{tcrossprod,gpuMatrix,gpuMatrix-method}
+\alias{crossprod,gpuMatrix,matrix-method}
+\alias{crossprod,matrix,gpuMatrix-method}
 \alias{tcrossprod,gpuMatrix,missing-method}
+\alias{tcrossprod,gpuMatrix,gpuMatrix-method}
+\alias{tcrossprod,matrix,gpuMatrix-method}
+\alias{tcrossprod,gpuMatrix,matrix-method}
 \title{gpuMatrix Crossproduct}
 \usage{
 \S4method{crossprod}{gpuMatrix,missing}(x, y)
 
 \S4method{crossprod}{gpuMatrix,gpuMatrix}(x, y)
 
+\S4method{crossprod}{gpuMatrix,matrix}(x, y)
+
+\S4method{crossprod}{matrix,gpuMatrix}(x, y)
+
 \S4method{tcrossprod}{gpuMatrix,missing}(x, y)
 
 \S4method{tcrossprod}{gpuMatrix,gpuMatrix}(x, y)
+
+\S4method{tcrossprod}{matrix,gpuMatrix}(x, y)
+
+\S4method{tcrossprod}{gpuMatrix,matrix}(x, y)
 }
 \arguments{
 \item{x}{A gpuMatrix}
@@ -34,4 +46,3 @@ device and host is required.
 \author{
 Charles Determan Jr.
 }
-

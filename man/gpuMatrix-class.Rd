@@ -38,12 +38,12 @@ May also remove the type slot
      \item{\code{.device}:}{Name of active device}
  }
 }
-\author{
-Charles Determan Jr.
-}
+
 \seealso{
 \code{\link{igpuMatrix-class}}, 
 \code{\link{fgpuMatrix-class}},
 \code{\link{dgpuMatrix-class}}
 }
-
+\author{
+Charles Determan Jr.
+}

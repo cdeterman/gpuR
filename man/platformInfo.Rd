@@ -24,4 +24,3 @@ Get basic information about the OpenCL platform
 \author{
 Charles Determan Jr.
 }
-

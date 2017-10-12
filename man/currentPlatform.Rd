@@ -17,4 +17,3 @@ Find out which platform is currently in use
 \seealso{
 \link{detectPlatforms}
 }
-

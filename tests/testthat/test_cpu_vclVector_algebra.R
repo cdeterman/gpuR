@@ -1,6 +1,8 @@
 library(gpuR)
 context("CPU vclVector algebra")
 
+current_context <- set_device_context("cpu")
+
 # set seed
 set.seed(123)
 
@@ -11,6 +13,7 @@ Aint <- seq.int(10)
 Bint <- sample(seq.int(10), ORDER)
 A <- rnorm(ORDER)
 B <- rnorm(ORDER)
+D <- rnorm(ORDER + 1)
 E <- rnorm(ORDER-1)
 
 # Single Precision Tests
@@ -237,15 +240,21 @@ test_that("CPU vclVector Single Precision Outer Product ", {
     has_cpu_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
     
     fvclA <- vclVector(A, type="float")
     fvclB <- vclVector(B, type="float")
+    fvclD <- vclVector(D, type="float")
     
     fvclC <- fvclA %o% fvclB
+    fvclC2 <- fvclA %o% fvclD
     
     expect_is(fvclC, "fvclMatrix")
+    expect_is(fvclC2, "fvclMatrix")
     expect_equal(fvclC[,], C, tolerance=1e-07, 
                  info="float vcl vector elements not equivalent")  
+    expect_equal(fvclC2[,], C2, tolerance=1e-07,
+                 info="float vcl vector elements not equivalent")
 })
 
 # Double Precision Tests
@@ -472,13 +481,21 @@ test_that("CPU vclVector Double Precision Outer Product ", {
     has_cpu_skip()
     
     C <- A %o% B
+    C2 <- A %o% D
     
     dvclA <- vclVector(A, type="double")
     dvclB <- vclVector(B, type="double")
+    dvclD <- vclVector(D, type="double")
     
     dvclC <- dvclA %o% dvclB
+    dvclC2 <- dvclA %o% dvclD
     
     expect_is(dvclC, "dvclMatrix")
+    expect_is(dvclC2, "dvclMatrix")
     expect_equal(dvclC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double vcl vector elements not equivalent")  
+    expect_equal(dvclC2[,], C2, tolerance=.Machine$double.eps^0.5,
+                 info="double vcl vector elements not equivalent")
 })
+
+setContext(current_context)

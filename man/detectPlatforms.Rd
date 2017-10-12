@@ -15,4 +15,3 @@ Find out how many OpenCL enabled platforms are available.
 \seealso{
 \link{detectGPUs}
 }
-
