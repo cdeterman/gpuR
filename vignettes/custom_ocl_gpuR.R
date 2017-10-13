@@ -4,10 +4,10 @@ opts_chunk$set(
 concordance=TRUE
 )
 
-## ----kernel-example, eval = FALSE----------------------------------------
+## ----kernel_example, eval = FALSE----------------------------------------
 #  __kernel void SAXPY(__global float* x, __global float* y, float a)
 #  {
-#      const int i = get_global_id (0);
+#      const int i = get_global_id(0);
 #  
 #      y [i] += a * x [i];
 #  }

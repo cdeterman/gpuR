@@ -1,4 +1,6 @@
 rm -f src/*.o
 rm -f src/*.dll
-rm -f src/loader/*.o
-rm -f src/loader/*.a
+rm -f inst/include/loader/i386/*.o
+rm -f inst/include/loader/x64/*.o
+rm -f inst/include/loader/i386/*.a
+rm -f inst/include/loader/x64/*.o

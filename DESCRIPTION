@@ -33,4 +33,3 @@ SystemRequirements: C++11 (supporting at least std=c++0x), OpenCL shared
     library (provided by an SDK such as AMD/NVIDIA) and OpenCL headers including
     the C++ header file (provided by Khronos if not by SDK)
 RoxygenNote: 6.0.1
-Encoding: UTF-8

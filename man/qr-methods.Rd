@@ -27,7 +27,7 @@ A \code{list} containing the QR decomposition of the matrix of class
 }
 }
 \description{
-\code{qr} computs the QR decomposition of a gpuR matrix
+\code{qr} computes the QR decomposition of a gpuR matrix
 }
 \note{
 This an S3 generic of \link[base]{qr}.  The default continues

@@ -1,6 +1,6 @@
 % \VignetteIndexEntry{ A Short Introduction to the gpuR Package}
 % \VignettePackage{gpuR}
-%\VignetteEngine{knitr::knitr}
+% \VignetteEngine{knitr::knitr}
 
 % To compile this document
 % library('knitr'); rm(list=ls()); knit('gpuR.Rnw')

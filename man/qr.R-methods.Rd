@@ -4,7 +4,7 @@
 \name{qr.R,gpuQR-method}
 \alias{qr.R,gpuQR-method}
 \alias{qr.Q,gpuQR-method}
-\title{Reconstruct the Q or R Matrices form a gpuQR Object}
+\title{Reconstruct the Q or R Matrices from a gpuQR Object}
 \usage{
 \S4method{qr.R}{gpuQR}(qr, complete = FALSE)
 
