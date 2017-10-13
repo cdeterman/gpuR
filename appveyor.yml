@@ -1,4 +1,9 @@
 
+branches:
+  only:
+    - master
+    - develop
+
 shallow_clone: true
 
 environment:

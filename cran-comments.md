@@ -7,17 +7,16 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release.
+* checking installed package size ... NOTE
+  installed size is 96.4Mb
+  sub-directories of 1Mb or more:
+    libs  94.2Mb
+    
+  This package depends upon the RViennaCL header only library
+  and contains lots of C++ code.
 
 ## Reverse dependencies
 
-This is a new release, so there are no reverse dependencies.
+This package is still relatively new and has no reverse dependecies.
 
 ---
-
-* I have run R CMD check on the NUMBER downstream dependencies.
-  (Summary at ...). 
-  
-* FAILURE SUMMARY
-
-* All revdep maintainers were notified of the release on RELEASE DATE.
