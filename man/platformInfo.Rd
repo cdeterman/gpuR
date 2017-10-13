@@ -16,7 +16,7 @@ platformInfo(platform_idx = 1L)
 
 \item{platformVersion}{Platform OpenCL Version}
 
-\item{platformExtensions}{Avaiable platform extensions}
+\item{platformExtensions}{Available platform extensions}
 }
 \description{
 Get basic information about the OpenCL platform

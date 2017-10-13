@@ -57,7 +57,7 @@ setGeneric("as.gpuMatrix", function(object, type){
 #' @param start An integer indicating the start of slice
 #' @param end An integer indicating the end of slice
 #' @details This function allows a user to create a gpuR vector object that
-#' references a continous subset of columns and rows of another gpuR vector
+#' references a continuous subset of columns and rows of another gpuR vector
 #' object without a copy.  
 #' 
 #' NOTE - this means that altering values in a vector slice object will alter
@@ -83,7 +83,7 @@ setGeneric("slice", function(object, start, end){
 #' @param colStart An integer indicating the first column of block
 #' @param colEnd An integer indicating the last column of block
 #' @details This function allows a user to create a gpuR matrix object that
-#' references a continous subset of columns and rows of another gpuR matrix
+#' references a continuous subset of columns and rows of another gpuR matrix
 #' object without a copy.  
 #' 
 #' NOTE - this means that altering values in a matrix block object will alter

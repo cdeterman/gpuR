@@ -3,7 +3,7 @@ setOldClass("solve")
 # GPU Singular Value Decomposition
 
 #' @title Solve a System of Equations for gpuR objects
-#' @description This funciton solves the equation \code{a \%*\% x = b} for 
+#' @description This function solves the equation \code{a \%*\% x = b} for 
 #' \code{x}, where \code{b} can be either a vector or a matrix.
 #' @param a A gpuR object
 #' @param b A gpuR object

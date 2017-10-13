@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
-^\include
+^include
 ^\.travis\.yml$
 ^appveyor\.yml$
+^cran-comments\.md$

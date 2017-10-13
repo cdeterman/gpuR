@@ -14,7 +14,7 @@ pmin(...)
 }
 \description{
 \code{pmax} and \code{pmin} take one or more
-vectors as arguments and returna single vector giving the 'parallel'
+vectors as arguments and return a single vector giving the 'parallel'
 maxima (or minima) of the argument vectors
 }
 \seealso{

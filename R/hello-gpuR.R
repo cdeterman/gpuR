@@ -2,7 +2,7 @@
 #' 
 #' @description This package was developed to provide simple to use R functions
 #' that leverage the power of GPU's but also retain a format familiar to the
-#' R user.  There are a handfull of other R packages that provide some
+#' R user.  There are a hand full of other R packages that provide some
 #' GPU functionality but nearly all rely on a CUDA backend thereby restricting
 #' the user to NVIDIA GPU hardware.  In the spirit of being as broadly 
 #' applicable as possible, this GPU code herein relies upon OpenCL via the 

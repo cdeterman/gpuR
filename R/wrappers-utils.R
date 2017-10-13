@@ -232,7 +232,7 @@ cpuInfo <- function(device_idx=NULL,
 #' @return \item{platformName}{Platform Name}
 #' @return \item{platformVendor}{Platform Vendor}
 #' @return \item{platformVersion}{Platform OpenCL Version}
-#' @return \item{platformExtensions}{Avaiable platform extensions}
+#' @return \item{platformExtensions}{Available platform extensions}
 #' @export
 platformInfo <- function(platform_idx=1L){
     assert_is_integer(platform_idx)

@@ -27,7 +27,7 @@
 A gpuR object
 }
 \description{
-This funciton solves the equation \code{a \%*\% x = b} for 
+This function solves the equation \code{a \%*\% x = b} for 
 \code{x}, where \code{b} can be either a vector or a matrix.
 }
 \author{

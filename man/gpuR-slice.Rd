@@ -31,7 +31,7 @@ points to a contiguous subvector of a \code{\link{gpuVector}} or
 }
 \details{
 This function allows a user to create a gpuR vector object that
-references a continous subset of columns and rows of another gpuR vector
+references a continuous subset of columns and rows of another gpuR vector
 object without a copy.  
 
 NOTE - this means that altering values in a vector slice object will alter

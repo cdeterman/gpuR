@@ -63,9 +63,9 @@ str.vclMatrix <- function(object, vec.len = strOptions()$vec.len,
 
 
 #' @title Permuting functions for \code{gpuR} objects
-#' @description Generate a perumutation of row or column indices
+#' @description Generate a permutation of row or column indices
 #' @param x A \code{gpuR} matrix object
-#' @param MARGIN dimenstion over which the ordering should be applied, 1
+#' @param MARGIN dimension over which the ordering should be applied, 1
 #' indicates rows, 2 indicates columns
 #' @param order An integer vector indicating order of rows to assign
 #' @return A \code{gpuR} object

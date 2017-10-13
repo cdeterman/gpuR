@@ -10,7 +10,7 @@ permute(x, MARGIN, order)
 \arguments{
 \item{x}{A \code{gpuR} matrix object}
 
-\item{MARGIN}{dimenstion over which the ordering should be applied, 1
+\item{MARGIN}{dimension over which the ordering should be applied, 1
 indicates rows, 2 indicates columns}
 
 \item{order}{An integer vector indicating order of rows to assign}
@@ -19,7 +19,7 @@ indicates rows, 2 indicates columns}
 A \code{gpuR} object
 }
 \description{
-Generate a perumutation of row or column indices
+Generate a permutation of row or column indices
 }
 \author{
 Charles Determan Jr.
