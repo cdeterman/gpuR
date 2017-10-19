@@ -1,6 +1,6 @@
 # gpuR
 
-[![DOI](https://zenodo.org/badge/32588017.svg)](https://zenodo.org/badge/latestdoi/32588017)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1027597.svg)](https://doi.org/10.5281/zenodo.1027597)
 
 ### Gitter rooms available for discussion
 [![chat](https://img.shields.io/badge/gitter-chat-brightgreen.svg)](https://gitter.im/cdeterman/gpuR)
