@@ -19,6 +19,7 @@ A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
 v <- rnorm(ORDER^2)
+v2 <- rnorm(ORDER)
 
 # Single Precision tests
 
@@ -50,6 +51,26 @@ test_that("vclMatrix Single Precision Matrix multiplication", {
     
     expect_is(fgpuC, "fvclMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Single Precision Matrix-Vector multiplication", {
+    
+    has_gpu_skip()
+    
+    C <- A %*% v2
+    C2 <- v2 %*% B
+    
+    fgpuA <- vclMatrix(A, type="float")
+    fgpuB <- vclMatrix(B, type="float")
+    fgpuV <- vclVector(v2, type = "float")
+    
+    fgpuC <- fgpuA %*% fgpuV
+    fgpuC2 <- fgpuV %*% fgpuB
+    
+    expect_equal(fgpuC[,], c(C), tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuC2[,], c(C2), tolerance=1e-07, 
                  info="float matrix elements not equivalent")  
 })
 
@@ -796,6 +817,27 @@ test_that("vclMatrix Double Precision Matrix multiplication", {
     
     expect_is(dgpuC, "dvclMatrix")
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double matrix elements not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Matrix-Vector multiplication", {
+    
+    has_gpu_skip()
+    has_double_skip()
+    
+    C <- A %*% v2
+    C2 <- v2 %*% B
+    
+    fgpuA <- vclMatrix(A, type="double")
+    fgpuB <- vclMatrix(B, type="double")
+    fgpuV <- vclVector(v2, type = "double")
+    
+    fgpuC <- fgpuA %*% fgpuV
+    fgpuC2 <- fgpuV %*% fgpuB
+    
+    expect_equal(fgpuC[,], c(C), tolerance=.Machine$double.eps^0.5, 
+                 info="double matrix elements not equivalent")  
+    expect_equal(fgpuC2[,], c(C2), tolerance=.Machine$double.eps^0.5, 
                  info="double matrix elements not equivalent")  
 })
 

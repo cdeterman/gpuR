@@ -318,9 +318,9 @@ vclGEMV<- function(A, B){
     BisVec <- inherits(B, "vclVector")
     
     if(AisVec){
-        C <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)
+        C <- vclVector(length = nrow(B), type=type, ctx_id = A@.context_index)
     }else{
-        C <- vclVector(length = length(B), type=type, ctx_id = A@.context_index)
+        C <- vclVector(length = nrow(A), type=type, ctx_id = A@.context_index)
     }
     
     
