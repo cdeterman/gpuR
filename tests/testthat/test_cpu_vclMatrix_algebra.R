@@ -12,6 +12,7 @@ ORDER <- 4
 Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
+Ansq <- matrix(A, nrow = ORDER/2, ncol = ORDER*2)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
 v <- rnorm(ORDER)
@@ -468,12 +469,17 @@ test_that("CPU vclMatrix Single Precision transpose", {
     has_cpu_skip()
     
     At <- t(A)
+    Ansqt <- t(Ansq)
     
     fgpuA <- vclMatrix(A, type="float")
+    fgpuAnsq <- vclMatrix(Ansq, type="float")
     fgpuAt <- t(fgpuA)
+    fgpuAnsqt <- t(fgpuAnsq)
     
     expect_is(fgpuAt, "fvclMatrix")
     expect_equal(fgpuAt[,], At, tolerance=1e-07, 
+                 info="transposed float matrix elements not equivalent") 
+    expect_equal(fgpuAnsqt[,], Ansqt, tolerance=1e-07, 
                  info="transposed float matrix elements not equivalent") 
 })
 
