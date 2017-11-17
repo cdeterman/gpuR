@@ -372,7 +372,7 @@ setMethod("%*%", signature(x="vclVector", y = "vclVector"),
               if( length(x) != length(y)){
                   stop("Non-conformant arguments")
               }
-              return(vclVecInner(x, y))
+              return(gpuVecInnerProd(x, y))
           },
           valueClass = "vclVector"
 )
@@ -397,7 +397,7 @@ setMethod("%*%", signature(x="vclVector", y = "vclMatrix"),
 setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           function(X,Y)
           {
-              return(vclVecOuter(X, Y))
+              return(gpuVecOuterProd(X, Y))
           },
           valueClass = "vclMatrix"
 )
@@ -413,11 +413,11 @@ setMethod("Arith", c(e1="vclVector", e2="vclVector"),
               
               op = .Generic[[1]]
               switch(op,
-                     `+` = vclVec_axpy(1, e1, e2),
-                     `-` = vclVec_axpy(-1, e2, e1),
-                     `*` = vclVecElemMult(e1, e2),
-                     `/` = vclVecElemDiv(e1,e2),
-                     `^` = vclVecElemPow(e1, e2),
+                     `+` = gpuVec_axpy(1, e1, e2),
+                     `-` = gpuVec_axpy(-1, e2, e1),
+                     `*` = gpuVecElemMult(e1, e2),
+                     `/` = gpuVecElemDiv(e1,e2),
+                     `^` = gpuVecElemPow(e1, e2),
                      stop("undefined operation")
               )
           },
@@ -435,20 +435,20 @@ setMethod("Arith", c(e1="numeric", e2="vclVector"),
               switch(op,
                      `+` = {
                          e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclVec_axpy(1, e1, e2)
+                         gpuVec_axpy(1, e1, e2)
                      },
                      `-` = {
                          e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclVec_axpy(-1, e2, e1)
+                         gpuVec_axpy(-1, e2, e1)
                      },
-                     `*` = vclVecScalarMult(e2, e1),
+                     `*` = gpuVecScalarMult(e2, e1),
                      `/` = {
                          e1 = vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclVecElemDiv(e1, e2)
+                         gpuVecElemDiv(e1, e2)
                      },
                      `^` = {
                          e1 <- vclVector(rep(e1, length(e2)), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclVecElemPow(e1, e2)
+                         gpuVecElemPow(e1, e2)
                      },
                      stop("undefined operation")
               )
@@ -467,15 +467,15 @@ setMethod("Arith", c(e1="vclVector", e2="numeric"),
               switch(op,
                      `+` = {
                          e2 = vclVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
-                         vclVec_axpy(1, e1, e2)
+                         gpuVec_axpy(1, e1, e2)
                      },
                      `-` = {
                          e2 = vclVector(rep(e2, length(e1)), type=typeof(e1), ctx_id = e1@.context_index)
-                         vclVec_axpy(-1, e2, e1)
+                         gpuVec_axpy(-1, e2, e1)
                      },
-                     `*` = vclVecScalarMult(e1, e2),
-                     `/` = vclVecScalarDiv(e1, e2),
-                     `^` = vclVecScalarPow(e1, e2),
+                     `*` = gpuVecScalarMult(e1, e2),
+                     `/` = gpuVecScalarDiv(e1, e2, 0),
+                     `^` = gpuVecScalarPow(e1, e2, 0),
                      stop("undefined operation")
               )
           },
@@ -489,7 +489,7 @@ setMethod("Arith", c(e1="vclVector", e2="missing"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `-` = vclVector_unary_axpy(e1),
+                     `-` = gpuVector_unary_axpy(e1),
                      stop("undefined operation")
               )
           },
@@ -531,7 +531,7 @@ setMethod("Math", c(x="vclVector"),
                      `log10` = vclVecElemLog10(x),
                      `exp` = vclVecElemExp(x),
                      `abs` = vclVecElemAbs(x),
-                     `sqrt` = vclVecSqrt(x),
+                     `sqrt` = gpuVecSqrt(x),
                      `sign` = gpuVecSign(x),
                      stop("undefined operation")
               )

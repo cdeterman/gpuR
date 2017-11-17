@@ -173,10 +173,10 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
-                     `+` = vclVec_axpy(1, y, x, inplace = TRUE),
-                     `-` = vclVec_axpy(-1, y, x, inplace = TRUE),
-                     `*` = vclVecElemMult(x, y, inplace = TRUE),
-                     `/` = vclVecElemDiv(x, y, inplace = TRUE),
+                     `+` = gpuVec_axpy(1, y, x, inplace = TRUE),
+                     `-` = gpuVec_axpy(-1, y, x, inplace = TRUE),
+                     `*` = gpuVecElemMult(x, y, inplace = TRUE),
+                     `/` = gpuVecElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -212,14 +212,14 @@ setMethod("inplace",
 		  	switch(deparse(substitute(f)),
 		  	       `+` = {
 		  	           z <- vclVector(rep(y, length(x)), type=typeof(x), ctx_id = x@.context_index)
-		  	           vclVec_axpy(1, z, x, inplace = TRUE)
+		  	           gpuVec_axpy(1, z, x, inplace = TRUE)
 		  	       },
 		  	       `-` = {
 		  	           z <- vclVector(rep(y, length(x)), type=typeof(x), ctx_id = x@.context_index)
-		  	           vclVec_axpy(-1, z, x, inplace = TRUE)
+		  	           gpuVec_axpy(-1, z, x, inplace = TRUE)
 		  	       },
-		  	       `*` = vclVecScalarMult(x, y, inplace = TRUE),
-		  	       `/` = vclVecScalarDiv(x, y, inplace = TRUE),
+		  	       `*` = gpuVecScalarMult(x, y, inplace = TRUE),
+		  	       `/` = gpuVecScalarDiv(x, y, inplace = TRUE),
 		  		   stop("undefined operation")
 		  	)
 		  })
@@ -233,14 +233,14 @@ setMethod("inplace",
               switch(deparse(substitute(f)),
                      `+` = {
                          z <- vclVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
-                         vclVec_axpy(1, z, y, inplace = TRUE)
+                         gpuVec_axpy(1, z, y, inplace = TRUE)
                      },
                      `-` = {
                          z <- vclVector(x, length = length(y), type=typeof(y), ctx_id = y@.context_index)
-                         vclVec_axpy(-1, z, y, inplace = TRUE, order = 1)
+                         gpuVec_axpy(-1, z, y, inplace = TRUE, order = 1)
                      },
-                     `*` = vclVecScalarMult(x, y, inplace = TRUE),
-                     `/` = vclVecScalarDiv(x, y, 1, inplace = TRUE),
+                     `*` = gpuVecScalarMult(x, y, inplace = TRUE),
+                     `/` = gpuVecScalarDiv(x, y, 1, inplace = TRUE),
                      stop("undefined operation")
               )
           })

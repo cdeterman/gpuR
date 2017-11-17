@@ -1658,11 +1658,15 @@ vclMatElemHypTan <- function(A, inplace = FALSE){
 }
 
 # GPU Element-Wise Natural Log
-vclMatElemLog <- function(A){
+vclMatElemLog <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1682,15 +1686,23 @@ vclMatElemLog <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Log Base
-vclMatElemLogBase <- function(A, base){
+vclMatElemLogBase <- function(A, base, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1713,15 +1725,23 @@ vclMatElemLogBase <- function(A, base){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Base 10 Log
-vclMatElemLog10 <- function(A){
+vclMatElemLog10 <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
+    }else{
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
@@ -1741,7 +1761,11 @@ vclMatElemLog10 <- function(A){
            stop("type not recognized")
     )
     
-    return(C)
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Exponential
