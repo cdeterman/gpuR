@@ -519,18 +519,18 @@ setMethod("Math", c(x="vclVector"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `sin` = vclVecElemSin(x),
-                     `asin` = vclVecElemArcSin(x),
-                     `sinh` = vclVecElemHypSin(x),
-                     `cos` = vclVecElemCos(x),
-                     `acos` = vclVecElemArcCos(x),
-                     `cosh` = vclVecElemHypCos(x),
-                     `tan` = vclVecElemTan(x),
-                     `atan` = vclVecElemArcTan(x),
-                     `tanh` = vclVecElemHypTan(x),
-                     `log10` = vclVecElemLog10(x),
-                     `exp` = vclVecElemExp(x),
-                     `abs` = vclVecElemAbs(x),
+                     `sin` = gpuVecElemSin(x),
+                     `asin` = gpuVecElemArcSin(x),
+                     `sinh` = gpuVecElemHypSin(x),
+                     `cos` = gpuVecElemCos(x),
+                     `acos` = gpuVecElemArcCos(x),
+                     `cosh` = gpuVecElemHypCos(x),
+                     `tan` = gpuVecElemTan(x),
+                     `atan` = gpuVecElemArcTan(x),
+                     `tanh` = gpuVecElemHypTan(x),
+                     `log10` = gpuVecElemLog10(x),
+                     `exp` = gpuVecElemExp(x),
+                     `abs` = gpuVecElemAbs(x),
                      `sqrt` = gpuVecSqrt(x),
                      `sign` = gpuVecSign(x),
                      stop("undefined operation")
@@ -545,10 +545,10 @@ setMethod("log", c(x="vclVector"),
           function(x, base=NULL)
           {
               if(is.null(base)){
-                  vclVecElemLog(x) 
+                  gpuVecElemLog(x) 
               }else{
                   assert_is_numeric(base)
-                  vclVecElemLogBase(x, base)
+                  gpuVecElemLogBase(x, base)
               }
               
           },

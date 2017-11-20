@@ -500,7 +500,11 @@ gpuVecElemSin <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -508,13 +512,17 @@ gpuVecElemSin <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_sin(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_sin(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },
@@ -537,7 +545,11 @@ gpuVecElemArcSin <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -545,13 +557,17 @@ gpuVecElemArcSin <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_asin(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_asin(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -572,7 +588,11 @@ gpuVecElemHypSin <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -580,13 +600,17 @@ gpuVecElemHypSin <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_sinh(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_sinh(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -608,7 +632,11 @@ gpuVecElemCos <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -616,13 +644,17 @@ gpuVecElemCos <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_cos(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_cos(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },
@@ -644,7 +676,11 @@ gpuVecElemArcCos <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -652,13 +688,17 @@ gpuVecElemArcCos <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_acos(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_acos(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -680,7 +720,11 @@ gpuVecElemHypCos <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -688,13 +732,17 @@ gpuVecElemHypCos <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_cosh(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_cosh(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -716,7 +764,11 @@ gpuVecElemTan <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -724,13 +776,17 @@ gpuVecElemTan <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_tan(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_tan(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },
@@ -752,7 +808,11 @@ gpuVecElemArcTan <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -760,13 +820,17 @@ gpuVecElemArcTan <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_atan(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_atan(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -788,7 +852,11 @@ gpuVecElemHypTan <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)   
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)    
+        }
     }
     
     switch(type,
@@ -796,13 +864,17 @@ gpuVecElemHypTan <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_tanh(A@address,
+                                            is(A, "vclVector"),
                                             C@address,
+                                            is(C, "vclVector"),
                                             6L,
                                             A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_tanh(A@address,
+                                       is(A, "vclVector"),
                                        C@address,
+                                       is(C, "vclVector"),
                                        8L,
                                        A@.context_index - 1)
            },
@@ -821,20 +893,28 @@ gpuVecElemLog10 <- function(A){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclVector")){
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_log10(A@address,
+                                             is(A, "vclVector"),
                                              C@address,
+                                             is(C, "vclVector"),
                                              6L,
                                              A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_log10(A@address,
+                                        is(A, "vclVector"),
                                         C@address,
+                                        is(C, "vclVector"),
                                         8L,
                                         A@.context_index - 1)
            },
@@ -848,20 +928,28 @@ gpuVecElemLog <- function(A){
     
     type <- typeof(A)
     
-    C <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclVector")){
+        C <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_log(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_log(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },
@@ -876,21 +964,29 @@ gpuVecElemLogBase <- function(A, base){
     
     type <- typeof(A)
     
-    C <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclVector")){
+        C <- vclVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuVector(length = length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_log_base(A@address,
+                                                is(A, "vclVector"),
                                                 C@address,
+                                                is(C, "vclVector"),
                                                 base,
                                                 6L,
                                                 A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_log_base(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            base,
                                            8L,
                                            A@.context_index - 1)
@@ -905,20 +1001,28 @@ gpuVecElemExp <- function(A){
     
     type <- typeof(A)
     
-    C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclVector")){
+        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+    }
     
     switch(type,
            integer = {
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_exp(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_exp(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },
@@ -935,7 +1039,11 @@ gpuVecElemAbs <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        }
     }
     
     switch(type,
@@ -943,13 +1051,17 @@ gpuVecElemAbs <- function(A, inplace = FALSE){
                stop("integer not currently implemented")
            },
            float = {cpp_gpuVector_elem_abs(A@address,
+                                           is(A, "vclVector"),
                                            C@address,
+                                           is(C, "vclVector"),
                                            6L,
                                            A@.context_index - 1)
            },
            double = {
                cpp_gpuVector_elem_abs(A@address,
+                                      is(A, "vclVector"),
                                       C@address,
+                                      is(C, "vclVector"),
                                       8L,
                                       A@.context_index - 1)
            },

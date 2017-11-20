@@ -339,393 +339,326 @@ cpp_gpuVector_sqrt(
 template <typename T>
 void 
 cpp_gpuVector_elem_sin(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_sin(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_sin(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_asin(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL, 
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_asin(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_asin(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_sinh(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_sinh(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_sinh(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_cos(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
+    *vcl_C = viennacl::linalg::element_cos(*vcl_A);
     
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_cos(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_acos(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
+    *vcl_C = viennacl::linalg::element_acos(*vcl_A);
     
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_acos(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_cosh(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_cosh(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_cosh(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_tan(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_,
+    const bool AisVCL, 
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_tan(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_tan(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_atan(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_,
+    const bool AisVCL, 
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_atan(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_atan(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_tanh(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL, 
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_tanh(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_tanh(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_exp(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
+    *vcl_C = viennacl::linalg::element_exp(*vcl_A);
     
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_exp(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_log10(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL, 
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_log10(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_log10(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_log(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_log(*vcl_A);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_log(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_log_base(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     T base,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    *vcl_C = viennacl::linalg::element_log10(*vcl_A);
+    *vcl_C /= log10(base);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
-    
-    int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_log10(vcl_A);
-    vcl_C /= log10(base);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
 void 
 cpp_gpuVector_elem_abs(
-    SEXP ptrA_, SEXP ptrC_,
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrC_,
+    const bool CisVCL,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-
-    XPtr<dynEigenVec<T> > ptrA(ptrA_);
-    XPtr<dynEigenVec<T> > ptrC(ptrC_);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Am = ptrA->data();
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > Cm = ptrC->data();
+    *vcl_C = viennacl::linalg::element_fabs(*vcl_A);
+    *vcl_C /= log10(base);
     
-    const int M = Am.size();
-    
-    viennacl::vector_base<T> vcl_A(M, ctx = ctx);
-    viennacl::vector_base<T> vcl_C(M, ctx = ctx);
-    
-    // viennacl::copy(Am, vcl_A); 
-    viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
-    
-    vcl_C = viennacl::linalg::element_fabs(vcl_A);
-    
-    // viennacl::copy(vcl_C, Cm);
-    viennacl::fast_copy(vcl_C.begin(), vcl_C.end(), &(Cm[0]));
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*vcl_C);
+        ptrC->release_device();
+    }
 }
 
 
@@ -1971,286 +1904,6 @@ cpp_gpuMatrix_scalar_axpy(
 //     
 //     vcl_C /= alpha;
 // }
-
-
-template <typename T>
-void cpp_vclVector_elem_sin(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_sin(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_asin(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_asin(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_sinh(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_sinh(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_cos(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_cos(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_acos(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_acos(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_cosh(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{   
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_cosh(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_tan(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_tan(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_atan(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_atan(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_tanh(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_tanh(ptrA);
-}
-
-template <typename T>
-void cpp_vclVector_elem_exp(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_exp(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_log10(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{ 
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_log10(ptrA);
-}
-
-
-template <typename T>
-void cpp_vclVector_elem_log_base(
-    SEXP ptrA_, 
-    SEXP ptrC_,
-    T base)
-{
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_log10(ptrA);
-    ptrC /= log10(base);
-}
-
-template <typename T>
-void cpp_vclVector_elem_log(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > ptrA  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > ptrC  = pC->data();
-
-    ptrC = viennacl::linalg::element_log(ptrA);
-}
-
-template <typename T>
-void 
-cpp_vclVector_elem_abs(
-    SEXP ptrA_, 
-    SEXP ptrC_)
-{    
-    Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-    
-    viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
-    
-    vcl_C = viennacl::linalg::element_fabs(vcl_A);
-}
-
-
-// template <typename T>
-// void 
-// cpp_vclVector_elem_abs2(
-//     SEXP ptrC_,
-//     SEXP sourceCode_,
-//     const int ctx_id)
-// {    
-//     // Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
-//     // Rcpp::XPtr<dynVCLVec<T> > pC(ptrC_);
-//     // 
-//     // viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
-//     // viennacl::vector_range<viennacl::vector_base<T> > vcl_C  = pC->data();
-//     // 
-//     // vcl_C = viennacl::linalg::element_fabs(vcl_A);
-//     
-//     viennacl::vector_base<T> *vcl_C;
-//     int max_local_size;
-//     
-//     // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-//     // viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
-//     // B = B + (alpha * scalar);
-//     // B = B + alpha;
-//     
-//     std::string my_kernel = as<std::string>(sourceCode_);
-//     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-//     
-//     Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
-//     // viennacl::matrix_range<viennacl::matrix<T> > C  = ptrC->data();
-//     vcl_C = getVCLVecptr<T>(ptrC_, true, ctx_id);
-//     
-//     int M = vcl_C->size();
-//     int M_internal = vcl_C->internal_size();
-//     
-//     // add kernel to program
-//     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
-//     
-//     // get compiled kernel function
-//     viennacl::ocl::kernel & my_kernel_mul = my_prog.get_kernel("abs_kernel");
-//     
-//     cl_device_type type_check = ctx.current_device().type();
-//     
-//     if(type_check & CL_DEVICE_TYPE_CPU){
-//         max_local_size = 1;
-//     }else{
-//         cl_device_id raw_device = ctx.current_device().id();
-//         cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "abs_kernel").handle().get();
-//         size_t preferred_work_group_size_multiple;
-//         
-//         cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-//                                               CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-//                                               sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-//         
-//         max_local_size = preferred_work_group_size_multiple;
-//     }
-//     
-//     // set global work sizes
-//     my_kernel_mul.global_work_size(0, M_internal);
-//     
-//     // set local work sizes
-//     my_kernel_mul.local_work_size(0, max_local_size);
-//     
-//     // execute kernel
-//     viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, M));
-//     
-// }
-
 
 template <typename T>
 T
@@ -3764,20 +3417,23 @@ cpp_gpuVector_sqrt(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_sin(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_sin<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_sin<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_sin<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sin<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3787,20 +3443,23 @@ cpp_gpuVector_elem_sin(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_asin(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_asin<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_asin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_asin<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_asin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_asin<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_asin<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3810,20 +3469,23 @@ cpp_gpuVector_elem_asin(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_sinh(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_sinh<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sinh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_sinh<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sinh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_sinh<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_sinh<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3833,20 +3495,23 @@ cpp_gpuVector_elem_sinh(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_cos(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_cos<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_cos<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_cos<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cos<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3856,20 +3521,23 @@ cpp_gpuVector_elem_cos(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_acos(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_acos<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_acos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_acos<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_acos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_acos<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_acos<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3879,20 +3547,23 @@ cpp_gpuVector_elem_acos(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_cosh(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_cosh<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cosh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_cosh<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cosh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_cosh<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_cosh<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3903,20 +3574,23 @@ cpp_gpuVector_elem_cosh(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_tan(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_tan<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_tan<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_tan<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tan<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3926,20 +3600,23 @@ cpp_gpuVector_elem_tan(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_atan(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_atan<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_atan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_atan<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_atan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_atan<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_atan<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3949,20 +3626,23 @@ cpp_gpuVector_elem_atan(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_tanh(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_tanh<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tanh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_tanh<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tanh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_tanh<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_tanh<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3972,20 +3652,23 @@ cpp_gpuVector_elem_tanh(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_log10(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_log10<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log10<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_log10<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log10<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_log10<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log10<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -3995,20 +3678,23 @@ cpp_gpuVector_elem_log10(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_log(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_log<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_log<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_log<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_log<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -4018,7 +3704,10 @@ cpp_gpuVector_elem_log(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_log_base(
-    SEXP ptrA, SEXP ptrB,
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     SEXP base,
     const int type_flag,
     int ctx_id)
@@ -4026,13 +3715,13 @@ cpp_gpuVector_elem_log_base(
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_log_base<int>(ptrA, ptrB, as<int>(base), ctx_id);
+            cpp_gpuVector_elem_log_base<int>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_log_base<float>(ptrA, ptrB, as<float>(base), ctx_id);
+            cpp_gpuVector_elem_log_base<float>(ptrA, AisVCL, ptrB, BisVCL, as<float>(base), ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_log_base<double>(ptrA, ptrB, as<double>(base), ctx_id);
+            cpp_gpuVector_elem_log_base<double>(ptrA, AisVCL, ptrB, BisVCL, as<double>(base), ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -4042,20 +3731,23 @@ cpp_gpuVector_elem_log_base(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_exp(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_exp<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_exp<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_exp<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_exp<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_exp<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_exp<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -4065,20 +3757,23 @@ cpp_gpuVector_elem_exp(
 // [[Rcpp::export]]
 void
 cpp_gpuVector_elem_abs(
-    SEXP ptrA, SEXP ptrB, 
+    SEXP ptrA, 
+    const bool AisVCL, 
+    SEXP ptrB,
+    const bool BisVCL,
     const int type_flag,
     int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuVector_elem_abs<int>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_abs<int>(ptrA, AisVCl, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuVector_elem_abs<float>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_abs<float>(ptrA, AisVCl, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuVector_elem_abs<double>(ptrA, ptrB, ctx_id);
+            cpp_gpuVector_elem_abs<double>(ptrA, AisVCl, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuVector object!");
@@ -4108,347 +3803,6 @@ cpp_gpuVector_min(
 }
 
 /*** vclVector Functions ***/
-    
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_sin(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_sin<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_sin<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_sin<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_asin(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_asin<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_asin<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_asin<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_sinh(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_sinh<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_sinh<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_sinh<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_cos(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_cos<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_cos<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_cos<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_acos(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_acos<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_acos<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_acos<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_cosh(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_cosh<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_cosh<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_cosh<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_tan(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_tan<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_tan<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_tan<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_atan(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_atan<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_atan<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_atan<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_tanh(
-    SEXP ptrA, SEXP ptrB,
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_tanh<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_tanh<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_tanh<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_log(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_log<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_log<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_log<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_log10(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_log10<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_log10<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_log10<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_log_base(
-    SEXP ptrA, SEXP ptrB, 
-    SEXP R_base,
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_log_base<int>(ptrA, ptrB, as<int>(R_base));
-            return;
-        case 6:
-            cpp_vclVector_elem_log_base<float>(ptrA, ptrB, as<float>(R_base));
-            return;
-        case 8:
-            cpp_vclVector_elem_log_base<double>(ptrA, ptrB, as<double>(R_base));
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_exp(
-    SEXP ptrA, SEXP ptrB, 
-    const int type_flag)
-{
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_exp<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclVector_elem_exp<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclVector_elem_exp<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-// [[Rcpp::export]]
-void
-cpp_vclVector_elem_abs(
-    SEXP ptrA, SEXP ptrC, 
-    const int type_flag)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclVector_elem_abs<int>(ptrA, ptrC);
-            return;
-        case 6:
-            cpp_vclVector_elem_abs<float>(ptrA, ptrC);
-            return;
-        case 8:
-            cpp_vclVector_elem_abs<double>(ptrA, ptrC);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclVector object!");
-    }
-}
-
-
-// // [[Rcpp::export]]
-// void
-// cpp_vclVector_elem_abs2(
-//     SEXP ptrA,
-//     SEXP sourceCode,
-//     const int ctx_id,
-//     const int type_flag)
-// {
-//     
-//     switch(type_flag) {
-//     case 4:
-//         cpp_vclVector_elem_abs2<int>(ptrA, sourceCode, ctx_id);
-//         return;
-//     case 6:
-//         cpp_vclVector_elem_abs2<float>(ptrA, sourceCode, ctx_id);
-//         return;
-//     case 8:
-//         cpp_vclVector_elem_abs2<double>(ptrA, sourceCode, ctx_id);
-//         return;
-//     default:
-//         throw Rcpp::exception("unknown type detected for vclVector object!");
-//     }
-// }
 
 // [[Rcpp::export]]
 SEXP

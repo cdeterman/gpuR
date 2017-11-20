@@ -189,16 +189,17 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
-                     `abs` = vclVecElemAbs(x, inplace = TRUE),
-                     `sin` = vclVecElemSin(x, inplace = TRUE),
-                     `asin` = vclVecElemArcSin(x, inplace = TRUE),
-                     `sinh` = vclVecElemHypSin(x, inplace = TRUE),
-                     `cos` = vclVecElemCos(x, inplace = TRUE),
-                     `acos` = vclVecElemArcCos(x, inplace = TRUE),
-                     `cosh` = vclVecElemHypCos(x, inplace = TRUE),
-                     `tan` = vclVecElemTan(x, inplace = TRUE),
-                     `atan` = vclVecElemArcTan(x, inplace = TRUE),
-                     `tanh` = vclVecElemHypTan(x, inplace = TRUE),
+                     `exp` = gpuVecElemExp(x, inplace = TRUE),
+                     `abs` = gpuVecElemAbs(x, inplace = TRUE),
+                     `sin` = gpuVecElemSin(x, inplace = TRUE),
+                     `asin` = gpuVecElemArcSin(x, inplace = TRUE),
+                     `sinh` = gpuVecElemHypSin(x, inplace = TRUE),
+                     `cos` = gpuVecElemCos(x, inplace = TRUE),
+                     `acos` = gpuVecElemArcCos(x, inplace = TRUE),
+                     `cosh` = gpuVecElemHypCos(x, inplace = TRUE),
+                     `tan` = gpuVecElemTan(x, inplace = TRUE),
+                     `atan` = gpuVecElemArcTan(x, inplace = TRUE),
+                     `tanh` = gpuVecElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
