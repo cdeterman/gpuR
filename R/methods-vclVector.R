@@ -504,8 +504,8 @@ setMethod("Arith", c(e1="vclVector", e2="vclMatrix"),
               op = .Generic[[1]]
               
               switch(op,
-                     `+` = vclMatVec_axpy(1, e1, e2),
-                     `-` = vclMatVec_axpy(-1, e2, e1),
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
                      stop("undefined operation")
               )
           },

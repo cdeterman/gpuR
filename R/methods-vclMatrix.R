@@ -507,11 +507,11 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclMatrix"),
               op = .Generic[[1]]
               
               switch(op,
-                     `+` = vclMat_axpy(1, e1, e2),
-                     `-` = vclMat_axpy(-1, e2, e1),
-                     `*` = vclMatElemMult(e1, e2),
-                     `/` = vclMatElemDiv(e1,e2),
-                     `^` = vclMatElemPow(e1, e2),
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
                      stop("undefined operation")
               )
           },
@@ -529,11 +529,11 @@ setMethod("Arith", c(e1="vclMatrix", e2="matrix"),
               op = .Generic[[1]]
               
               switch(op,
-                     `+` = vclMat_axpy(1, e1, e2),
-                     `-` = vclMat_axpy(-1, e2, e1),
-                     `*` = vclMatElemMult(e1, e2),
-                     `/` = vclMatElemDiv(e1,e2),
-                     `^` = vclMatElemPow(e1, e2),
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
                      stop("undefined operation")
               )
           },
@@ -550,11 +550,11 @@ setMethod("Arith", c(e1="matrix", e2="vclMatrix"),
               op = .Generic[[1]]
               
               switch(op,
-                     `+` = vclMat_axpy(1, e1, e2),
-                     `-` = vclMat_axpy(-1, e2, e1),
-                     `*` = vclMatElemMult(e1, e2),
-                     `/` = vclMatElemDiv(e1,e2),
-                     `^` = vclMatElemPow(e1, e2),
+                     `+` = gpu_Mat_axpy(1, e1, e2),
+                     `-` = gpu_Mat_axpy(-1, e2, e1),
+                     `*` = gpuMatElemMult(e1, e2),
+                     `/` = gpuMatElemDiv(e1,e2),
+                     `^` = gpuMatElemPow(e1, e2),
                      stop("undefined operation")
               )
           },
@@ -572,15 +572,15 @@ setMethod("Arith", c(e1="vclMatrix", e2="numeric"),
               switch(op,
                      `+` = {
                          e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1), ctx_id=e1@.context_index)
-                         vclMat_axpy(1, e1, e2)
+                         gpu_Mat_axpy(1, e1, e2)
                      },
                      `-` = {
                          e2 <- vclMatrix(e2, ncol=ncol(e1), nrow=nrow(e1), type=typeof(e1), ctx_id=e1@.context_index)
-                         vclMat_axpy(-1, e2, e1)
+                         gpu_Mat_axpy(-1, e2, e1)
                      },
-                     `*` = vclMatScalarMult(e1, e2),
-                     `/` = vclMatScalarDiv(e1, e2),
-                     `^` = vclMatScalarPow(e1, e2),
+                     `*` = gpuMatScalarMult(e1, e2),
+                     `/` = gpuMatScalarDiv(e1, e2),
+                     `^` = gpuMatScalarPow(e1, e2),
                      stop("undefined operation")
               )
 
@@ -599,21 +599,21 @@ setMethod("Arith", c(e1="numeric", e2="vclMatrix"),
               switch(op,
                      `+` = {
                          # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMat_axpy(1, e1, e2, AisScalar = TRUE)
+                         gpu_Mat_axpy(1, e1, e2, AisScalar = TRUE)
                      },
                      `-` = {
                          # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
                          # vclMat_axpy(-1, e2, e1)
-                         vclMat_axpy(-1, e1, e2, AisScalar = TRUE)
+                         gpu_Mat_axpy(-1, e1, e2, AisScalar = TRUE)
                      },
-                     `*` = vclMatScalarMult(e2, e1),
+                     `*` = gpuMatScalarMult(e2, e1),
                      `/` = {
                          # e1 = vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMatScalarDiv(e1, e2, AisScalar = TRUE)
+                         gpuMatScalarDiv(e1, e2, AisScalar = TRUE)
                      },
                      `^` = {
                          e1 <- vclMatrix(e1, ncol=ncol(e2), nrow=nrow(e2), type=typeof(e2), ctx_id = e2@.context_index)
-                         vclMatElemPow(e1, e2)
+                         gpuMatElemPow(e1, e2)
                      },
                      stop("undefined operation")
               )
@@ -643,8 +643,8 @@ setMethod("Arith", c(e1="vclMatrix", e2="vclVector"),
               op = .Generic[[1]]
               
               switch(op,
-                     `+` = vclMatVec_axpy(1, e1, e2),
-                     `-` = vclMatVec_axpy(-1, e2, e1),
+                     `+` = gpuMatVec_axpy(1, e1, e2),
+                     `-` = gpuMatVec_axpy(-1, e2, e1),
                      stop("undefined operation")
               )
           },
@@ -659,19 +659,19 @@ setMethod("Math", c(x="vclMatrix"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `sin` = vclMatElemSin(x),
-                     `asin` = vclMatElemArcSin(x),
-                     `sinh` = vclMatElemHypSin(x),
-                     `cos` = vclMatElemCos(x),
-                     `acos` = vclMatElemArcCos(x),
-                     `cosh` = vclMatElemHypCos(x),
-                     `tan` = vclMatElemTan(x),
-                     `atan` = vclMatElemArcTan(x),
-                     `tanh` = vclMatElemHypTan(x),
+                     `sin` = gpuMatElemSin(x),
+                     `asin` = gpuMatElemArcSin(x),
+                     `sinh` = gpuMatElemHypSin(x),
+                     `cos` = gpuMatElemCos(x),
+                     `acos` = gpuMatElemArcCos(x),
+                     `cosh` = gpuMatElemHypCos(x),
+                     `tan` = gpuMatElemTan(x),
+                     `atan` = gpuMatElemArcTan(x),
+                     `tanh` = gpuMatElemHypTan(x),
                      `log10` = vclMatElemLog10(x),
                      `exp` = vclMatElemExp(x),
                      `abs` = vclMatElemAbs(x),
-                     `sqrt` = vclMatSqrt(x),
+                     `sqrt` = gpuMatSqrt(x),
                      `sign` = gpuMatSign(x),
                      stop("undefined operation")
               )

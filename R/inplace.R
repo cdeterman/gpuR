@@ -21,10 +21,10 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
-                     `+` = vclMat_axpy(1, y, x, inplace = TRUE),
-                     `-` = vclMat_axpy(-1, y, x, inplace = TRUE),
-                     `*` = vclMatElemMult(x, y, inplace = TRUE),
-                     `/` = vclMatElemDiv(x, y, inplace = TRUE),
+                     `+` = gpu_Mat_axpy(1, y, x, inplace = TRUE),
+                     `-` = gpu_Mat_axpy(-1, y, x, inplace = TRUE),
+                     `*` = gpuMatElemMult(x, y, inplace = TRUE),
+                     `/` = gpuMatElemDiv(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -37,17 +37,17 @@ setMethod("inplace",
               
               switch(deparse(substitute(f)),
                      `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
-                     `exp` = vclMatElemExp(x, inplace = TRUE),
+                     `exp` = gpuMatElemExp(x, inplace = TRUE),
                      `abs` = vclMatElemAbs(x, inplace = TRUE),
-                     `sin` = vclMatElemSin(x, inplace = TRUE),
-                     `asin` = vclMatElemArcSin(x, inplace = TRUE),
-                     `sinh` = vclMatElemHypSin(x, inplace = TRUE),
-                     `cos` = vclMatElemCos(x, inplace = TRUE),
-                     `acos` = vclMatElemArcCos(x, inplace = TRUE),
-                     `cosh` = vclMatElemHypCos(x, inplace = TRUE),
-                     `tan` = vclMatElemTan(x, inplace = TRUE),
-                     `atan` = vclMatElemArcTan(x, inplace = TRUE),
-                     `tanh` = vclMatElemHypTan(x, inplace = TRUE),
+                     `sin` = gpuMatElemSin(x, inplace = TRUE),
+                     `asin` = gpuMatElemArcSin(x, inplace = TRUE),
+                     `sinh` = gpuMatElemHypSin(x, inplace = TRUE),
+                     `cos` = gpuMatElemCos(x, inplace = TRUE),
+                     `acos` = gpuMatElemArcCos(x, inplace = TRUE),
+                     `cosh` = gpuMatElemHypCos(x, inplace = TRUE),
+                     `tan` = gpuMatElemTan(x, inplace = TRUE),
+                     `atan` = gpuMatElemArcTan(x, inplace = TRUE),
+                     `tanh` = gpuMatElemHypTan(x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -73,10 +73,10 @@ setMethod("inplace",
           function(f, x, y){
 
               switch(deparse(substitute(f)),
-                     `+` = vclMat_axpy(1, x, y, inplace = TRUE, AisScalar = TRUE),
-                     `-` = vclMat_axpy(-1, x, y, inplace = TRUE, AisScalar = TRUE),
-                     `/` = vclMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE),
-                     `*` = vclMatScalarMult(y, x, inplace = TRUE),
+                     `+` = gpu_Mat_axpy(1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `-` = gpu_Mat_axpy(-1, x, y, inplace = TRUE, AisScalar = TRUE),
+                     `/` = gpuMatScalarDiv(x, y, AisScalar = TRUE, inplace = TRUE),
+                     `*` = gpuMatScalarMult(y, x, inplace = TRUE),
                      stop("undefined operation")
               )
           })
@@ -88,10 +88,10 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
-                     `+` = vclMat_axpy(1, x, y, inplace = TRUE, BisScalar = TRUE),
-                     `-` = vclMat_axpy(-1, x, y, inplace = TRUE, BisScalar = TRUE),
-                     `/` = vclMatScalarDiv(x, y, inplace = TRUE),
-                     `*` = vclMatScalarMult(x, y, inplace = TRUE),
+                     `+` = gpu_Mat_axpy(1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `-` = gpu_Mat_axpy(-1, x, y, inplace = TRUE, BisScalar = TRUE),
+                     `/` = gpuMatScalarDiv(x, y, inplace = TRUE),
+                     `*` = gpuMatScalarMult(x, y, inplace = TRUE),
                      stop("undefined operation")
               )
           })
