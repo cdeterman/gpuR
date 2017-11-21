@@ -578,24 +578,24 @@ cpp_gpuMatrix_elem_tanh <- function(ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_i
     invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_tanh`, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log`, ptrA, ptrB, type_flag))
+cpp_gpuMatrix_elem_log <- function(ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log`, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log_base <- function(ptrA, ptrB, base, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log_base`, ptrA, ptrB, base, type_flag))
+cpp_gpuMatrix_elem_log_base <- function(ptrA, AisVCL, ptrB, BisVCL, base, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log_base`, ptrA, AisVCL, ptrB, BisVCL, base, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_log10 <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log10`, ptrA, ptrB, type_flag))
+cpp_gpuMatrix_elem_log10 <- function(ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_log10`, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_exp <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_exp`, ptrA, ptrB, type_flag))
+cpp_gpuMatrix_elem_exp <- function(ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_exp`, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_elem_abs <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_abs`, ptrA, ptrB, type_flag))
+cpp_gpuMatrix_elem_abs <- function(ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_elem_abs`, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_axpy <- function(alpha, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id) {
@@ -612,26 +612,6 @@ cpp_gpuMatrix_scalar_axpy <- function(alpha, scalar, ptrB, BisVCL, order, max_lo
 
 cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
     invisible(.Call(`_gpuR_cpp_vclMatrix_unary_axpy`, ptrA, type_flag, ctx_id))
-}
-
-cpp_vclMatrix_elem_log <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_elem_log`, ptrA, ptrB, type_flag))
-}
-
-cpp_vclMatrix_elem_log10 <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_elem_log10`, ptrA, ptrB, type_flag))
-}
-
-cpp_vclMatrix_elem_log_base <- function(ptrA, ptrB, base, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_elem_log_base`, ptrA, ptrB, base, type_flag))
-}
-
-cpp_vclMatrix_elem_exp <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_elem_exp`, ptrA, ptrB, type_flag))
-}
-
-cpp_vclMatrix_elem_abs <- function(ptrA, ptrB, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_elem_abs`, ptrA, ptrB, type_flag))
 }
 
 cpp_vclMatrix_max <- function(ptrA, type_flag) {

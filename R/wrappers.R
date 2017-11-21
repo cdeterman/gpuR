@@ -1287,23 +1287,36 @@ gpuMatElemLog <- function(A){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclMatrix")){
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_log(A@address,
+                                      is(A, "vclMatrix"),
                                       C@address,
-                                      4L)
+                                      is(C, "vclMatrix"),
+                                      4L,
+                                      C@.context_index - 1L)
            },
            float = {cpp_gpuMatrix_elem_log(A@address,
+                                           is(A, "vclMatrix"),
                                            C@address,
-                                           6L)
+                                           is(C, "vclMatrix"),
+                                           6L,
+                                           C@.context_index - 1L)
            },
            double = {
                cpp_gpuMatrix_elem_log(A@address,
+                                      is(A, "vclMatrix"),
                                       C@address,
-                                      8L)
+                                      is(C, "vclMatrix"),
+                                      8L,
+                                      C@.context_index - 1L)
            },
            stop("type not recognized")
     )
@@ -1315,26 +1328,39 @@ gpuMatElemLogBase <- function(A, base){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclMatrix")){
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_log_base(A@address,
+                                           is(A, "vclMatrix"),
                                            C@address,
+                                           is(C, "vclMatrix"),
                                            base,
-                                           4L)
+                                           4L,
+                                           C@.context_index - 1L)
            },
            float = {cpp_gpuMatrix_elem_log_base(A@address,
+                                                is(A, "vclMatrix"),
                                                 C@address,
+                                                is(C, "vclMatrix"),
                                                 base,
-                                                6L)
+                                                6L,
+                                                C@.context_index - 1L)
            },
            double = {
                cpp_gpuMatrix_elem_log_base(A@address,
+                                           is(A, "vclMatrix"),
                                            C@address,
+                                           is(C, "vclMatrix"),
                                            base,
-                                           8L)
+                                           8L,
+                                           C@.context_index - 1L)
            },
            stop("type not recognized")
     )
@@ -1346,23 +1372,36 @@ gpuMatElemLog10 <- function(A){
     
     type <- typeof(A)
     
-    C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    if(is(A, "vclMatrix")){
+        C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+    }else{
+        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+    }
     
     switch(type,
            integer = {
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_log10(A@address,
+                                        is(A, "vclMatrix"),
                                         C@address,
-                                        4L)
+                                        is(C, "vclMatrix"),
+                                        4L,
+                                        C@.context_index - 1L)
            },
            float = {cpp_gpuMatrix_elem_log10(A@address,
+                                             is(A, "vclMatrix"),
                                              C@address,
-                                             6L)
+                                             is(C, "vclMatrix"),
+                                             6L,
+                                             C@.context_index - 1L)
            },
            double = {
                cpp_gpuMatrix_elem_log10(A@address,
+                                        is(A, "vclMatrix"),
                                         C@address,
-                                        8L)
+                                        is(C, "vclMatrix"),
+                                        8L,
+                                        C@.context_index - 1L)
            },
            stop("type not recognized")
     )
@@ -1377,28 +1416,96 @@ gpuMatElemExp <- function(A, inplace = FALSE){
     if(inplace){
         C <- A
     }else{
-        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclMatrix")){
+            C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+        }else{
+            C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+        }
     }
     
     switch(type,
            integer = {
                # stop("integer not currently implemented")
                cpp_gpuMatrix_elem_exp(A@address,
+                                      is(A, "vclMatrix"),
                                       C@address,
-                                      4L)
+                                      is(C, "vclMatrix"),
+                                      4L,
+                                      C@.context_index - 1L)
            },
            float = {cpp_gpuMatrix_elem_exp(A@address,
+                                           is(A, "vclMatrix"),
                                            C@address,
-                                           6L)
+                                           is(C, "vclMatrix"),
+                                           6L,
+                                           C@.context_index - 1L)
            },
            double = {
                cpp_gpuMatrix_elem_exp(A@address,
+                                      is(A, "vclMatrix"),
                                       C@address,
-                                      8L)
+                                      is(C, "vclMatrix"),
+                                      8L,
+                                      C@.context_index - 1L)
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
+}
+
+# GPU Element-Wise Absolute Value
+gpuMatElemAbs <- function(A, inplace = FALSE){
+    
+    type <- typeof(A)
+    
+    if(inplace){
+        C <- A
+    }else{
+        if(is(A, "vclMatrix")){
+            C <- vclMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
+        }else{
+            C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)   
+        }
+    }
+    
+    switch(type,
+           integer = {
+               # stop("integer not currently implemented")
+               cpp_gpuMatrix_elem_abs(A@address,
+                                      is(A, "vclMatrix"),
+                                      C@address,
+                                      is(C, "vclMatrix"),
+                                      4L,
+                                      C@.context_index - 1L)
+           },
+           float = {cpp_gpuMatrix_elem_abs(A@address,
+                                           is(A, "vclMatrix"),
+                                           C@address,
+                                           is(C, "vclMatrix"),
+                                           6L,
+                                           C@.context_index - 1L)
+           },
+           double = {
+               cpp_gpuMatrix_elem_abs(A@address,
+                                      is(A, "vclMatrix"),
+                                      C@address,
+                                      is(C, "vclMatrix"),
+                                      8L,
+                                      C@.context_index - 1L)
+           },
+           stop("type not recognized")
+    )
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)
+    }
 }
 
 # GPU colSums
@@ -1724,37 +1831,6 @@ gpuMatrix_peuclidean <- function(A, B, D, squareDist){
     invisible(D)
 }
 
-# GPU Element-Wise Absolute Value
-gpuMatElemAbs <- function(A, inplace = FALSE){
-    
-    type <- typeof(A)
-    
-    if(inplace){
-        C <- A
-    }else{
-        C <- gpuMatrix(nrow=nrow(A), ncol=ncol(A), type=type, ctx_id = A@.context_index)
-    }
-    
-    switch(type,
-           integer = {
-               # stop("integer not currently implemented")
-               cpp_gpuMatrix_elem_abs(A@address,
-                                      C@address,
-                                      4L)
-           },
-           float = {cpp_gpuMatrix_elem_abs(A@address,
-                                           C@address,
-                                           6L)
-           },
-           double = {
-               cpp_gpuMatrix_elem_abs(A@address,
-                                      C@address,
-                                      8L)
-           },
-           stop("type not recognized")
-    )
-    return(C)
-}
 
 # GPU Matrix maximum
 gpuMatrix_max <- function(A){

@@ -668,9 +668,9 @@ setMethod("Math", c(x="vclMatrix"),
                      `tan` = gpuMatElemTan(x),
                      `atan` = gpuMatElemArcTan(x),
                      `tanh` = gpuMatElemHypTan(x),
-                     `log10` = vclMatElemLog10(x),
-                     `exp` = vclMatElemExp(x),
-                     `abs` = vclMatElemAbs(x),
+                     `log10` = gpuMatElemLog10(x),
+                     `exp` = gpuMatElemExp(x),
+                     `abs` = gpuMatElemAbs(x),
                      `sqrt` = gpuMatSqrt(x),
                      `sign` = gpuMatSign(x),
                      stop("undefined operation")
@@ -685,10 +685,10 @@ setMethod("log", c(x="vclMatrix"),
           function(x, base=NULL)
           {
               if(is.null(base)){
-                  vclMatElemLog(x) 
+                  gpuMatElemLog(x) 
               }else{
                   assert_is_numeric(base)
-                  vclMatElemLogBase(x, base)
+                  gpuMatElemLogBase(x, base)
               }
               
           },

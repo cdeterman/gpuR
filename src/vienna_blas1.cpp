@@ -1259,104 +1259,121 @@ void cpp_gpuMatrix_elem_tanh(
 
 template <typename T>
 void cpp_gpuMatrix_elem_log(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrB_,
+    const bool BisVCL,
+    const int ctx_id)
 {    
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
-    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int K = ptrB->nrow();
-    const int M = ptrB->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
-    
-    vcl_B = viennacl::linalg::element_log(vcl_A);
-    
-    ptrB->to_host(vcl_B);
+    if(BisVCL){
+        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+        *vcl_B = viennacl::linalg::element_log(*vcl_A);        
+    }else{
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+        vcl_B = viennacl::linalg::element_log(*vcl_A);
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        ptrB->to_host(vcl_B);
+        ptrB->release_device();    
+    }
 }
 
 template <typename T>
 void cpp_gpuMatrix_elem_log_base(
-    SEXP ptrA_, SEXP ptrB_,
-    T base)
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrB_,
+    const bool BisVCL,
+    T base,
+    const int ctx_id
+)
 {    
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
-    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int K = ptrB->nrow();
-    const int M = ptrB->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
-    
-    vcl_B = viennacl::linalg::element_log10(vcl_A);
-    vcl_B /= log10(base);
-    
-    ptrB->to_host(vcl_B);
+    if(BisVCL){
+        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+        *vcl_B = viennacl::linalg::element_log10(*vcl_A);   
+        *vcl_B /= log10(base);     
+    }else{
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+        vcl_B = viennacl::linalg::element_log10(*vcl_A);
+        vcl_B /= log10(base);
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        ptrB->to_host(vcl_B);
+        ptrB->release_device();    
+    }
 }
 
 template <typename T>
 void cpp_gpuMatrix_elem_log10(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrB_,
+    const bool BisVCL,
+    const int ctx_id)
 {    
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
-    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int K = ptrB->nrow();
-    const int M = ptrB->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
-    
-    vcl_B = viennacl::linalg::element_log10(vcl_A);
-    
-    ptrB->to_host(vcl_B);
+    if(BisVCL){
+        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+        *vcl_B = viennacl::linalg::element_log10(*vcl_A);        
+    }else{
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+        vcl_B = viennacl::linalg::element_log10(*vcl_A);
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        ptrB->to_host(vcl_B);
+        ptrB->release_device();    
+    }
 }
 
 template <typename T>
 void cpp_gpuMatrix_elem_exp(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrB_,
+    const bool BisVCL,
+    const int ctx_id)
 {    
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
-    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int K = ptrB->nrow();
-    const int M = ptrB->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
-    
-    vcl_B = viennacl::linalg::element_exp(vcl_A);
-    
-    ptrB->to_host(vcl_B);
+    if(BisVCL){
+        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+        *vcl_B = viennacl::linalg::element_exp(*vcl_A);        
+    }else{
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+        vcl_B = viennacl::linalg::element_exp(*vcl_A);
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        ptrB->to_host(vcl_B);
+        ptrB->release_device();    
+    }
 }
 
 template <typename T>
 void cpp_gpuMatrix_elem_abs(
-    SEXP ptrA_, SEXP ptrB_)
+    SEXP ptrA_, 
+    const bool AisVCL,
+    SEXP ptrB_,
+    const bool BisVCL,
+    const int ctx_id)
 {    
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
-    XPtr<dynEigenMat<T> > ptrB(ptrB_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int K = ptrB->nrow();
-    const int M = ptrB->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_B(K,M, ctx = ctx);
-    
-    vcl_B = viennacl::linalg::element_fabs(vcl_A);
-    
-    ptrB->to_host(vcl_B);
+    if(BisVCL){
+        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+        *vcl_B = viennacl::linalg::element_fabs(*vcl_A);        
+    }else{
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+        vcl_B = viennacl::linalg::element_fabs(*vcl_A);
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        ptrB->to_host(vcl_B);
+        ptrB->release_device();    
+    }
 }
 
 /*** gpuMatrix Functions ***/
@@ -1811,19 +1828,23 @@ cpp_gpuMatrix_elem_tanh(
 // [[Rcpp::export]]
 void
 cpp_gpuMatrix_elem_log(
-    SEXP ptrA, SEXP ptrB,
-    const int type_flag)
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_elem_log<int>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_elem_log<float>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_elem_log<double>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -1833,20 +1854,24 @@ cpp_gpuMatrix_elem_log(
 // [[Rcpp::export]]
 void
 cpp_gpuMatrix_elem_log_base(
-    SEXP ptrA, SEXP ptrB,
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
     SEXP base,
-    const int type_flag)
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_elem_log_base<int>(ptrA, ptrB, as<int>(base));
+            cpp_gpuMatrix_elem_log_base<int>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_elem_log_base<float>(ptrA, ptrB, as<float>(base));
+            cpp_gpuMatrix_elem_log_base<float>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_elem_log_base<double>(ptrA, ptrB, as<double>(base));
+            cpp_gpuMatrix_elem_log_base<double>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -1856,19 +1881,23 @@ cpp_gpuMatrix_elem_log_base(
 // [[Rcpp::export]]
 void
 cpp_gpuMatrix_elem_log10(
-    SEXP ptrA, SEXP ptrB,
-    const int type_flag)
+    SEXP ptrA,
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_elem_log10<int>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log10<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_elem_log10<float>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log10<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_elem_log10<double>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_log10<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -1878,19 +1907,23 @@ cpp_gpuMatrix_elem_log10(
 // [[Rcpp::export]]
 void
 cpp_gpuMatrix_elem_exp(
-    SEXP ptrA, SEXP ptrB,
-    const int type_flag)
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_elem_exp<int>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_exp<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_elem_exp<float>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_exp<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_elem_exp<double>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_exp<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -1900,19 +1933,23 @@ cpp_gpuMatrix_elem_exp(
 // [[Rcpp::export]]
 void
 cpp_gpuMatrix_elem_abs(
-    SEXP ptrA, SEXP ptrB,
-    const int type_flag)
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB,
+    const bool BisVCL,
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_elem_abs<int>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_abs<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_elem_abs<float>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_abs<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_elem_abs<double>(ptrA, ptrB);
+            cpp_gpuMatrix_elem_abs<double>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -2103,83 +2140,6 @@ cpp_vclMatrix_unary_axpy(
 }
 
 template <typename T>
-void cpp_vclMatrix_elem_log(
-    SEXP ptrA_, 
-    SEXP ptrB_)
-{    
-
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > A  = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
-
-    B = viennacl::linalg::element_log(A);
-}
-
-
-template <typename T>
-void cpp_vclMatrix_elem_log10(
-    SEXP ptrA_, 
-    SEXP ptrB_)
-{    
-    
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > A  = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
-
-    B = viennacl::linalg::element_log10(A);
-}
-
-
-template <typename T>
-void cpp_vclMatrix_elem_log_base(
-    SEXP ptrA_, 
-    SEXP ptrB_,
-    const float base)
-{
-
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > A  = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
-
-    B = viennacl::linalg::element_log10(A);
-    B /= log10(base);
-}
-
-template <typename T>
-void cpp_vclMatrix_elem_exp(
-    SEXP ptrA_, 
-    SEXP ptrB_)
-{        
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > A  = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B  = ptrB->data();
-
-    B = viennacl::linalg::element_exp(A);
-}
-
-template <typename T>
-void cpp_vclMatrix_elem_abs(
-    SEXP ptrA_, 
-    SEXP ptrB_)
-{        
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    
-    viennacl::matrix_range<viennacl::matrix<T> > vcl_A  = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > vcl_B  = ptrB->data();
-    
-    vcl_B = viennacl::linalg::element_fabs(vcl_A);
-}
-
-template <typename T>
 T
 cpp_vclMatrix_max(
     SEXP ptrA_)
@@ -2243,114 +2203,6 @@ cpp_vclMatrix_unary_axpy(
             return;
         case 8:
             cpp_vclMatrix_unary_axpy<double>(ptrA, ctx_id);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_elem_log(
-    SEXP ptrA, 
-    SEXP ptrB,
-    const int type_flag)
-{
-   switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_elem_log<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclMatrix_elem_log<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclMatrix_elem_log<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
-
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_elem_log10(
-    SEXP ptrA, 
-    SEXP ptrB,
-    const int type_flag)
-{
-   switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_elem_log10<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclMatrix_elem_log10<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclMatrix_elem_log10<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
-
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_elem_log_base(
-    SEXP ptrA, 
-    SEXP ptrB,
-    SEXP base,
-    const int type_flag)
-{
-   switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_elem_log_base<int>(ptrA, ptrB, as<int>(base));
-            return;
-        case 6:
-            cpp_vclMatrix_elem_log_base<float>(ptrA, ptrB, as<float>(base));
-            return;
-        case 8:
-            cpp_vclMatrix_elem_log_base<double>(ptrA, ptrB, as<double>(base));
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_elem_exp(
-    SEXP ptrA, 
-    SEXP ptrB,
-    const int type_flag)
-{
-   switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_elem_exp<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclMatrix_elem_exp<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclMatrix_elem_exp<double>(ptrA, ptrB);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
-
-//[[Rcpp::export]]
-void cpp_vclMatrix_elem_abs(
-    SEXP ptrA, 
-    SEXP ptrB,
-    const int type_flag)
-{
-   switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_elem_abs<int>(ptrA, ptrB);
-            return;
-        case 6:
-            cpp_vclMatrix_elem_abs<float>(ptrA, ptrB);
-            return;
-        case 8:
-            cpp_vclMatrix_elem_abs<double>(ptrA, ptrB);
             return;
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
