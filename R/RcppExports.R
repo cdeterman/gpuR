@@ -602,16 +602,12 @@ cpp_gpuMatrix_axpy <- function(alpha, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx
     invisible(.Call(`_gpuR_cpp_gpuMatrix_axpy`, alpha, ptrA, AisVCL, ptrB, BisVCL, type_flag, ctx_id))
 }
 
-cpp_gpuMatrix_unary_axpy <- function(ptrA, type_flag) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_unary_axpy`, ptrA, type_flag))
+cpp_gpuMatrix_unary_axpy <- function(ptrA, AisVCL, type_flag, ctx_id) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_unary_axpy`, ptrA, AisVCL, type_flag, ctx_id))
 }
 
 cpp_gpuMatrix_scalar_axpy <- function(alpha, scalar, ptrB, BisVCL, order, max_local_size, sourceCode, ctx_id, type_flag) {
     invisible(.Call(`_gpuR_cpp_gpuMatrix_scalar_axpy`, alpha, scalar, ptrB, BisVCL, order, max_local_size, sourceCode, ctx_id, type_flag))
-}
-
-cpp_vclMatrix_unary_axpy <- function(ptrA, type_flag, ctx_id) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_unary_axpy`, ptrA, type_flag, ctx_id))
 }
 
 cpp_vclMatrix_max <- function(ptrA, type_flag) {

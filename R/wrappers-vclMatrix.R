@@ -430,43 +430,6 @@ vclGEMV<- function(A, B){
 # need to 'copy' the matrix for now because of the padding
 # waiting on viennacl issues #217 & #219
 
-# vclMatrix unary AXPY
-vclMatrix_unary_axpy <- function(A, inplace = FALSE){
-    
-    type = typeof(A)
-    
-    if(inplace){
-        Z <- A
-    }else{
-        Z <- deepcopy(A)   
-    }
-    
-    switch(type,
-           integer = {
-               cpp_vclMatrix_unary_axpy(Z@address, 
-                                        4L,
-                                        Z@.context_index - 1)
-           },
-           float = {
-               cpp_vclMatrix_unary_axpy(Z@address, 
-                                        6L,
-                                        Z@.context_index - 1)
-           },
-           double = {
-               cpp_vclMatrix_unary_axpy(Z@address,
-                                        8L,
-                                        Z@.context_index - 1)
-           },
-           stop("type not recognized")
-    )
-    
-    if(inplace){
-    	return(invisible(Z))
-    }else{
-    	return(Z)	
-    }
-}
-
 # vclMatrix crossprod
 vcl_crossprod <- function(X, Y){
     

@@ -351,15 +351,21 @@ gpuMatrix_unary_axpy <- function(A, inplace = FALSE){
     switch(type,
            integer = {
                cpp_gpuMatrix_unary_axpy(Z@address, 
-                                        4L)
+                                        is(Z, "vclMatrix"),
+                                        4L,
+                                        Z@.context_index - 1L)
            },
            float = {
                cpp_gpuMatrix_unary_axpy(Z@address, 
-                                        6L)
+                                        is(Z, "vclMatrix"),
+                                        6L,
+                                        Z@.context_index - 1L)
            },
            double = {
                cpp_gpuMatrix_unary_axpy(Z@address,
-                                        8L)
+                                        is(Z, "vclMatrix"),
+                                        8L,
+                                        Z@.context_index - 1L)
            },
            stop("type not recognized")
     )

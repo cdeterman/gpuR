@@ -718,21 +718,23 @@ cpp_gpuMatrix_axpy(
 template <typename T>
 void 
 cpp_gpuMatrix_unary_axpy(
-    SEXP ptrA_)
+    SEXP ptrA_,
+    const bool AisVCL,
+    const int ctx_id)
 {
-    XPtr<dynEigenMat<T> > ptrA(ptrA_);
+    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
-    const int M = ptrA->nrow();
-    const int K = ptrA->ncol();
-    
-    viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(M,K, ctx);
-    
-    vcl_Z -= vcl_A;
-
-    ptrA->to_host(vcl_Z);
+    if(!AisVCL){
+        viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+        viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A->size1(),vcl_A->size2(), ctx);
+        vcl_Z -= *vcl_A;
+        
+        Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
+        ptrA->to_host(vcl_Z);
+        ptrA->release_device();    
+    }else{
+        *vcl_A = (T)(-1) * *vcl_A;
+    }
 }
 
 template <typename T>
@@ -1987,18 +1989,20 @@ cpp_gpuMatrix_axpy(
 void
 cpp_gpuMatrix_unary_axpy(
     SEXP ptrA,
-    const int type_flag)
+    const int AisVCL,
+    const int type_flag,
+    const int ctx_id)
 {
     
     switch(type_flag) {
         case 4:
-            cpp_gpuMatrix_unary_axpy<int>(ptrA);
+            cpp_gpuMatrix_unary_axpy<int>(ptrA, AisVCL, ctx_id);
             return;
         case 6:
-            cpp_gpuMatrix_unary_axpy<float>(ptrA);
+            cpp_gpuMatrix_unary_axpy<float>(ptrA, AisVCL, ctx_id);
             return;
         case 8:
-            cpp_gpuMatrix_unary_axpy<double>(ptrA);
+            cpp_gpuMatrix_unary_axpy<double>(ptrA, AisVCL, ctx_id);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
@@ -2120,26 +2124,6 @@ cpp_vclVector_min(
 /*** vclMatrix templates ***/
 
 template <typename T>
-void 
-cpp_vclMatrix_unary_axpy(
-    SEXP ptrA_,
-    int ctx_id)
-{
-   
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);    
-    viennacl::matrix_range<viennacl::matrix<T> > vcl_A  = ptrA->data();
-    viennacl::context ctx(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
-    
-    
-    // viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A.size1(),vcl_A.size2(), ctx);
-    // 
-    // vcl_Z -= vcl_A;
-    // vcl_A = vcl_Z;
-    
-    vcl_A = (T)(-1) * vcl_A;
-}
-
-template <typename T>
 T
 cpp_vclMatrix_max(
     SEXP ptrA_)
@@ -2186,28 +2170,6 @@ cpp_vclMatrix_min(
 
 /*** vclMatrix Functions ***/
 
-// [[Rcpp::export]]
-void
-cpp_vclMatrix_unary_axpy(
-    SEXP ptrA,
-    const int type_flag,
-    int ctx_id)
-{
-    
-    switch(type_flag) {
-        case 4:
-            cpp_vclMatrix_unary_axpy<int>(ptrA, ctx_id);
-            return;
-        case 6:
-            cpp_vclMatrix_unary_axpy<float>(ptrA, ctx_id);
-            return;
-        case 8:
-            cpp_vclMatrix_unary_axpy<double>(ptrA, ctx_id);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix object!");
-    }
-}
 
 // [[Rcpp::export]]
 SEXP

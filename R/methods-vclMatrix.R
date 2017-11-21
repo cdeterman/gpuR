@@ -628,7 +628,7 @@ setMethod("Arith", c(e1="vclMatrix", e2="missing"),
           {
               op = .Generic[[1]]
               switch(op,
-                     `-` = vclMatrix_unary_axpy(e1),
+                     `-` = gpuMatrix_unary_axpy(e1),
                      stop("undefined operation")
               )
           },

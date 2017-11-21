@@ -1882,13 +1882,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_gpuMatrix_unary_axpy
-void cpp_gpuMatrix_unary_axpy(SEXP ptrA, const int type_flag);
-RcppExport SEXP _gpuR_cpp_gpuMatrix_unary_axpy(SEXP ptrASEXP, SEXP type_flagSEXP) {
+void cpp_gpuMatrix_unary_axpy(SEXP ptrA, const int AisVCL, const int type_flag, const int ctx_id);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_unary_axpy(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const int >::type AisVCL(AisVCLSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    cpp_gpuMatrix_unary_axpy(ptrA, type_flag);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
+    cpp_gpuMatrix_unary_axpy(ptrA, AisVCL, type_flag, ctx_id);
     return R_NilValue;
 END_RCPP
 }
@@ -1907,18 +1909,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     cpp_gpuMatrix_scalar_axpy(alpha, scalar, ptrB, BisVCL, order, max_local_size, sourceCode, ctx_id, type_flag);
-    return R_NilValue;
-END_RCPP
-}
-// cpp_vclMatrix_unary_axpy
-void cpp_vclMatrix_unary_axpy(SEXP ptrA, const int type_flag, int ctx_id);
-RcppExport SEXP _gpuR_cpp_vclMatrix_unary_axpy(SEXP ptrASEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
-    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    Rcpp::traits::input_parameter< int >::type ctx_id(ctx_idSEXP);
-    cpp_vclMatrix_unary_axpy(ptrA, type_flag, ctx_id);
     return R_NilValue;
 END_RCPP
 }
@@ -3028,9 +3018,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_gpuMatrix_elem_exp", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_exp, 6},
     {"_gpuR_cpp_gpuMatrix_elem_abs", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_abs, 6},
     {"_gpuR_cpp_gpuMatrix_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_axpy, 7},
-    {"_gpuR_cpp_gpuMatrix_unary_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_unary_axpy, 2},
+    {"_gpuR_cpp_gpuMatrix_unary_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_unary_axpy, 4},
     {"_gpuR_cpp_gpuMatrix_scalar_axpy", (DL_FUNC) &_gpuR_cpp_gpuMatrix_scalar_axpy, 9},
-    {"_gpuR_cpp_vclMatrix_unary_axpy", (DL_FUNC) &_gpuR_cpp_vclMatrix_unary_axpy, 3},
     {"_gpuR_cpp_vclMatrix_max", (DL_FUNC) &_gpuR_cpp_vclMatrix_max, 2},
     {"_gpuR_cpp_vclMatrix_min", (DL_FUNC) &_gpuR_cpp_vclMatrix_min, 2},
     {"_gpuR_cpp_gpuVector_axpy", (DL_FUNC) &_gpuR_cpp_gpuVector_axpy, 8},

@@ -36,7 +36,7 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
-                     `-` = vclMatrix_unary_axpy(x, inplace = TRUE),
+                     `-` = gpuMatrix_unary_axpy(x, inplace = TRUE),
                      `exp` = gpuMatElemExp(x, inplace = TRUE),
                      `abs` = gpuMatElemAbs(x, inplace = TRUE),
                      `sin` = gpuMatElemSin(x, inplace = TRUE),
