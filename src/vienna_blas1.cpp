@@ -125,7 +125,7 @@ void cpp_gpuVector_outer_prod(
     std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::vector_base<T> > vcl_B = getVCLVecptr<T>(ptrB_, BisVCL, ctx_id);
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C = viennacl::linalg::outer_prod(*vcl_A, *vcl_B);
     
@@ -701,8 +701,8 @@ cpp_gpuMatrix_axpy(
 {
     const T alpha = as<T>(alpha_);
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
     
     *vcl_B += alpha * *vcl_A;
     
@@ -722,7 +722,7 @@ cpp_gpuMatrix_unary_axpy(
     const bool AisVCL,
     const int ctx_id)
 {
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(!AisVCL){
         viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -754,7 +754,7 @@ void cpp_gpuMatrix_scalar_axpy(
     std::string my_kernel = as<std::string>(sourceCode_);
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();
@@ -817,9 +817,9 @@ cpp_gpuMatrix_elem_prod(
     const bool CisVCL,
     const int ctx_id)
 {   
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C = viennacl::linalg::element_prod(*vcl_A, *vcl_B);
     
@@ -840,7 +840,7 @@ cpp_gpuMatrix_scalar_prod(
 {        
     const T alpha = as<T>(scalar);
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C *= alpha;
     
@@ -862,9 +862,9 @@ cpp_gpuMatrix_elem_div(
     const bool CisVCL,
     const int ctx_id)
 {   
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C = viennacl::linalg::element_div(*vcl_A, *vcl_B);
     
@@ -885,7 +885,7 @@ cpp_gpuMatrix_scalar_div(
 {    
     T B = Rcpp::as<T>(B_scalar);
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C /= B;
     
@@ -911,7 +911,7 @@ void cpp_gpuMatrix_scalar_div_2(
     std::string my_kernel = as<std::string>(sourceCode_);
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();
@@ -974,9 +974,9 @@ cpp_gpuMatrix_elem_pow(
     const bool CisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     *vcl_C = viennacl::linalg::element_pow(*vcl_A, *vcl_B);
     
@@ -999,8 +999,8 @@ cpp_gpuMatrix_scalar_pow(
 {   
     const T scalar = as<T>(scalar_);    
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_C = getVCLptr<T>(ptrC_, CisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     // XPtr<dynEigenMat<T> > ptrA(ptrA_);
     // XPtr<dynEigenMat<T> > ptrC(ptrC_);
@@ -1032,10 +1032,10 @@ void cpp_gpuMatrix_sqrt(
         const bool BisVCL,
         const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sqrt(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1055,10 +1055,10 @@ void cpp_gpuMatrix_elem_sin(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sin(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1078,10 +1078,10 @@ void cpp_gpuMatrix_elem_asin(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_asin(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1102,10 +1102,10 @@ void cpp_gpuMatrix_elem_sinh(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sinh(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1126,10 +1126,10 @@ void cpp_gpuMatrix_elem_cos(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_cos(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1149,10 +1149,10 @@ void cpp_gpuMatrix_elem_acos(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_acos(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1173,10 +1173,10 @@ void cpp_gpuMatrix_elem_cosh(
     const bool BisVCL,
     const int ctx_id)
 {   
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_cosh(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1197,10 +1197,10 @@ void cpp_gpuMatrix_elem_tan(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_tan(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1220,10 +1220,10 @@ void cpp_gpuMatrix_elem_atan(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_atan(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1244,10 +1244,10 @@ void cpp_gpuMatrix_elem_tanh(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_tanh(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1267,10 +1267,10 @@ void cpp_gpuMatrix_elem_log(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_log(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1292,10 +1292,10 @@ void cpp_gpuMatrix_elem_log_base(
     const int ctx_id
 )
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_log10(*vcl_A);   
         *vcl_B /= log10(base);     
     }else{
@@ -1317,10 +1317,10 @@ void cpp_gpuMatrix_elem_log10(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_log10(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1340,10 +1340,10 @@ void cpp_gpuMatrix_elem_exp(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_exp(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
@@ -1363,10 +1363,10 @@ void cpp_gpuMatrix_elem_abs(
     const bool BisVCL,
     const int ctx_id)
 {    
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(BisVCL){
-        std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+       std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_fabs(*vcl_A);        
     }else{
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));

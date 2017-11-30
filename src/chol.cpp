@@ -33,7 +33,7 @@ cpp_vclMatrix_custom_chol(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();

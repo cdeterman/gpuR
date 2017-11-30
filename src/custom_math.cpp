@@ -26,8 +26,8 @@ cpp_vclMatrix_sign(
     
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();
@@ -100,8 +100,8 @@ cpp_vclMatrix_pmax(
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     T value = as<T>(value_);
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     unsigned int P = vcl_B->size2();

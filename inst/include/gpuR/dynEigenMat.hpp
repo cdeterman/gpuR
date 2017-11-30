@@ -109,7 +109,28 @@ class dynEigenMat {
             return ptr;
         };
         std::shared_ptr<viennacl::matrix<T> > getDevicePtr(){
-            return shptr; 
+            return shptr;
+        };
+        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > getDeviceBlockPtr(){
+            
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr.get()->data(), orig_nr, orig_nc);
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ref = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > block(
+                    ref.data(), ref.rows(), ref.cols(),
+                    Eigen::OuterStride<>(ref.outerStride())
+            );
+            
+            const int M = block.cols();
+            const int K = block.rows();
+            
+            
+            viennacl::range temp_rr(0, K);
+            viennacl::range temp_cr(0, M);
+            
+            viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), temp_rr, temp_cr);
+            std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > block_shptr = std::make_shared<viennacl::matrix_range<viennacl::matrix<T> > >(m_sub);
+            return block_shptr;
+            // return shptr; 
         };
         // viennacl::matrix<T>* getDevicePtr(){
         //     return shptr.get(); 
@@ -326,6 +347,16 @@ class dynEigenMat {
             viennacl::copy(*shptr.get(), block);  
         };
         void to_host(viennacl::matrix<T> &vclMat){
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr.get()->data(), orig_nr, orig_nc);
+            Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ref = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > block(
+                    ref.data(), ref.rows(), ref.cols(),
+                    Eigen::OuterStride<>(ref.outerStride())
+            );
+            
+            viennacl::copy(vclMat, block);  
+        };
+        void to_host(viennacl::matrix_range<viennacl::matrix<T> > &vclMat){
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr.get()->data(), orig_nr, orig_nc);
             Eigen::Ref<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ref = temp.block(r_start-1, c_start-1, r_end-r_start + 1, c_end-c_start + 1);
             Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > block(

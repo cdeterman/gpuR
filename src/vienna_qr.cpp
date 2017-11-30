@@ -60,9 +60,9 @@ cpp_recover_qr(
 
     // viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-    std::shared_ptr<viennacl::matrix<T> > vcl_QR = getVCLptr<T>(ptrQR_, QRisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_Q = getVCLptr<T>(ptrQ_, QisVCL, ctx_id);
-    std::shared_ptr<viennacl::matrix<T> > vcl_R = getVCLptr<T>(ptrR_, RisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_QR = getVCLBlockptr<T>(ptrQR_, QRisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_Q = getVCLBlockptr<T>(ptrQ_, QisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_R = getVCLBlockptr<T>(ptrR_, RisVCL, ctx_id);
     
     std::vector<T> betas = as<std::vector<T> >(betas_);
 

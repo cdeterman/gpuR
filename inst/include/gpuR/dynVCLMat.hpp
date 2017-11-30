@@ -172,6 +172,13 @@ class dynVCLMat {
         std::shared_ptr<viennacl::matrix<T> > sharedPtr(){
             return shptr;
         };
+        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > sharedBlockPtr(){
+            viennacl::matrix_range<viennacl::matrix<T> > m_sub(*shptr.get(), row_r, col_r);
+            
+            std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > block_shptr = std::make_shared<viennacl::matrix_range<viennacl::matrix<T> > >(m_sub);
+            return block_shptr;
+            // return shptr;
+        };
         
         int nrow() { return nr; }
         int ncol() { return nc; }

@@ -71,7 +71,7 @@ cpp_vclMatrix_set_row_order(
     // viennacl::matrix<T> *vcl_B;
     
     // std::cout << "getting matrix" << std::endl;
-    std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     // vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_A->size1();

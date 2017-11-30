@@ -29,6 +29,27 @@ getVCLptr(
 }
 
 template<typename T>
+std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > >
+getVCLBlockptr(
+    SEXP ptr_,
+    const bool isVCL,
+    const int ctx_id
+){
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vclptr;
+    
+    if(isVCL){
+        Rcpp::XPtr<dynVCLMat<T> > ptr(ptr_);
+        vclptr = ptr->sharedBlockPtr();
+    }else{
+        Rcpp::XPtr<dynEigenMat<T> > ptr(ptr_);
+        ptr->to_device(ctx_id);
+        vclptr = ptr->getDeviceBlockPtr();
+    }
+    
+    return vclptr;
+}
+
+template<typename T>
 std::shared_ptr<viennacl::vector_base<T> >
 getVCLVecptr(
     SEXP ptr_,
