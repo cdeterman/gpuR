@@ -2,10 +2,18 @@ gpuR
 
 ========
 
-This package is currently only functional for Linux systems.
-In order for it to work you will need to install a
-SDK for your respective gpu(s) and the opencl-headers.
-Follow your vendor specific instructions to install.
+This package is functional for all OS systems (to my knowledge).
+If installation fails, after consulting the wiki mentioned below,
+please feel free to submit an issue on the project github
+(https://github.com/cdeterman/gpuR/issues)
+
+In order for it to work you will need some form of OpenCL installed
+on your machine.  Windows systems often have a simple Intel OpenCL
+installed by default and OSX have OpenCL installed by default
+for their graphics processors.  For most Linux systems, you
+will likely need to install either a vendor specific SDK
+or look in to installing a non-vendor specification implementation
+like 'pocl'. Follow your vendor specific instructions to install.
 
 The installation of this package is OS specific.  For detailed
 instructions please see my github wiki (https://github.com/cdeterman/gpuR/wiki).
