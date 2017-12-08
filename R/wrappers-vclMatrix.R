@@ -272,9 +272,9 @@ vclMatMult <- function(A, B){
                kernel <- readChar(file, file.info(file)$size)
                
                maxWorkGroupSize <- 
-                   switch(deviceType(C@.platform_index, C@.device_index),
-                          "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
-                          "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   switch(deviceType(C@.device_index, C@.context_index),
+                          "gpu" = gpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
+                          "cpu" = cpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
                           stop("unrecognized device type")
                    )
                

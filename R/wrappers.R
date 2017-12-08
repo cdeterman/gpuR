@@ -90,9 +90,9 @@ gpu_Mat_axpy <- function(alpha, A, B, inplace = FALSE, AisScalar = FALSE, BisSca
         # print(head(Z[]))
         
         maxWorkGroupSize <- 
-            switch(deviceType(Z@.platform_index, Z@.device_index),
-                   "gpu" = gpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
-                   "cpu" = cpuInfo(Z@.platform_index, Z@.device_index)$maxWorkGroupSize,
+            switch(deviceType(Z@.device_index),
+                   "gpu" = gpuInfo(Z@.device_index, Z@.context_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(Z@.device_index, Z@.context_index)$maxWorkGroupSize,
                    stop("unrecognized device type")
             )
         
@@ -398,9 +398,9 @@ gpu_Mat_mult <- function(A, B, inplace = FALSE){
                kernel <- readChar(file, file.info(file)$size)
                
                maxWorkGroupSize <- 
-                   switch(deviceType(C@.platform_index, C@.device_index),
-                          "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
-                          "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+                   switch(deviceType(C@.device_index, C@.context_index),
+                          "gpu" = gpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
+                          "cpu" = cpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
                           stop("unrecognized device type")
                    )
                
@@ -600,9 +600,9 @@ gpuMatScalarDiv <- function(A, B, AisScalar = FALSE, inplace = FALSE){
         }
         
         maxWorkGroupSize <- 
-            switch(deviceType(C@.platform_index, C@.device_index),
-                   "gpu" = gpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
-                   "cpu" = cpuInfo(C@.platform_index, C@.device_index)$maxWorkGroupSize,
+            switch(deviceType(C@.device_index),
+                   "gpu" = gpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
+                   "cpu" = cpuInfo(C@.device_index, C@.context_index)$maxWorkGroupSize,
                    stop("unrecognized device type")
             )
         

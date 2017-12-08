@@ -12,9 +12,9 @@ gpuMatSign <- function(A){
     
     
     maxWorkGroupSize <- 
-        switch(deviceType(B@.platform_index, B@.device_index),
-               "gpu" = gpuInfo(B@.platform_index, B@.device_index)$maxWorkGroupSize,
-               "cpu" = cpuInfo(B@.platform_index, B@.device_index)$maxWorkGroupSize,
+        switch(deviceType(B@.device_index, B@.context_index),
+               "gpu" = gpuInfo(B@.device_index, B@.context_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(B@.device_index, B@.context_index)$maxWorkGroupSize,
                stop("unrecognized device type")
         )
     
@@ -91,9 +91,9 @@ gpuVecSign <- function(A){
     
     
     maxWorkGroupSize <- 
-        switch(deviceType(B@.platform_index, B@.device_index),
-               "gpu" = gpuInfo(B@.platform_index, B@.device_index)$maxWorkGroupSize,
-               "cpu" = cpuInfo(B@.platform_index, B@.device_index)$maxWorkGroupSize,
+        switch(deviceType(B@.device_index, B@.context_index),
+               "gpu" = gpuInfo(B@.device_index, B@.context_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(B@.device_index, B@.context_index)$maxWorkGroupSize,
                stop("unrecognized device type")
         )
     

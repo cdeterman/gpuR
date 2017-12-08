@@ -257,7 +257,7 @@ setMethod('vclVector',
               context_index <- data@.context_index
               platform_index <- data@.platform_index
               device_index <- data@.device_index
-              device_type <- deviceType(platform_index, device_index)
+              device_type <- deviceType(device_index, context_index)
               device_name <- switch(device_type,
                                     "gpu" = gpuInfo(
                                         device_idx = as.integer(device_index),

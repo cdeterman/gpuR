@@ -100,9 +100,9 @@ permute.vclMatrix <- function(x, MARGIN = 1, order){
     kernel <- readChar(file, file.info(file)$size)
     
     maxWorkGroupSize <- 
-        switch(deviceType(x@.platform_index, x@.device_index),
-               "gpu" = gpuInfo(x@.platform_index, x@.device_index)$maxWorkGroupSize,
-               "cpu" = cpuInfo(x@.platform_index, x@.device_index)$maxWorkGroupSize,
+        switch(deviceType(x@.device_index, x@.context_index),
+               "gpu" = gpuInfo(x@.device_index, x@.context_index)$maxWorkGroupSize,
+               "cpu" = cpuInfo(x@.device_index, x@.context_index)$maxWorkGroupSize,
                stop("unrecognized device type")
         )
     
