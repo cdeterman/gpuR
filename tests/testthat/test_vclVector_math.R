@@ -138,7 +138,7 @@ test_that("vclVector Single Precision Matrix Element-Wise Logs", {
                  info="log float matrix elements not equivalent")  
     expect_equal(fgpu_log10[,], R_log10, tolerance=1e-07, 
                  info="log10 float matrix elements not equivalent")  
-    expect_equal(fgpu_log2[,], R_log2, tolerance=1e-07, 
+    expect_equal(fgpu_log2[,], R_log2, tolerance=1e-06, 
                  info="base log float matrix elements not equivalent") 
 })
 
