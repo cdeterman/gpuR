@@ -9,11 +9,11 @@
 \alias{as.vclVector,vclMatrix}
 \title{Convert object to a vclVector}
 \usage{
-as.vclVector(object, type, ...)
+as.vclVector(object, type = NULL, ...)
 
 \S4method{as.vclVector}{vector}(object, type = NULL)
 
-\S4method{as.vclVector}{vclMatrix}(object, shared, type = NULL)
+\S4method{as.vclVector}{vclMatrix}(object, type = NULL, shared = FALSE)
 }
 \arguments{
 \item{object}{An object that is or can be converted to a 

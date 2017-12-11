@@ -27,7 +27,7 @@ setGeneric("as.gpuVector", function(object, type){
 #' @rdname as.vclVector-methods
 #' @author Charles Determan Jr.
 #' @export
-setGeneric("as.vclVector", function(object, type, ...){
+setGeneric("as.vclVector", function(object, type=NULL, ...){
     standardGeneric("as.vclVector")
 })
 

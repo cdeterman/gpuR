@@ -30,12 +30,15 @@ setMethod('as.vclVector',
 #' @aliases as.vclVector,vclMatrix
 setMethod('as.vclVector', 
           signature(object = 'vclMatrix'),
-          function(object, shared, type=NULL){
+          function(object, type=NULL, shared = FALSE){
+              
               if(!typeof(object) %in% c('integer', 'float', 'double')){
                   stop("unrecognized data type")
               }
               
               ctx_id <- object@.context_index - 1
+              
+              tmp = vclMatTovclVec(object@address, shared, ctx_id, 6L)
               
               out <- switch(typeof(object),
                      "integer" = return(new("ivclVector", 
@@ -45,13 +48,16 @@ setMethod('as.vclVector',
                                             .platform = object@.platform,
                                             .device_index = object@.device_index,
                                             .device = object@.device)),
-                     "float" = return(new("fvclVector", 
+                     "float" = {
+                         print('creating vector')
+                         return(new("fvclVector", 
                                           address=vclMatTovclVec(object@address, shared, ctx_id, 6L),
                                           .context_index = object@.context_index,
                                           .platform_index = object@.platform_index,
                                           .platform = object@.platform,
                                           .device_index = object@.device_index,
-                                          .device = object@.device)),
+                                          .device = object@.device))
+                         },
                      "double" = return(new("dvclVector", 
                                            address=vclMatTovclVec(object@address, shared, ctx_id, 8L),
                                            .context_index = object@.context_index,
