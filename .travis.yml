@@ -65,6 +65,7 @@ before_install:
   - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-3.8 lldb-3.8 libclang-3.8-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+  - ${POCL_LLVM_CONFIG} --shared-mode
   - |
     cd ..
     git clone -b release_1_0 https://github.com/pocl/pocl.git pocl
