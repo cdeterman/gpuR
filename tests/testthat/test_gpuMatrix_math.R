@@ -367,6 +367,23 @@ test_that("gpuMatrix Double Precision Matrix sqrt", {
                  info="sqrt double matrix elements not equivalent")  
 })
 
+
+test_that("gpuMatrix Integer Precision Matrix sign", {
+    has_gpu_skip()
+    
+    Ai <- matrix(seq.int(16), 4, 4) * sample(c(-1, 1), 16, replace = TRUE)
+    R_sign <- sign(Ai)
+    
+    fgpuA <- gpuMatrix(Ai, type="integer")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "igpuMatrix")
+    expect_equivalent(fgpu_sign[,], R_sign, 
+                      info="sign integer matrix elements not equivalent",
+                      check.attributes=FALSE)  
+})
+
 test_that("gpuMatrix Single Precision Matrix sign", {
     has_gpu_skip()
     

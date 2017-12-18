@@ -11,21 +11,82 @@ ORDER_Y <- 5
 
 # Base R objects
 A <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
+Ai <- matrix(seq.int(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
 B <- matrix(rnorm(ORDER_X*ORDER_Y), nrow=ORDER_X, ncol=ORDER_Y)
 Aint <- matrix(seq.int(ORDER_X), ORDER_X, ORDER_X)
 Bint <- matrix(seq.int(ORDER_X), ORDER_X, ORDER_X)
 
 R <- rowSums(A)
+Ri <- rowSums(Ai)
 C <- colSums(A)
+Ci <- colSums(Ai)
 RM <- rowMeans(A)
+# RMi <- rowMeans(Ai)
 CM <- colMeans(A)
+# CMi <- colMeans(Ai)
 
 RS <- rowSums(A[2:4, 2:4])
+# RSi <- rowSums(Ai[2:4, 2:4])
 CS <- colSums(A[2:4, 2:4])
+# CSi <- colSums(Ai[2:4, 2:4])
 RMS <- rowMeans(A[2:4, 2:4])
 CMS <- colMeans(A[2:4, 2:4])
 
 # gpuMatrix tests
+
+test_that("CPU gpuMatrix Integer Precision Sum",
+{
+  has_cpu_skip()
+  
+  fgpuX <- gpuMatrix(Ai, type="integer")
+  
+  gpuC <- sum(fgpuX)
+  
+  expect_is(gpuC, "integer")
+  expect_equivalent(gpuC[], sum(Ai), 
+                    info="integer sum not equivalent")  
+})
+
+test_that("CPU gpuMatrix Single Precision Sum",
+{
+  has_cpu_skip()
+  
+  fgpuX <- gpuMatrix(A, type="float")
+  
+  gpuC <- sum(fgpuX)
+  
+  expect_is(gpuC, "numeric")
+  expect_equal(gpuC[], sum(A), tolerance=1e-06, 
+               info="float sum not equivalent")  
+})
+
+test_that("CPU gpuMatrix Double Precision Sum", 
+{
+  
+  has_cpu_skip()
+  
+  dgpuX <- gpuMatrix(A, type="double")
+  
+  gpuC <-sum(dgpuX)
+  
+  expect_is(gpuC, "numeric")
+  expect_equal(gpuC[], sum(A), tolerance=.Machine$double.eps ^ 0.5, 
+               info="double sum not equivalent")  
+})
+
+# test_that("CPU gpuMatrix Integer Precision Column Sums",
+# {
+#   
+#   has_cpu_skip()
+#   
+#   fgpuX <- gpuMatrix(Ai, type="integer")
+#   
+#   gpuC <- colSums(fgpuX)
+#   
+#   expect_is(gpuC, "igpuVector")
+#   expect_equivalent(gpuC[], Ci, 
+#                     info="integer colSums not equivalent")  
+# })
 
 test_that("CPU gpuMatrix Single Precision Column Sums",
 {
@@ -55,6 +116,19 @@ test_that("CPU gpuMatrix Double Precision Column Sums",
                  info="double colSums not equivalent")  
 })
 
+# test_that("CPU gpuMatrix Integer Precision Row Sums",
+# {
+#   
+#   has_cpu_skip()
+#   
+#   fgpuX <- gpuMatrix(Ai, type="integer")
+#   
+#   gpuC <- rowSums(fgpuX)
+#   
+#   expect_is(gpuC, "fgpuVector")
+#   expect_equivalent(gpuC[], Ri, 
+#                     info="float rowSums not equivalent")  
+# })
 
 test_that("CPU gpuMatrix Single Precision Row Sums",
 {
@@ -83,6 +157,7 @@ test_that("CPU gpuMatrix Double Precision Row Sums",
     expect_equal(gpuC[], R, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double colSums not equivalent")  
 })
+
 
 test_that("CPU gpuMatrix Single Precision Column Means",
 {
@@ -296,6 +371,36 @@ test_that("CPU gpuMatrix Integer Precision rbind", {
 })
 
 # 'block' object tests
+test_that("CPU gpuMatrix Single Precision Block Sum",
+{
+  
+  has_cpu_skip()
+  
+  fgpuX <- gpuMatrix(A, type="float")
+  fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+  
+  gpuC <- sum(fgpuXS)
+  
+  expect_is(gpuC, "numeric")
+  expect_equal(gpuC[], sum(A[2:4, 2:4]), tolerance=1e-06, 
+               info="float sum not equivalent")  
+})
+
+test_that("CPU gpuMatrix Double Precision Block Sum", 
+{
+  
+  has_cpu_skip()
+  
+  dgpuX <- gpuMatrix(A, type="double")
+  dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+  
+  gpuC <- sum(dgpuXS)
+  
+  expect_is(gpuC, "numeric")
+  expect_equal(gpuC[], sum(A[2:4,2:4]), tolerance=.Machine$double.eps ^ 0.5, 
+               info="double colSums not equivalent")  
+})
+
 
 test_that("CPU gpuMatrix Single Precision Block Column Sums",
 {

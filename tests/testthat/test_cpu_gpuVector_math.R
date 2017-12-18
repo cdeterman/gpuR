@@ -353,6 +353,23 @@ test_that("CPU gpuVector Double Precision sqrt", {
                  info="sqrt double vector elements not equivalent")  
 })
 
+test_that("CPU gpuVector Integer Precision Matrix sign", {
+    has_cpu_skip()
+    
+    Ai <- seq.int(16) * sample(c(-1, 1), 16, replace = TRUE)
+    
+    R_sign <- sign(Ai)
+    
+    fgpuA <- gpuVector(Ai, type="integer")
+    
+    fgpu_sign <- sign(fgpuA)
+    
+    expect_is(fgpu_sign, "igpuVector")
+    expect_equal(fgpu_sign[,], R_sign, 
+                 info="sign integer matrix elements not equivalent",
+                 check.attributes=FALSE)  
+})
+
 test_that("CPU gpuVector Single Precision Matrix sign", {
     has_cpu_skip()
     
