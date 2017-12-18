@@ -57,7 +57,7 @@ test_that("CPU fvclVectorSlice class present", {
     expect_is(gpuS, "vclVector")
     expect_is(gpuS, "fvclVectorSlice")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("float"))
+    expect_match(typeof(gpuS), "float")
     
     expect_equal(gpuS[,], S, tolerance = 1e-07)
     expect_equal(length(gpuS), length(S))
@@ -85,7 +85,7 @@ test_that("CPU dvclVectorSlice class present", {
     expect_is(gpuS, "vclVector")
     expect_is(gpuS, "dvclVectorSlice")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("double"))
+    expect_match(typeof(gpuS), "double")
     expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
     expect_equal(length(gpuS), length(S))
     

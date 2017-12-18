@@ -212,7 +212,7 @@ test_that("fgpuMatrixBlock class present", {
     expect_is(gpuS, "gpuMatrix")
     expect_is(gpuS, "fgpuMatrixBlock")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("float"))
+    expect_match(typeof(gpuS), "float")
     expect_equal(gpuS[,], S, tolerance = 1e-07)
     expect_equal(dim(gpuS), dim(S))
     
@@ -239,7 +239,7 @@ test_that("dgpuMatrixBlock class present", {
     expect_is(gpuS, "gpuMatrix")
     expect_is(gpuS, "dgpuMatrixBlock")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("double"))
+    expect_match(typeof(gpuS), "double")
     expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
     expect_equal(dim(gpuS), dim(S))
     

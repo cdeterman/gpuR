@@ -13,7 +13,7 @@ test_that("integer vector class present", {
     
     expect_is(gpuA, "igpuVector")
     expect_is(gpuA@address, "externalptr")
-    expect_that(typeof(gpuA), matches("integer"))
+    expect_match(typeof(gpuA), "integer")
     expect_equivalent(gpuA[,], A)
     expect_equal(length(gpuA), length(A))
 })
@@ -26,7 +26,7 @@ test_that("float vector class present", {
     
     expect_is(gpuA, "fgpuVector")
     expect_is(gpuA@address, "externalptr")
-    expect_that(typeof(gpuA), matches("float"))
+    expect_match(typeof(gpuA), "float")
     expect_equal(gpuA[,], A, tolerance = 1e-07)
     expect_equal(length(gpuA), length(A))
 })
@@ -39,7 +39,7 @@ test_that("double vector class present", {
     
     expect_is(gpuA, "dgpuVector")
     expect_is(gpuA@address, "externalptr")
-    expect_that(typeof(gpuA), matches("double"))
+    expect_match(typeof(gpuA), "double")
     expect_equal(gpuA[,], A, tolerance = .Machine$double.eps ^ 0.5)
     expect_equal(length(gpuA), length(A))
 })
@@ -55,7 +55,7 @@ test_that("fgpuVectorSlice class present", {
     expect_is(gpuS, "gpuVector")
     expect_is(gpuS, "fgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("float"))
+    expect_match(typeof(gpuS), "float")
     expect_equal(gpuS[,], S, tolerance = 1e-07)
     expect_equal(length(gpuS), length(S))
     
@@ -82,7 +82,7 @@ test_that("dgpuVectorSlice class present", {
     expect_is(gpuS, "gpuVector")
     expect_is(gpuS, "dgpuVectorSlice")
     expect_is(gpuS@address, "externalptr")
-    expect_that(typeof(gpuS), matches("double"))
+    expect_match(typeof(gpuS), "double")
     expect_equal(gpuS[,], S, tolerance = .Machine$double.eps^0.5)
     expect_equal(length(gpuS), length(S))
     
