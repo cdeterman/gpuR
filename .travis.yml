@@ -4,11 +4,11 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-precise-3.8
+            - llvm-toolchain-trusty-5.0
           packages:
-            - clang-3.8
+            - clang-5.0
       env:
-        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
 
 #whitelist branches
 branches:
@@ -28,7 +28,7 @@ filter_secrets: false
 
 env:
   global:
-    - POCL_LLVM_VERSION=3.8
+    - POCL_LLVM_VERSION=5.0
     - POCL_LLVM_CONFIG=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/llvm-config
     - POCL_CXX_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang++
     - POCL_C_COMPILER=/usr/lib/llvm-${POCL_LLVM_VERSION}/bin/clang
@@ -62,17 +62,16 @@ before_install:
   - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq || true
-  - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-3.8 lldb-3.8 libclang-3.8-dev
+  - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-5.0 lldb-5.0 libclang-5.0-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
-  - ${POCL_LLVM_CONFIG} --shared-mode
   - |
     cd ..
     git clone -b release_1_0 https://github.com/pocl/pocl.git pocl
     cd pocl
     mkdir build
     cd build
-    cmake -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} ..
+    cmake -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} -DCMAKE_INSTALL_PREFIX=/usr ..
     make
     sudo make install
   - cd $HOMEDIR
