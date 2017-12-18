@@ -146,9 +146,9 @@ test_that("CPU vclMatrix integer scalar initializers", {
     
     expect_is(ivclA, "ivclMatrix")
     expect_equivalent(ivclA[], Ai,
-                      "scalar integer elements not equivalent")
+                      info = "scalar integer elements not equivalent")
     expect_equivalent(dim(Ai), dim(ivclA),
-                 "scalar integer dimensions not equivalent")
+                 info = "scalar integer dimensions not equivalent")
 })
 
 test_that("CPU vclMatrix float scalar initializers", {
