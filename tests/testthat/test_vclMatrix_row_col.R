@@ -333,6 +333,33 @@ test_that("vclMatrix Integer Precision rbind", {
 })
 
 # 'block' object tests
+test_that("vclMatrix Single Precision Block Sum",
+{
+    has_gpu_skip()
+    
+    fgpuX <- vclMatrix(A, type="float")
+    fgpuXS <- block(fgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- sum(fgpuXS)
+    
+    expect_is(gpuC, "numeric")
+    expect_equal(gpuC[], sum(A[2:4, 2:4]), tolerance=1e-06, 
+                 info="float sum not equivalent")  
+})
+
+test_that("vclMatrix Double Precision Block Sum", 
+{
+    has_gpu_skip()
+    
+    dgpuX <- vclMatrix(A, type="double")
+    dgpuXS <- block(dgpuX, 2L,4L,2L,4L)
+    
+    gpuC <- sum(dgpuXS)
+    
+    expect_is(gpuC, "numeric")
+    expect_equal(gpuC[], sum(A[2:4,2:4]), tolerance=.Machine$double.eps ^ 0.5, 
+                 info="double colSums not equivalent")  
+})
 
 test_that("vclMatrix Single Precision Block Column Sums",
 {
