@@ -31,11 +31,24 @@ CMS <- colMeans(A[2:4, 2:4])
 
 S <- sum(A)
 
+test_that("vclMatrix Integer Precision Sum",
+{
+  has_gpu_skip()
+  
+  fgpuX <- vclMatrix(Aint, type="integer")
+  
+  gpuC <- sum(fgpuX)
+  
+  expect_is(gpuC, "integer")
+  expect_equivalent(gpuC[], sum(Ai), 
+                    info="integer sum not equivalent")  
+})
+
 test_that("vclMatrix Single Precision Sum",
 {
     has_gpu_skip()
     
-    fgpuX <- vclMatrix(Aint, type="float")
+    fgpuX <- vclMatrix(A, type="float")
     
     gpuS <- sum(fgpuX)
     
