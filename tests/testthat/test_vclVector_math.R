@@ -368,22 +368,22 @@ test_that("vclVector Double Precision sqrt", {
                  info="sqrt double vector elements not equivalent")  
 })
 
-test_that("vclVector Integer Precision Matrix sign", {
-    has_gpu_skip()
-    
-    Ai <- seq.int(16) * sample(c(-1, 1), 16, replace = TRUE)
-    
-    R_sign <- sign(Ai)
-    
-    fgpuA <- vclVector(Ai, type="integer")
-    
-    fgpu_sign <- sign(fgpuA)
-    
-    expect_is(fgpu_sign, "ivclVector")
-    expect_equal(fgpu_sign[,], R_sign, 
-                 info="sign integer matrix elements not equivalent",
-                 check.attributes=FALSE)  
-})
+# test_that("vclVector Integer Precision Matrix sign", {
+#     has_gpu_skip()
+#     
+#     Ai <- seq.int(16) * sample(c(-1, 1), 16, replace = TRUE)
+#     
+#     R_sign <- sign(Ai)
+#     
+#     fgpuA <- vclVector(Ai, type="integer")
+#     
+#     fgpu_sign <- sign(fgpuA)
+#     
+#     expect_is(fgpu_sign, "ivclVector")
+#     expect_equal(fgpu_sign[,], R_sign, 
+#                  info="sign integer matrix elements not equivalent",
+#                  check.attributes=FALSE)  
+# })
 
 test_that("vclVector Single Precision Matrix sign", {
     has_gpu_skip()

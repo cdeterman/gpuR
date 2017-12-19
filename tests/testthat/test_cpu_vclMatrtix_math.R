@@ -351,21 +351,21 @@ test_that("CPU vclMatrix Double Precision Matrix sqrt", {
                  info="sqrt double matrix elements not equivalent")  
 })
 
-test_that("CPU vclMatrix Integer Precision Matrix sign", {
-    has_cpu_skip()
-    
-    Ai <- matrix(seq.int(16), 4, 4) * sample(c(-1, 1), 16, replace = TRUE)
-    R_sign <- sign(Ai)
-    
-    fgpuA <- vclMatrix(Ai, type="integer")
-    
-    fgpu_sign <- sign(fgpuA)
-    
-    expect_is(fgpu_sign, "ivclMatrix")
-    expect_equivalent(fgpu_sign[,], R_sign, 
-                      info="sign integer matrix elements not equivalent",
-                      check.attributes=FALSE)  
-})
+# test_that("CPU vclMatrix Integer Precision Matrix sign", {
+#     has_cpu_skip()
+#     
+#     Ai <- matrix(seq.int(16), 4, 4) * sample(c(-1, 1), 16, replace = TRUE)
+#     R_sign <- sign(Ai)
+#     
+#     fgpuA <- vclMatrix(Ai, type="integer")
+#     
+#     fgpu_sign <- sign(fgpuA)
+#     
+#     expect_is(fgpu_sign, "ivclMatrix")
+#     expect_equivalent(fgpu_sign[,], R_sign, 
+#                       info="sign integer matrix elements not equivalent",
+#                       check.attributes=FALSE)  
+# })
 
 test_that("CPU vclMatrix Single Precision Matrix sign", {
     has_cpu_skip()
