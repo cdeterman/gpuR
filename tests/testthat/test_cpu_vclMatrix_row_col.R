@@ -36,7 +36,7 @@ test_that("CPU vclMatrix Integer Precision Sum",
   gpuC <- sum(fgpuX)
   
   expect_is(gpuC, "integer")
-  expect_equivalent(gpuC[], sum(Ai), 
+  expect_equivalent(gpuC[], sum(Aint), 
                     info="integer sum not equivalent")  
 })
 
