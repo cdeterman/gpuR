@@ -35,7 +35,7 @@ test_that("vclMatrix Single Precision Sum",
 {
     has_gpu_skip()
     
-    fgpuX <- vclMatrix(A, type="float")
+    fgpuX <- vclMatrix(Aint, type="float")
     
     gpuS <- sum(fgpuX)
     

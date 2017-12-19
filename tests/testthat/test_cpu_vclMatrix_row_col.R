@@ -31,7 +31,7 @@ test_that("CPU vclMatrix Integer Precision Sum",
 {
   has_cpu_skip()
   
-  fgpuX <- vclMatrix(Ai, type="integer")
+  fgpuX <- vclMatrix(Aint, type="integer")
   
   gpuC <- sum(fgpuX)
   
