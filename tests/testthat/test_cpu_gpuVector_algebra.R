@@ -339,6 +339,27 @@ test_that("CPU gpuVector Single precision outer product", {
                  info="float vector outer product elements not equivalent")
 })
 
+test_that("CPU gpuVector Single precision tcrossprod", {
+    
+    has_cpu_skip()
+    
+    C <- tcrossprod(A,B)
+    C2 <- tcrossprod(A)
+    
+    gpuA <- gpuVector(A, type="float")
+    gpuB <- gpuVector(B, type="float")
+    
+    gpuC <- tcrossprod(gpuA, gpuB)
+    gpuC2 <- tcrossprod(gpuA)
+    
+    expect_is(gpuC, "fgpuMatrix")
+    expect_is(gpuC2, "fgpuMatrix")
+    expect_equal(gpuC[], C, tolerance=1e-06, 
+                 info="float vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=1e-06,
+                 info="float vector outer product elements not equivalent")
+})
+
 # Double Precision Tests
 
 test_that("CPU gpuVector Double precision vector additonal", {
@@ -586,6 +607,27 @@ test_that("CPU gpuVector double precision outer product", {
     expect_equal(gpuC[], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double vector outer product elements not equivalent")
     expect_equal(gpuC2[], C2, tolerance=.Machine$double.eps^0.5,
+                 info="double vector outer product elements not equivalent")
+})
+
+test_that("CPU gpuVector double precision tcrossprod", {
+    
+    has_cpu_skip()
+    
+    C <- tcrossprod(A,B)
+    C2 <- tcrossprod(A)
+    
+    gpuA <- gpuVector(A, type="double")
+    gpuB <- gpuVector(B, type="double")
+    
+    gpuC <- tcrossprod(gpuA, gpuB)
+    gpuC2 <- tcrossprod(gpuA)
+    
+    expect_is(gpuC, "dgpuMatrix")
+    expect_is(gpuC2, "dgpuMatrix")
+    expect_equal(gpuC[], C, tolerance=1e-06, 
+                 info="double vector outer product elements not equivalent")
+    expect_equal(gpuC2[,], C2, tolerance=1e-06,
                  info="double vector outer product elements not equivalent")
 })
 

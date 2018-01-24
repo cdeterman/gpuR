@@ -408,6 +408,24 @@ setMethod("%o%", signature(X="vclVector", Y = "vclVector"),
           valueClass = "vclMatrix"
 )
 
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclVector", y = "vclVector"),
+          function(x, y){
+              return(gpuVecOuterProd(x, y))
+          },
+          valueClass = "vclMatrix")
+
+#' @rdname vclMatrix-crossprod
+#' @export
+setMethod("tcrossprod",
+          signature(x = "vclVector", y = "missing"),
+          function(x, y){
+              return(gpuVecOuterProd(x, x))
+          },
+          valueClass = "vclMatrix")
+
 #' @rdname Arith-methods
 #' @export
 setMethod("Arith", c(e1="vclVector", e2="vclVector"),
