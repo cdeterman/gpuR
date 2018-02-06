@@ -1,30 +1,28 @@
 
 #include "gpuR/windows_check.hpp"
 
-// eigen headers for handling the R input data
-#include <RcppEigen.h>
-
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
-
 #include "viennacl/matrix.hpp"
+
+#ifndef BACKEND_CUDA
 #include "viennacl/linalg/svd.hpp"
+#endif
 
 #include <algorithm>
 
 using namespace Rcpp;
 
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_vclMatrix_svd(
     SEXP ptrA_,
     SEXP ptrD_,
@@ -32,9 +30,8 @@ cpp_vclMatrix_svd(
     SEXP ptrV_,
     int ctx_id)
 {
-
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
+#ifndef BACKEND_CUDA
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > ptrD(ptrD_);
     Rcpp::XPtr<dynVCLMat<T> > ptrU(ptrU_);
@@ -63,11 +60,18 @@ cpp_vclMatrix_svd(
     
     // D = (vcl_A.handle(), std::min(vcl_A.size1(), vcl_A.size2()), 0, vcl_A.internal_size2() + 1);
     ptrD->setVector(D);
+#else
+    Rcpp::stop("CUDA backend SVD is not currently implemented :(");
+#endif
 }
 
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_svd(
     SEXP ptrA_,
     SEXP ptrD_,
@@ -75,6 +79,7 @@ cpp_gpuMatrix_svd(
     SEXP ptrV_)
 {
     
+#ifndef BACKEND_CUDA
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrD(ptrD_);
     Rcpp::XPtr<dynEigenMat<T> > ptrU(ptrU_);
@@ -118,6 +123,10 @@ cpp_gpuMatrix_svd(
     viennacl::copy(D, cpuD);
     ptrU->to_host(U);
     ptrV->to_host(V);
+#else
+    Rcpp::stop("CUDA backend SVD is not currently implemented :(");
+#endif
+    
 }
 
 // [[Rcpp::export]]
@@ -132,9 +141,11 @@ cpp_vclMatrix_svd(
 {
 
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatrix_svd<int>(ptrA, ptrD, ptrU, ptrV, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclMatrix_svd<float>(ptrA, ptrD, ptrU, ptrV, ctx_id);
         return;
@@ -158,9 +169,11 @@ cpp_gpuMatrix_svd(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuMatrix_svd<int>(ptrA, ptrD, ptrU, ptrV);
         return;
+#endif
     case 6:
         cpp_gpuMatrix_svd<float>(ptrA, ptrD, ptrU, ptrV);
         return;
