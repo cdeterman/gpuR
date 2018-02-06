@@ -7,22 +7,24 @@
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
-
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#endif
+
 #include "viennacl/linalg/prod.hpp"
 #include "viennacl/linalg/qr-method.hpp"
 
 using namespace Rcpp;
 
-template <typename T>
-void cpp_gpu_eigen(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
+    cpp_gpu_eigen(
     SEXP &Am, 
     SEXP &Qm,
     SEXP &eigenvalues,
@@ -40,11 +42,22 @@ void cpp_gpu_eigen(
     
     const int K = ptrA->nrow();
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::matrix<T> vcl_Q = ptrQ->device_data();
+    
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     viennacl::vector_base<T> vcl_eigenvalues(K, ctx = ctx);
+#else
+    int cuda_device;
+    cudaGetDevice(&cuda_device);
+    
+    if(ptrA->deviceIndex() != cuda_device){
+        cudaSetDevice(ptrA->deviceIndex());    
+    }
+    
+    viennacl::vector_base<T> vcl_eigenvalues(K);
+#endif
 
     //temp D
     std::vector<T> D(vcl_eigenvalues.size());
@@ -57,8 +70,13 @@ void cpp_gpu_eigen(
     std::copy(D.begin(), D.end(), &eigen_eigenvalues(0));
 }
 
-template <typename T>
-void cpp_vcl_eigen(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
+    cpp_vcl_eigen(
     SEXP &Am, 
     SEXP &Qm,
     SEXP &eigenvalues,
@@ -68,7 +86,6 @@ void cpp_vcl_eigen(
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(Am);
     Rcpp::XPtr<dynVCLMat<T> > ptrQ(Qm);
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
     // want copy of A to prevent overwriting original matrix
     viennacl::matrix<T> vcl_A = ptrA->matrix();
@@ -112,9 +129,11 @@ cpp_gpu_eigen(
     const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpu_eigen<int>(Am, Qm, eigenvalues, symmetric);
             return;
+#endif
         case 6:
             cpp_gpu_eigen<float>(Am, Qm, eigenvalues, symmetric);
             return;
@@ -137,9 +156,11 @@ cpp_vcl_eigen(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vcl_eigen<int>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
+#endif
         case 6:
             cpp_vcl_eigen<float>(Am, Qm, eigenvalues, symmetric, ctx_id);
             return;
