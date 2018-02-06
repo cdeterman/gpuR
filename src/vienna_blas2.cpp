@@ -9,16 +9,12 @@
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
-
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/backend.hpp"
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#endif
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/prod.hpp"
 
@@ -28,8 +24,13 @@ using namespace Rcpp;
 
 /*** vclMatrix Templates ***/
 
-template <typename T>
-void cpp_vclMatrix_gemv(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_vclMatrix_gemv(
         SEXP ptrA_, 
         SEXP ptrB_,
         SEXP ptrC_)
@@ -45,8 +46,13 @@ void cpp_vclMatrix_gemv(
     C = viennacl::linalg::prod(A, B);
 }
 
-template <typename T>
-void cpp_vclMatrix_gevm(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_vclMatrix_gevm(
         SEXP ptrA_, 
         SEXP ptrB_,
         SEXP ptrC_)
@@ -63,8 +69,12 @@ void cpp_vclMatrix_gevm(
 }
 
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_vclMatVec_crossprod(
     SEXP ptrA_, 
     const bool AisVec,
@@ -99,8 +109,12 @@ cpp_vclMatVec_crossprod(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_vclMatVec_tcrossprod(
     SEXP ptrA_, 
     const bool AisVec,
@@ -166,8 +180,13 @@ cpp_vclMatVec_tcrossprod(
     }
 }
 
-template <typename T>
-void cpp_vclMatVec_axpy(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_vclMatVec_axpy(
         SEXP alpha_,
         SEXP ptrA_, 
         const bool AisVec,
@@ -175,8 +194,6 @@ void cpp_vclMatVec_axpy(
         const bool BisVec,
         const int ctx_id)
 {
-    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     const T alpha = as<T>(alpha_);
     
@@ -270,9 +287,11 @@ cpp_vclMatrix_gemv(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatrix_gemv<int>(ptrA, ptrB, ptrC);
         return;
+#endif
     case 6:
         cpp_vclMatrix_gemv<float>(ptrA, ptrB, ptrC);
         return;
@@ -293,9 +312,11 @@ cpp_vclMatrix_gevm(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatrix_gevm<int>(ptrA, ptrB, ptrC);
         return;
+#endif
     case 6:
         cpp_vclMatrix_gevm<float>(ptrA, ptrB, ptrC);
         return;
@@ -319,9 +340,11 @@ cpp_vclMatVec_crossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatVec_crossprod<int>(ptrA, AisVec, ptrB, BisVec, ptrC);
         return;
+#endif
     case 6:
         cpp_vclMatVec_crossprod<float>(ptrA, AisVec, ptrB, BisVec, ptrC);
         return;
@@ -347,9 +370,11 @@ cpp_vclMatVec_tcrossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatVec_tcrossprod<int>(ptrA, AisVec, ptrB, BisVec, ptrC, CisVec);
         return;
+#endif
     case 6:
         cpp_vclMatVec_tcrossprod<float>(ptrA, AisVec, ptrB, BisVec, ptrC, CisVec);
         return;
@@ -375,9 +400,11 @@ cpp_vclMatVec_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatVec_axpy<int>(alpha, ptrA, AisVec, ptrB, BisVec, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclMatVec_axpy<float>(alpha, ptrA, AisVec, ptrB, BisVec, ctx_id);
         return;
