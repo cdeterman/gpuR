@@ -56,56 +56,60 @@ using namespace Rcpp;
 // }
 
 
-template<typename T>
-void
-vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
-    
-    viennacl::context ctx;
-    
-    // explicitly pull context for thread safe forking
-    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
-    
-    XPtr<dynVCLVec<T> > ptrV(ptrV_);
-    viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
-    
-    int start = 0;
-    int end = 0;
-    
-    // std::cout << "start loop" << std::endl;
-    for(int i = 0; i < mylist.size(); i++){
-        
-        S4 tmp = mylist[i];
-        SEXP tmp_address = tmp.slot("address");
-        XPtr<dynVCLMat<T> > tmpPtr(tmp_address);
-        viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
-        
-        viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
-        
-        viennacl::matrix_base<T> dummy(A.handle(),
-                                       mat.size1(), 0, 1, mat.size1(),   //row layout
-                                       mat.size2(), 0, 1, mat.size2(),   //column layout
-                                       true); // row-major
-        
-        
-        dummy = mat;
-        
-        end += A.size();
-        
-        // std::cout << "start: " << start << std::endl;
-        // std::cout << "end: " << end << std::endl;
-        
-        viennacl::range r(start, end);
-        viennacl::vector_range<viennacl::vector_base<T> > vsub(V, r);
-        
-        vsub = A;
-        
-        start += A.size();
-    }
-}
+// template<typename T>
+// void
+// vectorizeList(List mylist, SEXP ptrV_, const int ctx_id){
+//     
+//     viennacl::context ctx;
+//     
+//     // explicitly pull context for thread safe forking
+//     ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+//     
+//     XPtr<dynVCLVec<T> > ptrV(ptrV_);
+//     viennacl::vector_range<viennacl::vector_base<T> > V = ptrV->data();
+//     
+//     int start = 0;
+//     int end = 0;
+//     
+//     // std::cout << "start loop" << std::endl;
+//     for(int i = 0; i < mylist.size(); i++){
+//         
+//         S4 tmp = mylist[i];
+//         SEXP tmp_address = tmp.slot("address");
+//         XPtr<dynVCLMat<T> > tmpPtr(tmp_address);
+//         viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
+//         
+//         viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+//         
+//         viennacl::matrix_base<T> dummy(A.handle(),
+//                                        mat.size1(), 0, 1, mat.size1(),   //row layout
+//                                        mat.size2(), 0, 1, mat.size2(),   //column layout
+//                                        true); // row-major
+//         
+//         
+//         dummy = mat;
+//         
+//         end += A.size();
+//         
+//         // std::cout << "start: " << start << std::endl;
+//         // std::cout << "end: " << end << std::endl;
+//         
+//         viennacl::range r(start, end);
+//         viennacl::vector_range<viennacl::vector_base<T> > vsub(V, r);
+//         
+//         vsub = A;
+//         
+//         start += A.size();
+//     }
+// }
 
 
 template<typename T>
-void
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
     
     // viennacl::context ctx;
@@ -145,7 +149,11 @@ assignVectorToMat(SEXP ptrM_, SEXP ptrV_){
 
 
 template<typename T>
-void
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 assignVectorToCol(SEXP ptrM_, SEXP ptrV_, const int index){
     
     // viennacl::context ctx;
@@ -172,16 +180,24 @@ assignVectorToCol(SEXP ptrM_, SEXP ptrV_, const int index){
     M_sub = dummy;
 }
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 setVCLcols(SEXP ptrA_, CharacterVector names){
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     ptrA->setColumnNames(names);
     return;
 }
 
-template <typename T>
-StringVector
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, StringVector>::type
+#else
+    StringVector
+#endif  
 getVCLcols(SEXP ptrA_){
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     StringVector cnames = ptrA->getColumnNames();
@@ -189,8 +205,12 @@ getVCLcols(SEXP ptrA_){
 }
 
 // create identity matrix
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_identity_vclMatrix(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -202,8 +222,12 @@ cpp_identity_vclMatrix(SEXP ptrA_)
 
 
 // get diagonal of vclMatrix
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_vclMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -217,8 +241,12 @@ cpp_vclMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
 
 
 // set diagonal with vclVector
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_vclMat_vclVec_set_diag(SEXP ptrA_, SEXP ptrB_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -236,8 +264,12 @@ cpp_vclMat_vclVec_set_diag(SEXP ptrA_, SEXP ptrB_)
 
 
 //copy an existing Xptr
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_deepcopy_vclMatrix(SEXP ptrA_, const int ctx_id, const bool source)
 {        
     
@@ -257,8 +289,12 @@ cpp_deepcopy_vclMatrix(SEXP ptrA_, const int ctx_id, const bool source)
 }
 
 //copy an existing Xptr
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_deepcopy_vclVector(SEXP ptrA_, int ctx_id)
 {        
     Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
@@ -275,8 +311,12 @@ cpp_deepcopy_vclVector(SEXP ptrA_, int ctx_id)
 }
 
 // slice vclVector
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_vclVector_slice(SEXP ptrA_, int start, int end)
 {
     Rcpp::XPtr<dynVCLVec<T> > pVec(ptrA_);
@@ -292,15 +332,14 @@ cpp_vclVector_slice(SEXP ptrA_, int start, int end)
 }
 
 //cbind two vclMatrix objects
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const int ctx_id)
-{        
-    viennacl::context ctx;
-    
-    // explicitly pull context for thread safe forking
-    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
-    
+{  
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
     Rcpp::XPtr<dynVCLMat<T> > ptrC(ptrC_);
@@ -308,7 +347,6 @@ cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const int ctx_id)
     viennacl::matrix_range<viennacl::matrix<T> > pB  = ptrB->data();
     viennacl::matrix_range<viennacl::matrix<T> > pC  = ptrC->data();
     
-    // viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2(), ctx);
     
     viennacl::matrix_range<viennacl::matrix<T> > C_right(pC, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + pB.size2()));
     viennacl::matrix_range<viennacl::matrix<T> > C_left(pC, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
@@ -326,14 +364,14 @@ cpp_cbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const int ctx_id)
 }
 
 //cbind two vclMatrix objects
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_cbind_vclMat_vclVec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const bool order, const int ctx_id)
 {        
-    viennacl::context ctx;
-    
-    // explicitly pull context for thread safe forking
-    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
@@ -342,7 +380,6 @@ cpp_cbind_vclMat_vclVec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const bool order, co
     viennacl::vector_range<viennacl::vector_base<T> > pB  = ptrB->data();
     viennacl::matrix_range<viennacl::matrix<T> > pC  = ptrC->data();
     
-    // viennacl::matrix<T> C(pA.size1(), pA.size2() + pB.size2(), ctx);
     
     if(order){
         viennacl::matrix_range<viennacl::matrix<T> > C_right(pC, viennacl::range(0, pA.size1()), viennacl::range(pA.size2(), pA.size2() + 1));
@@ -362,8 +399,12 @@ cpp_cbind_vclMat_vclVec(SEXP ptrA_, SEXP ptrB_, SEXP ptrC_, const bool order, co
 }
 
 //rbind two vclMatrix objects
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int ctx_id)
 {        
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -372,10 +413,15 @@ cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int ctx_id)
     viennacl::matrix_range<viennacl::matrix<T> > pB  = ptrB->data();
     viennacl::context ctx;
     
+#ifndef BACKEND_CUDA
     // explicitly pull context for thread safe forking
     ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     
     viennacl::matrix<T> C(pA.size1() + pB.size1(), pA.size2(), ctx);
+#else
+    cudaSetDevice(ctx_id);
+    viennacl::matrix<T> C(pA.size1() + pB.size1(), pA.size2());
+#endif
     
     viennacl::matrix_range<viennacl::matrix<T> > C_top(C, viennacl::range(0, pA.size1()), viennacl::range(0, pA.size2()));
     viennacl::matrix_range<viennacl::matrix<T> > C_bottom(C, viennacl::range(pA.size1(), pA.size1() + pB.size1()), viennacl::range(0, pA.size2()));
@@ -392,8 +438,12 @@ cpp_rbind_vclMatrix(SEXP ptrA_, SEXP ptrB_, int ctx_id)
     return pMat;
 }
 
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_vclMatrix_block(
     const SEXP ptrA, 
     int rowStart, int rowEnd,
@@ -414,8 +464,12 @@ cpp_vclMatrix_block(
 }
 
 // convert XPtr ViennaCL Vector to Eigen vector
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Eigen::Matrix<T, Eigen::Dynamic, 1>>::type
+#else
+    Eigen::Matrix<T, Eigen::Dynamic, 1>
+#endif  
 VCLtoVecSEXP(SEXP A_)
 {   
     Rcpp::XPtr<dynVCLVec<T> > ptrA(A_);
@@ -433,8 +487,12 @@ VCLtoVecSEXP(SEXP A_)
 }
 
 // scalar initialized ViennaCL matrix
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif 
 cpp_scalar_vclMatrix(
     SEXP scalar_, 
     int nr, 
@@ -449,8 +507,13 @@ cpp_scalar_vclMatrix(
 }
 
 // empty ViennaCL matrix
-template <typename T>
-SEXP cpp_zero_vclMatrix(int nr, int nc, int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
+    cpp_zero_vclMatrix(int nr, int nc, int ctx_id)
 {
     dynVCLMat<T> *mat = new dynVCLMat<T>(nr, nc, ctx_id);
     Rcpp::XPtr<dynVCLMat<T> > pMat(mat);
@@ -458,8 +521,12 @@ SEXP cpp_zero_vclMatrix(int nr, int nc, int ctx_id)
 }
 
 // convert SEXP Vector to ViennaCL vector
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif 
 sexpVecToVCL(
     SEXP A,
     int ctx_id)
@@ -470,8 +537,12 @@ sexpVecToVCL(
 }
 
 // scalar initialized ViennaCL vector
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
 cpp_scalar_vclVector(
     SEXP scalar_, 
     int size, 
@@ -485,8 +556,13 @@ cpp_scalar_vclVector(
 }
 
 // convert SEXP Matrix to ViennaCL matrix
-template <typename T>
-SEXP cpp_sexp_mat_to_vclMatrix(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
+    cpp_sexp_mat_to_vclMatrix(
     SEXP A, 
     int ctx_id)
 {
@@ -498,8 +574,12 @@ SEXP cpp_sexp_mat_to_vclMatrix(
 
 
 // convert XPtr ViennaCL Matrix to Eigen matrix
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >::type
+#else
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> 
+#endif
 VCLtoSEXP(SEXP A)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(A);
@@ -523,91 +603,95 @@ VCLtoSEXP(SEXP A)
     return Am;
 }
 
-template <>
-Eigen::Matrix<std::complex<float>, Eigen::Dynamic, Eigen::Dynamic> 
-VCLtoSEXP(SEXP A)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(A);
-    viennacl::matrix_range<viennacl::matrix<float> > tempA  = ptrA->data();
-    
-    viennacl::matrix<float> pA = static_cast<viennacl::matrix<float> >(tempA);
-    const int nr = pA.size1();
-    const int nc = pA.size2() / 2;
-    
-    Eigen::MatrixXcf Am = Eigen::MatrixXcf::Zero(nr, nc);
-    
-    // assign real elements
-    // assign existing matrix with new data
-    viennacl::matrix_slice<viennacl::matrix<float> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
-    
-    // other attempts for more direct copy
-    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
-    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
-    // std::cout << "try copy" << std::endl;
-    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
-    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
-    
-    Eigen::MatrixXf pAm(Am.real());
-    viennacl::copy(A_sub, pAm);
-    Am.real() = pAm;
-    
-    // assign imaginary elements
-    A_sub = viennacl::matrix_slice<viennacl::matrix<float> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
-    
-    pAm = Am.imag();
-    viennacl::copy(A_sub, pAm);
-    Am.imag() = pAm;
-    
-    return Am;
-}
-
-template <>
-Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> 
-VCLtoSEXP(SEXP A)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(A);
-    viennacl::matrix_range<viennacl::matrix<double> > tempA  = ptrA->data();
-    
-    viennacl::matrix<double> pA = static_cast<viennacl::matrix<double> >(tempA);
-    const int nr = pA.size1();
-    const int nc = pA.size2() / 2;
-    
-    Eigen::MatrixXcd Am = Eigen::MatrixXcd::Zero(nr, nc);
-    
-    // assign real elements
-    // assign existing matrix with new data
-    viennacl::matrix_slice<viennacl::matrix<double> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
-    
-    // other attempts for more direct copy
-    // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
-    // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
-    // std::cout << "try copy" << std::endl;
-    // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
-    // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
-    // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
-    
-    Eigen::MatrixXd pAm(Am.real());
-    viennacl::copy(A_sub, pAm);
-    Am.real() = pAm;
-    
-    // assign imaginary elements
-    A_sub = viennacl::matrix_slice<viennacl::matrix<double> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
-
-    pAm = Am.imag();
-    viennacl::copy(A_sub, pAm);
-    Am.imag() = pAm;
-    
-    return Am;
-}
+// template <>
+// Eigen::Matrix<std::complex<float>, Eigen::Dynamic, Eigen::Dynamic> 
+// VCLtoSEXP(SEXP A)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(A);
+//     viennacl::matrix_range<viennacl::matrix<float> > tempA  = ptrA->data();
+//     
+//     viennacl::matrix<float> pA = static_cast<viennacl::matrix<float> >(tempA);
+//     const int nr = pA.size1();
+//     const int nc = pA.size2() / 2;
+//     
+//     Eigen::MatrixXcf Am = Eigen::MatrixXcf::Zero(nr, nc);
+//     
+//     // assign real elements
+//     // assign existing matrix with new data
+//     viennacl::matrix_slice<viennacl::matrix<float> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+//     
+//     // other attempts for more direct copy
+//     // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+//     // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+//     // std::cout << "try copy" << std::endl;
+//     // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+//     // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+//     
+//     Eigen::MatrixXf pAm(Am.real());
+//     viennacl::copy(A_sub, pAm);
+//     Am.real() = pAm;
+//     
+//     // assign imaginary elements
+//     A_sub = viennacl::matrix_slice<viennacl::matrix<float> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+//     
+//     pAm = Am.imag();
+//     viennacl::copy(A_sub, pAm);
+//     Am.imag() = pAm;
+//     
+//     return Am;
+// }
+// 
+// template <>
+// Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> 
+// VCLtoSEXP(SEXP A)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(A);
+//     viennacl::matrix_range<viennacl::matrix<double> > tempA  = ptrA->data();
+//     
+//     viennacl::matrix<double> pA = static_cast<viennacl::matrix<double> >(tempA);
+//     const int nr = pA.size1();
+//     const int nc = pA.size2() / 2;
+//     
+//     Eigen::MatrixXcd Am = Eigen::MatrixXcd::Zero(nr, nc);
+//     
+//     // assign real elements
+//     // assign existing matrix with new data
+//     viennacl::matrix_slice<viennacl::matrix<double> > A_sub(pA, viennacl::slice(0, 1, nr), viennacl::slice(0, 2, nc));
+//     
+//     // other attempts for more direct copy
+//     // viennacl::copy(A_sub, static_cast<Eigen::Matrix<std::complex<double>, -1, -1>& >(Am.real()));
+//     // viennacl::copy<double>(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)Am.real());
+//     // std::cout << "try copy" << std::endl;
+//     // Eigen::Matrix<double, -1, -1> *tmp = &(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>)(Am.real().cast<double>());
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(tmp));
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&)(Am.real().cast<double>()));
+//     // viennacl::copy(A_sub, (Eigen::Matrix<double, -1, -1>&)Am.real().cast<double>());
+//     // viennacl::copy(A_sub.begin(), A_sub.end(), Am.real().begin());
+//     
+//     Eigen::MatrixXd pAm(Am.real());
+//     viennacl::copy(A_sub, pAm);
+//     Am.real() = pAm;
+//     
+//     // assign imaginary elements
+//     A_sub = viennacl::matrix_slice<viennacl::matrix<double> >(pA, viennacl::slice(0, 1, nr), viennacl::slice(1, 2, nc));
+// 
+//     pAm = Am.imag();
+//     viennacl::copy(A_sub, pAm);
+//     Am.imag() = pAm;
+//     
+//     return Am;
+// }
 
 // convert SEXP Vector to ViennaCL matrix
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
 vectorToMatVCL(SEXP A, int nr, int nc, int ctx_id)
 {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Am;
@@ -634,8 +718,12 @@ vectorToMatVCL(SEXP A, int nr, int nc, int ctx_id)
 }
 
 // convert ViennaCL matrix to ViennaCL vector (shared memory)
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
 vclMatTovclVec(SEXP ptrA_, const bool shared, const int ctx_id){
     
     XPtr<dynVCLMat<T> > ptrA(ptrA_);
@@ -656,8 +744,13 @@ vclMatTovclVec(SEXP ptrA_, const bool shared, const int ctx_id){
 }
 
 // empty ViennaCL Vector
-template <typename T>
-SEXP emptyVecVCL(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
+    emptyVecVCL(
     int length,
     int ctx_id)
 {
@@ -669,8 +762,12 @@ SEXP emptyVecVCL(
 /*** vclVector get elements ***/
 
 // Get viennacl column elements
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 vclVecGetElement(SEXP &data, const int &idx)
 {
     Rcpp::XPtr<dynVCLVec<T> > pVec(data);
@@ -684,8 +781,12 @@ vclVecGetElement(SEXP &data, const int &idx)
 /*** vclVector set elements ***/
 
 // Get viennacl column elements
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
 {
     Rcpp::XPtr<dynVCLVec<T> > pA(data);
@@ -699,9 +800,13 @@ vclVecSetElement(SEXP &data, SEXP newdata, const int &idx)
 }
 
 // update viennacl vector with R vector
-template <typename T>
-void
-vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     viennacl::vector_range<viennacl::vector_base<T> > A  = pMat->data();
@@ -719,18 +824,26 @@ vclSetVector(SEXP data, SEXP newdata, const int ctx_id)
 }
 
 // update viennacl vector with R scalar
-template <typename T>
-void
-vclFillVectorScalar(SEXP data, T newdata, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillVectorScalar(SEXP data, T newdata, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     pMat->fill(newdata);
 }
 
 // update viennacl vector range with R scalar
-template <typename T>
-void
-vclFillVectorRangeScalar(SEXP data, T newdata, const int start, const int end, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillVectorRangeScalar(SEXP data, T newdata, const int start, const int end, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     
@@ -740,9 +853,13 @@ vclFillVectorRangeScalar(SEXP data, T newdata, const int start, const int end, c
 }
 
 // update viennacl vector slice with R scalar
-template <typename T>
-void
-vclFillVectorSliceScalar(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillVectorSliceScalar(
     SEXP data, const NumericVector newdata, 
     const IntegerVector start, const int stride,
     const int ctx_id)
@@ -766,9 +883,13 @@ vclFillVectorSliceScalar(
     }
 }
 
-template <typename T>
-void
-vclFillVectorElementwise(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillVectorElementwise(
     SEXP data, SEXP newdata, 
     const IntegerVector elems, 
     const int ctx_id)
@@ -779,9 +900,13 @@ vclFillVectorElementwise(
 }
 
 // update viennacl matrix with another viennacl vector
-template <typename T>
-void
-vclSetVCLVector(SEXP data, SEXP newdata)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetVCLVector(SEXP data, SEXP newdata)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     Rcpp::XPtr<dynVCLVec<T> > pMatNew(newdata);
@@ -793,9 +918,13 @@ vclSetVCLVector(SEXP data, SEXP newdata)
 }
 
 // update viennacl vector with another viennacl vector
-template <typename T>
-void
-vclSetVCLVectorRange(SEXP data, SEXP newdata, const int start, const int end)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetVCLVectorRange(SEXP data, SEXP newdata, const int start, const int end)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     Rcpp::XPtr<dynVCLVec<T> > pMatNew(newdata);
@@ -818,9 +947,13 @@ vclSetVCLVectorRange(SEXP data, SEXP newdata, const int start, const int end)
 
 
 // update viennacl vector with another viennacl matrix
-template <typename T>
-void
-vclVecSetVCLMatrix(SEXP data, SEXP newdata)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclVecSetVCLMatrix(SEXP data, SEXP newdata)
 {
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
@@ -840,14 +973,14 @@ vclVecSetVCLMatrix(SEXP data, SEXP newdata)
 
 
 // update viennacl vector with another viennacl matrix
-template <typename T>
-void
-vclSetVCLMatrixRange(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetVCLMatrixRange(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
 {
-    viennacl::context ctx;
-    
-    // explicitly pull context for thread safe forking
-    ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     
     Rcpp::XPtr<dynVCLVec<T> > pMat(data);
     Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
@@ -860,7 +993,13 @@ vclSetVCLMatrixRange(SEXP data, SEXP newdata, const int start, const int end, co
     
     // viennacl::matrix_range<viennacl::matrix<T> > mat = tmpPtr->data();
     
+#ifndef BACKEND_CUDA
+    // explicitly pull context for thread safe forking
+    viennacl::context ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
     viennacl::vector_base<T> tmp = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx);
+#else
+    viennacl::vector_base<T> tmp = viennacl::vector_base<T>(mat.size1() * mat.size2());
+#endif
     
     viennacl::matrix_base<T> dummy(tmp.handle(),
                                    mat.size1(), 0, 1, mat.size1(),   //row layout
@@ -878,9 +1017,13 @@ vclSetVCLMatrixRange(SEXP data, SEXP newdata, const int start, const int end, co
 /*** vclMatrix setting elements ***/
 
 // update viennacl column elements
-template <typename T>
-void
-vclSetCol(SEXP data, SEXP newdata, const int nc)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetCol(SEXP data, SEXP newdata, const int nc)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
@@ -903,9 +1046,13 @@ vclSetCol(SEXP data, SEXP newdata, const int nc)
 }
 
 // update viennacl matrix with a scalar
-template <typename T>
-void
-vclFillCol(SEXP data, SEXP newdata, const int nc, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillCol(SEXP data, SEXP newdata, const int nc, const int ctx_id)
 {
     T fill_data = as<T>(newdata);
 	Rcpp::XPtr<dynVCLMat<T> > pMat(data);
@@ -918,9 +1065,13 @@ vclFillCol(SEXP data, SEXP newdata, const int nc, const int ctx_id)
 }
 
 // update viennacl row elements
-template <typename T>
-void
-vclSetRow(SEXP data, SEXP newdata, const int nr)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetRow(SEXP data, SEXP newdata, const int nr)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
@@ -942,9 +1093,13 @@ vclSetRow(SEXP data, SEXP newdata, const int nr)
 }
 
 // update viennacl element
-template <typename T>
-void
-vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
@@ -956,9 +1111,13 @@ vclSetElement(SEXP data, SEXP newdata, const int nr, const int nc)
 }
 
 // update viennacl matrix with R matrix
-template <typename T>
-void
-vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
@@ -976,9 +1135,13 @@ vclSetMatrix(SEXP data, SEXP newdata, const int ctx_id)
 }
 
 // update viennacl matrix with another viennacl matrix
-template <typename T>
-void
-vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
@@ -989,9 +1152,13 @@ vclSetVCLMatrix(SEXP data, SEXP newdata, const int ctx_id)
     A = A_new;
 }
 
-template <typename T>
-void
-vclMatSetVCLCols(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclMatSetVCLCols(SEXP data, SEXP newdata, const int start, const int end, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     Rcpp::XPtr<dynVCLMat<T> > pMatNew(newdata);
@@ -1005,9 +1172,13 @@ vclMatSetVCLCols(SEXP data, SEXP newdata, const int start, const int end, const 
 }
 
 // update viennacl matrix with a scalar
-template <typename T>
-void
-vclFillVCLMatrix(SEXP data, T newdata, const int ctx_id)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    vclFillVCLMatrix(SEXP data, T newdata, const int ctx_id)
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > A  = pMat->data();
@@ -1017,8 +1188,12 @@ vclFillVCLMatrix(SEXP data, T newdata, const int ctx_id)
 /*** vclMatrix get elements ***/
 
 // Get viennacl column elements
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Eigen::Matrix<T, Eigen::Dynamic, 1>>::type
+#else
+    Eigen::Matrix<T, Eigen::Dynamic, 1>
+#endif
 vclGetCol(
     SEXP &data, 
     const int &nc,
@@ -1026,12 +1201,16 @@ vclGetCol(
 {
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(pA.size1());
     
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::vector_base<T> vcl_A(pA.size1(), ctx=ctx);
+#else
+    viennacl::vector_base<T> vcl_A(pA.size1());
+#endif
     vcl_A = viennacl::column(pA, nc-1);
     
     // copy(static_cast<viennacl::vector<T> >(vcl_A), Am);
@@ -1040,8 +1219,12 @@ vclGetCol(
 }
 
 // Get viennacl row elements
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1>
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Eigen::Matrix<T, Eigen::Dynamic, 1>>::type
+#else
+    Eigen::Matrix<T, Eigen::Dynamic, 1>
+#endif
 vclGetRow(
     SEXP &data, 
     const int &nr,
@@ -1050,13 +1233,18 @@ vclGetRow(
     
     Rcpp::XPtr<dynVCLMat<T> > pMat(data);
     viennacl::matrix_range<viennacl::matrix<T> > pA  = pMat->data();
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
 //    Rcpp::XPtr<viennacl::matrix<T> > pA(data);
     Eigen::Matrix<T, Eigen::Dynamic, 1> Am;
     Am = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(pA.size2());
     
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::vector_base<T> vcl_A(pA.size2(), ctx=ctx);
+#else
+    viennacl::vector_base<T> vcl_A(pA.size2());
+#endif
+    
     vcl_A = viennacl::row(pA, nr-1);
     
     // copy(static_cast<viennacl::vector<T> >(vcl_A), Am);
@@ -1065,8 +1253,12 @@ vclGetRow(
 }
 
 
-template <typename T>
-SEXP
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
 extractRow(
     SEXP &data, 
     const int row_idx,
@@ -1088,9 +1280,13 @@ extractRow(
     return pVec;
 }
 
-template <typename T>
-SEXP
-extractCol(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
+    extractCol(
     SEXP &data, 
     const int col_idx,
     const int ctx_id)
@@ -1117,9 +1313,13 @@ extractCol(
 }
 
 // Get viennacl row elements
-template <typename T>
-T
-vclGetElement(SEXP &data, const int &nr, const int &nc)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    vclGetElement(SEXP &data, const int &nr, const int &nc)
 {
     T value;
     
@@ -1139,9 +1339,11 @@ void
 cpp_identity_vclMatrix(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_identity_vclMatrix<int>(ptrA);
             return;
+#endif
         case 6:
             cpp_identity_vclMatrix<float>(ptrA);
             return;
@@ -1160,9 +1362,11 @@ void
 cpp_vclMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMatrix_get_diag<int>(ptrA, ptrB);
             return;
+#endif
         case 6:
             cpp_vclMatrix_get_diag<float>(ptrA, ptrB);
             return;
@@ -1181,9 +1385,11 @@ void
 cpp_vclMat_vclVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMat_vclVec_set_diag<int>(ptrA, ptrB);
             return;
+#endif
         case 6:
             cpp_vclMat_vclVec_set_diag<float>(ptrA, ptrB);
             return;
@@ -1205,8 +1411,10 @@ cpp_deepcopy_vclMatrix(SEXP ptrA,
                        const bool source)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_deepcopy_vclMatrix<int>(ptrA, ctx_id, source);
+#endif
         case 6:
             return cpp_deepcopy_vclMatrix<float>(ptrA, ctx_id, source);
         case 8:
@@ -1225,8 +1433,10 @@ cpp_deepcopy_vclVector(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_deepcopy_vclVector<int>(ptrA, ctx_id);
+#endif
         case 6:
             return cpp_deepcopy_vclVector<float>(ptrA, ctx_id);
         case 8:
@@ -1242,8 +1452,10 @@ SEXP
 cpp_vclVector_slice(SEXP ptrA, const int start, const int end, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_vclVector_slice<int>(ptrA, start, end);
+#endif
         case 6:
             return cpp_vclVector_slice<float>(ptrA, start, end);
         case 8:
@@ -1264,8 +1476,10 @@ cpp_vclMatrix_block(
     const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_vclMatrix_block<int>(ptrA, rowStart, rowEnd, colStart, colEnd);
+#endif
         case 6:
             return cpp_vclMatrix_block<float>(ptrA, rowStart, rowEnd, colStart, colEnd);
         case 8:
@@ -1286,9 +1500,11 @@ cpp_cbind_vclMatrix(
     const int ctx_id)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_cbind_vclMatrix<int>(ptrA, ptrB, ptrC, ctx_id);
             return;
+#endif
         case 6:
             cpp_cbind_vclMatrix<float>(ptrA, ptrB, ptrC, ctx_id);
             return;
@@ -1311,9 +1527,11 @@ cpp_cbind_vclMat_vclVec(
     const int ctx_id)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_cbind_vclMat_vclVec<int>(ptrA, ptrB, ptrC, order, ctx_id);
         return;
+#endif
     case 6:
         cpp_cbind_vclMat_vclVec<float>(ptrA, ptrB, ptrC, order, ctx_id);
         return;
@@ -1335,8 +1553,10 @@ cpp_rbind_vclMatrix(
     int ctx_id)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_rbind_vclMatrix<int>(ptrA, ptrB, ctx_id);
+#endif
         case 6:
             return cpp_rbind_vclMatrix<float>(ptrA, ptrB, ctx_id);
         case 8:
@@ -1356,16 +1576,18 @@ cpp_sexp_mat_to_vclMatrix(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_sexp_mat_to_vclMatrix<int>(ptrA, ctx_id);
+#endif
         case 6:
             return cpp_sexp_mat_to_vclMatrix<float>(ptrA, ctx_id);
         case 8:
             return cpp_sexp_mat_to_vclMatrix<double>(ptrA, ctx_id);
-        case 10:
-            return cpp_sexp_mat_to_vclMatrix<std::complex<float> >(ptrA, ctx_id);
-        case 12:
-            return cpp_sexp_mat_to_vclMatrix<std::complex<double> >(ptrA, ctx_id);
+        // case 10:
+        //     return cpp_sexp_mat_to_vclMatrix<std::complex<float> >(ptrA, ctx_id);
+        // case 12:
+        //     return cpp_sexp_mat_to_vclMatrix<std::complex<double> >(ptrA, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -1381,16 +1603,18 @@ VCLtoMatSEXP(
     int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(VCLtoSEXP<int>(ptrA));
+#endif
         case 6:
             return wrap(VCLtoSEXP<float>(ptrA));
         case 8:
             return wrap(VCLtoSEXP<double>(ptrA));
-        case 10:
-            return wrap(VCLtoSEXP<std::complex<float> >(ptrA));
-        case 12:
-            return wrap(VCLtoSEXP<std::complex<double> >(ptrA));
+        // case 10:
+        //     return wrap(VCLtoSEXP<std::complex<float> >(ptrA));
+        // case 12:
+        //     return wrap(VCLtoSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -1407,8 +1631,10 @@ cpp_zero_vclMatrix(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_zero_vclMatrix<int>(nr, nc, ctx_id);
+#endif
         case 6:
             return cpp_zero_vclMatrix<float>(nr, nc, ctx_id);
         case 8:
@@ -1428,8 +1654,10 @@ cpp_scalar_vclMatrix(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_scalar_vclMatrix<int>(scalar, nr, nc, ctx_id);
+#endif
         case 6:
             return cpp_scalar_vclMatrix<float>(scalar, nr, nc, ctx_id);
         case 8:
@@ -1446,9 +1674,11 @@ void
 vclSetCol(SEXP ptrA, const int nc, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             vclSetCol<int>(ptrA, newdata, nc);
             return;
+#endif
         case 6:
             vclSetCol<float>(ptrA, newdata, nc);
             return;
@@ -1466,9 +1696,11 @@ vclFillCol(SEXP ptrA, const int nc, SEXP newdata,
            const int ctx_id, const int type_flag){
 	
 	switch(type_flag) {
+#ifndef BACKEND_CUDA
 		case 4:
 			vclFillCol<int>(ptrA, newdata, nc, ctx_id);
 			return;
+#endif
 		case 6:
 			vclFillCol<float>(ptrA, newdata, nc, ctx_id);
 			return;
@@ -1485,9 +1717,11 @@ void
 vclSetRow(SEXP ptrA, const int nr, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             vclSetRow<int>(ptrA, newdata, nr);
             return;
+#endif
         case 6:
             vclSetRow<float>(ptrA, newdata, nr);
             return;
@@ -1504,9 +1738,11 @@ void
 vclSetElement(SEXP ptrA, const int nr, const int nc, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             vclSetElement<int>(ptrA, newdata, nr, nc);
             return;
+#endif
         case 6:
             vclSetElement<float>(ptrA, newdata, nr, nc);
             return;
@@ -1523,9 +1759,11 @@ void
 vclSetMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetMatrix<int>(ptrA, newdata, ctx_id);
         return;
+#endif
     case 6:
         vclSetMatrix<float>(ptrA, newdata, ctx_id);
         return;
@@ -1542,9 +1780,11 @@ void
 vclSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetVCLMatrix<int>(ptrA, newdata, ctx_id);
         return;
+#endif
     case 6:
         vclSetVCLMatrix<float>(ptrA, newdata, ctx_id);
         return;
@@ -1562,9 +1802,11 @@ void
 vclMatSetVCLCols(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclMatSetVCLCols<int>(ptrA, newdata, start, end, ctx_id);
         return;
+#endif
     case 6:
         vclMatSetVCLCols<float>(ptrA, newdata, start, end, ctx_id);
         return;
@@ -1581,9 +1823,11 @@ void
 vclFillVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclFillVCLMatrix<int>(ptrA, as<int>(newdata), ctx_id);
         return;
+#endif
     case 6:
         vclFillVCLMatrix<float>(ptrA, as<float>(newdata), ctx_id);
         return;
@@ -1602,8 +1846,10 @@ SEXP
 vclGetCol(SEXP ptrA, const int nc, const int type_flag, int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(vclGetCol<int>(ptrA, nc, ctx_id));
+#endif
         case 6:
             return wrap(vclGetCol<float>(ptrA, nc, ctx_id));
         case 8:
@@ -1618,8 +1864,10 @@ SEXP
 vclGetRow(SEXP ptrA, const int nr, const int type_flag, int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(vclGetRow<int>(ptrA, nr, ctx_id));
+#endif
         case 6:
             return wrap(vclGetRow<float>(ptrA, nr, ctx_id));
         case 8:
@@ -1634,8 +1882,10 @@ SEXP
 extractRow(SEXP ptrA, const int row_idx, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(extractRow<int>(ptrA, row_idx, ctx_id));
+#endif
     case 6:
         return wrap(extractRow<float>(ptrA, row_idx, ctx_id));
     case 8:
@@ -1650,8 +1900,10 @@ SEXP
 extractCol(SEXP ptrA, const int col_idx, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(extractCol<int>(ptrA, col_idx, ctx_id));
+#endif
     case 6:
         return wrap(extractCol<float>(ptrA, col_idx, ctx_id));
     case 8:
@@ -1666,8 +1918,10 @@ SEXP
 vclGetElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(vclGetElement<int>(ptrA, nr, nc));
+#endif
         case 6:
             return wrap(vclGetElement<float>(ptrA, nr, nc));
         case 8:
@@ -1684,8 +1938,10 @@ SEXP
 vclVecGetElement(SEXP ptrA, const int idx, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(vclVecGetElement<int>(ptrA, idx));
+#endif
         case 6:
             return wrap(vclVecGetElement<float>(ptrA, idx));
         case 8:
@@ -1700,9 +1956,11 @@ void
 vclVecSetElement(SEXP ptrA, const int idx, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             vclVecSetElement<int>(ptrA, newdata, idx);
             return;
+#endif
         case 6:
             vclVecSetElement<float>(ptrA, newdata, idx);
             return;
@@ -1719,9 +1977,11 @@ void
 vclSetVector(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetVector<int>(ptrA, newdata, ctx_id);
         return;
+#endif
     case 6:
         vclSetVector<float>(ptrA, newdata, ctx_id);
         return;
@@ -1738,9 +1998,11 @@ void
 vclFillVectorScalar(SEXP ptrA, SEXP newdata, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclFillVectorScalar<int>(ptrA, as<int>(newdata), ctx_id);
         return;
+#endif
     case 6:
         vclFillVectorScalar<float>(ptrA, as<float>(newdata), ctx_id);
         return;
@@ -1760,9 +2022,11 @@ vclFillVectorRangeScalar(
     const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclFillVectorRangeScalar<int>(ptrA, as<int>(newdata), start, end, ctx_id);
         return;
+#endif
     case 6:
         vclFillVectorRangeScalar<float>(ptrA, as<float>(newdata), start, end, ctx_id);
         return;
@@ -1783,9 +2047,11 @@ vclFillVectorSliceScalar(
     const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclFillVectorSliceScalar<int>(ptrA, newdata, start, stride, ctx_id);
         return;
+#endif
     case 6:
         vclFillVectorSliceScalar<float>(ptrA, newdata, start, stride, ctx_id);
         return;
@@ -1806,9 +2072,11 @@ vclFillVectorElementwise(
     const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclFillVectorElementwise<int>(ptrA, newdata, start, ctx_id);
         return;
+#endif
     case 6:
         vclFillVectorElementwise<float>(ptrA, newdata, start, ctx_id);
         return;
@@ -1825,9 +2093,11 @@ void
 vclSetVCLVector(SEXP ptrA, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetVCLVector<int>(ptrA, newdata);
         return;
+#endif
     case 6:
         vclSetVCLVector<float>(ptrA, newdata);
         return;
@@ -1845,9 +2115,11 @@ void
 vclSetVCLVectorRange(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetVCLVectorRange<int>(ptrA, newdata, start, end);
         return;
+#endif
     case 6:
         vclSetVCLVectorRange<float>(ptrA, newdata, start, end);
         return;
@@ -1864,9 +2136,11 @@ void
 vclVecSetVCLMatrix(SEXP ptrA, SEXP newdata, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclVecSetVCLMatrix<int>(ptrA, newdata);
         return;
+#endif
     case 6:
         vclVecSetVCLMatrix<float>(ptrA, newdata);
         return;
@@ -1883,9 +2157,11 @@ void
 vclSetVCLMatrixRange(SEXP ptrA, SEXP newdata, const int start, const int end, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         vclSetVCLMatrixRange<int>(ptrA, newdata, start, end, ctx_id);
         return;
+#endif
     case 6:
         vclSetVCLMatrixRange<float>(ptrA, newdata, start, end, ctx_id);
         return;
@@ -1908,8 +2184,10 @@ vectorToVCL(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return sexpVecToVCL<int>(ptrA, ctx_id);
+#endif
         case 6:
             return sexpVecToVCL<float>(ptrA, ctx_id);
         case 8:
@@ -1929,8 +2207,10 @@ vectorToMatVCL(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return vectorToMatVCL<int>(ptrA, nr, nc, ctx_id);
+#endif
         case 6:
             return vectorToMatVCL<float>(ptrA, nr, nc, ctx_id);
         case 8:
@@ -1950,8 +2230,10 @@ vclMatTovclVec(
     const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return vclMatTovclVec<int>(ptrA, shared, ctx_id);
+#endif
     case 6:
         return vclMatTovclVec<float>(ptrA, shared, ctx_id);
     case 8:
@@ -1970,8 +2252,10 @@ cpp_scalar_vclVector(
     const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return cpp_scalar_vclVector<int>(scalar, size, ctx_id);
+#endif
     case 6:
         return cpp_scalar_vclVector<float>(scalar, size, ctx_id);
     case 8:
@@ -1988,8 +2272,10 @@ SEXP
 VCLtoVecSEXP(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(VCLtoVecSEXP<int>(ptrA));
+#endif
         case 6:
             return wrap(VCLtoVecSEXP<float>(ptrA));
         case 8:
@@ -2009,8 +2295,10 @@ emptyVecVCL(
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return emptyVecVCL<int>(length, ctx_id);
+#endif
         case 6:
             return emptyVecVCL<float>(length, ctx_id);
         case 8:
@@ -2025,9 +2313,11 @@ void
 setVCLcols(SEXP ptrA, CharacterVector names, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             setVCLcols<int>(ptrA, names);
             return;
+#endif
         case 6:
             setVCLcols<float>(ptrA, names);
             return;
@@ -2045,8 +2335,10 @@ StringVector
 getVCLcols(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return getVCLcols<int>(ptrA);
+#endif
     case 6:
         return getVCLcols<float>(ptrA);
     case 8:
@@ -2077,24 +2369,24 @@ getVCLcols(SEXP ptrA, const int type_flag)
 // }
 
 
-// [[Rcpp::export]]
-void
-vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
-{
-    switch(type_flag){
-        case 4:
-            vectorizeList<int>(mylist, ptrV, ctx_id);
-            return;
-        case 6:
-            vectorizeList<float>(mylist, ptrV, ctx_id);
-            return;
-        case 8:
-            vectorizeList<double>(mylist, ptrV, ctx_id);
-            return;
-        default:
-            throw Rcpp::exception("unknown type detected for vclMatrix");
-    }
-}
+// // [[Rcpp::export]]
+// void
+// vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag)
+// {
+//     switch(type_flag){
+//         case 4:
+//             vectorizeList<int>(mylist, ptrV, ctx_id);
+//             return;
+//         case 6:
+//             vectorizeList<float>(mylist, ptrV, ctx_id);
+//             return;
+//         case 8:
+//             vectorizeList<double>(mylist, ptrV, ctx_id);
+//             return;
+//         default:
+//             throw Rcpp::exception("unknown type detected for vclMatrix");
+//     }
+// }
 
 
 // [[Rcpp::export]]
@@ -2102,9 +2394,11 @@ void
 assignVectorToMat(SEXP ptrM, SEXP ptrV, const int type_flag)
 {
     switch(type_flag){
+#ifndef BACKEND_CUDA
     case 4:
         assignVectorToMat<int>(ptrM, ptrV);
         return;
+#endif
     case 6:
         assignVectorToMat<float>(ptrM, ptrV);
         return;
@@ -2121,9 +2415,11 @@ void
 assignVectorToCol(SEXP ptrM, SEXP ptrV, const int index, const int type_flag)
 {
     switch(type_flag){
+#ifndef BACKEND_CUDA
     case 4:
         assignVectorToCol<int>(ptrM, ptrV, index);
         return;
+#endif
     case 6:
         assignVectorToCol<float>(ptrM, ptrV, index);
         return;

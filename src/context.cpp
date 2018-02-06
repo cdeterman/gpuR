@@ -2,18 +2,128 @@
 // #include "gpuR/cl_helpers.hpp"
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif defined(BACKEND_OPENCL)
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 //#define VIENNACL_DEBUG_ALL 1
 
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
 #include "viennacl/ocl/backend.hpp"
+#endif
 
 #include <Rcpp.h>
 
 // using namespace cl;
 using namespace Rcpp;
+
+#ifdef BACKEND_CUDA
+
+
+int currentContext()
+{
+    int cuda_device;
+    cudaGetDevice(&cuda_device);
+    return cuda_device + 1;
+}
+
+
+void
+cpp_setContext(int id)
+{
+    if(id <= 0){
+        stop("Index cannot be 0 or less");
+    }
+    cudaSetDevice(id - 1);
+}
+
+
+void initContexts(){
+    // declarations
+    int id = 0;
+    
+    int device_count;
+    cudaGetDeviceCount(&device_count);
+    
+    for(unsigned int gpu_idx = 0; gpu_idx < device_count; gpu_idx++) {
+        cudaDeviceProp prop;    
+        Rcpp::Rcout << "  - context device index: " << gpu_idx << std::endl;
+        cudaGetDeviceProperties(&prop, gpu_idx);
+        Rcpp::Rcout << "    - " << prop.name << std::endl;
+        
+        // increment context
+        id++;
+    }
+    
+    Rcpp::Rcout << "checked all devices" << std::endl;
+    Rcpp::Rcout << "completed initialization" << std::endl;
+}
+
+
+DataFrame 
+listContexts()
+{
+    
+    // declarations
+    int id = 0;
+    int num_contexts = 0;
+    cudaGetDeviceCount(&num_contexts);
+    
+    Rcpp::IntegerVector   context_index(num_contexts);
+    Rcpp::CharacterVector platform_name(num_contexts);
+    Rcpp::IntegerVector   platform_index(num_contexts);
+    Rcpp::CharacterVector device_name(num_contexts);
+    Rcpp::IntegerVector   device_index(num_contexts);
+    Rcpp::CharacterVector device_type(num_contexts);
+    
+    for(unsigned int gpu_idx = 0; gpu_idx < num_contexts; gpu_idx++) {
+        
+        //            Rcout << "context id" << std::endl;
+        //            Rcout << id << std::endl;
+        
+        //            Rcout << "current platform index" << std::endl;
+        //            Rcout << plat_idx << std::endl;
+        
+        context_index[id] = id + 1;
+        platform_index[id] = 0;
+        platform_name[id] = "NVIDIA platform";
+        
+        //            viennacl::ocl::set_context_platform_index(id, plat_idx);
+        //            
+        ////            Rcout << "set platform successfully" << std::endl;
+        //            
+        //            // Select device
+        //            viennacl::ocl::setup_context(id, devices[gpu_idx]);
+        //            
+        ////            Rcout << "switched device successfully" << std::endl;
+        
+        // Get device info
+        cudaDeviceProp prop;    
+        cudaGetDeviceProperties(&prop, gpu_idx);
+        device_index[id] = 0;
+        device_name[id] = prop.name;
+        device_type[id] = "gpu";
+        
+        // increment context
+        id++;
+    }
+    
+    return Rcpp::DataFrame::create(Rcpp::Named("context") = context_index,
+                                   Rcpp::Named("platform") = platform_name,
+                                   Rcpp::Named("platform_index") = platform_index,
+                                   Rcpp::Named("device") = device_name,
+                                   Rcpp::Named("device_index") = device_index,
+                                   Rcpp::Named("device_type") = device_type,
+                                   _["stringsAsFactors"] = false );
+}
+
+#else
 
 // [[Rcpp::export]]
 void initContexts(){
@@ -51,36 +161,6 @@ void initContexts(){
     
     Rcpp::Rcout << "completed initialization" << std::endl;
 }
-
-
-////'@export
-//// [[Rcpp::export]]
-//void debugContexts(){
-//    
-//    typedef std::vector< viennacl::ocl::platform > platforms_type;
-//    
-//    // get platforms
-//    platforms_type platforms = viennacl::ocl::get_platforms();  
-//    
-//    std::vector< viennacl::ocl::device > devices;
-//    devices = platforms[0].devices();
-//    
-//    //devices = viennacl::ocl::current_context().devices();
-//    
-//    Rcout << "devices found on default platform" << std::endl;
-//    Rcout << devices.size() << std::endl;
-//    
-//    for(unsigned int gpu_idx=0; gpu_idx < devices.size(); gpu_idx++){
-//        viennacl::ocl::device gpu = devices[gpu_idx];
-//        
-//        Rcout << "device index" << std::endl;
-//        Rcout << gpu_idx << std::endl;
-//        
-//        Rcout << "device name" << std::endl;
-//        Rcout << gpu.name() << std::endl;
-//    }
-//}
-
 
 
 //' @title Available OpenCL Contexts
@@ -231,4 +311,4 @@ getContextPtr(const int ctx_id){
     return ptrctx;
 }
 
-
+#endif

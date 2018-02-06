@@ -7,8 +7,14 @@
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
+#include <type_traits>
+
 template<typename T>
-std::shared_ptr<viennacl::matrix<T> >
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, std::shared_ptr<viennacl::matrix<T> > >::type
+#else 
+std::shared_ptr<viennacl::matrix<T> >    
+#endif
 getVCLptr(
     SEXP ptr_,
     const bool isVCL,
@@ -29,7 +35,11 @@ getVCLptr(
 }
 
 template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > >::type
+#else
 std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > >
+#endif
 getVCLBlockptr(
     SEXP ptr_,
     const bool isVCL,
@@ -50,7 +60,11 @@ getVCLBlockptr(
 }
 
 template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, std::shared_ptr<viennacl::vector_base<T> > >::type
+#else
 std::shared_ptr<viennacl::vector_base<T> >
+#endif
 getVCLVecptr(
     SEXP ptr_,
     const bool isVCL,

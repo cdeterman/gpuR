@@ -3,14 +3,23 @@
 #define DYNVCL_VEC_HPP
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif defined(BACKEND_OPENCL)
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1
 
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#endif
+
 #include "viennacl/vector.hpp"
 #include "viennacl/vector_proxy.hpp"
 #include "viennacl/matrix.hpp"
@@ -27,8 +36,15 @@
 //     }
 // };
 
+template <typename T, typename Enable = void>
+class dynVCLVec;
+
 template <class T> 
-class dynVCLVec {
+#ifdef BACKEND_CUDA
+class dynVCLVec<T, typename std::enable_if<std::is_floating_point<T>::value>::type> {
+#else
+class dynVCLVec<T>{
+#endif
     private:
         bool shared;
         int shared_type;
@@ -110,10 +126,20 @@ class dynVCLVec {
         dynVCLVec(viennacl::matrix_range<viennacl::matrix<T> > &mat, const int ctx_id) {
             viennacl::context ctx;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2());
+#else
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
             viennacl::vector_base<T> A = viennacl::vector_base<T>(mat.size1() * mat.size2(), ctx); 
+#endif
             
             viennacl::matrix_base<T> dummy(A.handle(),
                                            mat.size1(), 0, 1, mat.size1(),   //row layout
@@ -174,14 +200,23 @@ class dynVCLVec {
             Am = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
             
             int K = Am.size();
-            viennacl::context ctx;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            viennacl::vector_base<T> A = viennacl::vector_base<T>(K);
+#else
             // explicitly pull context for thread safe forking
-            ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+            viennacl::context ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
             // std::cout << "about to initialize" << std::endl;
             viennacl::vector_base<T> A = viennacl::vector_base<T>(K, ctx); 
             // std::cout << "initialized vector" << std::endl;
+#endif
             
             viennacl::fast_copy(Am.data(), Am.data() + Am.size(), A.begin());
             // viennacl::fast_copy(Am.begin(), Am.end(), A.begin());
@@ -203,12 +238,20 @@ class dynVCLVec {
         // dynVCLVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);
         dynVCLVec(const int size_in, const int ctx_id) {
             
-            viennacl::context ctx;
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
             
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in);
+#else
             // explicitly pull context for thread safe forking
-            ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+            viennacl::context ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
             viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
+#endif
             // A = viennacl::zero_vector<T>(size_in, ctx);
             // A = static_cast<viennacl::vector_base<T> >(A);
             
@@ -225,16 +268,26 @@ class dynVCLVec {
             shptr = std::make_shared<viennacl::vector_base<T> >(A);
         }
         dynVCLVec(const int size_in, T scalar, const int ctx_id){
-            viennacl::context ctx;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in);
+#else
             // explicitly pull context for thread safe forking
-            ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+            viennacl::context ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
             // A.switch_memory_context(ctx);
             // A = viennacl::scalar_vector<T>(size_in, scalar, ctx);
             // A = static_cast<viennacl::vector_base<T> >(A);
             
             viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
+#endif
+            
             viennacl::linalg::vector_assign(A, scalar);
             
             size = size_in;

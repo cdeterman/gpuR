@@ -9,3 +9,7 @@ inst/include/loader/*.a
 *.dll
 src/Makevars
 .httr-oauth
+config.log
+config.status
+autom4te.cache/*
+0

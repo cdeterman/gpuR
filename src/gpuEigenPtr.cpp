@@ -4,14 +4,16 @@
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
-#include <RcppEigen.h>
-
 using namespace Rcpp;
 
 
 // convert SEXP Matrix to Eigen matrix
 template <typename T>
-SEXP 
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 getRmatEigenAddress(SEXP A, const int nr, const int nc, int ctx_id)
 {    
     dynEigenMat<T> *mat = new dynEigenMat<T>(A, ctx_id);
@@ -21,8 +23,12 @@ getRmatEigenAddress(SEXP A, const int nr, const int nc, int ctx_id)
 
 // convert SEXP Vector to Eigen Vector (i.e. 1 column matrix)
 template <typename T>
-SEXP 
-sexpVecToEigenVecXptr(SEXP A, const int size)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    sexpVecToEigenVecXptr(SEXP A, const int size)
 {
     dynEigenVec<T> *vec =  new dynEigenVec<T>(A);
     Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
@@ -31,7 +37,11 @@ sexpVecToEigenVecXptr(SEXP A, const int size)
 
 // scalar initialized ViennaCL vector
 template <typename T>
-SEXP 
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 cpp_scalar_gpuVector(
     SEXP scalar_, 
     int size)
@@ -46,7 +56,11 @@ cpp_scalar_gpuVector(
 // convert an XPtr back to a MapVec object to ultimately 
 // be returned as a SEXP object
 template <typename T>
-Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > >::type
+#else 
+    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > 
+#endif
 getEigenMatrix(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenVec<T> > pVec(ptrA_);
@@ -55,7 +69,11 @@ getEigenMatrix(SEXP ptrA_)
 }
 
 template <typename T>
-void
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
 SetMatRow(SEXP data, const int idx, SEXP value)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
@@ -64,7 +82,11 @@ SetMatRow(SEXP data, const int idx, SEXP value)
 
 
 template <typename T>
-void
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
 SetMatCol(SEXP data, const int idx, SEXP value)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
@@ -72,32 +94,48 @@ SetMatCol(SEXP data, const int idx, SEXP value)
 }
 
 template <typename T>
-void
-SetMatElement(SEXP data, const int nr, const int nc, SEXP value)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
+    SetMatElement(SEXP data, const int nr, const int nc, SEXP value)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
     pMat->setElement(value, nr, nc);
 }
 
 template <typename T>
-SEXP
-GetMatRow(const SEXP data, const int idx)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    GetMatRow(const SEXP data, const int idx)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
     return(wrap(pMat->getRow(idx)));
 }
 
 template <typename T>
-SEXP
-GetMatCol(const SEXP data, const int idx)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    GetMatCol(const SEXP data, const int idx)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
     return(wrap(pMat->getCol(idx)));
 }
 
 template <typename T>
-SEXP
-GetMatElement(const SEXP data, const int nr, const int nc)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    GetMatElement(const SEXP data, const int nr, const int nc)
 {    
     Rcpp::XPtr<dynEigenMat<T> > pMat(data);
     return(wrap(pMat->getElement(nr, nc)));
@@ -105,7 +143,12 @@ GetMatElement(const SEXP data, const int nr, const int nc)
 
 // create an empty eigen matrix
 template <typename T>
-SEXP emptyEigenXptr(const int nr, const int nc, const int ctx_id)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    emptyEigenXptr(const int nr, const int nc, const int ctx_id)
 {
     dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc, ctx_id);
     //    std::cout << mat->data() << std::endl;
@@ -115,8 +158,12 @@ SEXP emptyEigenXptr(const int nr, const int nc, const int ctx_id)
 
 // create an empty eigen vector
 template <typename T>
-SEXP 
-emptyEigenVecXptr(const int size)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    emptyEigenVecXptr(const int size)
 {    
     dynEigenVec<T> *vec = new dynEigenVec<T>(size);
     Rcpp::XPtr<dynEigenVec<T> > pVec(vec);
@@ -124,8 +171,12 @@ emptyEigenVecXptr(const int size)
 }
 
 template <typename T>
-void
-setCols(SEXP ptrA_, StringVector names){
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
+    setCols(SEXP ptrA_, StringVector names){
     
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     ptrA->setColumnNames(names);
@@ -134,7 +185,11 @@ setCols(SEXP ptrA_, StringVector names){
 }
 
 template <typename T>
-StringVector
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, Rcpp::StringVector>::type
+#else 
+    Rcpp::StringVector
+#endif
 getCols(SEXP ptrA_){
     
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -145,8 +200,12 @@ getCols(SEXP ptrA_){
 
 // get diagonal of gpuMatrix
 template <typename T>
-void
-cpp_gpuMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
+    cpp_gpuMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -159,8 +218,12 @@ cpp_gpuMatrix_get_diag(SEXP ptrA_, SEXP ptrB_)
 
 // set diagonal with gpuVector
 template <typename T>
-void
-cpp_gpuMat_gpuVec_set_diag(SEXP ptrA_, SEXP ptrB_)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
+    cpp_gpuMat_gpuVec_set_diag(SEXP ptrA_, SEXP ptrB_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -174,7 +237,11 @@ cpp_gpuMat_gpuVec_set_diag(SEXP ptrA_, SEXP ptrB_)
 
 //copy an existing gpuMatrix
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 cpp_deepcopy_gpuMatrix(SEXP ptrA_)
 {
     XPtr<dynEigenMat<T> > pA(ptrA_);
@@ -186,8 +253,12 @@ cpp_deepcopy_gpuMatrix(SEXP ptrA_)
 
 //copy an existing gpuVector
 template <typename T>
-SEXP
-cpp_deepcopy_gpuVector(SEXP ptrA_)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    cpp_deepcopy_gpuVector(SEXP ptrA_)
 {
     XPtr<dynEigenVec<T> > pA(ptrA_);
     Eigen::Matrix<T, Eigen::Dynamic, 1> A = pA->data();
@@ -197,7 +268,11 @@ cpp_deepcopy_gpuVector(SEXP ptrA_)
 }
 
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 sliceGPUvec(const SEXP ptrA, int start, int end)
 {
     XPtr<dynEigenVec<T> > pA(ptrA);
@@ -211,7 +286,11 @@ sliceGPUvec(const SEXP ptrA, int start, int end)
 }
 
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 gpuMatBlock(
     const SEXP ptrA, 
     int rowStart, int rowEnd,
@@ -231,7 +310,11 @@ gpuMatBlock(
 
 //cbind gpuMatrix objects
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 cpp_cbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
 {    
     XPtr<dynEigenMat<T> > pA(ptrA_);
@@ -250,7 +333,11 @@ cpp_cbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
 
 //rbind gpuMatrix objects
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 cpp_rbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
 {    
     XPtr<dynEigenMat<T> > pA(ptrA_);
@@ -287,7 +374,11 @@ cpp_rbind_gpuMatrix(SEXP ptrA_, SEXP ptrB_)
 // }
 
 template <typename T>
-T
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else 
+    T
+#endif
 GetVecElement(const SEXP data, const int idx)
 {    
     XPtr<dynEigenVec<T> > pVec(data);
@@ -295,7 +386,11 @@ GetVecElement(const SEXP data, const int idx)
 }
 
 template <typename T>
-void
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
+    void
+#endif
 SetVecElement(const SEXP data, const int idx, SEXP value)
 {    
     XPtr<dynEigenVec<T> > pVec(data);
@@ -311,8 +406,10 @@ SEXP
 cpp_deepcopy_gpuMatrix(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_deepcopy_gpuMatrix<int>(ptrA);
+#endif
         case 6:
             return cpp_deepcopy_gpuMatrix<float>(ptrA);
         case 8:
@@ -328,8 +425,10 @@ SEXP
 cpp_cbind_gpuMatrix(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_cbind_gpuMatrix<int>(ptrA, ptrB);
+#endif
         case 6:
             return cpp_cbind_gpuMatrix<float>(ptrA, ptrB);
         case 8:
@@ -345,8 +444,10 @@ SEXP
 cpp_rbind_gpuMatrix(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_rbind_gpuMatrix<int>(ptrA, ptrB);
+#endif
         case 6:
             return cpp_rbind_gpuMatrix<float>(ptrA, ptrB);
         case 8:
@@ -362,8 +463,10 @@ SEXP
 cpp_deepcopy_gpuVector(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_deepcopy_gpuVector<int>(ptrA);
+#endif
         case 6:
             return cpp_deepcopy_gpuVector<float>(ptrA);
         case 8:
@@ -379,8 +482,10 @@ SEXP
 sliceGPUvec(SEXP ptrA, const int start, const int end, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return sliceGPUvec<int>(ptrA, start, end);
+#endif
         case 6:
             return sliceGPUvec<float>(ptrA, start, end);
         case 8:
@@ -401,8 +506,10 @@ gpuMatBlock(
     const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return gpuMatBlock<int>(ptrA, rowStart, rowEnd, colStart, colEnd);
+#endif
         case 6:
             return gpuMatBlock<float>(ptrA, rowStart, rowEnd, colStart, colEnd);
         case 8:
@@ -453,8 +560,10 @@ SEXP
 GetVecElement(SEXP ptrA, const int idx, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(GetVecElement<int>(ptrA, idx));
+#endif
         case 6:
             return wrap(GetVecElement<float>(ptrA, idx));
         case 8:
@@ -469,9 +578,11 @@ void
 SetVecElement(SEXP ptrA, const int idx, SEXP value, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             SetVecElement<int>(ptrA, idx, value);
             return;
+#endif
         case 6:
             SetVecElement<float>(ptrA, idx, value);
             return;
@@ -490,9 +601,11 @@ void
 SetMatRow(SEXP ptrA, const int idx, SEXP value, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             SetMatRow<int>(ptrA, idx, value);
             return;
+#endif
         case 6:
             SetMatRow<float>(ptrA, idx, value);
             return;
@@ -509,9 +622,11 @@ void
 SetMatCol(SEXP ptrA, const int idx, SEXP value, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             SetMatCol<int>(ptrA, idx, value);
             return;
+#endif
         case 6:
             SetMatCol<float>(ptrA, idx, value);
             return;
@@ -528,9 +643,11 @@ void
 SetMatElement(SEXP ptrA, const int nr, const int nc, SEXP value, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             SetMatElement<int>(ptrA, nr, nc, value);
             return;
+#endif
         case 6:
             SetMatElement<float>(ptrA, nr, nc, value);
             return;
@@ -547,8 +664,10 @@ SEXP
 GetMatRow(SEXP ptrA, const int idx, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return GetMatRow<int>(ptrA, idx);
+#endif
         case 6:
             return GetMatRow<float>(ptrA, idx);
         case 8:
@@ -563,8 +682,10 @@ SEXP
 GetMatCol(SEXP ptrA, const int idx, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return GetMatCol<int>(ptrA, idx);
+#endif
         case 6:
             return GetMatCol<float>(ptrA, idx);
         case 8:
@@ -579,8 +700,10 @@ SEXP
 GetMatElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return GetMatElement<int>(ptrA, nr, nc);
+#endif
         case 6:
             return GetMatElement<float>(ptrA, nr, nc);
         case 8:
@@ -597,8 +720,10 @@ GetMatElement(SEXP ptrA, const int nr, const int nc, const int type_flag)
 SEXP sexpVecToEigenVecXptr(SEXP ptrA, const int size, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return sexpVecToEigenVecXptr<int>(ptrA, size);
+#endif
         case 6:
             return sexpVecToEigenVecXptr<float>(ptrA, size);
         case 8:
@@ -617,8 +742,10 @@ cpp_scalar_gpuVector(
     const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return cpp_scalar_gpuVector<int>(scalar, size);
+#endif
     case 6:
         return cpp_scalar_gpuVector<float>(scalar, size);
     case 8:
@@ -631,7 +758,12 @@ cpp_scalar_gpuVector(
 
 // convert SEXP Vector to Eigen matrix
 template <typename T>
-SEXP sexpVecToEigenXptr(SEXP A, const int nr, const int nc, const int ctx_id)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    sexpVecToEigenXptr(SEXP A, const int nr, const int nc, const int ctx_id)
 {
     dynEigenMat<T> *mat = new dynEigenMat<T>(nr, nc, ctx_id);
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> temp = as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A);
@@ -643,7 +775,12 @@ SEXP sexpVecToEigenXptr(SEXP A, const int nr, const int nc, const int ctx_id)
 
 // convert SEXP Vector to Eigen matrix
 template <typename T>
-SEXP initScalarEigenXptr(T A, const int nr, const int nc, const int ctx_id)
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
+    initScalarEigenXptr(T A, const int nr, const int nc, const int ctx_id)
 {    
     dynEigenMat<T> *mat = new dynEigenMat<T>(A, nr, nc, ctx_id);
     XPtr<dynEigenMat<T> > pMat(mat);
@@ -655,8 +792,10 @@ SEXP
 sexpVecToEigenXptr(SEXP ptrA, const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return sexpVecToEigenXptr<int>(ptrA, nr, nc, ctx_id);
+#endif
         case 6:
             return sexpVecToEigenXptr<float>(ptrA, nr, nc, ctx_id);
         case 8:
@@ -672,8 +811,10 @@ SEXP
 initScalarEigenXptr(SEXP scalar, const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return initScalarEigenXptr<int>(as<int>(scalar), nr, nc, ctx_id);
+#endif
         case 6:
             return initScalarEigenXptr<float>(as<float>(scalar), nr, nc, ctx_id);
         case 8:
@@ -694,16 +835,18 @@ getRmatEigenAddress(SEXP ptrA,
     int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return getRmatEigenAddress<int>(ptrA, nr, nc, ctx_id);
+#endif
         case 6:
             return getRmatEigenAddress<float>(ptrA, nr, nc, ctx_id);
         case 8:
             return getRmatEigenAddress<double>(ptrA, nr, nc, ctx_id);
-        case 10:
-            return getRmatEigenAddress<std::complex<float> >(ptrA, nr, nc, ctx_id);
-        case 12:
-            return getRmatEigenAddress<std::complex<double> >(ptrA, nr, nc, ctx_id);
+        // case 10:
+        //     return getRmatEigenAddress<std::complex<float> >(ptrA, nr, nc, ctx_id);
+        // case 12:
+        //     return getRmatEigenAddress<std::complex<double> >(ptrA, nr, nc, ctx_id);
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -716,8 +859,10 @@ SEXP
 getEigenMatrix(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(getEigenMatrix<int>(ptrA));
+#endif
         case 6:
             return wrap(getEigenMatrix<float>(ptrA));
         case 8:
@@ -729,7 +874,11 @@ getEigenMatrix(SEXP ptrA, const int type_flag)
 
 
 template <typename T>
-SEXP
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else 
+    SEXP
+#endif
 MatXptrToMatSEXP(SEXP ptrA){
     Rcpp::XPtr<dynEigenMat<T> > pMat(ptrA);
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > mapA = pMat->data();
@@ -743,16 +892,18 @@ SEXP
 MatXptrToMatSEXP(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return(MatXptrToMatSEXP<int>(ptrA));
+#endif
         case 6:
             return(MatXptrToMatSEXP<float>(ptrA));
         case 8:
             return(MatXptrToMatSEXP<double>(ptrA));
-        case 10:
-            return(MatXptrToMatSEXP<std::complex<float> >(ptrA));
-        case 12:
-            return(MatXptrToMatSEXP<std::complex<double> >(ptrA));
+        // case 10:
+        //     return(MatXptrToMatSEXP<std::complex<float> >(ptrA));
+        // case 12:
+        //     return(MatXptrToMatSEXP<std::complex<double> >(ptrA));
         default:
             throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -765,8 +916,10 @@ SEXP
 emptyEigenVecXptr(const int size, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
-            return emptyEigenVecXptr<int>(size);;
+            return emptyEigenVecXptr<int>(size);
+#endif
         case 6:
             return emptyEigenVecXptr<float>(size);
         case 8:
@@ -784,8 +937,10 @@ SEXP
 emptyEigenXptr(const int nr, const int nc, const int type_flag, const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
-            return emptyEigenXptr<int>(nr, nc, ctx_id);;
+            return emptyEigenXptr<int>(nr, nc, ctx_id);
+#endif
         case 6:
             return emptyEigenXptr<float>(nr, nc, ctx_id);
         case 8:
@@ -801,9 +956,11 @@ void
 setCols(SEXP ptrA, StringVector names, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         setCols<int>(ptrA, names);
         return;
+#endif
     case 6:
         setCols<float>(ptrA, names);
         return;
@@ -821,8 +978,10 @@ StringVector
 getCols(SEXP ptrA, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return getCols<int>(ptrA);
+#endif
     case 6:
         return getCols<float>(ptrA);
     case 8:
@@ -838,9 +997,11 @@ void
 cpp_gpuMatrix_get_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuMatrix_get_diag<int>(ptrA, ptrB);
         return;
+#endif
     case 6:
         cpp_gpuMatrix_get_diag<float>(ptrA, ptrB);
         return;
@@ -858,9 +1019,11 @@ void
 cpp_gpuMat_gpuVec_set_diag(SEXP ptrA, SEXP ptrB, const int type_flag)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuMat_gpuVec_set_diag<int>(ptrA, ptrB);
         return;
+#endif
     case 6:
         cpp_gpuMat_gpuVec_set_diag<float>(ptrA, ptrB);
         return;

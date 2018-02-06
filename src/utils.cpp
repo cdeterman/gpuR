@@ -1,39 +1,53 @@
 
 #include "gpuR/windows_check.hpp"
 
-#include <RcppEigen.h>
-
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 
 using namespace Rcpp;
 
-template <typename T>
-int 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, int>::type
+#else
+    int
+#endif 
 cpp_ncol(SEXP ptrA_)
 {       
     XPtr<dynEigenMat<T> > pMat(ptrA_);
     return pMat->ncol();
 }
 
-template <typename T>
-int 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, int>::type
+#else
+    int
+#endif 
 cpp_nrow(SEXP ptrA_)
 {
     XPtr<dynEigenMat<T> > pMat(ptrA_);
     return pMat->nrow();
 }
 
-template <typename T>
-int 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, int>::type
+#else
+    int
+#endif 
 cpp_gpuVector_size(SEXP ptrA_)
 {
     XPtr<dynEigenVec<T> > pMat(ptrA_);
     return pMat->length();
 }
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif 
 cpp_gpuVector_max(
     SEXP ptrA_,
     int ctx_id)
@@ -60,8 +74,12 @@ cpp_gpuVector_max(
     return Am.maxCoeff();
 }
 
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_gpuMatrix_max(SEXP ptrA_)
 {       
     XPtr<dynEigenMat<T> > pMat(ptrA_);
@@ -71,8 +89,12 @@ cpp_gpuMatrix_max(SEXP ptrA_)
     return wrap(Am.maxCoeff());
 }
 
-template <typename T>
-SEXP 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif  
 cpp_gpuMatrix_min(SEXP ptrA_)
 {       
     XPtr<dynEigenMat<T> > pMat(ptrA_);
@@ -122,8 +144,10 @@ cpp_gpuVector_size(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_gpuVector_size<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_gpuVector_size<float>(ptrA));
         case 8:
@@ -142,8 +166,10 @@ cpp_gpuVector_max(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuVector_max<int>(ptrA, ctx_id));
+#endif
     case 6:
         return wrap(cpp_gpuVector_max<float>(ptrA, ctx_id));
     case 8:
@@ -161,8 +187,10 @@ cpp_gpuMatrix_max(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_gpuMatrix_max<int>(ptrA);
+#endif
         case 6:
             return cpp_gpuMatrix_max<float>(ptrA);
         case 8:
@@ -180,8 +208,10 @@ cpp_gpuMatrix_min(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return cpp_gpuMatrix_min<int>(ptrA);
+#endif
         case 6:
             return cpp_gpuMatrix_min<float>(ptrA);
         case 8:
@@ -199,16 +229,18 @@ cpp_gpuMatrix_nrow(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_nrow<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_nrow<float>(ptrA));
     case 8:
         return wrap(cpp_nrow<double>(ptrA));
-    case 10:
-        return wrap(cpp_nrow<std::complex<float> >(ptrA));
-    case 12:
-        return wrap(cpp_nrow<std::complex<double> >(ptrA));
+    // case 10:
+    //     return wrap(cpp_nrow<std::complex<float> >(ptrA));
+    // case 12:
+    //     return wrap(cpp_nrow<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }
@@ -222,16 +254,18 @@ cpp_gpuMatrix_ncol(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_ncol<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_ncol<float>(ptrA));
     case 8:
         return wrap(cpp_ncol<double>(ptrA));
-    case 10:
-        return wrap(cpp_ncol<std::complex<float> >(ptrA));
-    case 12:
-        return wrap(cpp_ncol<std::complex<double> >(ptrA));
+    // case 10:
+    //     return wrap(cpp_ncol<std::complex<float> >(ptrA));
+    // case 12:
+    //     return wrap(cpp_ncol<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for gpuMatrix object!");
     }

@@ -3,7 +3,13 @@
 #include "gpuR/windows_check.hpp"
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif BACKEND_OPENCL
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1

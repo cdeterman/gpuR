@@ -1,28 +1,21 @@
 
 #include "gpuR/windows_check.hpp"
 
-// eigen headers for handling the R input data
-#include <RcppEigen.h>
-
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynEigenVec.hpp"
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
-
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#include "viennacl/linalg/svd.hpp"
+#endif
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/sum.hpp"
 #include "viennacl/linalg/maxmin.hpp"
 #include "viennacl/linalg/norm_frobenius.hpp"
-#include "viennacl/linalg/svd.hpp"
 
 #include <unordered_map>
 
@@ -43,8 +36,13 @@ const std::unordered_map<std::string, NORM_METHOD> norm_methods {
     {"2", Spectral}
 };
 
-template <typename T>
-T cpp_vclMatrix_norm_one(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_vclMatrix_norm_one(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     
@@ -55,8 +53,13 @@ T cpp_vclMatrix_norm_one(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_vclMatrix_norm_inf(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_vclMatrix_norm_inf(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     
@@ -67,8 +70,13 @@ T cpp_vclMatrix_norm_inf(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_vclMatrix_norm_frobenius(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_vclMatrix_norm_frobenius(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     
@@ -79,8 +87,13 @@ T cpp_vclMatrix_norm_frobenius(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_vclMatrix_norm_max_mod(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_vclMatrix_norm_max_mod(SEXP ptrA_)
 {
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     
@@ -94,9 +107,17 @@ T cpp_vclMatrix_norm_max_mod(SEXP ptrA_)
 }
 
 
-template <typename T>
-T cpp_vclMatrix_norm_2(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_vclMatrix_norm_2(SEXP ptrA_)
 {
+
+#ifndef BACKEND_CUDA
+
     Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     viennacl::matrix<T> vcl_A = ptrA->matrix();
     viennacl::context ctx = ptrA->getContext();
@@ -117,6 +138,9 @@ T cpp_vclMatrix_norm_2(SEXP ptrA_)
     T result = viennacl::linalg::max(D);
     
     return result;
+#else
+    Rcpp::stop("CUDA backend SVD is not currently implemented :(");
+#endif
 }
 
 // [[Rcpp::export]]
@@ -136,8 +160,10 @@ cpp_vclMatrix_norm(
     switch(n_method) {
     case One: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_norm_one<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_norm_one<float>(ptrA));
         case 8:
@@ -148,8 +174,10 @@ cpp_vclMatrix_norm(
     }
     case Infinity: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_norm_inf<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_norm_inf<float>(ptrA));
         case 8:
@@ -160,8 +188,10 @@ cpp_vclMatrix_norm(
     }   
     case Frobenius: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_norm_frobenius<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_norm_frobenius<float>(ptrA));
         case 8:
@@ -172,8 +202,10 @@ cpp_vclMatrix_norm(
     }
     case Maximum_Modulus: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_norm_max_mod<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_norm_max_mod<float>(ptrA));
         case 8:
@@ -184,8 +216,10 @@ cpp_vclMatrix_norm(
     }
     case Spectral: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_norm_2<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_norm_2<float>(ptrA));
         case 8:
@@ -202,8 +236,13 @@ cpp_vclMatrix_norm(
 
 
 
-template <typename T>
-T cpp_gpuMatrix_norm_one(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_gpuMatrix_norm_one(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     
@@ -230,8 +269,13 @@ T cpp_gpuMatrix_norm_one(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_gpuMatrix_norm_inf(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_gpuMatrix_norm_inf(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     
@@ -242,8 +286,13 @@ T cpp_gpuMatrix_norm_inf(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_gpuMatrix_norm_frobenius(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif 
+    cpp_gpuMatrix_norm_frobenius(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     
@@ -254,8 +303,13 @@ T cpp_gpuMatrix_norm_frobenius(SEXP ptrA_)
     return result;
 }
 
-template <typename T>
-T cpp_gpuMatrix_norm_max_mod(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_gpuMatrix_norm_max_mod(SEXP ptrA_)
 {
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     
@@ -269,9 +323,17 @@ T cpp_gpuMatrix_norm_max_mod(SEXP ptrA_)
 }
 
 
-template <typename T>
-T cpp_gpuMatrix_norm_2(SEXP ptrA_)
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_gpuMatrix_norm_2(SEXP ptrA_)
 {
+
+#ifndef BACKEND_CUDA
+
     Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
@@ -292,6 +354,10 @@ T cpp_gpuMatrix_norm_2(SEXP ptrA_)
     T result = viennacl::linalg::max(D);
     
     return result;
+    
+#else
+    Rcpp::stop("CUDA backend SVD is not currently implemented :(");
+#endif
 }
 
 // [[Rcpp::export]]
@@ -311,8 +377,10 @@ cpp_gpuMatrix_norm(
     switch(n_method) {
     case One: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuMatrix_norm_one<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_gpuMatrix_norm_one<float>(ptrA));
     case 8:
@@ -323,8 +391,10 @@ cpp_gpuMatrix_norm(
     }
     case Infinity: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuMatrix_norm_inf<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_gpuMatrix_norm_inf<float>(ptrA));
     case 8:
@@ -335,8 +405,10 @@ cpp_gpuMatrix_norm(
     }   
     case Frobenius: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuMatrix_norm_frobenius<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_gpuMatrix_norm_frobenius<float>(ptrA));
     case 8:
@@ -347,8 +419,10 @@ cpp_gpuMatrix_norm(
     }
     case Maximum_Modulus: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuMatrix_norm_max_mod<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_gpuMatrix_norm_max_mod<float>(ptrA));
     case 8:
@@ -359,8 +433,10 @@ cpp_gpuMatrix_norm(
     }
     case Spectral: {
         switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuMatrix_norm_2<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_gpuMatrix_norm_2<float>(ptrA));
     case 8:

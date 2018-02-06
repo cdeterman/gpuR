@@ -3,7 +3,13 @@
 #define DYNEIGEN_VEC_HPP
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif defined(BACKEND_OPENCL)
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1
@@ -14,12 +20,22 @@
 // #include "viennacl/vector_def.hpp"
 #include "viennacl/vector.hpp"
 #include "viennacl/vector_proxy.hpp"
+
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/backend.hpp"
+#endif
 
 #include <memory>
 
+template <typename T, typename Enable = void>
+class dynEigenVec;
+
 template <class T> 
-class dynEigenVec {
+#ifdef BACKEND_CUDA
+class dynEigenVec<T, typename std::enable_if<std::is_floating_point<T>::value>::type> {
+#else
+class dynEigenVec<T>{
+#endif
     private:
         int size,begin,last,ctx_id;
         // T* ptr;
@@ -156,9 +172,19 @@ class dynEigenVec {
             const int M = block.size();
             ctx_id = ctx_in;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            viennacl::vector_base<T> vclA = viennacl::vector_base<T>(M);
+#else            
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
             viennacl::vector_base<T> vclA = viennacl::vector_base<T>(M, ctx=ctx);
+#endif            
             // shptr.reset(vclA);
             shptr = std::make_shared<viennacl::vector_base<T> >(vclA);
             

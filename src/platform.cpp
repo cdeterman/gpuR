@@ -3,17 +3,27 @@
 #include "gpuR/utils.hpp"
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif defined(BACKEND_OPENCL)
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/backend.hpp"
 #include "viennacl/ocl/platform.hpp"
+
+typedef std::vector< viennacl::ocl::platform > platforms_type;
+
+#endif
 
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
-typedef std::vector< viennacl::ocl::platform > platforms_type;
 
 //' @title Detect Number of Platforms
 //' @description Find out how many OpenCL enabled platforms are available.
@@ -23,9 +33,12 @@ typedef std::vector< viennacl::ocl::platform > platforms_type;
 // [[Rcpp::export]]
 SEXP detectPlatforms()
 {
+#ifdef BACKEND_CUDA
+    return wrap(1);
+#else
     platforms_type platforms = viennacl::ocl::get_platforms();
-    
     return wrap(platforms.size());
+#endif
 }
 
 //// [[Rcpp::export]]
@@ -57,6 +70,9 @@ SEXP detectPlatforms()
 // [[Rcpp::export]]
 SEXP currentPlatform()
 {
+#ifdef BACKEND_CUDA
+    Rcpp::stop("Platform is always NVIDIA with BACKEND=CUDA");
+#else
     // get current platform index
     int plat_idx = viennacl::ocl::current_context().platform_index();
     
@@ -68,13 +84,8 @@ SEXP currentPlatform()
     
     return List::create(Named("platform") = wrap(platforms[plat_idx].info()),
                         Named("platform_index") = wrap(plat_idx + 1));
+#endif
 }
-
-//List platformNames()
-//{
-//    
-//    std::cout << platforms[0].info();
-//}
 
 //std::vector<std::string> split(const std::string &s, char delim) {
 //    std::vector<std::string> elems;
@@ -86,6 +97,9 @@ SEXP currentPlatform()
 // [[Rcpp::export]]
 List cpp_platformInfo(SEXP platform_idx_)
 {
+
+#ifndef BACKEND_CUDA
+
     cl_int err;
     
     // get platforms
@@ -162,4 +176,16 @@ List cpp_platformInfo(SEXP platform_idx_)
                         Named("platformVersion") = platformVersionStr,
                         Named("platformExtensions") = extensionsVector
                         );
+    
+#else
+    int driverVersion;
+    int runtimeVersion;
+    
+    cudaDriverGetVersion(&driverVersion);
+    cudaRuntimeGetVersion(&runtimeVersion);
+    
+    return List::create(Named("platformName") = "NVIDIA",
+                        Named("driverVersion") = driverVersion,
+                        Named("runtimeVersion") = runtimeVersion);
+#endif
 }

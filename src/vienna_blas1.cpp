@@ -1,8 +1,6 @@
 
 #include "gpuR/windows_check.hpp"
 
-// eigen headers for handling the R input data
-#include <RcppEigen.h>
 
 #include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
@@ -11,30 +9,76 @@
 // #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
 
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#endif
+
 #include "viennacl/matrix.hpp"
 #include "viennacl/vector.hpp"
 #include "viennacl/linalg/prod.hpp"
 #include "viennacl/linalg/inner_prod.hpp"
 #include "viennacl/linalg/maxmin.hpp"
 
+#include <type_traits>
+
 using namespace Rcpp;
+
+//CUDA Kernel Templaces
+#ifdef BACKEND_CUDA
+
+template<typename T>
+__global__ void scalar_axpy(
+        T *A, const T scalar, const T alpha, const int order,
+        const int Mdim, const int Pdim, const int MdimPad) {
+    
+    // Get the index of the elements to be processed
+    const int globalRow = threadIdx.x; // C Row ID
+    const int globalCol = threadIdx.y; // C Col ID
+    
+    // Do the operation
+    if((globalRow <= Mdim) && (globalCol <= Pdim)){
+        
+        if(order == 0){
+            A[globalRow * MdimPad + globalCol] = alpha * A[globalRow * MdimPad + globalCol] + scalar;
+        }else{
+            A[globalRow * MdimPad + globalCol] = A[globalRow * MdimPad + globalCol] + alpha * scalar;
+        }
+    }
+}
+
+template<typename T>
+__global__ void ScalarElemDiv(
+        T *A, const T B,
+        const int Mdim, const int Pdim, const int MdimPad) {
+    
+    // Get the index of the elements to be processed
+    const int globalRow = threadIdx.x; // C Row ID
+    const int globalCol = threadIdx.y; // C Col ID
+    
+    // Do the operation
+    if((globalRow <= Mdim) && (globalCol <= Pdim)){
+        
+        A[globalRow * MdimPad + globalCol] = B/A[globalRow * MdimPad + globalCol];
+    }
+}
+
+#endif
 
 /*** templates ***/
 
 
 /*** gpuVector Templates ***/
 
-template <typename T>
-void cpp_gpuVector_axpy(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_axpy(
     SEXP alpha_, 
     SEXP A_, 
     const bool AisVCL,
@@ -64,18 +108,27 @@ void cpp_gpuVector_axpy(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_unary_axpy(
     SEXP ptrA_,
     const bool AisVCL,
     int ctx_id)
 {
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
     std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
-    
+ 
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));   
     viennacl::vector_base<T> vcl_Z = viennacl::vector_base<T>(vcl_A->size(), ctx = ctx);
+#else
+    viennacl::vector_base<T> vcl_Z = viennacl::vector_base<T>(vcl_A->size());
+#endif
+    
     viennacl::linalg::vector_assign(vcl_Z, (T)(0));
     
     vcl_Z -= *vcl_A;
@@ -94,8 +147,13 @@ cpp_gpuVector_unary_axpy(
 }
 
 
-template <typename T>
-T cpp_gpuVector_inner_prod(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
+    cpp_gpuVector_inner_prod(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -112,8 +170,13 @@ T cpp_gpuVector_inner_prod(
     return C;
 }
 
-template <typename T>
-void cpp_gpuVector_outer_prod(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_outer_prod(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_, 
@@ -138,8 +201,13 @@ void cpp_gpuVector_outer_prod(
     }
 }
 
-template <typename T>
-void cpp_gpuVector_elem_prod(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_elem_prod(
         SEXP ptrA_, 
         const bool AisVCL,
         SEXP ptrB_, 
@@ -163,8 +231,12 @@ void cpp_gpuVector_elem_prod(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_scalar_prod(
     SEXP ptrC_, 
     const bool CisVCL,
@@ -186,8 +258,13 @@ cpp_gpuVector_scalar_prod(
     }
 }
 
-template <typename T>
-void cpp_gpuVector_elem_div(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_elem_div(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_, 
@@ -211,8 +288,12 @@ void cpp_gpuVector_elem_div(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_scalar_div(
     SEXP ptrC_, 
     const bool CisVCL,
@@ -235,9 +316,13 @@ cpp_gpuVector_scalar_div(
             ptrC->release_device();
         }
     }else{
-        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         
+#ifndef BACKEND_CUDA
+        viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::vector_base<T> vcl_scalar = viennacl::vector_base<T>(vcl_C->size(), ctx = ctx);
+#else
+        viennacl::vector_base<T> vcl_scalar = viennacl::vector_base<T>(vcl_C->size());
+#endif
         viennacl::linalg::vector_assign(vcl_scalar, alpha);
         
         *vcl_C = viennacl::linalg::element_div(vcl_scalar, *vcl_C);
@@ -252,8 +337,13 @@ cpp_gpuVector_scalar_div(
     }
 }
 
-template <typename T>
-void cpp_gpuVector_elem_pow(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_elem_pow(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_, 
@@ -277,8 +367,13 @@ void cpp_gpuVector_elem_pow(
     }
 }
 
-template <typename T>
-void cpp_gpuVector_scalar_pow(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuVector_scalar_pow(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP scalar_, 
@@ -287,14 +382,19 @@ void cpp_gpuVector_scalar_pow(
     const int order,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     const T scalar = as<T>(scalar_);
     
     std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::vector_base<T> > vcl_C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::vector_base<T> vcl_B = viennacl::vector_base<T>(vcl_A->size(), ctx = ctx);
+#else
+    viennacl::vector_base<T> vcl_B = viennacl::vector_base<T>(vcl_A->size());
+#endif
+    
     viennacl::linalg::vector_assign(vcl_B, scalar);
     
     if(order == 0){
@@ -312,8 +412,12 @@ void cpp_gpuVector_scalar_pow(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_sqrt(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -336,8 +440,12 @@ cpp_gpuVector_sqrt(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_sin(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -359,8 +467,12 @@ cpp_gpuVector_elem_sin(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_asin(
     SEXP ptrA_, 
     const bool AisVCL, 
@@ -382,8 +494,12 @@ cpp_gpuVector_elem_asin(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_sinh(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -405,8 +521,12 @@ cpp_gpuVector_elem_sinh(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_cos(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -428,8 +548,12 @@ cpp_gpuVector_elem_cos(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_elem_acos(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -451,8 +575,12 @@ cpp_gpuVector_elem_acos(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_elem_cosh(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -474,8 +602,12 @@ cpp_gpuVector_elem_cosh(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_elem_tan(
     SEXP ptrA_,
     const bool AisVCL, 
@@ -497,8 +629,12 @@ cpp_gpuVector_elem_tan(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_atan(
     SEXP ptrA_,
     const bool AisVCL, 
@@ -520,8 +656,12 @@ cpp_gpuVector_elem_atan(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_elem_tanh(
     SEXP ptrA_, 
     const bool AisVCL, 
@@ -543,8 +683,12 @@ cpp_gpuVector_elem_tanh(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_exp(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -566,8 +710,12 @@ cpp_gpuVector_elem_exp(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuVector_elem_log10(
     SEXP ptrA_, 
     const bool AisVCL, 
@@ -589,8 +737,12 @@ cpp_gpuVector_elem_log10(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_log(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -612,8 +764,12 @@ cpp_gpuVector_elem_log(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_log_base(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -637,8 +793,12 @@ cpp_gpuVector_elem_log_base(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuVector_elem_abs(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -661,13 +821,16 @@ cpp_gpuVector_elem_abs(
 }
 
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_gpuVector_min(
     SEXP ptrA_,
     int ctx_id)
 {    
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     T max;
 
@@ -677,7 +840,12 @@ cpp_gpuVector_min(
     
     const int M = Am.size();
     
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::vector_base<T> vcl_A(M, ctx = ctx);
+#else
+    viennacl::vector_base<T> vcl_A(M);
+#endif
     
     // viennacl::copy(Am, vcl_A); 
     viennacl::fast_copy(Am.data(), Am.data() + Am.size(), vcl_A.begin());
@@ -689,8 +857,12 @@ cpp_gpuVector_min(
 
 /*** gpuMatrix Templates ***/
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuMatrix_axpy(
     SEXP alpha_, 
     SEXP ptrA_, 
@@ -715,8 +887,12 @@ cpp_gpuMatrix_axpy(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuMatrix_unary_axpy(
     SEXP ptrA_,
     const bool AisVCL,
@@ -725,8 +901,12 @@ cpp_gpuMatrix_unary_axpy(
    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     
     if(!AisVCL){
+#ifndef BACKEND_CUDA
         viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A->size1(),vcl_A->size2(), ctx);
+#else
+        viennacl::matrix<T> vcl_Z = viennacl::zero_matrix<T>(vcl_A->size1(),vcl_A->size2());
+#endif
         vcl_Z -= *vcl_A;
         
         Rcpp::XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -737,8 +917,13 @@ cpp_gpuMatrix_unary_axpy(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_scalar_axpy(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_scalar_axpy(
         SEXP alpha_, 
         SEXP scalar_, 
         SEXP ptrC_,
@@ -752,15 +937,24 @@ void cpp_gpuMatrix_scalar_axpy(
     const T scalar = as<T>(scalar_);
     
     std::string my_kernel = as<std::string>(sourceCode_);
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();
     int P = vcl_C->size2();
     int M_internal = vcl_C->internal_size1();
     int P_internal = vcl_C->internal_size2();
+    
+#ifdef BACKEND_CUDA
+    scalar_axpy<<<max_local_size, max_local_size>>>(viennacl::cuda_arg(*vcl_C), 
+                                                    scalar, 
+                                                    alpha, 
+                                                    order, 
+                                                    M, P, P_internal);
+#else
+    // get context
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
@@ -799,6 +993,8 @@ void cpp_gpuMatrix_scalar_axpy(
     // execute kernel
     viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, scalar, alpha, order, M, P, P_internal));
     
+#endif
+    
     if(!CisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrC(ptrC_);
         ptrC->to_host(*vcl_C);
@@ -806,8 +1002,12 @@ void cpp_gpuMatrix_scalar_axpy(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuMatrix_elem_prod(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -830,8 +1030,12 @@ cpp_gpuMatrix_elem_prod(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_scalar_prod(
     SEXP ptrC_, 
     const bool CisVCL,
@@ -851,8 +1055,12 @@ cpp_gpuMatrix_scalar_prod(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_elem_div(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -875,8 +1083,12 @@ cpp_gpuMatrix_elem_div(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_scalar_div(
     SEXP ptrC_,
     const bool CisVCL,
@@ -896,8 +1108,13 @@ cpp_gpuMatrix_scalar_div(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_scalar_div_2(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_scalar_div_2(
         SEXP scalar,
         SEXP ptrC_,
         const bool CisVCL,
@@ -909,15 +1126,24 @@ void cpp_gpuMatrix_scalar_div_2(
     const T alpha = as<T>(scalar);
     
     std::string my_kernel = as<std::string>(sourceCode_);
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
-   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_C = getVCLBlockptr<T>(ptrC_, CisVCL, ctx_id);
     
     int M = vcl_C->size1();
     // int N = vcl_B.size1();
     int P = vcl_C->size2();
     int M_internal = vcl_C->internal_size1();
     int P_internal = vcl_C->internal_size2();
+    
+    
+#ifdef BACKEND_CUDA
+    ScalarElemDiv<<<max_local_size, max_local_size>>>(viennacl::cuda_arg(*vcl_C), 
+                                                      alpha, 
+                                                      M, P, P_internal);
+#else
+    
+    // get context
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
@@ -956,6 +1182,8 @@ void cpp_gpuMatrix_scalar_div_2(
     // execute kernel
     viennacl::ocl::enqueue(my_kernel_mul(*vcl_C, alpha, M, P, P_internal));
     
+#endif
+    
     if(!CisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrC(ptrC_);
         ptrC->to_host(*vcl_C);
@@ -963,9 +1191,13 @@ void cpp_gpuMatrix_scalar_div_2(
     }
 }
 
-template <typename T>
-void 
-cpp_gpuMatrix_elem_pow(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_pow(
     SEXP ptrA_,
     const bool AisVCL,
     SEXP ptrB_, 
@@ -987,8 +1219,12 @@ cpp_gpuMatrix_elem_pow(
     }
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
 cpp_gpuMatrix_scalar_pow(
     SEXP ptrA_, 
     const bool AisVCL,
@@ -1005,15 +1241,18 @@ cpp_gpuMatrix_scalar_pow(
     // XPtr<dynEigenMat<T> > ptrA(ptrA_);
     // XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     const int K = vcl_C->size1();
     const int M = vcl_C->size2();
     
     // viennacl::matrix<T> vcl_A = ptrA->device_data();
     // viennacl::matrix<T> vcl_C(K,M, ctx = ctx);
     
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(K,M,scalar, ctx = ctx);
+#else
+    viennacl::matrix<T> vcl_B = viennacl::scalar_matrix<T>(K,M,scalar);
+#endif
     
     *vcl_C = viennacl::linalg::element_pow(*vcl_A, vcl_B);
     
@@ -1024,8 +1263,13 @@ cpp_gpuMatrix_scalar_pow(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_sqrt(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_sqrt(
         SEXP ptrA_, 
         const bool AisVCL,
         SEXP ptrB_,
@@ -1038,8 +1282,14 @@ void cpp_gpuMatrix_sqrt(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sqrt(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_sqrt(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1047,8 +1297,13 @@ void cpp_gpuMatrix_sqrt(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_sin(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_sin(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1061,8 +1316,14 @@ void cpp_gpuMatrix_elem_sin(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sin(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_sin(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1070,8 +1331,13 @@ void cpp_gpuMatrix_elem_sin(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_asin(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_asin(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1084,8 +1350,14 @@ void cpp_gpuMatrix_elem_asin(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_asin(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_asin(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1093,9 +1365,13 @@ void cpp_gpuMatrix_elem_asin(
     }
 }
 
-
-template <typename T>
-void cpp_gpuMatrix_elem_sinh(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_sinh(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1108,8 +1384,14 @@ void cpp_gpuMatrix_elem_sinh(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_sinh(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_sinh(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1118,8 +1400,13 @@ void cpp_gpuMatrix_elem_sinh(
 }
 
 
-template <typename T>
-void cpp_gpuMatrix_elem_cos(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_cos(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1132,8 +1419,14 @@ void cpp_gpuMatrix_elem_cos(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_cos(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_cos(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1141,8 +1434,13 @@ void cpp_gpuMatrix_elem_cos(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_acos(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_acos(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1155,8 +1453,14 @@ void cpp_gpuMatrix_elem_acos(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_acos(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_acos(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1165,8 +1469,13 @@ void cpp_gpuMatrix_elem_acos(
 }
 
 
-template <typename T>
-void cpp_gpuMatrix_elem_cosh(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_cosh(
     SEXP ptrA_,
     const bool AisVCL,
     SEXP ptrB_,
@@ -1179,8 +1488,14 @@ void cpp_gpuMatrix_elem_cosh(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_cosh(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_cosh(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1189,8 +1504,13 @@ void cpp_gpuMatrix_elem_cosh(
 }
 
 
-template <typename T>
-void cpp_gpuMatrix_elem_tan(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_tan(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1203,8 +1523,14 @@ void cpp_gpuMatrix_elem_tan(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_tan(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_tan(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1212,8 +1538,13 @@ void cpp_gpuMatrix_elem_tan(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_atan(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
+    cpp_gpuMatrix_elem_atan(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1226,8 +1557,14 @@ void cpp_gpuMatrix_elem_atan(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_atan(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_atan(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1236,8 +1573,13 @@ void cpp_gpuMatrix_elem_atan(
 }
 
 
-template <typename T>
-void cpp_gpuMatrix_elem_tanh(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_tanh(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1250,8 +1592,13 @@ void cpp_gpuMatrix_elem_tanh(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_tanh(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
         vcl_B = viennacl::linalg::element_tanh(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1259,8 +1606,13 @@ void cpp_gpuMatrix_elem_tanh(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_log(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_log(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1273,8 +1625,13 @@ void cpp_gpuMatrix_elem_log(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_log(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
         vcl_B = viennacl::linalg::element_log(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1282,8 +1639,13 @@ void cpp_gpuMatrix_elem_log(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_log_base(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
+    cpp_gpuMatrix_elem_log_base(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1299,8 +1661,12 @@ void cpp_gpuMatrix_elem_log_base(
         *vcl_B = viennacl::linalg::element_log10(*vcl_A);   
         *vcl_B /= log10(base);     
     }else{
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
         vcl_B = viennacl::linalg::element_log10(*vcl_A);
         vcl_B /= log10(base);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
@@ -1309,8 +1675,13 @@ void cpp_gpuMatrix_elem_log_base(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_log10(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_log10(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1323,8 +1694,13 @@ void cpp_gpuMatrix_elem_log10(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_log10(*vcl_A);        
     }else{
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_log10(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1332,8 +1708,13 @@ void cpp_gpuMatrix_elem_log10(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_exp(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_exp(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1346,8 +1727,12 @@ void cpp_gpuMatrix_elem_exp(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_exp(*vcl_A);        
     }else{
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
         vcl_B = viennacl::linalg::element_exp(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1355,8 +1740,13 @@ void cpp_gpuMatrix_elem_exp(
     }
 }
 
-template <typename T>
-void cpp_gpuMatrix_elem_abs(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif
+    cpp_gpuMatrix_elem_abs(
     SEXP ptrA_, 
     const bool AisVCL,
     SEXP ptrB_,
@@ -1369,8 +1759,14 @@ void cpp_gpuMatrix_elem_abs(
        std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
         *vcl_B = viennacl::linalg::element_fabs(*vcl_A);        
     }else{
+        
+#ifndef BACKEND_CUDA
         viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
         viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2(), ctx = ctx);
+#else
+        viennacl::matrix<T> vcl_B(vcl_A->size1(),vcl_A->size2());
+#endif
+        
         vcl_B = viennacl::linalg::element_fabs(*vcl_A);
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         ptrB->to_host(vcl_B);
@@ -1394,9 +1790,11 @@ cpp_gpuMatrix_elem_prod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_prod<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_prod<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -1418,9 +1816,11 @@ cpp_gpuMatrix_scalar_prod(
     const int ctx_id)
 {    
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_scalar_prod<int>(ptrC, CisVCL, scalar, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_scalar_prod<float>(ptrC, CisVCL, scalar, ctx_id);
             return;
@@ -1443,9 +1843,11 @@ cpp_gpuMatrix_scalar_div(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_scalar_div<int>(ptrC, CisVCL, B_scalar, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_scalar_div<float>(ptrC, CisVCL, B_scalar, ctx_id);
             return;
@@ -1470,9 +1872,11 @@ cpp_gpuMatrix_scalar_div_2(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuMatrix_scalar_div_2<int>(scalar, ptrC, CisVCL, max_local_size, sourceCode_, ctx_id);
         return;
+#endif
     case 6:
         cpp_gpuMatrix_scalar_div_2<float>(scalar, ptrC, CisVCL, max_local_size, sourceCode_, ctx_id);
         return;
@@ -1498,9 +1902,11 @@ cpp_gpuMatrix_elem_div(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_div<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_div<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -1526,9 +1932,11 @@ cpp_gpuMatrix_elem_pow(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_pow<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_pow<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -1553,9 +1961,11 @@ cpp_gpuMatrix_scalar_pow(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_scalar_pow<int>(ptrA, AisVCL, scalar, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_scalar_pow<float>(ptrA, AisVCL, scalar, ptrC, CisVCL, ctx_id);
             return;
@@ -1579,9 +1989,11 @@ cpp_gpuMatrix_sqrt(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_sqrt<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_sqrt<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1605,9 +2017,11 @@ cpp_gpuMatrix_elem_sin(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_sin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_sin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1631,9 +2045,11 @@ cpp_gpuMatrix_elem_asin(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_asin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_asin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1657,9 +2073,11 @@ cpp_gpuMatrix_elem_sinh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_sinh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_sinh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1683,9 +2101,11 @@ cpp_gpuMatrix_elem_cos(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_cos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_cos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1709,9 +2129,11 @@ cpp_gpuMatrix_elem_acos(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_acos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_acos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1735,9 +2157,11 @@ cpp_gpuMatrix_elem_cosh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_cosh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_cosh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1761,9 +2185,11 @@ cpp_gpuMatrix_elem_tan(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_tan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_tan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1787,9 +2213,11 @@ cpp_gpuMatrix_elem_atan(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_atan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_atan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1813,9 +2241,11 @@ cpp_gpuMatrix_elem_tanh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_tanh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_tanh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1839,9 +2269,11 @@ cpp_gpuMatrix_elem_log(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_log<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_log<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1866,9 +2298,11 @@ cpp_gpuMatrix_elem_log_base(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_log_base<int>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_log_base<float>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
@@ -1892,9 +2326,11 @@ cpp_gpuMatrix_elem_log10(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_log10<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_log10<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1918,9 +2354,11 @@ cpp_gpuMatrix_elem_exp(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_exp<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_exp<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1944,9 +2382,11 @@ cpp_gpuMatrix_elem_abs(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_elem_abs<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_elem_abs<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1971,9 +2411,11 @@ cpp_gpuMatrix_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_axpy<int>(alpha, ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_axpy<float>(alpha, ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -1995,9 +2437,11 @@ cpp_gpuMatrix_unary_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_unary_axpy<int>(ptrA, AisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_unary_axpy<float>(ptrA, AisVCL, ctx_id);
             return;
@@ -2024,9 +2468,11 @@ cpp_gpuMatrix_scalar_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuMatrix_scalar_axpy<int>(alpha, scalar, ptrB, BisVCL, order, max_local_size, sourceCode, ctx_id);
         return;
+#endif
     case 6:
         cpp_gpuMatrix_scalar_axpy<float>(alpha, scalar, ptrB, BisVCL, order, max_local_size, sourceCode, ctx_id);
         return;
@@ -2056,8 +2502,12 @@ cpp_gpuMatrix_scalar_axpy(
 //     vcl_C /= alpha;
 // }
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_vclVector_elem_max_abs(
     SEXP ptrA_)
 {    
@@ -2081,8 +2531,12 @@ cpp_vclVector_elem_max_abs(
 
 // probably want to have some sort of switch for when to leave on the
 // device and when to copy to host
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_vclVector_max(
     SEXP ptrA_)
 {    
@@ -2106,8 +2560,12 @@ cpp_vclVector_max(
     return Am.maxCoeff();
 }
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_vclVector_min(
     SEXP ptrA_)
 {    
@@ -2123,8 +2581,12 @@ cpp_vclVector_min(
 
 /*** vclMatrix templates ***/
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_vclMatrix_max(
     SEXP ptrA_)
 {    
@@ -2146,8 +2608,12 @@ cpp_vclMatrix_max(
     return max_out;
 }
 
-template <typename T>
-T
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+#else
+    T
+#endif
 cpp_vclMatrix_min(
     SEXP ptrA_)
 {    
@@ -2179,8 +2645,10 @@ cpp_vclMatrix_max(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_max<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_max<float>(ptrA));
         case 8:
@@ -2198,8 +2666,10 @@ cpp_vclMatrix_min(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclMatrix_min<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclMatrix_min<float>(ptrA));
         case 8:
@@ -2227,9 +2697,11 @@ cpp_gpuVector_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_axpy<int>(alpha, ptrA, AisVCL, ptrB, BisVCL, order, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_axpy<float>(alpha, ptrA, AisVCL, ptrB, BisVCL, order, ctx_id);
             return;
@@ -2251,9 +2723,11 @@ cpp_gpuVector_unary_axpy(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_unary_axpy<int>(ptrA, AisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_unary_axpy<float>(ptrA, AisVCL, ctx_id);
             return;
@@ -2278,8 +2752,10 @@ cpp_gpuVector_inner_prod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_gpuVector_inner_prod<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id));
+#endif
         case 6:
             return wrap(cpp_gpuVector_inner_prod<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id));
         case 8:
@@ -2303,9 +2779,11 @@ cpp_gpuVector_outer_prod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_outer_prod<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_outer_prod<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -2332,9 +2810,11 @@ cpp_gpuVector_elem_prod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_prod<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_prod<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -2357,9 +2837,11 @@ cpp_gpuVector_scalar_prod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_scalar_prod<int>(ptrC, CisVCL, scalar, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_scalar_prod<float>(ptrC, CisVCL, scalar, ctx_id);
             return;
@@ -2385,9 +2867,11 @@ cpp_gpuVector_elem_div(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_div<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_div<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -2411,9 +2895,11 @@ cpp_gpuVector_scalar_div(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_scalar_div<int>(ptrC, CisVCL, scalar, order, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_scalar_div<float>(ptrC, CisVCL, scalar, order, ctx_id);
             return;
@@ -2439,9 +2925,11 @@ cpp_gpuVector_elem_pow(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_pow<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_pow<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
             return;
@@ -2467,9 +2955,11 @@ cpp_gpuVector_scalar_pow(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_scalar_pow<int>(ptrA, AisVCL, scalar, ptrC, CisVCL, order, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_scalar_pow<float>(ptrA, AisVCL, scalar, ptrC, CisVCL, order, ctx_id);
             return;
@@ -2493,9 +2983,11 @@ cpp_gpuVector_sqrt(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_gpuVector_sqrt<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
         return;
+#endif
     case 6:
         cpp_gpuVector_sqrt<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
         return;
@@ -2519,9 +3011,11 @@ cpp_gpuVector_elem_sin(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_sin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_sin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2545,9 +3039,11 @@ cpp_gpuVector_elem_asin(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_asin<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_asin<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2571,9 +3067,11 @@ cpp_gpuVector_elem_sinh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_sinh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_sinh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2597,9 +3095,11 @@ cpp_gpuVector_elem_cos(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_cos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_cos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2623,9 +3123,11 @@ cpp_gpuVector_elem_acos(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_acos<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_acos<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2649,9 +3151,11 @@ cpp_gpuVector_elem_cosh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_cosh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_cosh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2676,9 +3180,11 @@ cpp_gpuVector_elem_tan(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_tan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_tan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2702,9 +3208,11 @@ cpp_gpuVector_elem_atan(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_atan<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_atan<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2728,9 +3236,11 @@ cpp_gpuVector_elem_tanh(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_tanh<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_tanh<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2754,9 +3264,11 @@ cpp_gpuVector_elem_log10(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_log10<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_log10<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2780,9 +3292,11 @@ cpp_gpuVector_elem_log(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_log<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_log<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2807,9 +3321,11 @@ cpp_gpuVector_elem_log_base(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_log_base<int>(ptrA, AisVCL, ptrB, BisVCL, as<int>(base), ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_log_base<float>(ptrA, AisVCL, ptrB, BisVCL, as<float>(base), ctx_id);
             return;
@@ -2833,9 +3349,11 @@ cpp_gpuVector_elem_exp(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_exp<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_exp<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2859,9 +3377,11 @@ cpp_gpuVector_elem_abs(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuVector_elem_abs<int>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
+#endif
         case 6:
             cpp_gpuVector_elem_abs<float>(ptrA, AisVCL, ptrB, BisVCL, ctx_id);
             return;
@@ -2884,8 +3404,10 @@ cpp_gpuVector_min(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_gpuVector_min<int>(ptrA, ctx_id));
+#endif
         case 6:
             return wrap(cpp_gpuVector_min<float>(ptrA, ctx_id));
         case 8:
@@ -2905,8 +3427,10 @@ cpp_vclVector_max(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclVector_max<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclVector_max<float>(ptrA));
         case 8:
@@ -2924,8 +3448,10 @@ cpp_vclVector_elem_max_abs(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_vclVector_elem_max_abs<int>(ptrA));
+#endif
     case 6:
         return wrap(cpp_vclVector_elem_max_abs<float>(ptrA));
     case 8:
@@ -2943,8 +3469,10 @@ cpp_vclVector_min(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             return wrap(cpp_vclVector_min<int>(ptrA));
+#endif
         case 6:
             return wrap(cpp_vclVector_min<float>(ptrA));
         case 8:

@@ -1,0 +1,58 @@
+CXX_STD = CXX11
+
+PKG_CPPFLAGS = @GPUR_CPPFLAGS@
+PKG_CXXFLAGS = @GPUR_CXXFLAGS@
+
+PKG_LIBS = @GPUR_LIBS@
+R_LIBS = @R_LIBS@
+
+cpp_sources = $(wildcard *.cpp)
+cpp_sharedlibs = $(patsubst %.cpp, %.o, $(cpp_sources))
+
+OBJECTS = $(cpp_sharedlibs)
+
+R_INC = @R_INCL@ @RCPP_INCL@ @RCPPEIGEN_INCL@ @VCL_INCL@ @BH_INCL@
+CXX_ARGS = @R_CPIC@
+
+# possibly add manually - diag_suppress 2739
+# it is a suppress code for an annoying warning with Eigen when using nvcc
+CU_ARGS = -Xcompiler "-fPIC" -Xcudafe "--diag_suppress=boolean_controlling_expr_is_constant --diag_suppress=code_is_unreachable" --expt-relaxed-constexpr
+CU_INCL = @GPUR_CPPFLAGS@ $(R_INC)
+CU_ARCH = -arch=sm_30
+
+CXX=@CXX@
+NVCC=@NVCC@
+
+$(SHLIB): @BUILD_LIB@
+
+../inst/include/loader/libOpenCL.a:
+	cd ../inst/include/loader/ && $(MAKE) libOpenCL.a \
+	CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \
+	ICD_OS=icd_linux
+
+all: gpuR.so
+
+gpuR.so: $(OBJECTS)
+
+BACKEND = @BACKEND@
+ifeq "$(BACKEND)" "CUDA"
+%.o: %.cpp $(cpp_sources)
+		$(NVCC) -gencode arch=compute_30,code=sm_30 -std=c++11 -DGPU -x cu -c $(CU_ARGS) $(CU_INCL) $< -o $@
+else
+gpuR.so: $(OBJECTS)
+endif
+
+
+clean:
+	@rm -rf *.o *.so *.dll
+
+
+#%.o: %.cpp $(cpp_sources)
+#		$(CXX) $(CXX_ARGS) $(R_INC) $< -c
+
+#%.o: %.cu $(cu_sources)
+#		$(NVCC) $(CU_ARCH) $(CU_ARGS) $(CU_INCL) $< -c
+
+#clean:
+#		rm -rf *.o Makevars
+

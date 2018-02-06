@@ -9,12 +9,14 @@
 #include "gpuR/windows_check.hpp"
 #include "gpuR/dynEigenMat.hpp"
 
-#include <RcppEigen.h>
-
 using namespace Rcpp;
 
 template<typename T>
-SEXP 
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, SEXP>::type
+#else
+    SEXP
+#endif
 trunc_mat(SEXP ptrA_, int nr, int nc)
 {    
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
@@ -28,7 +30,11 @@ trunc_mat(SEXP ptrA_, int nr, int nc)
 SEXP 
 truncIntgpuMat(SEXP ptrA_, int nr, int nc)
 {
-    return trunc_mat<int>(ptrA_, nr, nc);   
+#ifndef BACKEND_CUDA
+    return trunc_mat<int>(ptrA_, nr, nc); 
+#else
+    Rcpp::stop("integer not supported for CUDA backend");
+#endif
 }
 
 // [[Rcpp::export]]

@@ -1,18 +1,9 @@
 
 #include "gpuR/windows_check.hpp"
 
-// eigen headers for handling the R input data
-#include <RcppEigen.h>
-
 #include "gpuR/dynEigenMat.hpp"
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/getVCLptr.hpp"
-
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
 
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/lu.hpp"
@@ -25,8 +16,6 @@ T cpp_gpuMatrix_det(
         const bool AisVCL,
         const int ctx_id)
 {
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
 
     Eigen::Matrix<T, Eigen::Dynamic, 1> A = Eigen::Matrix<T, Eigen::Dynamic, 1>::Zero(vcl_A->size1());
@@ -60,7 +49,6 @@ void cpp_gpuMatrix_solve(
         const bool BisVCL,
         const int ctx_id)
 {
-    viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
     std::shared_ptr<viennacl::matrix<T> > vcl_A = getVCLptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);

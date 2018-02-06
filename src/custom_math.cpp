@@ -1,9 +1,5 @@
 #include "gpuR/windows_check.hpp"
 
-#include <RcppEigen.h>
-
-#include "viennacl/ocl/backend.hpp"
-
 #include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
 
@@ -11,23 +7,96 @@
 using namespace Rcpp;
 
 
+// custom kernels for CUDA backend
+#ifdef BACKEND_CUDA
+
 template<typename T>
+__global__ void MatSign(const T *A, T *B,
+                      const unsigned int Mdim, const unsigned int Pdim,
+                      const unsigned int MdimPad) { 
+    
+    int i = threadIdx.x; 
+    int j = threadIdx.y; 
+    
+    // Do the operation
+    if((i <= Mdim) && (j <= Pdim)){
+        
+        // B[i * MdimPad + j] = sign(A[i * MdimPad + j]);
+        
+        T tmp = A[i * MdimPad + j] < 0 ? -1 : 0;
+        B[i * MdimPad + j] = A[i * MdimPad + j] > 0 ? 1 : tmp;
+    }
+    return;
+}
+
+template<typename T>
+__global__ void VecSign(const T *A, T *B,
+                        const unsigned int n) { 
+    
+    int i = threadIdx.x;  
+    
+    // Do the operation
+    if(i < n){
+        T tmp = A[i] < 0 ? -1 : 0;
+        B[i] = A[i] > 0 ? 1 : tmp;
+    }
+    return;
+}
+
+template<typename T>
+__global__ void matrix_pmax(
+        const T *A, T *B, const T x,
+        const unsigned int Mdim, const unsigned Pdim, 
+        const unsigned int MdimPad) {
+    
+    // Get the index of the elements to be processed
+    int globalRow = threadIdx.x; // C Row ID
+    int globalCol = threadIdx.y; // C Col ID
+    
+    // Do the operation
+    if((globalRow <= Mdim) && (globalCol <= Pdim)){
+        
+        B[globalRow * MdimPad + globalCol] = max(A[globalRow * MdimPad + globalCol], x);
+    }
+    return;
+}
+
+template<typename T>
+__global__ void vector_pmax(
+        const T *A, T *B, const T x,
+        const unsigned int n) {
+
+    // Get the index of the elements to be processed
+    int globalRow = threadIdx.x; // C Row ID
+
+    // Do the operation
+    if(globalRow < n){
+        B[globalRow] = max(A[globalRow], x);
+    }
+    return;
+}
+
+#endif
+
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
 void
+#endif
 cpp_vclMatrix_sign(
     SEXP ptrA_,
     const bool AisVCL,
     SEXP ptrB_, 
     const bool BisVCL,
     SEXP sourceCode_,
-    int max_local_size,
+    unsigned int max_local_size,
     const int ctx_id)
 {
     std::string my_kernel = as<std::string>(sourceCode_);
     
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
-   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
-   std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size1();
     // // int N = vcl_B.size1();
@@ -35,31 +104,22 @@ cpp_vclMatrix_sign(
     unsigned int M_internal = vcl_B->internal_size1();
     unsigned int P_internal = vcl_B->internal_size2();
     
+#ifdef BACKEND_CUDA
+    MatSign<<<max_local_size, max_local_size>>>(viennacl::cuda_arg(*vcl_A),
+                                                viennacl::cuda_arg(*vcl_B),
+                                                M, P, M_internal);
+#else
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
     
     // get compiled kernel function
     viennacl::ocl::kernel & mat_sign = my_prog.get_kernel("MatSign");
     
-    cl_device_type type_check = ctx.current_device().type();
-    
-    if(type_check & CL_DEVICE_TYPE_CPU){
-        max_local_size = 1;
-    }else{
-        cl_device_id raw_device = ctx.current_device().id();
-        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "MatSign").handle().get();
-        size_t preferred_work_group_size_multiple;
-        
-        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-        
-        if(err != CL_SUCCESS){
-            Rcpp::stop("clGetKernelWorkGroupInfo failed");
-        }
-        
-        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
-    }
+    // query appropriate max_size and update if different
+    check_max_size(ctx, "MatSign", max_local_size);
     
     // set global work sizes
     mat_sign.global_work_size(0, M_internal);
@@ -74,6 +134,8 @@ cpp_vclMatrix_sign(
         viennacl::ocl::enqueue(mat_sign(*vcl_A, *vcl_B, M, P, M_internal));
     }
     
+#endif
+    
     if(!BisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         
@@ -84,7 +146,11 @@ cpp_vclMatrix_sign(
 }
 
 template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
 void
+#endif
 cpp_vclMatrix_pmax(
     SEXP ptrA_,
     const bool AisVCL,
@@ -97,8 +163,6 @@ cpp_vclMatrix_pmax(
 {
     std::string my_kernel = as<std::string>(sourceCode_);
     
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     T value = as<T>(value_);
     std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > vcl_B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
@@ -108,31 +172,23 @@ cpp_vclMatrix_pmax(
     unsigned int M_internal = vcl_B->internal_size1();
     unsigned int P_internal = vcl_B->internal_size2();
     
+#ifdef BACKEND_CUDA
+    matrix_pmax<<<max_local_size, max_local_size>>>(viennacl::cuda_arg(*vcl_A),
+                                                    viennacl::cuda_arg(*vcl_B),
+                                                    value,
+                                                    M, P, M_internal);
+#else
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
     
     // get compiled kernel function
     viennacl::ocl::kernel & pmax = my_prog.get_kernel("pmax");
     
-    cl_device_type type_check = ctx.current_device().type();
-    
-    if(type_check & CL_DEVICE_TYPE_CPU){
-        max_local_size = 1;
-    }else{
-        cl_device_id raw_device = ctx.current_device().id();
-        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "pmax").handle().get();
-        size_t preferred_work_group_size_multiple;
-        
-        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-        
-        if(err != CL_SUCCESS){
-            Rcpp::stop("clGetKernelWorkGroupInfo failed");
-        }
-        
-        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
-    }
+    // query appropriate max_size and update if different
+    check_max_size(ctx, "pmax", max_local_size);
     
     // set global work sizes
     const unsigned int globalSize1 = roundUp(M_internal, max_local_size);
@@ -149,6 +205,8 @@ cpp_vclMatrix_pmax(
         viennacl::ocl::enqueue(pmax(*vcl_A, *vcl_B, value, M, P, M_internal));
     }
     
+#endif
+    
     if(!BisVCL){
         Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         
@@ -160,7 +218,11 @@ cpp_vclMatrix_pmax(
 
 
 template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
 void
+#endif
 cpp_vclVector_sign(
     SEXP ptrA_,
     const bool AisVCL,
@@ -172,38 +234,27 @@ cpp_vclVector_sign(
 {
     std::string my_kernel = as<std::string>(sourceCode_);
     
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::vector_base<T> > vcl_B = getVCLVecptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size();
 
+#ifdef BACKEND_CUDA
+    VecSign<<<max_local_size, 1>>>(viennacl::cuda_arg(*vcl_A),
+                                   viennacl::cuda_arg(*vcl_B),
+                                   M);
+#else
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+    
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
     
     // get compiled kernel function
     viennacl::ocl::kernel & mat_sign = my_prog.get_kernel("VecSign");
     
-    cl_device_type type_check = ctx.current_device().type();
-    
-    if(type_check & CL_DEVICE_TYPE_CPU){
-        max_local_size = 1;
-    }else{
-        cl_device_id raw_device = ctx.current_device().id();
-        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "VecSign").handle().get();
-        size_t preferred_work_group_size_multiple;
-        
-        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-        
-        if(err != CL_SUCCESS){
-            Rcpp::stop("clGetKernelWorkGroupInfo failed");
-        }
-        
-        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
-    }
+    // query appropriate max_size and update if different
+    check_max_size(ctx, "VecSign", max_local_size);
     
     // set global work sizes
     int globalSize = roundUp(M, max_local_size);
@@ -214,6 +265,8 @@ cpp_vclVector_sign(
     
     // execute kernels
     viennacl::ocl::enqueue(mat_sign(*vcl_A, *vcl_B, M));
+    
+#endif
     
     if(!BisVCL){
         Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -226,7 +279,11 @@ cpp_vclVector_sign(
 
 
 template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else 
 void
+#endif
 cpp_vclVector_pmax(
     SEXP ptrA_,
     const bool AisVCL,
@@ -239,13 +296,20 @@ cpp_vclVector_pmax(
 {
     std::string my_kernel = as<std::string>(sourceCode_);
     
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     T value = as<T>(value_);
     std::shared_ptr<viennacl::vector_base<T> > vcl_A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
     std::shared_ptr<viennacl::vector_base<T> > vcl_B = getVCLVecptr<T>(ptrB_, BisVCL, ctx_id);
     
     unsigned int M = vcl_B->size();
+    
+#ifdef BACKEND_CUDA
+    vector_pmax<<<max_local_size, 1>>>(viennacl::cuda_arg(*vcl_A),
+                                       viennacl::cuda_arg(*vcl_B),
+                                       value,
+                                       M);
+#else
+    
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
@@ -253,25 +317,8 @@ cpp_vclVector_pmax(
     // get compiled kernel function
     viennacl::ocl::kernel & pmax = my_prog.get_kernel("pmax");
     
-    cl_device_type type_check = ctx.current_device().type();
-    
-    if(type_check & CL_DEVICE_TYPE_CPU){
-        max_local_size = 1;
-    }else{
-        cl_device_id raw_device = ctx.current_device().id();
-        cl_kernel raw_kernel = ctx.get_kernel("my_kernel", "pmax").handle().get();
-        size_t preferred_work_group_size_multiple;
-        
-        cl_int err = clGetKernelWorkGroupInfo(raw_kernel, raw_device, 
-                                              CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE, 
-                                              sizeof(size_t), &preferred_work_group_size_multiple, NULL);
-        
-        if(err != CL_SUCCESS){
-            Rcpp::stop("clGetKernelWorkGroupInfo failed");
-        }
-        
-        max_local_size = roundDown(max_local_size, preferred_work_group_size_multiple);
-    }
+    // query appropriate max_size and update if different
+    check_max_size(ctx, "pmax", max_local_size);
     
     // set global work sizes
     int globalSize = roundUp(M, max_local_size);
@@ -282,6 +329,8 @@ cpp_vclVector_pmax(
     
     // execute kernels
     viennacl::ocl::enqueue(pmax(*vcl_A, *vcl_B, value, M));
+    
+#endif
     
     if(!BisVCL){
         Rcpp::XPtr<dynEigenVec<T> > ptrB(ptrB_);
@@ -307,9 +356,11 @@ cpp_vclMatrix_sign(
     const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatrix_sign<int>(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclMatrix_sign<float>(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, ctx_id);
         return;
@@ -335,9 +386,11 @@ cpp_vclVector_sign(
     const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclVector_sign<int>(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclVector_sign<float>(ptrA, AisVCL, ptrB, BisVCL, sourceCode, max_local_size, ctx_id);
         return;
@@ -363,9 +416,11 @@ cpp_vclMatrix_pmax(
     const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMatrix_pmax<int>(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclMatrix_pmax<float>(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, ctx_id);
         return;
@@ -391,9 +446,11 @@ cpp_vclVector_pmax(
     const int ctx_id)
 {
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclVector_pmax<int>(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, ctx_id);
         return;
+#endif
     case 6:
         cpp_vclVector_pmax<float>(ptrA, AisVCL, ptrB, BisVCL, value, sourceCode, max_local_size, ctx_id);
         return;

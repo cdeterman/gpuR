@@ -1,14 +1,27 @@
 #include "gpuR/windows_check.hpp"
-
-#include <RcppEigen.h>
-
-#include "viennacl/ocl/backend.hpp"
-
 #include "gpuR/utils.hpp"
 #include "gpuR/getVCLptr.hpp"
 
 // using namespace cl;
 using namespace Rcpp;
+
+#ifdef BACKEND_CUDA
+
+template<typename T>
+__global__ void set_row_order(
+        const T *A, T *B, const int *indices,
+        const int Mdim, const int globalCol, const int MdimPad) {
+    
+    // Get the index of the elements to be processed
+    const int globalRow = threadIdx.x; // C Row ID
+    
+    // Do the operation
+    if((globalRow <= Mdim)){
+        B[globalRow] = A[indices[globalRow] * MdimPad + globalCol];
+    }
+}
+
+#endif
 
 template<typename T>
 void
@@ -20,7 +33,9 @@ cpp_vclVector_permute(
 {
     std::string my_kernel = as<std::string>(sourceCode_);
     
+#ifndef BACKEND_CUDA
     viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
+#endif
     
     Rcpp::XPtr<dynVCLVec<T> > pA(ptrA_);
     viennacl::vector_range<viennacl::vector_base<T> > vcl_A  = pA->data();
@@ -64,8 +79,6 @@ cpp_vclMatrix_set_row_order(
     
     std::string my_kernel = as<std::string>(sourceCode_);
     
-    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
-    
     // Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
     // viennacl::matrix<T> vcl_A = ptrA->data();
     // viennacl::matrix<T> *vcl_B;
@@ -84,6 +97,42 @@ cpp_vclMatrix_set_row_order(
     
     // std::cout << "initialized" << std::endl;
     
+#ifdef BACKEND_CUDA
+    
+    // std::cout << "moving indexes" << std::endl;
+    viennacl::vector<int> vcl_I(indices.size());
+    viennacl::copy(indices, vcl_I);
+    
+    // std::cout << "creating dummy vector" << std::endl;
+    viennacl::vector<T> vcl_V = viennacl::zero_vector<T>(M_internal);
+    
+    viennacl::matrix_base<T> vcl_B(vcl_V.handle(),
+                                   M_internal, 0, 1, M_internal,   //row layout
+                                   1, 0, 1, 1,   //column layout
+                                   true); // row-major
+    
+    viennacl::range r(0, M);
+    
+    for(unsigned int i=0; i < P; i++){
+        
+        // std::cout << "column: " << i << std::endl;
+        
+        viennacl::range c(i, i+1);
+        
+        viennacl::matrix_range<viennacl::matrix<T> > tmp(*vcl_A, r, c);
+        
+        // std::cout << tmp << std::endl;
+        
+        set_row_order<<<max_local_size, 1>>>(viennacl::cuda_arg(tmp), 
+                                             viennacl::cuda_arg(vcl_B), 
+                                             viennacl::cuda_arg(vcl_I),
+                                             M, i, P_internal);
+        
+        tmp = vcl_B;
+    }
+    
+#else
+    viennacl::ocl::context ctx(viennacl::ocl::get_context(ctx_id));
     viennacl::ocl::kernel set_row_order;
     
     // try {
@@ -181,6 +230,8 @@ cpp_vclMatrix_set_row_order(
             tmp = vcl_B;
         }
     }
+    
+#endif
     
     // delete vcl_A;
     

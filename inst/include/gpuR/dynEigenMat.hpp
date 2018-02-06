@@ -3,7 +3,13 @@
 #define DYNEIGEN_MAT_HPP
 
 // Use OpenCL with ViennaCL
+#ifdef BACKEND_CUDA
+#define VIENNACL_WITH_CUDA 1
+#elif BACKEND_OPENCL
 #define VIENNACL_WITH_OPENCL 1
+#else
+#define VIENNACL_WITH_OPENCL 1
+#endif
 
 // Use ViennaCL algorithms on Eigen objects
 #define VIENNACL_WITH_EIGEN 1
@@ -18,15 +24,22 @@
 #include <memory>
 #include <complex>
 
+template <typename T, typename Enable = void>
+class dynEigenMat;
+
 template <class T> 
-class dynEigenMat {
+#ifdef BACKEND_CUDA
+class dynEigenMat<T, typename std::enable_if<std::is_floating_point<T>::value>::type> {
+#else
+class dynEigenMat<T>{
+#endif
     
-    static_assert(std::is_same<T, double>::value || 
-                  std::is_same<T, float>::value ||
-                  std::is_same<T, int>::value ||
-                  std::is_same<T, std::complex<double> >::value ||
-                  std::is_same<T, std::complex<float> >::value,
-                  "some meaningful error message");
+    // static_assert(std::is_same<T, double>::value || 
+    //               std::is_same<T, float>::value ||
+    //               std::is_same<T, int>::value ||
+    //               std::is_same<T, std::complex<double> >::value ||
+    //               std::is_same<T, std::complex<float> >::value,
+    //               "some meaningful error message");
     
     private:
         int nr, orig_nr, nc, orig_nc, r_start, r_end, c_start, c_end, ctx_id;
@@ -259,9 +272,21 @@ class dynEigenMat {
             const int M = block.cols();
             const int K = block.rows();
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            
+            viennacl::matrix<T> vclMat(K,M);
+#else
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            viennacl::matrix<T> vclMat(K,M, ctx = ctx);
+            viennacl::matrix<T> vclMat(K, M, ctx=ctx);
+#endif
+            
             viennacl::copy(block, vclMat);
             
             return vclMat;
@@ -281,9 +306,21 @@ class dynEigenMat {
             
             ctx_id = ctx_in;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            
+            viennacl::matrix<T> vclMat(K, M);
+#else
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
-            viennacl::matrix<T> vclMat(K,M, ctx = ctx);
+            viennacl::matrix<T> vclMat(K, M, ctx=ctx);
+#endif
+            
             viennacl::copy(block, vclMat);
             
             return vclMat;
@@ -304,9 +341,20 @@ class dynEigenMat {
             const int M = block.cols();
             const int K = block.rows();
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            
+            shptr.reset(new viennacl::matrix<T>(K, M));
+#else
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
             shptr.reset(new viennacl::matrix<T>(K, M, ctx=ctx));
+#endif
             
             viennacl::copy(block, *shptr.get());
         };
@@ -323,9 +371,20 @@ class dynEigenMat {
             const int K = block.rows();
             ctx_id = ctx_in;
             
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            
+            if(ctx_id != cuda_device){
+                cudaSetDevice(ctx_id);    
+            }
+            
+            shptr.reset(new viennacl::matrix<T>(K, M));
+#else
             viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
             
             shptr.reset(new viennacl::matrix<T>(K, M, ctx=ctx));
+#endif
             
             viennacl::copy(block, *shptr.get());
         };
@@ -368,8 +427,8 @@ class dynEigenMat {
         };
 };
 
-template class dynEigenMat<int>;
-template class dynEigenMat<float>;
-template class dynEigenMat<double>;
+// template class dynEigenMat<int>;
+// template class dynEigenMat<float>;
+// template class dynEigenMat<double>;
 
 #endif
