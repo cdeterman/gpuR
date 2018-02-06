@@ -10,8 +10,12 @@
 
 using namespace Rcpp;
 
-template <typename T>
-std::vector<T>
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, std::vector<T> >::type
+#else
+    std::vector<T>
+#endif 
 cpp_gpuR_qr(
     SEXP ptrA_,
     const bool isVCL,
@@ -45,8 +49,12 @@ cpp_gpuR_qr(
     return betas;
 }
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_recover_qr(
     SEXP ptrQR_,
     const bool QRisVCL,
@@ -99,9 +107,11 @@ cpp_gpuR_qr(
 {
 
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         return wrap(cpp_gpuR_qr<int>(ptrA, isVCL, ctx_id));
         // return wrap(betas);
+#endif
     case 6:
         return wrap(cpp_gpuR_qr<float>(ptrA, isVCL, ctx_id));
         // return wrap(betas);
@@ -128,9 +138,11 @@ cpp_recover_qr(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_recover_qr<int>(ptrQR, QRisVCL, ptrQ, QisVCL, ptrR, RisVCL, betas, ctx_id);
         return;
+#endif
     case 6:
         cpp_recover_qr<float>(ptrQR, QRisVCL, ptrQ, QisVCL, ptrR, RisVCL, betas, ctx_id);
         return;
