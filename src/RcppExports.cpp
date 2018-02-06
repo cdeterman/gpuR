@@ -1490,19 +1490,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// vectorizeList
-void vectorizeList(List mylist, SEXP ptrV, const int ctx_id, const int type_flag);
-RcppExport SEXP _gpuR_vectorizeList(SEXP mylistSEXP, SEXP ptrVSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type mylist(mylistSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ptrV(ptrVSEXP);
-    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
-    Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
-    vectorizeList(mylist, ptrV, ctx_id, type_flag);
-    return R_NilValue;
-END_RCPP
-}
 // assignVectorToMat
 void assignVectorToMat(SEXP ptrM, SEXP ptrV, const int type_flag);
 RcppExport SEXP _gpuR_assignVectorToMat(SEXP ptrMSEXP, SEXP ptrVSEXP, SEXP type_flagSEXP) {
@@ -2878,6 +2865,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _gpuR_vectorizeList(SEXP, SEXP, SEXP, SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclMatrix_custom_chol", (DL_FUNC) &_gpuR_cpp_vclMatrix_custom_chol, 7},
     {"_gpuR_initContexts", (DL_FUNC) &_gpuR_initContexts, 0},
@@ -2992,7 +2981,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_emptyVecVCL", (DL_FUNC) &_gpuR_emptyVecVCL, 3},
     {"_gpuR_setVCLcols", (DL_FUNC) &_gpuR_setVCLcols, 3},
     {"_gpuR_getVCLcols", (DL_FUNC) &_gpuR_getVCLcols, 2},
-    {"_gpuR_vectorizeList", (DL_FUNC) &_gpuR_vectorizeList, 4},
     {"_gpuR_assignVectorToMat", (DL_FUNC) &_gpuR_assignVectorToMat, 3},
     {"_gpuR_assignVectorToCol", (DL_FUNC) &_gpuR_assignVectorToCol, 4},
     {"_gpuR_cpp_gpuMatrix_elem_prod", (DL_FUNC) &_gpuR_cpp_gpuMatrix_elem_prod, 8},
@@ -3089,6 +3077,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclMatrix_sum", (DL_FUNC) &_gpuR_cpp_vclMatrix_sum, 2},
     {"_gpuR_cpp_vclMatrix_svd", (DL_FUNC) &_gpuR_cpp_vclMatrix_svd, 6},
     {"_gpuR_cpp_gpuMatrix_svd", (DL_FUNC) &_gpuR_cpp_gpuMatrix_svd, 5},
+    {"_gpuR_vectorizeList",               (DL_FUNC) &_gpuR_vectorizeList,               4},
     {NULL, NULL, 0}
 };
 

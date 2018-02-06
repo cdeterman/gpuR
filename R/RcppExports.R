@@ -498,10 +498,6 @@ getVCLcols <- function(ptrA, type_flag) {
     .Call(`_gpuR_getVCLcols`, ptrA, type_flag)
 }
 
-vectorizeList <- function(mylist, ptrV, ctx_id, type_flag) {
-    invisible(.Call(`_gpuR_vectorizeList`, mylist, ptrV, ctx_id, type_flag))
-}
-
 assignVectorToMat <- function(ptrM, ptrV, type_flag) {
     invisible(.Call(`_gpuR_assignVectorToMat`, ptrM, ptrV, type_flag))
 }

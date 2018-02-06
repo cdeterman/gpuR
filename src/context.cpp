@@ -123,6 +123,12 @@ listContexts()
                                    _["stringsAsFactors"] = false );
 }
 
+
+SEXP
+getContextPtr(const int ctx_id){
+    Rcpp::stop("Contexts are not relevant for CUDA backend");
+}
+
 #else
 
 // [[Rcpp::export]]

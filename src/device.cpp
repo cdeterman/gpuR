@@ -381,13 +381,15 @@ SEXP cpp_detectCPUs(SEXP platform_idx)
 }
 
 
-#ifndef BACKEND_CUDA
+
 
 #include "gpuR/windows_check.hpp"
 
 #include <RcppEigen.h>
 
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/backend.hpp"
+#endif
 
 #include "gpuR/utils.hpp"
 
@@ -400,6 +402,7 @@ preferred_wg_size(
     std::string kernel_name,
     const int ctx_id)
 {
+#ifndef BACKEND_CUDA
     unsigned int max_local_size;
     
     // get kernel
@@ -433,8 +436,10 @@ preferred_wg_size(
     }
     
     return max_local_size;
+#else
+    Rcpp::stop("checking work group size not relevant for CUDA backend");
+#endif
 }
 
-#endif
 
 
