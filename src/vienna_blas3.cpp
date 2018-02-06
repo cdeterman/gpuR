@@ -9,16 +9,12 @@
 #include "gpuR/dynVCLMat.hpp"
 #include "gpuR/dynVCLVec.hpp"
 
-// Use OpenCL with ViennaCL
-#define VIENNACL_WITH_OPENCL 1
-
-// Use ViennaCL algorithms on Eigen objects
-#define VIENNACL_WITH_EIGEN 1
-
 // ViennaCL headers
+#ifndef BACKEND_CUDA
 #include "viennacl/ocl/backend.hpp"
 #include "viennacl/ocl/device.hpp"
 #include "viennacl/ocl/platform.hpp"
+#endif
 #include "viennacl/matrix.hpp"
 #include "viennacl/linalg/prod.hpp"
 
@@ -26,8 +22,12 @@ using namespace Rcpp;
 
 /*** gpuMatrix templates ***/
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_, 
@@ -37,22 +37,30 @@ cpp_gpuMatrix_gemm(
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-        
     const int M = ptrC->row_end() - ptrC->row_start() + 1;
     const int K = ptrC->col_end() - ptrC->col_start() + 1;
     
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::matrix<T> vcl_B = ptrB->device_data();
+    
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     viennacl::matrix<T> vcl_C(M, K, ctx = ctx);
+#else
+    viennacl::matrix<T> vcl_C(M, K);
+#endif
     
     vcl_C = viennacl::linalg::prod(vcl_A, vcl_B);
     
     ptrC->to_host(vcl_C);
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -62,22 +70,33 @@ cpp_gpuMatrix_crossprod(
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
     const int M = ptrC->row_end() - ptrC->row_start() + 1;
     const int K = ptrC->col_end() - ptrC->col_start() + 1;
     
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::matrix<T> vcl_B = ptrB->device_data();
+    
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     viennacl::matrix<T> vcl_C(M, K, ctx = ctx);
+#else
+    int device_idx = ptrA->deviceIndex();
+    cudaSetDevice(device_idx);
+    
+    viennacl::matrix<T> vcl_C(M, K);
+#endif
     
     vcl_C = viennacl::linalg::prod(trans(vcl_A), vcl_B);
     
     ptrC->to_host(vcl_C);
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif 
 cpp_gpuMatrix_tcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -87,22 +106,33 @@ cpp_gpuMatrix_tcrossprod(
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     XPtr<dynEigenMat<T> > ptrC(ptrC_);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
-    
     const int M = ptrC->row_end() - ptrC->row_start() + 1;
     const int K = ptrC->col_end() - ptrC->col_start() + 1;
     
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::matrix<T> vcl_B = ptrB->device_data();
+    
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     viennacl::matrix<T> vcl_C(M, K, ctx = ctx);
+#else
+    int device_idx = ptrA->deviceIndex();
+    cudaSetDevice(device_idx);
+    
+    viennacl::matrix<T> vcl_C(M, K);
+#endif
     
     vcl_C = viennacl::linalg::prod(vcl_A, trans(vcl_B));
     
     ptrC->to_host(vcl_C);
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_gpuMatrix_transpose(
     SEXP ptrA_, 
     SEXP ptrB_)
@@ -110,13 +140,20 @@ cpp_gpuMatrix_transpose(
     XPtr<dynEigenMat<T> > ptrA(ptrA_);
     XPtr<dynEigenMat<T> > ptrB(ptrB_);
     
-    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));   
-    
     const int M = ptrB->nrow();
     const int K = ptrB->ncol();
     
     viennacl::matrix<T> vcl_A = ptrA->device_data();
+    
+#ifndef BACKEND_CUDA
+    viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     viennacl::matrix<T> vcl_B(M, K, ctx = ctx);
+#else
+    int device_idx = ptrA->deviceIndex();
+    cudaSetDevice(device_idx);
+    
+    viennacl::matrix<T> vcl_B(M, K);
+#endif
     
     vcl_B = trans(vcl_A);
     
@@ -134,9 +171,11 @@ cpp_gpuMatrix_gemm(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_gemm<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_gemm<float>(ptrA, ptrB, ptrC);
             return;
@@ -157,9 +196,11 @@ cpp_gpuMatrix_crossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_crossprod<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_crossprod<float>(ptrA, ptrB, ptrC);
             return;
@@ -180,9 +221,11 @@ cpp_gpuMatrix_tcrossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_tcrossprod<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_tcrossprod<float>(ptrA, ptrB, ptrC);
             return;
@@ -202,9 +245,11 @@ cpp_gpuMatrix_transpose(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_gpuMatrix_transpose<int>(ptrA, ptrB);
             return;
+#endif
         case 6:
             cpp_gpuMatrix_transpose<float>(ptrA, ptrB);
             return;
@@ -219,8 +264,13 @@ cpp_gpuMatrix_transpose(
 
 /*** vclMatrix Templates ***/
 
-template <typename T>
-void cpp_vclMatrix_gemm(
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
+    cpp_vclMatrix_gemm(
     SEXP ptrA_, 
     SEXP ptrB_,
     SEXP ptrC_)
@@ -236,8 +286,12 @@ void cpp_vclMatrix_gemm(
     C = viennacl::linalg::prod(A, B);
 }
 
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif   
 cpp_vclMatrix_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -255,8 +309,12 @@ cpp_vclMatrix_crossprod(
 }
 
 // for use in cases where two matrices crossprod result in 1 row/column
-template <typename T>
-void 
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif   
 cpp_vclMat_vclVec_crossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -305,8 +363,12 @@ cpp_vclMat_vclVec_crossprod(
 }
 
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_vclMatrix_tcrossprod(
     SEXP ptrA_, 
     SEXP ptrB_,
@@ -323,8 +385,12 @@ cpp_vclMatrix_tcrossprod(
     C = viennacl::linalg::prod(A, trans(B));
 }
 
-template <typename T>
-void
+template<typename T>
+#ifdef BACKEND_CUDA
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+#else
+    void
+#endif  
 cpp_vclMatrix_transpose(
     SEXP ptrA_, 
     SEXP ptrB_)
@@ -349,9 +415,11 @@ cpp_vclMatrix_gemm(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMatrix_gemm<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_vclMatrix_gemm<float>(ptrA, ptrB, ptrC);
             return;
@@ -372,9 +440,11 @@ cpp_vclMatrix_crossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMatrix_crossprod<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_vclMatrix_crossprod<float>(ptrA, ptrB, ptrC);
             return;
@@ -394,9 +464,11 @@ cpp_vclMat_vclVec_crossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
     case 4:
         cpp_vclMat_vclVec_crossprod<int>(ptrA, ptrB, ptrC);
         return;
+#endif
     case 6:
         cpp_vclMat_vclVec_crossprod<float>(ptrA, ptrB, ptrC);
         return;
@@ -417,9 +489,11 @@ cpp_vclMatrix_tcrossprod(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMatrix_tcrossprod<int>(ptrA, ptrB, ptrC);
             return;
+#endif
         case 6:
             cpp_vclMatrix_tcrossprod<float>(ptrA, ptrB, ptrC);
             return;
@@ -439,9 +513,11 @@ cpp_vclMatrix_transpose(
 {
     
     switch(type_flag) {
+#ifndef BACKEND_CUDA
         case 4:
             cpp_vclMatrix_transpose<int>(ptrA, ptrB);
             return;
+#endif
         case 6:
             cpp_vclMatrix_transpose<float>(ptrA, ptrB);
             return;
