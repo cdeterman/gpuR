@@ -240,6 +240,18 @@ class dynEigenMat<T>{
             return ctx_id;
         }
         
+        // get device index
+        int deviceIndex(){
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            return cuda_device;
+#else
+            int opencl_device = viennacl::ocl::get_context(static_cast<long>(ctx_id)).current_device_id();
+            return opencl_device;
+#endif
+        }
+        
         // get host data
         Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, 0, Eigen::OuterStride<> > data(){
             // Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > temp(ptr.get()->data(), orig_nr, orig_nc);

@@ -71,18 +71,7 @@ class dynVCLMat<T>{
         } // private default constructor
 	    dynVCLMat(viennacl::matrix<T> mat, int ctx_id): ctx_id(ctx_id) {
 	        
-	        // explicitly pull context for thread safe forking
-#ifdef BACKEND_CUDA
-	        int cuda_device;
-	        cudaGetDevice(&cuda_device);
-#else
-	        viennacl::context ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
-#endif
-	        
-	        // must explicity switch context to make sure the same
-	        // it appears when class initialized the A is set to current context (may not be desired)
-	        // A.switch_memory_context(ctx);
-	        
+	        // assign matrix
 	        viennacl::matrix<T> A = mat;
 	        
 	        nr = A.size1();
@@ -253,6 +242,17 @@ class dynVCLMat<T>{
             Rcpp::stop("CUDA backend doesn't have contexts!");
 #else
             return viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
+#endif
+        }
+        
+        int deviceIndex(){
+#ifdef BACKEND_CUDA
+            int cuda_device;
+            cudaGetDevice(&cuda_device);
+            return cuda_device;
+#else
+            int opencl_device = viennacl::ocl::get_context(static_cast<long>(ctx_id)).current_device_id();
+            return opencl_device;
 #endif
         }
         
