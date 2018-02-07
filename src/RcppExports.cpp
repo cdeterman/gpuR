@@ -2865,8 +2865,6 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _gpuR_vectorizeList(SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclMatrix_custom_chol", (DL_FUNC) &_gpuR_cpp_vclMatrix_custom_chol, 7},
     {"_gpuR_initContexts", (DL_FUNC) &_gpuR_initContexts, 0},
@@ -3077,7 +3075,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclMatrix_sum", (DL_FUNC) &_gpuR_cpp_vclMatrix_sum, 2},
     {"_gpuR_cpp_vclMatrix_svd", (DL_FUNC) &_gpuR_cpp_vclMatrix_svd, 6},
     {"_gpuR_cpp_gpuMatrix_svd", (DL_FUNC) &_gpuR_cpp_gpuMatrix_svd, 5},
-    {"_gpuR_vectorizeList",               (DL_FUNC) &_gpuR_vectorizeList,               4},
     {NULL, NULL, 0}
 };
 
