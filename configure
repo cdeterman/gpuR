@@ -2985,7 +2985,7 @@ $as_echo "\"yes -- using ${CUDA_HOME}/lib64 for CUDA libs\"" >&6; }
         #AC_SUBST(CUDA_LIBDIR,["$cu_libdir"])
     fi
 
-    GPUR_LIBS="${GPUR_LIBS} -L${cu_libdir} -Wl,-rpath,${cu_libdir} -lcublas -lcudart"
+    GPUR_LIBS="${GPUR_LIBS} -L${cu_libdir} -Wl,-rpath,${cu_libdir} -lcudart"
 
 
     ## look for Rscript, but use the one found via R_HOME to allow for multiple installations

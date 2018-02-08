@@ -221,7 +221,7 @@ elif test "$BACKEND" = "CUDA"; then
         #AC_SUBST(CUDA_LIBDIR,["$cu_libdir"])
     fi
     
-    GPUR_LIBS="${GPUR_LIBS} -L${cu_libdir} -Wl,-rpath,${cu_libdir} -lcublas -lcudart"
+    GPUR_LIBS="${GPUR_LIBS} -L${cu_libdir} -Wl,-rpath,${cu_libdir} -lcudart"
     
     
     ## look for Rscript, but use the one found via R_HOME to allow for multiple installations
