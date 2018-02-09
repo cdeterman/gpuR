@@ -17,7 +17,7 @@ CXX_ARGS = @R_CPIC@
 # possibly add manually - diag_suppress 2739
 # it is a suppress code for an annoying warning with Eigen when using nvcc
 CU_ARGS = -Xcompiler "-fPIC" -Xcudafe "--diag_suppress=boolean_controlling_expr_is_constant --diag_suppress=code_is_unreachable" --expt-relaxed-constexpr
-CU_INCL = @GPUR_CPPFLAGS@ $(R_INC)
+CU_INCL = @GPUR_CPPFLAGS@ $(R_INC) -I@CRT_INCL@
 CU_ARCH = -arch=sm_30
 
 CXX=@CXX@
