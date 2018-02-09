@@ -71,7 +71,8 @@ SEXP detectPlatforms()
 SEXP currentPlatform()
 {
 #ifdef BACKEND_CUDA
-    Rcpp::stop("Platform is always NVIDIA with BACKEND=CUDA");
+    return List::create(Named("platform") = "NVIDIA",
+                        Named("platform_index") = 1);
 #else
     // get current platform index
     int plat_idx = viennacl::ocl::current_context().platform_index();
