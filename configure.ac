@@ -202,6 +202,21 @@ elif test "$BACKEND" = "CUDA"; then
         AC_MSG_RESULT("using CUDA_HOME=${CUDA_HOME}")
     fi
     
+    AC_MSG_CHECKING("Parsing CUDA version")
+    CUDA_VER=$(find /usr/local/ -maxdepth 1 -type d -name "cuda*" | sort -V | tail -1 | sed -r "s/[[a-z]]*|-||\///g")
+    AC_MSG_RESULT("CUDA version being used is ${CUDA_VER}")
+    
+    #echo ${CUDA_VER} 9.1 | awk '{if ($1 < $2) print false; else print true}'
+    CUDA_EXCEPTION=`echo ${CUDA_VER} 9.1 | awk '{if ($1 < $2) print "false"; else print "true"}'`
+    echo ${CUDA_EXCEPTION}
+    if [ "$CUDA_EXCEPTION" = true ]; then
+        AC_MSG_NOTICE("Need special include")
+        AC_SUBST(CRT_INCL,["$CUDA_HOME/include/crt"])
+    else
+        AC_MSG_NOTICE("All is good")
+        AC_SUBST(CRT_INCL,"")
+    fi
+    
     AC_CHECK_FILE([${CUDA_HOME}/bin/nvcc], [HAS_NVCC="yes"])
     if test -z "${HAS_NVCC}"; then
         AC_MSG_ERROR("NVCC not found; check CUDA install")
