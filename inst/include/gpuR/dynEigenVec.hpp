@@ -31,7 +31,11 @@ class dynEigenVec {
         // viennacl::vector_base<T> *vclA = new viennacl::vector_base<T>();
         
         dynEigenVec() { } // private default constructor
-        ~dynEigenVec() { } // private default destructor
+        // destructor
+        ~ dynEigenVec() {
+            this->release_device();
+            this->release_host();
+        }
         dynEigenVec(SEXP A_){
             A = Rcpp::as<Eigen::Matrix<T, Eigen::Dynamic, 1> >(A_);
             size = A.size();
@@ -169,6 +173,11 @@ class dynEigenVec {
         // release device memory
         void release_device(){
             shptr.reset();
+        };
+        
+        // release host memory
+        void release_host(){
+            ptr.reset();
         };
         
         void setElement(const int idx, SEXP value){

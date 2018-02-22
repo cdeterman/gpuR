@@ -41,6 +41,11 @@ class dynEigenMat {
         // viennacl::matrix<T> *vclA;
         // Eigen::Block<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > block;
         
+        // destructor
+        ~ dynEigenMat() {
+            this->release_device();
+            this->release_host();
+        }
         
         // initializers
         dynEigenMat() { }; // private default constructor
@@ -333,6 +338,11 @@ class dynEigenMat {
         // release device memory
         void release_device(){
             shptr.reset();
+        };
+        
+        // release host memory
+        void release_host(){
+            ptr.reset();
         };
         
         // copy back to host

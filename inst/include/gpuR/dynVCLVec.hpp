@@ -70,6 +70,9 @@ class dynVCLVec {
         // viennacl::vector_base<T> A;
     	int size,begin,last;
         
+        ~ dynVCLVec() {
+            this->release_device();
+        }
         dynVCLVec() { } // private default constructor
         // dynVCLVec(viennacl::vector_base<T> *vec) : ptr(vec){
         //     // A = vec;
@@ -368,6 +371,11 @@ class dynVCLVec {
                 v_sub(idx[i]) = Am(i);
             }
         }
+        
+        // release device memory
+        void release_device(){
+            shptr.reset();
+        };
         
 };
 
