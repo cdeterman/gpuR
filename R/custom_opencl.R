@@ -511,7 +511,7 @@ custom_opencl <- function(kernel, cl_args, type){
            "Windows" = {
                arch <- if(R.Version()[["arch"]] == "x86_64") "x64" else "i386"
                LIBS <- "-LPATH/loader/ARCH -lOpenCL -Wl,-rpath,PATH/loader/ARCH"
-               LIBS <- gsub("PATH", pkg_inc, LIBS)
+               LIBS <- gsub("PATH", paste('"', pkg_inc, '"', sep = ""), LIBS)
                LIBS <- gsub("ARCH", arch, LIBS)
                Sys.setenv(PKG_LIBS=LIBS)
            },
