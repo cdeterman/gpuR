@@ -129,7 +129,7 @@ cpp_gpuMatrix_solve(
     bool BisVCL,
     const int type_flag,
     const int ctx_id,
-    const bool BisI)
+    const bool BisI = true)
 {
 
     switch(type_flag) {
