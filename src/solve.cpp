@@ -58,7 +58,8 @@ void cpp_gpuMatrix_solve(
         SEXP ptrB_,
         const bool AisVCL,
         const bool BisVCL,
-        const int ctx_id)
+        const int ctx_id,
+        const bool BisI = true)
 {
     viennacl::context ctx(viennacl::ocl::get_context(ctx_id));
 
@@ -70,14 +71,26 @@ void cpp_gpuMatrix_solve(
     if(BisVCL){
         viennacl::linalg::lu_substitute(*vcl_A, *vcl_B);    
     }else{
-        viennacl::matrix<T> tmp = viennacl::identity_matrix<T>(vcl_A->size1());
-        viennacl::linalg::lu_substitute(*vcl_A, tmp);
+        if(BisI){
+            viennacl::matrix<T> tmp = viennacl::identity_matrix<T>(vcl_A->size1());
+            viennacl::linalg::lu_substitute(*vcl_A, tmp);
+            
+            Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+            
+            // copy device data back to CPU
+            ptrB->to_host(tmp);
+            ptrB->release_device();
+        }else{
+            viennacl::linalg::lu_substitute(*vcl_A, *vcl_B);    
+            
+            Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+            
+            // copy device data back to CPU
+            ptrB->to_host(*vcl_B);
+            ptrB->release_device();
+        }
         
-        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
         
-        // copy device data back to CPU
-        ptrB->to_host(tmp);
-        ptrB->release_device();
     }
     
 
@@ -115,15 +128,16 @@ cpp_gpuMatrix_solve(
     bool AisVCL,
     bool BisVCL,
     const int type_flag,
-    const int ctx_id)
+    const int ctx_id,
+    const bool BisI)
 {
 
     switch(type_flag) {
         case 6:
-            cpp_gpuMatrix_solve<float>(ptrA, ptrB, AisVCL, BisVCL, ctx_id);
+            cpp_gpuMatrix_solve<float>(ptrA, ptrB, AisVCL, BisVCL, ctx_id, BisI);
             return;
         case 8:
-            cpp_gpuMatrix_solve<double>(ptrA, ptrB, AisVCL, BisVCL, ctx_id);
+            cpp_gpuMatrix_solve<double>(ptrA, ptrB, AisVCL, BisVCL, ctx_id, BisI);
             return;
         default:
             throw Rcpp::exception("unknown type detected for gpuR matrix object!");

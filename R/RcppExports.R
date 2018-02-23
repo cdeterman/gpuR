@@ -246,8 +246,8 @@ cpp_gpuMatrix_det <- function(ptrA, AisVCL, type_flag, ctx_id) {
     .Call(`_gpuR_cpp_gpuMatrix_det`, ptrA, AisVCL, type_flag, ctx_id)
 }
 
-cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id) {
-    invisible(.Call(`_gpuR_cpp_gpuMatrix_solve`, ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id))
+cpp_gpuMatrix_solve <- function(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id, BisI) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_solve`, ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id, BisI))
 }
 
 #' @title Synchronize Device Execution

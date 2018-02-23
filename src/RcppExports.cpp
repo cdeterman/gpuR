@@ -698,8 +698,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_gpuMatrix_solve
-void cpp_gpuMatrix_solve(SEXP ptrA, SEXP ptrB, bool AisVCL, bool BisVCL, const int type_flag, const int ctx_id);
-RcppExport SEXP _gpuR_cpp_gpuMatrix_solve(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP AisVCLSEXP, SEXP BisVCLSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP) {
+void cpp_gpuMatrix_solve(SEXP ptrA, SEXP ptrB, bool AisVCL, bool BisVCL, const int type_flag, const int ctx_id, const bool BisI);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_solve(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP AisVCLSEXP, SEXP BisVCLSEXP, SEXP type_flagSEXP, SEXP ctx_idSEXP, SEXP BisISEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
@@ -708,7 +708,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type BisVCL(BisVCLSEXP);
     Rcpp::traits::input_parameter< const int >::type type_flag(type_flagSEXP);
     Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
-    cpp_gpuMatrix_solve(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id);
+    Rcpp::traits::input_parameter< const bool >::type BisI(BisISEXP);
+    cpp_gpuMatrix_solve(ptrA, ptrB, AisVCL, BisVCL, type_flag, ctx_id, BisI);
     return R_NilValue;
 END_RCPP
 }
@@ -2932,7 +2933,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclVector_permute", (DL_FUNC) &_gpuR_cpp_vclVector_permute, 5},
     {"_gpuR_cpp_vclMatrix_set_row_order", (DL_FUNC) &_gpuR_cpp_vclMatrix_set_row_order, 7},
     {"_gpuR_cpp_gpuMatrix_det", (DL_FUNC) &_gpuR_cpp_gpuMatrix_det, 4},
-    {"_gpuR_cpp_gpuMatrix_solve", (DL_FUNC) &_gpuR_cpp_gpuMatrix_solve, 6},
+    {"_gpuR_cpp_gpuMatrix_solve", (DL_FUNC) &_gpuR_cpp_gpuMatrix_solve, 7},
     {"_gpuR_synchronize", (DL_FUNC) &_gpuR_synchronize, 0},
     {"_gpuR_truncIntgpuMat", (DL_FUNC) &_gpuR_truncIntgpuMat, 3},
     {"_gpuR_truncFloatgpuMat", (DL_FUNC) &_gpuR_truncFloatgpuMat, 3},

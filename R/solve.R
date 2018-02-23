@@ -147,7 +147,8 @@ setMethod("solve",
                                              FALSE,
                                              FALSE,
                                              6L, 
-                                             in_mat@.context_index - 1)
+                                             in_mat@.context_index - 1,
+                                             FALSE)
                      },
                      double = {
                          cpp_gpuMatrix_solve(in_mat@address, 
@@ -155,7 +156,8 @@ setMethod("solve",
                                              FALSE,
                                              FALSE,
                                              8L, 
-                                             in_mat@.context_index - 1)
+                                             in_mat@.context_index - 1,
+                                             FALSE)
                      },
                      stop("type not recognized")
               )
