@@ -67,14 +67,22 @@ void cpp_gpuMatrix_solve(
 
     // solution of a full system right into the load vector vcl_rhs:
     viennacl::linalg::lu_factorize(*vcl_A);
-    viennacl::linalg::lu_substitute(*vcl_A, *vcl_B);
+    if(BisVCL){
+        viennacl::linalg::lu_substitute(*vcl_A, *vcl_B);    
+    }else{
+        viennacl::matrix<T> tmp = viennacl::identity_matrix<T>(vcl_A->size1());
+        viennacl::linalg::lu_substitute(*vcl_A, tmp);
+        
+        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
+        
+        // copy device data back to CPU
+        ptrB->to_host(tmp);
+        ptrB->release_device();
+    }
+    
 
     if(!BisVCL){
-        Rcpp::XPtr<dynEigenMat<T> > ptrB(ptrB_);
-
-        // copy device data back to CPU
-        ptrB->to_host(*vcl_B);
-        ptrB->release_device();
+        
     }
 }
 

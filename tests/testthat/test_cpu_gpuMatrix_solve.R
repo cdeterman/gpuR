@@ -31,7 +31,7 @@ test_that("CPU gpuMatrix Single Precision Matrix Square Matrix Inversion",
               
               # print("completed")
               
-              expect_is(ginv, "fvclMatrix")
+              expect_is(ginv, "fgpuMatrix")
               
               # print("R matrix")
               # print(rinv)
@@ -103,7 +103,7 @@ test_that("CPU gpuMatrix Double Precision Matrix Square Matrix Inversion",
               
               ginv <- solve(fgpuX)
               
-              expect_is(ginv, "dvclMatrix")
+              expect_is(ginv, "dgpuMatrix")
               
               expect_equal(fgpuX[], X, tolerance = .Machine$double.eps ^ 0.5,
                            info = "input matrix was overwritten")
