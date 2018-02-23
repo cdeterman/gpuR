@@ -1,6 +1,8 @@
 // [[Rcpp::depends(BH, RcppEigen, RViennaCL, gpuR)]]
 // [[Rcpp::plugins(cpp11)]]
 
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+
 #include "gpuR/windows_check.hpp"
 
 #include <RcppEigen.h>
