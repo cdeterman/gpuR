@@ -143,9 +143,10 @@ class dynVCLVec {
             // ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             // 
             // A.switch_memory_context(ctx);
-            viennacl::vector_base<T> A = vec;
-
-            size = A.size();
+            // viennacl::vector_base<T> A = vec;
+            shptr = std::make_shared<viennacl::vector_base<T> >(vec);
+            
+            size = shptr->size();
             begin = 1;
             last = size;
             // ptr = &A;
@@ -154,7 +155,7 @@ class dynVCLVec {
             
             shared = false;
             shared_type = 0;
-            shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            
         }
         // dynVCLVec(viennacl::vector_range<viennacl::vector_base<T> > vec, int ctx_id){
         //     viennacl::context ctx;
@@ -183,15 +184,16 @@ class dynVCLVec {
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
             // std::cout << "about to initialize" << std::endl;
-            viennacl::vector_base<T> A = viennacl::vector_base<T>(K, ctx); 
+            // viennacl::vector_base<T> A = viennacl::vector_base<T>(K, ctx); 
             // std::cout << "initialized vector" << std::endl;
+            shptr = std::make_shared<viennacl::vector_base<T> >(viennacl::vector_base<T>(K, ctx));
             
-            viennacl::fast_copy(Am.data(), Am.data() + Am.size(), A.begin());
+            viennacl::fast_copy(Am.data(), Am.data() + Am.size(), shptr->begin());
             // viennacl::fast_copy(Am.begin(), Am.end(), A.begin());
             
             // std::cout << "copied" << std::endl;
             
-            size = A.size();
+            size = shptr->size();
             begin = 1;
             last = size;
             // ptr = &A;
@@ -200,7 +202,7 @@ class dynVCLVec {
             
             shared = false;
             shared_type = 0;
-            shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            
         }
         // dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_);
         // dynVCLVec(Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > &A_, int size_);
@@ -211,11 +213,12 @@ class dynVCLVec {
             // explicitly pull context for thread safe forking
             ctx = viennacl::context(viennacl::ocl::get_context(static_cast<long>(ctx_id)));
             
-            viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
+            // viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
+            shptr = std::make_shared<viennacl::vector_base<T> >(viennacl::vector_base<T>(size_in, ctx));
             // A = viennacl::zero_vector<T>(size_in, ctx);
             // A = static_cast<viennacl::vector_base<T> >(A);
             
-            viennacl::linalg::vector_assign(A, (T)(0));
+            viennacl::linalg::vector_assign(*shptr, (T)(0));
             
             begin = 1;
             last = size_in;
@@ -225,7 +228,7 @@ class dynVCLVec {
             
             shared = false;
             shared_type = 0;
-            shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            
         }
         dynVCLVec(const int size_in, T scalar, const int ctx_id){
             viennacl::context ctx;
@@ -237,8 +240,9 @@ class dynVCLVec {
             // A = viennacl::scalar_vector<T>(size_in, scalar, ctx);
             // A = static_cast<viennacl::vector_base<T> >(A);
             
-            viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
-            viennacl::linalg::vector_assign(A, scalar);
+            // viennacl::vector_base<T> A = viennacl::vector_base<T>(size_in, ctx);
+            shptr = std::make_shared<viennacl::vector_base<T> >(viennacl::vector_base<T>(size_in, ctx));
+            viennacl::linalg::vector_assign(*shptr, scalar);
             
             size = size_in;
             // ptr = &A;
@@ -253,7 +257,7 @@ class dynVCLVec {
             
             shared = false;
             shared_type = 0;
-            shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            
         };
         // dynVCLVec(Eigen::Matrix<T, Eigen::Dynamic,1> &A_, const int start, const int end);
         // dynVCLVec(Rcpp::XPtr<dynVCLVec<T> > dynVec){
@@ -283,9 +287,9 @@ class dynVCLVec {
         };
         // void setVector(viennacl::vector_range<viennacl::vector_base<T> > vec);
         void setVector(viennacl::vector_base<T> vec){
-            viennacl::vector_base<T> A = vec;
+            // viennacl::vector_base<T> A = vec;
             // ptr = &A;
-            shptr = std::make_shared<viennacl::vector_base<T> >(A);
+            shptr = std::make_shared<viennacl::vector_base<T> >(vec);
             
             shared = false;
             shared_type = 0;
