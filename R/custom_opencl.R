@@ -104,13 +104,26 @@ custom_opencl <- function(kernel, cl_args, type){
         }
 
     })
-
+    
     # list of input objects for later use
     input_objs <- sapply(input_args, function(x){
         # y <- unlist(strsplit(input_args[3], " "))
-        unlist(lapply(strsplit(x, " "), function(y) substr(y[[length(y)]], 0, nchar(y[[length(y)]])-1)))
+        unlist(lapply(strsplit(x, " "), function(y) {
+            # print(y)
+            if(any(grepl(",", y) & !grepl("ptr", y))){
+                end <- nchar(y[[length(y)]])-2
+            }else{
+                end <- nchar(y[[length(y)]])-1
+            }
+            substr(y[[length(y)]], 0, end)
+        }
+        ))
     }, USE.NAMES = FALSE)
-
+    
+    # print(input_args)
+    # print(input_objs)
+    # stop("stopping")
+    
     # context index
     # grab first cl argument
     cl_arg <- cl_args[cl_args$object %in% c("gpuMatrix", "gpuVector", "vclMatrix", "vclVector"),]
@@ -434,6 +447,9 @@ custom_opencl <- function(kernel, cl_args, type){
     non_cl_objs <- lapply(k_args, function(x) x[!grepl('\\*', x)])
 
     # probably want additional documentation on what this error actually means
+    print(non_cl_objs)
+    # print(dim_objs)
+    print(input_objs)
     arg_checks <- unlist(lapply(non_cl_objs, function(x) any(!x %in% c(dim_objs, input_objs))))
     if(any(arg_checks)){
         stop("Non OpenCL buffer kernel arguments don't match to initialized objects.")
