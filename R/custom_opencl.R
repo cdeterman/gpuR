@@ -306,6 +306,11 @@ custom_opencl <- function(kernel, cl_args, type){
         gsub("\\(.*", "", unlist(strsplit(x[1], " "))[3])
     }, USE.NAMES = FALSE)
 
+    if(any(!cl_args[,"queues"] %in% knames)){
+        mismatches <- unique(cl_args[!cl_args[,"queues"] %in% knames,"queues"])
+        stop(paste0(paste0("queues: ", paste(mismatches, collapse=", ")), " defined in 'setup_opencl' not found in kernel file: ", kernel))
+    }
+    
     knames_line <- paste0('Rcpp::StringVector kernel_name("',paste(knames, collapse = '","'), '");')
 
     kernel_args <- sapply(kernels, function(x){
@@ -447,9 +452,6 @@ custom_opencl <- function(kernel, cl_args, type){
     non_cl_objs <- lapply(k_args, function(x) x[!grepl('\\*', x)])
 
     # probably want additional documentation on what this error actually means
-    print(non_cl_objs)
-    # print(dim_objs)
-    print(input_objs)
     arg_checks <- unlist(lapply(non_cl_objs, function(x) any(!x %in% c(dim_objs, input_objs))))
     if(any(arg_checks)){
         stop("Non OpenCL buffer kernel arguments don't match to initialized objects.")
