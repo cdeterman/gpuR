@@ -30,6 +30,21 @@ setMethod("%*%", c(x="gpuVector", y="gpuVector"),
               gpuVecInnerProd(x,y)
           })
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="gpuVector", y = "gpuMatrix"),
+          function(x,y)
+          {
+              # print(length(x))
+              # print(nrow(y))
+              if(length(x) != nrow(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "gpuVector"
+)
+
 #' @title Outer Product
 #' @description The outer product of two gpuR vector objects
 #' @param X A gpuR object

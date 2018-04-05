@@ -734,12 +734,12 @@ cpp_vclVector_min <- function(ptrA, type_flag) {
     .Call(`_gpuR_cpp_vclVector_min`, ptrA, type_flag)
 }
 
-cpp_vclMatrix_gemv <- function(ptrA, ptrB, ptrC, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_gemv`, ptrA, ptrB, ptrC, type_flag))
+cpp_gpuMatrix_gemv <- function(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_gemv`, ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag))
 }
 
-cpp_vclMatrix_gevm <- function(ptrA, ptrB, ptrC, type_flag) {
-    invisible(.Call(`_gpuR_cpp_vclMatrix_gevm`, ptrA, ptrB, ptrC, type_flag))
+cpp_gpuMatrix_gevm <- function(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag) {
+    invisible(.Call(`_gpuR_cpp_gpuMatrix_gevm`, ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag))
 }
 
 cpp_vclMatVec_crossprod <- function(ptrA, AisVec, ptrB, BisVec, ptrC, type_flag) {

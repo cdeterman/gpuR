@@ -4,6 +4,7 @@
 \docType{methods}
 \name{\%*\%,gpuVector,gpuVector-method}
 \alias{\%*\%,gpuVector,gpuVector-method}
+\alias{\%*\%,gpuVector,gpuMatrix-method}
 \alias{\%*\%,vclMatrix,vclMatrix-method}
 \alias{\%*\%,vclMatrix,vclVector-method}
 \alias{\%*\%,vclMatrix,matrix-method}
@@ -11,11 +12,14 @@
 \alias{\%*\%,vclVector,vclVector-method}
 \alias{\%*\%,vclVector,vclMatrix-method}
 \alias{\%*\%,gpuMatrix,gpuMatrix-method}
+\alias{\%*\%,gpuMatrix,gpuVector-method}
 \alias{\%*\%,gpuMatrix,matrix-method}
 \alias{\%*\%,matrix,gpuMatrix-method}
 \title{Matrix Multiplication}
 \usage{
 \S4method{\%*\%}{gpuVector,gpuVector}(x, y)
+
+\S4method{\%*\%}{gpuVector,gpuMatrix}(x, y)
 
 \S4method{\%*\%}{vclMatrix,vclMatrix}(x, y)
 
@@ -30,6 +34,8 @@
 \S4method{\%*\%}{vclVector,vclMatrix}(x, y)
 
 \S4method{\%*\%}{gpuMatrix,gpuMatrix}(x, y)
+
+\S4method{\%*\%}{gpuMatrix,gpuVector}(x, y)
 
 \S4method{\%*\%}{gpuMatrix,matrix}(x, y)
 

@@ -29,6 +29,18 @@ setMethod("%*%", signature(x="gpuMatrix", y = "gpuMatrix"),
           valueClass = "gpuMatrix"
 )
 
+#' @rdname grapes-times-grapes-methods
+#' @export
+setMethod("%*%", signature(x="gpuMatrix", y = "gpuVector"),
+          function(x,y)
+          {
+              if( ncol(x) != length(y)){
+                  stop("Non-conformable arguments")
+              }
+              return(vclGEMV(x, y))
+          },
+          valueClass = "gpuVector"
+)
 
 #' @rdname grapes-times-grapes-methods
 #' @export

@@ -2372,29 +2372,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_vclMatrix_gemv
-void cpp_vclMatrix_gemv(SEXP ptrA, SEXP ptrB, SEXP ptrC, int type_flag);
-RcppExport SEXP _gpuR_cpp_vclMatrix_gemv(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP) {
+// cpp_gpuMatrix_gemv
+void cpp_gpuMatrix_gemv(SEXP ptrA, const bool AisVCL, SEXP ptrB, const bool BisVCL, SEXP ptrC, const bool CisVCL, const int ctx_id, int type_flag);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_gemv(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP ptrCSEXP, SEXP CisVCLSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< const bool >::type CisVCL(CisVCLSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
-    cpp_vclMatrix_gemv(ptrA, ptrB, ptrC, type_flag);
+    cpp_gpuMatrix_gemv(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag);
     return R_NilValue;
 END_RCPP
 }
-// cpp_vclMatrix_gevm
-void cpp_vclMatrix_gevm(SEXP ptrA, SEXP ptrB, SEXP ptrC, int type_flag);
-RcppExport SEXP _gpuR_cpp_vclMatrix_gevm(SEXP ptrASEXP, SEXP ptrBSEXP, SEXP ptrCSEXP, SEXP type_flagSEXP) {
+// cpp_gpuMatrix_gevm
+void cpp_gpuMatrix_gevm(SEXP ptrA, const bool AisVCL, SEXP ptrB, const bool BisVCL, SEXP ptrC, const bool CisVCL, const int ctx_id, int type_flag);
+RcppExport SEXP _gpuR_cpp_gpuMatrix_gevm(SEXP ptrASEXP, SEXP AisVCLSEXP, SEXP ptrBSEXP, SEXP BisVCLSEXP, SEXP ptrCSEXP, SEXP CisVCLSEXP, SEXP ctx_idSEXP, SEXP type_flagSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type ptrA(ptrASEXP);
+    Rcpp::traits::input_parameter< const bool >::type AisVCL(AisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrB(ptrBSEXP);
+    Rcpp::traits::input_parameter< const bool >::type BisVCL(BisVCLSEXP);
     Rcpp::traits::input_parameter< SEXP >::type ptrC(ptrCSEXP);
+    Rcpp::traits::input_parameter< const bool >::type CisVCL(CisVCLSEXP);
+    Rcpp::traits::input_parameter< const int >::type ctx_id(ctx_idSEXP);
     Rcpp::traits::input_parameter< int >::type type_flag(type_flagSEXP);
-    cpp_vclMatrix_gevm(ptrA, ptrB, ptrC, type_flag);
+    cpp_gpuMatrix_gevm(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id, type_flag);
     return R_NilValue;
 END_RCPP
 }
@@ -3052,8 +3060,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpuR_cpp_vclVector_max", (DL_FUNC) &_gpuR_cpp_vclVector_max, 2},
     {"_gpuR_cpp_vclVector_elem_max_abs", (DL_FUNC) &_gpuR_cpp_vclVector_elem_max_abs, 2},
     {"_gpuR_cpp_vclVector_min", (DL_FUNC) &_gpuR_cpp_vclVector_min, 2},
-    {"_gpuR_cpp_vclMatrix_gemv", (DL_FUNC) &_gpuR_cpp_vclMatrix_gemv, 4},
-    {"_gpuR_cpp_vclMatrix_gevm", (DL_FUNC) &_gpuR_cpp_vclMatrix_gevm, 4},
+    {"_gpuR_cpp_gpuMatrix_gemv", (DL_FUNC) &_gpuR_cpp_gpuMatrix_gemv, 8},
+    {"_gpuR_cpp_gpuMatrix_gevm", (DL_FUNC) &_gpuR_cpp_gpuMatrix_gevm, 8},
     {"_gpuR_cpp_vclMatVec_crossprod", (DL_FUNC) &_gpuR_cpp_vclMatVec_crossprod, 6},
     {"_gpuR_cpp_vclMatVec_tcrossprod", (DL_FUNC) &_gpuR_cpp_vclMatVec_tcrossprod, 7},
     {"_gpuR_cpp_vclMatVec_axpy", (DL_FUNC) &_gpuR_cpp_vclMatVec_axpy, 7},

@@ -14,6 +14,7 @@ Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
+v <- rnorm(ORDER)
 
 # Single Precision tests
 
@@ -45,6 +46,26 @@ test_that("CPU gpuMatrix Single Precision Matrix multiplication", {
     
     expect_is(fgpuC, "fgpuMatrix")
     expect_equal(fgpuC[,], C, tolerance=1e-07, 
+                 info="float matrix elements not equivalent")  
+})
+
+test_that("CPU gpuMatrix Single Precision Matrix-Vector multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- A %*% v
+    C2 <- v %*% B
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    fgpuB <- gpuMatrix(B, type="float")
+    fgpuV <- gpuVector(v, type = "float")
+    
+    fgpuC <- fgpuA %*% fgpuV
+    fgpuC2 <- fgpuV %*% fgpuB
+    
+    expect_equal(fgpuC[,], c(C), tolerance=1e-06, 
+                 info="float matrix elements not equivalent")  
+    expect_equal(fgpuC2[,], c(C2), tolerance=1e-06, 
                  info="float matrix elements not equivalent")  
 })
 
@@ -791,6 +812,26 @@ test_that("CPU gpuMatrix Double Precision Matrix multiplication", {
     expect_is(dgpuC, "dgpuMatrix")
     expect_equal(dgpuC[,], C, tolerance=.Machine$double.eps ^ 0.5, 
                  info="double matrix elements not equivalent")  
+})
+
+test_that("CPU gpuMatrix Double Precision Matrix-Vector multiplication", {
+    
+    has_cpu_skip()
+    
+    C <- A %*% v
+    C2 <- v %*% B
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    fgpuB <- gpuMatrix(B, type="double")
+    fgpuV <- gpuVector(v, type = "double")
+    
+    fgpuC <- fgpuA %*% fgpuV
+    fgpuC2 <- fgpuV %*% fgpuB
+    
+    expect_equal(fgpuC[,], c(C), tolerance=.Machine$double.eps^0.5,
+                 info="double matrix elements not equivalent")
+    expect_equal(fgpuC2[,], c(C2), tolerance=.Machine$double.eps^0.5,
+                 info="double matrix elements not equivalent")
 })
 
 test_that("CPU gpuMatrix Double Precision Matrix Subtraction", {

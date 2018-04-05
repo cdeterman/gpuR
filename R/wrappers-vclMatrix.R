@@ -314,13 +314,23 @@ vclGEMV<- function(A, B){
     
     assert_are_identical(A@.context_index, B@.context_index)
     
-    AisVec <- inherits(A, "vclVector")
-    BisVec <- inherits(B, "vclVector")
+    AisVec <- inherits(A, c("vclVector", "gpuVector"))
+    BisVec <- inherits(B, c("vclVector", "gpuVector"))
     
     if(AisVec){
-        C <- vclVector(length = nrow(B), type=type, ctx_id = A@.context_index)
+        if(inherits(A, "vclVector")){
+            C <- vclVector(length = nrow(B), type=type, ctx_id = A@.context_index)    
+        }else{
+            C <- gpuVector(length = nrow(B), type=type, ctx_id = A@.context_index)
+        }
+        
     }else{
-        C <- vclVector(length = nrow(A), type=type, ctx_id = A@.context_index)
+        if(inherits(A, "vclVector")){
+            C <- vclVector(length = nrow(A), type=type, ctx_id = A@.context_index)    
+        }else{
+            C <- gpuVector(length = nrow(A), type=type, ctx_id = A@.context_index)
+        }
+        
     }
     
     
@@ -354,15 +364,23 @@ vclGEMV<- function(A, B){
                    #                            sqrt(maxWorkGroupSize),
                    #                            C@.context_index - 1)
                },
-               float = {cpp_vclMatrix_gevm(A@address,
+               float = {cpp_gpuMatrix_gevm(A@address,
+                                           inherits(A, "vclVector"),
                                            B@address,
+                                           inherits(B, "vclMatrix"),
                                            C@address,
+                                           inherits(C, "vclVector"),
+                                           A@.context_index - 1L,
                                            6L)
                },
                double = {
-                   cpp_vclMatrix_gevm(A@address,
+                   cpp_gpuMatrix_gevm(A@address,
+                                      inherits(A, "vclVector"),
                                       B@address,
+                                      inherits(B, "vclMatrix"),
                                       C@address,
+                                      inherits(C, "vclVector"),
+                                      A@.context_index - 1L,
                                       8L)
                    
                },
@@ -403,15 +421,23 @@ vclGEMV<- function(A, B){
                    #                            sqrt(maxWorkGroupSize),
                    #                            C@.context_index - 1)
                },
-               float = {cpp_vclMatrix_gemv(A@address,
+               float = {cpp_gpuMatrix_gemv(A@address,
+                                           inherits(A, "vclMatrix"),
                                            B@address,
+                                           inherits(B, "vclVector"),
                                            C@address,
+                                           inherits(C, "vclVector"),
+                                           A@.context_index - 1L,
                                            6L)
                },
                double = {
-                   cpp_vclMatrix_gemv(A@address,
+                   cpp_gpuMatrix_gemv(A@address,
+                                      inherits(A, "vclMatrix"),
                                       B@address,
+                                      inherits(B, "vclVector"),
                                       C@address,
+                                      inherits(C, "vclVector"),
+                                      A@.context_index - 1L,
                                       8L)
                    
                },

@@ -6,8 +6,9 @@
 
 // #include "gpuR/dynEigenMat.hpp"
 // #include "gpuR/dynEigenVec.hpp"
-#include "gpuR/dynVCLMat.hpp"
-#include "gpuR/dynVCLVec.hpp"
+// #include "gpuR/dynVCLMat.hpp"
+// #include "gpuR/dynVCLVec.hpp"
+#include "gpuR/getVCLptr.hpp"
 
 // Use OpenCL with ViennaCL
 #define VIENNACL_WITH_OPENCL 1
@@ -29,37 +30,74 @@ using namespace Rcpp;
 /*** vclMatrix Templates ***/
 
 template <typename T>
-void cpp_vclMatrix_gemv(
+void cpp_gpuMatrix_gemv(
         SEXP ptrA_, 
+        const bool AisVCL,
         SEXP ptrB_,
-        SEXP ptrC_)
+        const bool BisVCL,
+        SEXP ptrC_,
+        const bool CisVCL,
+        const int ctx_id)
 {
-    Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
-    Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+    // Rcpp::XPtr<dynVCLMat<T> > ptrA(ptrA_);
+    // Rcpp::XPtr<dynVCLVec<T> > ptrB(ptrB_);
+    // Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+    // 
+    // viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
+    // viennacl::vector_range<viennacl::vector_base<T> > B = ptrB->data();
+    // viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+    // 
+    // C = viennacl::linalg::prod(A, B);
     
-    viennacl::matrix_range<viennacl::matrix<T> > A = ptrA->data();
-    viennacl::vector_range<viennacl::vector_base<T> > B = ptrB->data();
-    viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
     
-    C = viennacl::linalg::prod(A, B);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > A = getVCLBlockptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > B = getVCLVecptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
+        
+    *C = viennacl::linalg::prod(*A, *B);
+    
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*C);
+        ptrC->release_device();
+    }
 }
 
 template <typename T>
-void cpp_vclMatrix_gevm(
+void cpp_gpuMatrix_gevm(
         SEXP ptrA_, 
+        const bool AisVCL,
         SEXP ptrB_,
-        SEXP ptrC_)
+        const bool BisVCL,
+        SEXP ptrC_,
+        const bool CisVCL,
+        const int ctx_id)
 {
-    Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
-    Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
-    Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+    // Rcpp::XPtr<dynVCLVec<T> > ptrA(ptrA_);
+    // Rcpp::XPtr<dynVCLMat<T> > ptrB(ptrB_);
+    // Rcpp::XPtr<dynVCLVec<T> > ptrC(ptrC_);
+    // 
+    // viennacl::vector_range<viennacl::vector_base<T> > A = ptrA->data();
+    // viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
+    // viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+    // 
+    // C = viennacl::linalg::prod(trans(B), A);
     
-    viennacl::vector_range<viennacl::vector_base<T> > A = ptrA->data();
-    viennacl::matrix_range<viennacl::matrix<T> > B = ptrB->data();
-    viennacl::vector_range<viennacl::vector_base<T> > C = ptrC->data();
+    std::shared_ptr<viennacl::vector_base<T> > A = getVCLVecptr<T>(ptrA_, AisVCL, ctx_id);
+    std::shared_ptr<viennacl::matrix_range<viennacl::matrix<T> > > B = getVCLBlockptr<T>(ptrB_, BisVCL, ctx_id);
+    std::shared_ptr<viennacl::vector_base<T> > C = getVCLVecptr<T>(ptrC_, CisVCL, ctx_id);
     
-    C = viennacl::linalg::prod(trans(B), A);
+    *C = viennacl::linalg::prod(trans(*B), *A);
+    
+    if(!CisVCL){
+        Rcpp::XPtr<dynEigenVec<T> > ptrC(ptrC_);
+        
+        // copy device data back to CPU
+        ptrC->to_host(*C);
+        ptrC->release_device();
+    }
 }
 
 
@@ -264,20 +302,26 @@ void cpp_vclMatVec_axpy(
 
 // [[Rcpp::export]]
 void
-cpp_vclMatrix_gemv(
-    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+cpp_gpuMatrix_gemv(
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB, 
+    const bool BisVCL,
+    SEXP ptrC,
+    const bool CisVCL,
+    const int ctx_id,
     int type_flag)
 {
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_gemv<int>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gemv<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_gemv<float>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gemv<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_gemv<double>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gemv<double>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
@@ -287,20 +331,26 @@ cpp_vclMatrix_gemv(
 
 // [[Rcpp::export]]
 void
-cpp_vclMatrix_gevm(
-    SEXP ptrA, SEXP ptrB, SEXP ptrC,
+cpp_gpuMatrix_gevm(
+    SEXP ptrA, 
+    const bool AisVCL,
+    SEXP ptrB, 
+    const bool BisVCL,
+    SEXP ptrC,
+    const bool CisVCL,
+    const int ctx_id,
     int type_flag)
 {
     
     switch(type_flag) {
     case 4:
-        cpp_vclMatrix_gevm<int>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gevm<int>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     case 6:
-        cpp_vclMatrix_gevm<float>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gevm<float>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     case 8:
-        cpp_vclMatrix_gevm<double>(ptrA, ptrB, ptrC);
+        cpp_gpuMatrix_gevm<double>(ptrA, AisVCL, ptrB, BisVCL, ptrC, CisVCL, ctx_id);
         return;
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
