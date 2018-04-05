@@ -70,7 +70,7 @@ test_that("CPU vclVector Single Precision Vector Subtraction ", {
                  info="float vcl vector elements not equivalent")  
 })
 
-test_that("gpuVector Single Precision Scalar Matrix Subtraction", {
+test_that("CPU vclVector Single Precision Scalar Matrix Subtraction", {
     
     has_cpu_skip()
     
@@ -257,7 +257,7 @@ test_that("CPU vclVector Single Precision Outer Product ", {
                  info="float vcl vector elements not equivalent")
 })
 
-test_that("CPU gpuVector Single precision tcrossprod", {
+test_that("CPU vclVector Single precision tcrossprod", {
     
     has_cpu_skip()
     
