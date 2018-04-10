@@ -53,6 +53,9 @@ CPP_NAME(
     // viennacl::ocl::kernel & my_kernel = my_prog.get_kernel(kernel_name);
     
     viennacl::ocl::device working_device = ctx.current_device();
+    
+    std::cout << working_device.name() << std::endl;
+    
     Rcpp::IntegerVector max_local_size(kernel_name.size(), working_device.max_work_group_size());
         
     cl_device_type type_check = working_device.type();
