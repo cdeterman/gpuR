@@ -35,7 +35,11 @@ CPP_NAME(
     // std::shared_ptr<viennacl::matrix<T> > vcl_B = getVCLptr<T>(ptrB_, BisVCL, ctx_id);
     
     MY_CONTEXT
-        
+    
+    viennacl::ocl::device working_device = ctx.current_device();
+    
+    std::cout << working_device.name() << std::endl;
+    
     MY_DIMS
     // unsigned int M = vcl_B->size1();
     // unsigned int P = vcl_B->size2();
@@ -52,9 +56,7 @@ CPP_NAME(
     // viennacl::ocl::kernel & update_block = my_prog.get_kernel("update_block");
     // viennacl::ocl::kernel & my_kernel = my_prog.get_kernel(kernel_name);
     
-    viennacl::ocl::device working_device = ctx.current_device();
-    
-    std::cout << working_device.name() << std::endl;
+    // viennacl::ocl::device working_device = ctx.current_device();
     
     Rcpp::IntegerVector max_local_size(kernel_name.size(), working_device.max_work_group_size());
         
