@@ -37,8 +37,14 @@ CPP_NAME(
     MY_CONTEXT
     
     viennacl::ocl::device working_device = ctx.current_device();
+    std::string extensions = working_device.extensions();
+    bool double_support = working_device.double_support();
     
     std::cout << working_device.name() << std::endl;
+    std::cout << "extensions" << std::endl;
+    std::cout << extensions << std::endl;
+    std::cout << "double support check" << std::endl;
+    std::cout << double_support << std::endl;
     
     MY_DIMS
     // unsigned int M = vcl_B->size1();
