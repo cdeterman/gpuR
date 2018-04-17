@@ -52,9 +52,11 @@ CPP_NAME(
     // unsigned int M_internal = vcl_B->internal_size1();
     // unsigned int P_internal = vcl_B->internal_size2();
     
+    std::cout << "adding kernel" << std::endl;
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
     
+    std::cout << "pulling kernel function(s)" << std::endl;
     // get compiled kernel function
     MY_KERNELS
     // viennacl::ocl::kernel & update_kk = my_prog.get_kernel("update_kk");
@@ -63,6 +65,7 @@ CPP_NAME(
     // viennacl::ocl::kernel & my_kernel = my_prog.get_kernel(kernel_name);
     
     // viennacl::ocl::device working_device = ctx.current_device();
+    std::cout << "getting work size multiple" << std::endl;
     
     Rcpp::IntegerVector max_local_size(kernel_name.size(), working_device.max_work_group_size());
         
@@ -88,6 +91,7 @@ CPP_NAME(
         }
     }
     
+    std::cout << "setting global work sizes" << std::endl;
     
     // set global work sizes
     MY_GLOBALS
@@ -96,10 +100,13 @@ CPP_NAME(
     // pmax.global_work_size(0, globalSize1);
     // pmax.global_work_size(1, globalSize2);
     
+    std::cout << "setting local work sizes" << std::endl;
     // set local work sizes
     MY_LOCALS
     // pmax.local_work_size(0, max_local_size);
     // pmax.local_work_size(1, max_local_size);
+    
+    std::cout << "just before queue" << std::endl;
     
     // execute kernels
     MY_QUEUES
