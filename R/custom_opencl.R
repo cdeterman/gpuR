@@ -298,10 +298,12 @@ custom_opencl <- function(kernel, cl_args, type){
 
     # remove blank lines
     src <- src[sapply(src, function(x) length(grep("^\\s*$", x)) == 0)]
+    # remove any possible pragma lines
+    src <- src[!sapply(src, function(x) grepl("#pragma", x))]
 
     # separate kernels
     kernels <- splitAt(src, which(sapply(src, function(x) grepl("\\_\\_kernel", x, perl = TRUE), USE.NAMES = FALSE)))
-
+    
     # get kernel names
     knames <- sapply(kernels, function(x) {
         gsub("\\(.*", "", unlist(strsplit(x[1], " "))[3])
