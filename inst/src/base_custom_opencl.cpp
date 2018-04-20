@@ -36,27 +36,15 @@ CPP_NAME(
     
     MY_CONTEXT
     
-    viennacl::ocl::device working_device = ctx.current_device();
-    std::string extensions = working_device.extensions();
-    bool double_support = working_device.double_support();
-    
-    std::cout << working_device.name() << std::endl;
-    std::cout << "extensions" << std::endl;
-    std::cout << extensions << std::endl;
-    std::cout << "double support check" << std::endl;
-    std::cout << double_support << std::endl;
-    
     MY_DIMS
     // unsigned int M = vcl_B->size1();
     // unsigned int P = vcl_B->size2();
     // unsigned int M_internal = vcl_B->internal_size1();
     // unsigned int P_internal = vcl_B->internal_size2();
     
-    std::cout << "adding kernel" << std::endl;
     // add kernel to program
     viennacl::ocl::program & my_prog = ctx.add_program(my_kernel, "my_kernel");
     
-    std::cout << "pulling kernel function(s)" << std::endl;
     // get compiled kernel function
     MY_KERNELS
     // viennacl::ocl::kernel & update_kk = my_prog.get_kernel("update_kk");
@@ -64,8 +52,7 @@ CPP_NAME(
     // viennacl::ocl::kernel & update_block = my_prog.get_kernel("update_block");
     // viennacl::ocl::kernel & my_kernel = my_prog.get_kernel(kernel_name);
     
-    // viennacl::ocl::device working_device = ctx.current_device();
-    std::cout << "getting work size multiple" << std::endl;
+    viennacl::ocl::device working_device = ctx.current_device();
     
     Rcpp::IntegerVector max_local_size(kernel_name.size(), working_device.max_work_group_size());
         
@@ -91,8 +78,6 @@ CPP_NAME(
         }
     }
     
-    std::cout << "setting global work sizes" << std::endl;
-    
     // set global work sizes
     MY_GLOBALS
     // const unsigned int globalSize1 = roundUp(M_internal, max_local_size);
@@ -100,13 +85,10 @@ CPP_NAME(
     // pmax.global_work_size(0, globalSize1);
     // pmax.global_work_size(1, globalSize2);
     
-    std::cout << "setting local work sizes" << std::endl;
     // set local work sizes
     MY_LOCALS
     // pmax.local_work_size(0, max_local_size);
     // pmax.local_work_size(1, max_local_size);
-    
-    std::cout << "just before queue" << std::endl;
     
     // execute kernels
     MY_QUEUES
