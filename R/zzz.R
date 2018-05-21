@@ -2,7 +2,7 @@
 
 .onLoad <- function(libname, pkgname) {
     options(gpuR.print.warning=TRUE)
-    options(gpuR.default.type = "double")
+    options(gpuR.default.type = "float")
     # options(gpuR.default.device.type = "gpu")
 }
 
