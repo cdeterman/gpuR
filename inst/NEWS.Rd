@@ -1,5 +1,34 @@
 \name{NEWS}
 \title{News for Package 'gpuR'}
+\newcommand{\ghpr}{\href{https://github.com/cdeterman/gpuR/pull/#1}{##1}}
+\newcommand{\ghit}{\href{https://github.com/cdeterman/gpuR/issues/#1}{##1}}
+
+\section{Version 2.1.0}{
+    \itemize{
+        \item API Changes:
+        \itemize{
+            \item The \code{solve} method for \code{gpuMatrix} objects now returns a \code{gpuMatrix} to remain consistent with the overall gpuR API \ghit{108}
+            \item The default numeric type has been changed to 'float' to allow all devices to use the functions herein by default as is also generally faster than 'double' which is not always required. \ghit{92}
+        }
+        \item New Features:
+        \itemize{
+            \item Improved error message when referring to queues \ghit{119}
+            \item Implemented \code{tcrossprod} methods for \code{gpuVector}/\code{vclVector} objects \ghit{112}
+            \item The deprecation warnings often returned from \code{custom_opencl} are now suppressed to avoid end-user confusion \ghit{103}
+            \item Added matrix-vector product for \code{gpuMatrix}/\code{gpuVector} objects \ghit{98}
+        }
+        \item Bug Fixes:
+        \itemize{
+            \item Fixed bug when using \code{custom_opencl} with multiple scalars \ghit{118}
+            \item GEMV output dimensions have been fixed \ghit{97}
+        }
+        \item Changes in gpuR Documentation:
+        \itemize{
+            \item Updated \code{custom_opencl} documentation \ghit{120}
+            \item Updated the INSTALL file \ghit{101}
+        }
+    }
+}
 
 \section{Version 2.0.0}{
     \itemize{
