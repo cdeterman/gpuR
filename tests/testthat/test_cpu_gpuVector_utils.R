@@ -58,7 +58,7 @@ test_that("gpuVector accession method successful", {
 test_that("dgpuVector accession method successful", {
     has_cpu_skip()
     
-    gpuD <- gpuVector(D)
+    gpuD <- gpuVector(D, type = "double")
     
     gs <- gpuD[2]
     s <- D[2]
@@ -95,7 +95,7 @@ test_that("gpuVector set accession method successful", {
 test_that("dgpuVector set accession method successful", {
     has_cpu_skip()
     
-    gpuD <- gpuVector(D)
+    gpuD <- gpuVector(D, type = "double")
     
     float = rnorm(1)
     
@@ -112,7 +112,7 @@ test_that("gpuVector as.vector method", {
     
     has_cpu_skip()
     
-    dgpu <- gpuVector(D)
+    dgpu <- gpuVector(D, type = "double")
     fgpu <- gpuVector(D, type="float")
     igpu <- gpuVector(A)
     

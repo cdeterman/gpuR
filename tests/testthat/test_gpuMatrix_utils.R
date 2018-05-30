@@ -108,7 +108,7 @@ test_that("gpuMatrix set row access", {
     has_double_skip()
     
     gpuA <- gpuMatrix(A)
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     gpuF <- gpuMatrix(D, type = "float")
     gpuB <- gpuD
     
@@ -156,7 +156,7 @@ test_that("gpuMatrix set element access", {
     has_double_skip()
     
     gpuA <- gpuMatrix(A)
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     gpuF <- gpuMatrix(D, type = "float")
     gpuB <- gpuD
     
@@ -210,7 +210,7 @@ test_that("gpuMatrix as.matrix method", {
     has_gpu_skip()
     has_double_skip()
     
-    dgpu <- gpuMatrix(D)
+    dgpu <- gpuMatrix(D, type = "double")
     fgpu <- gpuMatrix(D, type="float")
     igpu <- gpuMatrix(A)
     

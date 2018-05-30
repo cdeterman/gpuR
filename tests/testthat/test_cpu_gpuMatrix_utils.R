@@ -12,7 +12,7 @@ cnames <- paste0("V", seq(10))
 test_that("CPU gpuMatrix element access", {
     has_cpu_skip()
     
-    dgpu <- gpuMatrix(D)
+    dgpu <- gpuMatrix(D, type = "double")
     fgpu <- gpuMatrix(D, type="float")
     igpu <- gpuMatrix(A)
     
@@ -51,7 +51,7 @@ test_that("CPU gpuMatrix set column access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     gpuF <- gpuMatrix(D, type = "float")
     gpuB <- gpuD
     
@@ -96,7 +96,7 @@ test_that("CPU gpuMatrix set row access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     gpuF <- gpuMatrix(D, type = "float")
     gpuB <- gpuD
     
@@ -141,7 +141,7 @@ test_that("CPU gpuMatrix set element access", {
     has_cpu_skip()
     
     gpuA <- gpuMatrix(A)
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     gpuF <- gpuMatrix(D, type = "float")
     gpuB <- gpuD
     
@@ -194,7 +194,7 @@ test_that("CPU gpuMatrix as.matrix method", {
     
     has_cpu_skip()
     
-    dgpu <- gpuMatrix(D)
+    dgpu <- gpuMatrix(D, type = "double")
     fgpu <- gpuMatrix(D, type="float")
     igpu <- gpuMatrix(A)
     

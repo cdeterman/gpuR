@@ -75,7 +75,7 @@ test_that("CPU vclMatrix double class initializer" ,{
     
     has_cpu_skip()
     
-    vclD <- vclMatrix(D)
+    vclD <- vclMatrix(D, type = "double")
     
     expect_is(vclD, "dvclMatrix")
     expect_equal(vclD[], D, tolerance=.Machine$double.eps ^ 0.5, 

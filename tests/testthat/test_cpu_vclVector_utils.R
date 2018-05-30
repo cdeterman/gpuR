@@ -64,7 +64,7 @@ test_that("dvclVector accession method successful", {
     
     has_cpu_skip()
     
-    gpuD <- vclVector(D)
+    gpuD <- vclVector(D, type = "double")
     
     gs <- gpuD[2]
     s <- D[2]
@@ -103,7 +103,7 @@ test_that("dvclVector set accession method successful", {
     
     has_cpu_skip()
     
-    gpuD <- vclVector(D)
+    gpuD <- vclVector(D, type = "double")
     
     float = rnorm(1)
     
@@ -121,7 +121,7 @@ test_that("vclVector as.vector method", {
     
     has_cpu_skip()
     
-    dgpu <- vclVector(D)
+    dgpu <- vclVector(D, type = "double")
     fgpu <- vclVector(D, type="float")
     igpu <- vclVector(A)
     
@@ -147,7 +147,7 @@ test_that("CPU vclVector set vector access", {
     
     has_cpu_skip()
     
-    gpuA <- vclVector(D)
+    gpuA <- vclVector(D, type = "double")
     gpuF <- vclVector(D, type = "float")
     
     gpuA[] <- D2
@@ -165,8 +165,8 @@ test_that("CPU vclVector set vclVector access", {
     
     has_cpu_skip()
     
-    gpuA <- vclVector(D)
-    gpuD <- vclVector(D2)
+    gpuA <- vclVector(D, type = "double")
+    gpuD <- vclVector(D2, type = "double")
     gpuF <- vclVector(D, type = "float")
     gpuDF <- vclVector(D2, type = "float")
     

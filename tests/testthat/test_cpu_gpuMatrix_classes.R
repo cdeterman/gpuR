@@ -49,7 +49,7 @@ test_that("CPU gpuMatrix class contains correct information", {
     expect_true(typeof(gpuA) == "integer")
     expect_equivalent(gpuA[,], A)
     
-    gpuD <- gpuMatrix(D)
+    gpuD <- gpuMatrix(D, type = "double")
     expect_is(gpuD, "dgpuMatrix")
     expect_true(typeof(gpuD) == "double")
     expect_equivalent(gpuD[,], D)

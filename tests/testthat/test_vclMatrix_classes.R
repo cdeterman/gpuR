@@ -82,7 +82,7 @@ test_that("vclMatrix double class initializer" ,{
     has_gpu_skip()
     has_double_skip()
     
-    vclD <- vclMatrix(D)
+    vclD <- vclMatrix(D, type = "double")
     
     expect_is(vclD, "dvclMatrix")
     expect_equal(vclD[], D, tolerance=.Machine$double.eps ^ 0.5, 
