@@ -298,6 +298,28 @@ custom_opencl <- function(kernel, cl_args, type){
 
     # remove blank lines
     src <- src[sapply(src, function(x) length(grep("^\\s*$", x)) == 0)]
+    
+    # remove non-kernel functions
+    # create environment for scoping flag
+    e <- new.env()
+    e$flag <- FALSE
+    src<- src[sapply(src, function(x){
+        if(grepl("__kernel", x)){
+            e$flag <- TRUE
+            return(TRUE)
+        }else{
+            if(e$flag){
+                return(e$flag)
+            }else{
+                e$flag <- FALSE
+                return(e$flag)
+            }
+        }
+    })]
+    
+    # cleanup environment
+    rm(e)
+    
     # remove any possible pragma lines
     src <- src[!sapply(src, function(x) grepl("#pragma", x))]
 
