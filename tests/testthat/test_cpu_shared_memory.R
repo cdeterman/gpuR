@@ -24,10 +24,10 @@ test_that("Share memory between vclMatrix & vclVector", {
     expect_equal(gpuA[1], gpuB[1], tolerance=1e-07, 
                  info="float elements not equivalent")
     
-    gpuA <- vclMatrix(A)
+    gpuA <- vclMatrix(A, type = "double")
     
     # convert to vector
-    gpuB <- as.vclVector(gpuA, shared = TRUE, type = "double")
+    gpuB <- as.vclVector(gpuA, shared = TRUE)
     
     gpuB[1] <- 42
     
