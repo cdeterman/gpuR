@@ -37,7 +37,7 @@ test_that("CPU vclVector float class initializer" ,{
 test_that("CPU vclVector double class initializer" ,{
     has_cpu_skip()
     
-    vclD <- vclVector(D)
+    vclD <- vclVector(D, type = "double")
     
     expect_is(vclD, "dvclVector")
     expect_equal(vclD[], D, tolerance=.Machine$double.eps ^ 0.5, 

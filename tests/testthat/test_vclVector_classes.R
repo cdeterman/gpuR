@@ -45,7 +45,7 @@ test_that("vclVector double class initializer" ,{
     has_gpu_skip()
     has_double_skip()
     
-    vclD <- vclVector(D)
+    vclD <- vclVector(D, type = "double")
     
     expect_is(vclD, "dvclVector")
     expect_equal(vclD[], D, tolerance=.Machine$double.eps ^ 0.5, 

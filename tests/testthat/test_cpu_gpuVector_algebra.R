@@ -79,11 +79,11 @@ test_that("CPU gpuVector integer subtraction", {
 
 # Single Precision Tests
 
-test_that("CPU gpuVector comparison operator", {
+test_that("CPU gpuVector Double precision comparison operator", {
     
     has_cpu_skip()
     
-    gpuA <- gpuVector(A)
+    gpuA <- gpuVector(A, type = "double")
     
     expect_true(all(A == gpuA), 
                 info = "vector/gpuVector== operator not working correctly")

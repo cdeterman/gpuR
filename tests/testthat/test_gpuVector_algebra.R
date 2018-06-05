@@ -622,7 +622,7 @@ test_that("gpuVector Double precision comparison operator", {
     has_gpu_skip()
     has_double_skip()
     
-    gpuA <- gpuVector(A)
+    gpuA <- gpuVector(A, type = "double")
     
     expect_true(all(A == gpuA), 
                 info = "vector/gpuVector== operator not working correctly")

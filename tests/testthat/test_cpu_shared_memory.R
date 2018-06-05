@@ -27,7 +27,7 @@ test_that("Share memory between vclMatrix & vclVector", {
     gpuA <- vclMatrix(A)
     
     # convert to vector
-    gpuB <- as.vclVector(gpuA, shared = TRUE)
+    gpuB <- as.vclVector(gpuA, shared = TRUE, type = "double")
     
     gpuB[1] <- 42
     

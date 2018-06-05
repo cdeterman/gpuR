@@ -43,7 +43,7 @@ test_that("double vector class present", {
     has_double_skip()
     
     A <- as.numeric(seq(10))
-    gpuA <- gpuVector(A)
+    gpuA <- gpuVector(A, type = "double")
     
     expect_is(gpuA, "dgpuVector")
     expect_is(gpuA@address, "externalptr")
