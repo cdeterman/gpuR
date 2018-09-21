@@ -19,17 +19,8 @@ __kernel void iMatMult(const int A_size1,
         // multiply the A element
         for(int k=0; k < B_size1; k++){
             
-            //printf("globalRow: %d\n", globalRow);
-            //printf("globalCol: %d\n", globalCol);
-            //printf("k: %d\n", k);
-            //printf("A[idx]: %d\n", A[globalRow * A_internal_size1 + k]);
-            //printf("B[idx]: %d\n", B[globalCol+B_internal_size2*k]);
-            //printf("%d * %d\n", A[globalRow * A_internal_size1 + k], B[globalCol+B_internal_size2*k]);
-            
             tmp += A[globalRow * A_internal_size1 + k] * B[globalCol+B_internal_size2*k];
         }
-        
-        //printf("tmp: %d\n", tmp);
         
         C[globalCol+C_internal_size2*globalRow] = tmp;
     }
