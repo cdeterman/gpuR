@@ -31,9 +31,10 @@ cpp_gpuMatrix_custom_igemm(
     std::shared_ptr<viennacl::matrix_range<viennacl::matrix<int> > > vcl_B = getVCLBlockptr<int>(ptrB_, BisVCL, ctx_id);
     std::shared_ptr<viennacl::matrix_range<viennacl::matrix<int> > > vcl_C = getVCLBlockptr<int>(ptrC_, CisVCL, ctx_id);
     
-    int M = vcl_A->size2();
-    // int N = vcl_B->size2();
+    int M = vcl_A->size1();
+    int N = vcl_B->size2();
     int P = vcl_B->size1();
+    // int A_rows = vcl_A->internal_size1();
     int A_cols = vcl_A->internal_size2();
     int B_cols = vcl_B->internal_size2();
     int M_internal = vcl_C->internal_size2();
@@ -74,7 +75,7 @@ cpp_gpuMatrix_custom_igemm(
     my_kernel_mul.local_work_size(1, max_local_size);
     
     // execute kernel
-    viennacl::ocl::enqueue(my_kernel_mul(M, A_cols, P, B_cols, M_internal, *vcl_A, *vcl_B, *vcl_C));
+    viennacl::ocl::enqueue(my_kernel_mul(M, A_cols, P, N, B_cols, M_internal, *vcl_A, *vcl_B, *vcl_C));
     
     if(!CisVCL){
         // move back to host

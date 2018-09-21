@@ -11,10 +11,13 @@ if(detectGPUs() >= 1){
 set.seed(123)
 
 ORDER <- 4
+ORDER_PAD <- 129
 
 # Base R objects
 Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+AintPad <- matrix(sample(seq(10), ORDER*ORDER_PAD, replace=TRUE), nrow=ORDER, ncol=ORDER_PAD)
+BintPad <- matrix(sample(seq(10), ORDER*ORDER_PAD, replace=TRUE), nrow=ORDER_PAD, ncol = ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 E <- matrix(rnorm(15), nrow=5)
@@ -502,9 +505,12 @@ test_that("gpuMatrix Integer Matrix multiplication", {
     has_gpu_skip()
     
     Cint <- Aint %*% Bint
+    CintPad <- AintPad %*% BintPad
     
     igpuA <- gpuMatrix(Aint, type="integer")
     igpuB <- gpuMatrix(Bint, type="integer")
+    igpuApad <- gpuMatrix(AintPad, type="integer")
+    igpuBpad <- gpuMatrix(BintPad, type="integer")
     
     igpuC <- igpuA %*% igpuB
     
@@ -520,6 +526,11 @@ test_that("gpuMatrix Integer Matrix multiplication", {
     
     expect_equivalent(igpuC[,], Cint,
                       info="integer matrix elements not equivalent")
+    
+    igpuCpad <- igpuApad %*% igpuBpad
+    
+    expect_equivalent(igpuCpad[], CintPad,
+                      info = "padded rectangular matrix elements not equivalent")
 })
 
 test_that("gpuMatrix Integer Matrix Subtraction", {

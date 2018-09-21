@@ -7,10 +7,13 @@ current_context <- set_device_context("cpu")
 set.seed(123)
 
 ORDER <- 4
+ORDER_PAD <- 129
 
 # Base R objects
 Aint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
 Bint <- matrix(sample(seq(10), ORDER^2, replace=TRUE), nrow=ORDER, ncol=ORDER)
+AintPad <- matrix(sample(seq(10), ORDER*ORDER_PAD, replace=TRUE), nrow=ORDER, ncol=ORDER_PAD)
+BintPad <- matrix(sample(seq(10), ORDER*ORDER_PAD, replace=TRUE), nrow=ORDER_PAD, ncol = ORDER)
 A <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
 Ansq <- matrix(A, nrow = ORDER/2, ncol = ORDER*2)
 B <- matrix(rnorm(ORDER^2), nrow=ORDER, ncol=ORDER)
@@ -503,11 +506,14 @@ test_that("vclMatrix Single Precision determinant", {
 test_that("CPU vclMatrix Integer Matrix multiplication", {
 
     has_cpu_skip()
-
+    
     Cint <- Aint %*% Bint
-
+    CintPad <- AintPad %*% BintPad
+    
     igpuA <- vclMatrix(Aint, type="integer")
     igpuB <- vclMatrix(Bint, type="integer")
+    igpuApad <- vclMatrix(AintPad, type="integer")
+    igpuBpad <- vclMatrix(BintPad, type="integer")
 
     igpuC <- igpuA %*% igpuB
 
@@ -523,6 +529,11 @@ test_that("CPU vclMatrix Integer Matrix multiplication", {
 
     expect_equivalent(igpuC[,], Cint,
                       info="integer matrix elements not equivalent")
+    
+    igpuCpad <- igpuApad %*% igpuBpad
+    
+    expect_equivalent(igpuCpad[], CintPad,
+                      info = "padded rectangular matrix elements not equivalent")
 })
 
 test_that("CPU vclMatrix Integer Matrix Subtraction", {

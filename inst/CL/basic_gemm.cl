@@ -1,7 +1,8 @@
-__kernel void iMatMult(const int A_size2, 
-                       const int A_internal_size2,
-                       const int B_size1, 
-                       const int B_internal_size1,
+__kernel void iMatMult(const int A_size1, 
+                       const int A_internal_size1,
+                       const int B_size1,
+                       const int B_size2, 
+                       const int B_internal_size2,
                        const int C_internal_size2, 
                        __global const int *A, __global const int *B, __global int *C) {
     
@@ -11,14 +12,24 @@ __kernel void iMatMult(const int A_size2,
     int tmp = 0;
     
     // Do the operation
-    if((globalRow <= A_size2) && (globalCol < B_size1)){
+    if((globalRow < A_size1) && (globalCol < B_size2)){
+    //if((globalRow == 1) && (globalCol < 1)){
         
         // for each row in B column
         // multiply the A element
         for(int k=0; k < B_size1; k++){
             
-            tmp += A[globalRow * A_internal_size2 + k] * B[globalCol+B_internal_size1*k];
+            //printf("globalRow: %d\n", globalRow);
+            //printf("globalCol: %d\n", globalCol);
+            //printf("k: %d\n", k);
+            //printf("A[idx]: %d\n", A[globalRow * A_internal_size1 + k]);
+            //printf("B[idx]: %d\n", B[globalCol+B_internal_size2*k]);
+            //printf("%d * %d\n", A[globalRow * A_internal_size1 + k], B[globalCol+B_internal_size2*k]);
+            
+            tmp += A[globalRow * A_internal_size1 + k] * B[globalCol+B_internal_size2*k];
         }
+        
+        //printf("tmp: %d\n", tmp);
         
         C[globalCol+C_internal_size2*globalRow] = tmp;
     }
