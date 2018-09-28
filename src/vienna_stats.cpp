@@ -482,9 +482,13 @@ cpp_gpuMatrix_eucl(
         vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
     }
     
+    std::cout << "sqrt complete" << std::endl;
+    
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
     }
+    
+    std::cout << "diag set to zero" << std::endl;
     
     ptrD->to_host(vcl_D);
 }
