@@ -428,14 +428,9 @@ cpp_gpuMatrix_eucl(
     viennacl::context ctx(viennacl::ocl::get_context(ptrA->getContext()));
     
     viennacl::matrix<T> vcl_A = ptrA->device_data();
-    viennacl::matrix<T> vcl_D = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size2(), ctx = ctx);
+    viennacl::matrix<T> vcl_D = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size1(), ctx = ctx);
     
-    std::cout << "pulled data" << std::endl;
-    
-    // other temp objects
-    viennacl::matrix<T> square_A = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size2(), ctx = ctx);
-    
-    const int K = vcl_A.size1();
+    // std::cout << "pulled data" << std::endl;
       
     // temp objects
     // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx = ctx));
@@ -445,20 +440,31 @@ cpp_gpuMatrix_eucl(
     viennacl::vector_base<T> vcl_sqrt;
     // viennacl::linalg::vector_assign(vcl_sqrt, (T)(0));
     
-    std::cout << "row of zeros" << std::endl;
+    // std::cout << "row of zeros" << std::endl;
+    
+    // std::cout << vcl_A << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
     {
-        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(K, K, 2, ctx = ctx);
+        // viennacl::matrix<T> square_A = viennacl::zero_matrix<T>(K, K, ctx = ctx);
         
-        square_A = viennacl::linalg::element_pow(vcl_A, twos);
+        viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2, ctx = ctx);
+        
+        viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
+        // viennacl::backend::finish();
+        
+        // std::cout << square_A << std::endl;
+        
         vcl_sqrt = viennacl::linalg::row_sum(square_A);
+        
+        // std::cout << vcl_sqrt << std::endl;
     }
     
+    // viennacl::backend::finish();
     
-    std::cout << "powers and rowsum completed" << std::endl;
+    // std::cout << "powers and rowsum completed" << std::endl;
     
     {
         // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx));
@@ -468,27 +474,35 @@ cpp_gpuMatrix_eucl(
         //        std::cout << "row of ones" << std::endl;
         
         vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
+        
+        // std::cout << vcl_D << std::endl;
     }
     
-    std::cout << "outer product complete" << std::endl;
+    // viennacl::backend::finish();
+    // std::cout << "outer product complete" << std::endl;
     
     vcl_D += trans(vcl_D);
+    // viennacl::backend::finish();
+    // std::cout << vcl_D << std::endl;
     
-    std::cout << "transpose complete" << std::endl;
+    // std::cout << "transpose complete" << std::endl;
     
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
+    // viennacl::backend::finish();
+    // std::cout << vcl_D << std::endl;
     
     if(!squareDist){
         vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
+        // viennacl::backend::finish();
     }
     
-    std::cout << "sqrt complete" << std::endl;
+    // std::cout << "sqrt complete" << std::endl;
     
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
     }
     
-    std::cout << "diag set to zero" << std::endl;
+    // std::cout << "diag set to zero" << std::endl;
     
     ptrD->to_host(vcl_D);
 }
