@@ -430,79 +430,43 @@ cpp_gpuMatrix_eucl(
     viennacl::matrix<T> vcl_A = ptrA->device_data();
     viennacl::matrix<T> vcl_D = viennacl::zero_matrix<T>(vcl_A.size1(), vcl_A.size1(), ctx = ctx);
     
-    // std::cout << "pulled data" << std::endl;
-      
     // temp objects
     // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(K, 1, ctx = ctx));
     // viennacl::vector_base<T> vcl_sqrt = static_cast<viennacl::vector_base<T> >(viennacl::zero_vector<T>(K, ctx = ctx));
     // viennacl::vector_base<T> vcl_sqrt = viennacl::vector_base<T>(K, ctx = ctx);
     
     viennacl::vector_base<T> vcl_sqrt;
-    // viennacl::linalg::vector_assign(vcl_sqrt, (T)(0));
-    
-    // std::cout << "row of zeros" << std::endl;
-    
-    // std::cout << vcl_A << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
     // element_pow below
     {
-        // viennacl::matrix<T> square_A = viennacl::zero_matrix<T>(K, K, ctx = ctx);
-        
         viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2, ctx = ctx);
         
         viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
-        // viennacl::backend::finish();
-        
-        // std::cout << square_A << std::endl;
         
         vcl_sqrt = viennacl::linalg::row_sum(square_A);
-        
-        // std::cout << vcl_sqrt << std::endl;
     }
-    
-    // viennacl::backend::finish();
-    
-    // std::cout << "powers and rowsum completed" << std::endl;
     
     {
         // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx));
         viennacl::vector_base<T> row_ones = viennacl::vector_base<T>(vcl_A.size1(), ctx = ctx);
         viennacl::linalg::vector_assign(row_ones, (T)(1));
         
-        //        std::cout << "row of ones" << std::endl;
-        
         vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
-        
-        // std::cout << vcl_D << std::endl;
     }
-    
-    // viennacl::backend::finish();
-    // std::cout << "outer product complete" << std::endl;
     
     vcl_D += trans(vcl_D);
-    // viennacl::backend::finish();
-    // std::cout << vcl_D << std::endl;
-    
-    // std::cout << "transpose complete" << std::endl;
     
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
-    // viennacl::backend::finish();
-    // std::cout << vcl_D << std::endl;
     
     if(!squareDist){
-        vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
-        // viennacl::backend::finish();
+        vcl_D = viennacl::linalg::element_sqrt(vcl_D);   
     }
-    
-    // std::cout << "sqrt complete" << std::endl;
     
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
     }
-    
-    // std::cout << "diag set to zero" << std::endl;
     
     ptrD->to_host(vcl_D);
 }
@@ -596,13 +560,7 @@ cpp_vclMatrix_eucl(
     viennacl::matrix_range<viennacl::matrix<T> > vcl_A = ptrA->data();
     viennacl::matrix_range<viennacl::matrix<T> > vcl_D = ptrD->data();
     
-    std::cout << "pulled data" << std::endl;
-    //    std::cout << vcl_A.size1() << std::endl;
-    
-    //    viennacl::vector_base<T> vcl_sqrt = viennacl::zero_vector<T>(vcl_A.size1());
     viennacl::vector_base<T> vcl_sqrt;
-    
-    std::cout << "row of zeros" << std::endl;
     
     // this will definitely need to be updated with the next ViennaCL release
     // currently doesn't support the single scalar operation with
@@ -610,39 +568,25 @@ cpp_vclMatrix_eucl(
     {
         viennacl::matrix<T> twos = viennacl::scalar_matrix<T>(vcl_A.size1(), vcl_A.size2(), 2, ctx);
         
-        std::cout << "create 'twos' matrix" << std::endl;
-        
         viennacl::matrix<T> square_A = viennacl::linalg::element_pow(vcl_A, twos);
         vcl_sqrt = viennacl::linalg::row_sum(square_A);
     }
     
-    
-    std::cout << "powers and rowsum completed" << std::endl;
     
     {
         // viennacl::vector_base<T> row_ones = static_cast<viennacl::vector_base<T> >(viennacl::scalar_vector<T>(vcl_A.size1(), 1, ctx));
         viennacl::vector_base<T> row_ones = viennacl::vector_base<T>(vcl_A.size1(), ctx = ctx);
         viennacl::linalg::vector_assign(row_ones, (T)(1));
         
-        //        std::cout << "row of ones" << std::endl;
-        
         vcl_D = viennacl::linalg::outer_prod(vcl_sqrt, row_ones);
     }
     
-    std::cout << "outer product completed" << std::endl;
-    
-    //    std::cout << vcl_D << std::endl;
-    
     vcl_D += trans(vcl_D);
-    
-    std::cout << "transpose completed" << std::endl;
-//    std::cout << vcl_D << std::endl;
     
 //    viennacl::matrix<T> temp = 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
     
-//    std::cout << temp << std::endl;
     vcl_D -= 2 * (viennacl::linalg::prod(vcl_A, trans(vcl_A)));
-//    vcl_D -= temp;
+    
     if(!squareDist){
         vcl_D = viennacl::linalg::element_sqrt(vcl_D);    
     }
@@ -650,7 +594,6 @@ cpp_vclMatrix_eucl(
     for(unsigned int i=0; i < vcl_D.size1(); i++){
         vcl_D(i,i) = 0;
     }
-//    viennacl::diag(vcl_D) = viennacl::zero_vector<T>(vcl_A.size1());
         
 }
 

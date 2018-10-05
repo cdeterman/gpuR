@@ -997,14 +997,18 @@ gpuVecElemLogBase <- function(A, base){
 }
 
 # GPU Element-Wise Exponential
-gpuVecElemExp <- function(A){
+gpuVecElemExp <- function(A, inplace = FALSE){
     
     type <- typeof(A)
     
-    if(is(A, "vclVector")){
-        C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+    if(inplace){
+        C <- A
     }else{
-        C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        if(is(A, "vclVector")){
+            C <- vclVector(length=length(A), type=type, ctx_id = A@.context_index)
+        }else{
+            C <- gpuVector(length=length(A), type=type, ctx_id = A@.context_index)
+        }
     }
     
     switch(type,
@@ -1028,7 +1032,12 @@ gpuVecElemExp <- function(A){
            },
            stop("type not recognized")
     )
-    return(C)
+    
+    if(inplace){
+        return(invisible(C))
+    }else{
+        return(C)    
+    }
 }
 
 # GPU Element-Wise Absolute Value

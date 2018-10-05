@@ -268,6 +268,7 @@ setMethod("inplace",
           function(f, x, y){
               
               switch(deparse(substitute(f)),
+                     `exp` = gpuVecElemExp(x, inplace = TRUE),
                      `abs` = gpuVecElemAbs(x, inplace = TRUE),
                      `sin` = gpuVecElemSin(x, inplace = TRUE),
                      `asin` = gpuVecElemArcSin(x, inplace = TRUE),

@@ -519,6 +519,245 @@ test_that("CPU Inplace vclVector Double Precision Matrix Element-Wise Trignometr
                  check.attributes=FALSE)  
 })
 
+test_that("CPU Inplace gpuMatrix Single Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "fgpuMatrix")
+    expect_equal(fgpuA[,], R_exp, tolerance=1e-07, 
+                 info="exp float matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuMatrix Double Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "dgpuMatrix")
+    expect_equal(fgpuA[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuVector Single Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A_vec)
+    
+    fgpuA <- gpuVector(A_vec, type="float")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "fgpuVector")
+    expect_equal(fgpuA[,], R_exp, tolerance=1e-07, 
+                 info="exp float vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuVector Double Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A_vec)
+    
+    fgpuA <- gpuVector(A_vec, type="double")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "dgpuVector")
+    expect_equal(fgpuA[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclMatrix Single Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "fvclMatrix")
+    expect_equal(fgpuA[,], R_exp, tolerance=1e-07, 
+                 info="exp float matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclMatrix Double Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "dvclMatrix")
+    expect_equal(fgpuA[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclVector Single Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A_vec)
+    
+    fgpuA <- vclVector(A_vec, type="float")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "fvclVector")
+    expect_equal(fgpuA[,], R_exp, tolerance=1e-07, 
+                 info="exp float vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclVector Double Precision Matrix Exponential", {
+    has_cpu_skip()
+    
+    R_exp <- exp(A_vec)
+    
+    fgpuA <- vclVector(A_vec, type="double")
+    
+    inplace(`exp`,fgpuA)
+    
+    expect_is(fgpuA, "dvclVector")
+    expect_equal(fgpuA[,], R_exp, tolerance=.Machine$double.eps^0.5, 
+                 info="exp double vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuMatrix Single Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuMatrix(A, type="float")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "fgpuMatrix")
+    expect_equal(fgpuA[,], R_abs, tolerance=1e-07, 
+                 info="abs float matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuMatrix Double Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- gpuMatrix(A, type="double")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "dgpuMatrix")
+    expect_equal(fgpuA[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuVector Single Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A_vec)
+    
+    fgpuA <- gpuVector(A_vec, type="float")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "fgpuVector")
+    expect_equal(fgpuA[,], R_abs, tolerance=1e-07, 
+                 info="abs float vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace gpuVector Double Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A_vec)
+    
+    fgpuA <- gpuVector(A_vec, type="double")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "dgpuVector")
+    expect_equal(fgpuA[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclMatrix Single Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- vclMatrix(A, type="float")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "fvclMatrix")
+    expect_equal(fgpuA[,], R_abs, tolerance=1e-07, 
+                 info="abs float matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclMatrix Double Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A)
+    
+    fgpuA <- vclMatrix(A, type="double")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "dvclMatrix")
+    expect_equal(fgpuA[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double matrix elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclVector Single Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A_vec)
+    
+    fgpuA <- vclVector(A_vec, type="float")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "fvclVector")
+    expect_equal(fgpuA[,], R_abs, tolerance=1e-07, 
+                 info="abs float vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
+
+test_that("CPU Inplace vclVector Double Precision Matrix Absolute Value", {
+    has_cpu_skip()
+    
+    R_abs <- abs(A_vec)
+    
+    fgpuA <- vclVector(A_vec, type="double")
+    
+    inplace(`abs`,fgpuA)
+    
+    expect_is(fgpuA, "dvclVector")
+    expect_equal(fgpuA[,], R_abs, tolerance=.Machine$double.eps^0.5, 
+                 info="abs double vector elements not equivalent",
+                 check.attributes=FALSE)   
+})
 
 options(warn=0)
 
