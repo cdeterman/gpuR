@@ -196,14 +196,14 @@ elif test "$BACKEND" = "CUDA"; then
     
     AC_MSG_CHECKING("Checking environment variable CUDA_HOME")
     if test -z "${CUDA_HOME}"; then
-        CUDA_HOME=`find /usr/local/ -maxdepth 1 -type d -name "cuda*" | sort -V | tail -1`
+        CUDA_HOME=`find /usr/local/ -maxdepth 1 -type d -name "cuda-*" | sort -V | tail -1`
         AC_MSG_RESULT("CUDA_HOME not set; using highest version found ${CUDA_HOME}")
     else
         AC_MSG_RESULT("using CUDA_HOME=${CUDA_HOME}")
     fi
     
     AC_MSG_CHECKING("Parsing CUDA version")
-    CUDA_VER=$(find /usr/local/ -maxdepth 1 -type d -name "cuda*" | sort -V | tail -1 | sed -r "s/[[a-z]]*|-||\///g")
+    CUDA_VER=$(find /usr/local/ -maxdepth 1 -type d -name "cuda*-" | sort -V | tail -1 | sed -r "s/[[a-z]]*|-||\///g")
     AC_MSG_RESULT("CUDA version being used is ${CUDA_VER}")
     
     #echo ${CUDA_VER} 9.1 | awk '{if ($1 < $2) print false; else print true}'
