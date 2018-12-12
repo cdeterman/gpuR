@@ -12,7 +12,7 @@ endif
 $(SHLIB): ../inst/include/loader$(R_ARCH)/libOpenCL.a
 
 ../inst/include/loader$(R_ARCH)/libOpenCL.a:
-	cd ../inst/include/loader && $(MAKE) .$(R_ARCH)/libOpenCL.a \
+	cd ../inst/include/loader && mkdir -p .$(R_ARCH) && $(MAKE) .$(R_ARCH)/libOpenCL.a \
 	CC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \
 	ICD_OS=icd_windows
 

@@ -180,7 +180,7 @@ echo "${LIBS}" >> src/Makevars
 echo "${BUILD_LIB}" >> src/Makevars
 printf '\n$(SHLIB): $(BUILD_LIB)\n\n' >> src/Makevars
 printf '../inst/include/loader/libOpenCL.a:\n' >> src/Makevars
-printf '\tcd ../inst/include/loader/ && $(MAKE) libOpenCL.a \\\n' >> src/Makevars
+printf '\tcd ../inst/include/loader/ && mkdir -p .$(R_ARCH) && $(MAKE) libOpenCL.a \\\n' >> src/Makevars
 printf '\tCC="$(CC)" CFLAGS="$(ALL_CFLAGS)" AR="$(AR)" RM="$(RM)" \\\n' >> src/Makevars
 printf '\tICD_OS=icd_linux\n' >> src/Makevars
 
