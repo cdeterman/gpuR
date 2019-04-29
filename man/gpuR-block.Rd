@@ -9,11 +9,11 @@
 \usage{
 block(object, rowStart, rowEnd, colStart, colEnd)
 
-\S4method{block}{vclMatrix,integer,integer,integer,integer}(object, rowStart,
-  rowEnd, colStart, colEnd)
+\S4method{block}{vclMatrix,integer,integer,integer,integer}(object,
+  rowStart, rowEnd, colStart, colEnd)
 
-\S4method{block}{gpuMatrix,integer,integer,integer,integer}(object, rowStart,
-  rowEnd, colStart, colEnd)
+\S4method{block}{gpuMatrix,integer,integer,integer,integer}(object,
+  rowStart, rowEnd, colStart, colEnd)
 }
 \arguments{
 \item{object}{A \code{gpuMatrix} or \code{vclMatrix} object}

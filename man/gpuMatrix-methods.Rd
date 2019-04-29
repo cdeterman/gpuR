@@ -17,12 +17,14 @@ gpuMatrix(data = NA, nrow = NA, ncol = NA, type = NULL, ...)
 
 \S4method{gpuMatrix}{matrix}(data, type = NULL, ctx_id = NULL)
 
-\S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA, type = NULL,
+\S4method{gpuMatrix}{missing}(data, nrow = NA, ncol = NA,
+  type = NULL, ctx_id = NULL)
+
+\S4method{gpuMatrix}{numeric}(data, nrow, ncol, type = NULL,
   ctx_id = NULL)
 
-\S4method{gpuMatrix}{numeric}(data, nrow, ncol, type = NULL, ctx_id = NULL)
-
-\S4method{gpuMatrix}{integer}(data, nrow, ncol, type = NULL, ctx_id = NULL)
+\S4method{gpuMatrix}{integer}(data, nrow, ncol, type = NULL,
+  ctx_id = NULL)
 }
 \arguments{
 \item{data}{An object that is or can be converted to a 

@@ -32,13 +32,6 @@ A vclVector object
 \description{
 Construct a vclVector of a class that inherits
 from \code{vclVector}
-
-#' @rdname as.vclVector-methods
-#' @param shared Logical indicating if memory should be shared with \code{x}
-#' @export
-as.vclVector <- function (data, shared, ...) {
-    UseMethod("as.vclVector", data)
-}
 }
 \author{
 Charles Determan Jr.

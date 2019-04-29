@@ -12,26 +12,26 @@
 \alias{cov,gpuMatrix,gpuMatrix,missing,character-method}
 \title{Covariance (gpuR)}
 \usage{
-\S4method{cov}{vclMatrix,missing,missing,missing}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{vclMatrix,missing,missing,missing}(x, y = NULL,
+  use = NULL, method = "pearson")
 
-\S4method{cov}{vclMatrix,vclMatrix,missing,missing}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{vclMatrix,vclMatrix,missing,missing}(x, y = NULL,
+  use = NULL, method = "pearson")
 
-\S4method{cov}{vclMatrix,missing,missing,character}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{vclMatrix,missing,missing,character}(x, y = NULL,
+  use = NULL, method = "pearson")
 
 \S4method{cov}{vclMatrix,vclMatrix,missing,character}(x, y = NULL,
   use = NULL, method = "pearson")
 
-\S4method{cov}{gpuMatrix,missing,missing,missing}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{gpuMatrix,missing,missing,missing}(x, y = NULL,
+  use = NULL, method = "pearson")
 
-\S4method{cov}{gpuMatrix,gpuMatrix,missing,missing}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{gpuMatrix,gpuMatrix,missing,missing}(x, y = NULL,
+  use = NULL, method = "pearson")
 
-\S4method{cov}{gpuMatrix,missing,missing,character}(x, y = NULL, use = NULL,
-  method = "pearson")
+\S4method{cov}{gpuMatrix,missing,missing,character}(x, y = NULL,
+  use = NULL, method = "pearson")
 
 \S4method{cov}{gpuMatrix,gpuMatrix,missing,character}(x, y = NULL,
   use = NULL, method = "pearson")

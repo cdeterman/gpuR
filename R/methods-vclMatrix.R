@@ -478,8 +478,6 @@ setMethod("cov",
 #' @title Row and Column Sums and Means of vclMatrix
 #' @description Row and column sums and of vclMatrix objects
 #' @param x A vclMatrix object
-#' @param na.rm Not currently used
-#' @param dims Not currently used
 #' @return A gpuVector object
 #' @author Charles Determan Jr.
 #' @docType methods
@@ -488,8 +486,8 @@ setMethod("cov",
 #' @aliases rowSums,vclMatrix
 #' @export
 setMethod("colSums",
-          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-          function(x, na.rm, dims){
+          signature(x = "vclMatrix"),
+          function(x){
               vclMatrix_colSums(x)
           })
 
@@ -497,8 +495,8 @@ setMethod("colSums",
 #' @rdname vclMatrix.colSums
 #' @export
 setMethod("rowSums",
-          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-          function(x, na.rm, dims){
+          signature(x = "vclMatrix"),
+          function(x){
               vclMatrix_rowSums(x)
           })
 
@@ -507,8 +505,8 @@ setMethod("rowSums",
 #' @rdname vclMatrix.colSums
 #' @export
 setMethod("colMeans",
-          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-          function(x, na.rm, dims){
+          signature(x = "vclMatrix"),
+          function(x){
               vclMatrix_colMeans(x)
           })
 
@@ -516,8 +514,8 @@ setMethod("colMeans",
 #' @rdname vclMatrix.colSums
 #' @export
 setMethod("rowMeans",
-          signature(x = "vclMatrix", na.rm = "missing", dims = "missing"),
-          function(x, na.rm, dims){
+          signature(x = "vclMatrix"),
+          function(x){
               vclMatrix_rowMeans(x)
           })
 

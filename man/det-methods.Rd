@@ -5,7 +5,6 @@
 \alias{det,vclMatrix-method}
 \alias{det,vclMatrix}
 \alias{det,gpuMatrix-method}
-\alias{det,vclMatrix}
 \title{Calculate Determinant of a Matrix on GPU}
 \usage{
 \S4method{det}{vclMatrix}(x)

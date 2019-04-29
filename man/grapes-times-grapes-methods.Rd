@@ -15,7 +15,38 @@
 \alias{\%*\%,gpuMatrix,gpuVector-method}
 \alias{\%*\%,gpuMatrix,matrix-method}
 \alias{\%*\%,matrix,gpuMatrix-method}
-\title{Matrix Multiplication}
+\title{#' @rdname as.vclVector-methods
+#' @param shared Logical indicating if memory should be shared with \code{x}
+#' @aliases as.gpuVector,matrix
+#' @export
+as.vclVector.vclMatrix <- function(data, shared = FALSE, ...){
+    
+    ctx_id <- data@.context_index - 1
+    
+    switch(typeof(data),
+           "integer" = return(new("ivclVector", 
+                                  address=vclMatTovclVec(data@address, shared, ctx_id, 4L),
+                                  .context_index = data@.context_index,
+                                  .platform_index = data@.platform_index,
+                                  .platform = data@.platform,
+                                  .device_index = data@.device_index,
+                                  .device = data@.device)),
+           "float" = return(new("fvclVector", 
+                                address=vclMatTovclVec(data@address, shared, ctx_id, 6L),
+                                .context_index = data@.context_index,
+                                .platform_index = data@.platform_index,
+                                .platform = data@.platform,
+                                .device_index = data@.device_index,
+                                .device = data@.device)),
+           "double" = return(new("dvclVector", 
+                                 address=vclMatTovclVec(data@address, shared, ctx_id, 8L),
+                                 .context_index = data@.context_index,
+                                 .platform_index = data@.platform_index,
+                                 .platform = data@.platform,
+                                 .device_index = data@.device_index,
+                                 .device = data@.device))
+    )
+}}
 \usage{
 \S4method{\%*\%}{gpuVector,gpuVector}(x, y)
 

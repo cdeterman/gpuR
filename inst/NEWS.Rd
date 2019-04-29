@@ -12,15 +12,21 @@
         }
         \item New Features:
         \itemize{
-            \item Improved error message when referring to queues \ghit{119}
-            \item Implemented \code{tcrossprod} methods for \code{gpuVector}/\code{vclVector} objects \ghit{112}
-            \item The deprecation warnings often returned from \code{custom_opencl} are now suppressed to avoid end-user confusion \ghit{103}
             \item Added matrix-vector product for \code{gpuMatrix}/\code{gpuVector} objects \ghit{98}
+            \item The deprecation warnings often returned from \code{custom_opencl} are now suppressed to avoid end-user confusion \ghit{103}
+            \item Implemented \code{tcrossprod} methods for \code{gpuVector}/\code{vclVector} objects \ghit{112}
+            \item Improved error message when referring to queues \ghit{119}
+            \item \code{custom_opencl} now allows for kernels to call internally defined functions \ghit{129}
+            \item Added `inplace` operations for `exp`, `abs` \ghit{141}
         }
         \item Bug Fixes:
         \itemize{
-            \item Fixed bug when using \code{custom_opencl} with multiple scalars \ghit{118}
             \item GEMV output dimensions have been fixed \ghit{97}
+            \item Fixed bug when using \code{custom_opencl} with multiple scalars \ghit{118}
+            \item Fixed bug in \code{custom_opencl} which omitted pragma allowing for double precision in special cases \ghit{123}
+            \item Fixed bug in \code{dist} with respect to \code{gpuMatrix} objects exceeding dimensions of 128 \ghit{131}
+            \item Fixed bug in integer GEMM kernel observed in larger matrices \ghit{140}
+            \item Fixed bug in restricting S4 methods in recent R versions \ghit{152}
         }
         \item Changes in gpuR Documentation:
         \itemize{

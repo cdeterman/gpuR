@@ -5,7 +5,6 @@
 \alias{eigen,gpuMatrix-method}
 \alias{eigen,vclMatrix}
 \alias{eigen,vclMatrix-method}
-\alias{eigen,vclMatrix}
 \title{gpuMatrix Eigen Decomposition}
 \usage{
 \S4method{eigen}{gpuMatrix}(x, symmetric, only.values = FALSE,

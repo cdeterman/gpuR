@@ -8,7 +8,6 @@
 \alias{gpuVector,missingOrNULL,ANY-method}
 \alias{gpuVector,missingOrNULL}
 \alias{gpuVector,numeric,numericOrInt-method}
-\alias{gpuVector,vector}
 \title{Construct a gpuVector}
 \usage{
 gpuVector(data, length, type = NULL, ...)

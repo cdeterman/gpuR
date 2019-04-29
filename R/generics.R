@@ -124,9 +124,40 @@ setGeneric("deepcopy", function(object, ...){
 #     standardGeneric("colSums")
 # }, useAsDefault=base::colSums)
 
+#' @export
+setGeneric("colSums", function(x, na.rm = FALSE, dims = 1, ...)
+    standardGeneric("colSums"),
+    useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
+        base::colSums(x, na.rm=na.rm, dims=dims, ...),
+              signature = "x")
+
+
+# setGeneric("rowSums", function(x, na.rm = FALSE, dims = 1, ...)
+#     standardGeneric("rowSums"),
+#     useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
+#         base::rowSums(x, na.rm=na.rm, dims=dims, ...),
+#     signature = "x")
+# 
+# 
+# setGeneric("colMeans", function(x, na.rm = FALSE, dims = 1, ...)
+#     standardGeneric("colMeans"),
+#     useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
+#         base::colMeans(x, na.rm=na.rm, dims=dims, ...),
+#     signature = "x")
+# 
+# 
+# setGeneric("rowMeans", function(x, na.rm = FALSE, dims = 1, ...)
+#     standardGeneric("rowMeans"),
+#     useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
+#         base::rowMeans(x, na.rm=na.rm, dims=dims, ...),
+#     signature = "x")
+
 #' @rdname dist-vclMatrix
 #' @aliases distance
 #' @export
 setGeneric("distance", function(x, y, method = "euclidean"){
     standardGeneric("distance")
 })
+
+
+
