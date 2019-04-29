@@ -19,21 +19,21 @@ int vcl_ncol(SEXP ptrA_)
 //    return ptrA->size2();
 }
 
-template <>
-int vcl_ncol<std::complex<float> >(SEXP ptrA_)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(ptrA_);
-    viennacl::matrix_range<viennacl::matrix<float> > pA  = ptrA->data();
-    return pA.size2() / 2;
-}
+// template <>
+// int vcl_ncol<std::complex<float> >(SEXP ptrA_)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(ptrA_);
+//     viennacl::matrix_range<viennacl::matrix<float> > pA  = ptrA->data();
+//     return pA.size2() / 2;
+// }
 
-template <>
-int vcl_ncol<std::complex<double> >(SEXP ptrA_)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(ptrA_);
-    viennacl::matrix_range<viennacl::matrix<double> > pA  = ptrA->data();
-    return pA.size2() / 2;
-}
+// template <>
+// int vcl_ncol<std::complex<double> >(SEXP ptrA_)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(ptrA_);
+//     viennacl::matrix_range<viennacl::matrix<double> > pA  = ptrA->data();
+//     return pA.size2() / 2;
+// }
 
 template <typename T>
 int vcl_nrow(SEXP ptrA_)
@@ -46,21 +46,21 @@ int vcl_nrow(SEXP ptrA_)
 //    return ptrA->size1();
 }
 
-template <>
-int vcl_nrow<std::complex<float> >(SEXP ptrA_)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(ptrA_);
-    viennacl::matrix_range<viennacl::matrix<float> > pA  = ptrA->data();
-    return pA.size1();
-}
+// template <>
+// int vcl_nrow<std::complex<float> >(SEXP ptrA_)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<float> > > ptrA(ptrA_);
+//     viennacl::matrix_range<viennacl::matrix<float> > pA  = ptrA->data();
+//     return pA.size1();
+// }
 
-template <>
-int vcl_nrow<std::complex<double> >(SEXP ptrA_)
-{
-    Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(ptrA_);
-    viennacl::matrix_range<viennacl::matrix<double> > pA  = ptrA->data();
-    return pA.size1();
-}
+// template <>
+// int vcl_nrow<std::complex<double> >(SEXP ptrA_)
+// {
+//     Rcpp::XPtr<dynVCLMat<std::complex<double> > > ptrA(ptrA_);
+//     viennacl::matrix_range<viennacl::matrix<double> > pA  = ptrA->data();
+//     return pA.size1();
+// }
 
 template <typename T>
 int cpp_vclVector_size(SEXP ptrA_)
@@ -71,41 +71,6 @@ int cpp_vclVector_size(SEXP ptrA_)
     return pA.size();
 }
 
-// // [[Rcpp::export]]
-// int vcl_dncol(SEXP ptrA)
-// {
-//     return vcl_ncol<double>(ptrA);
-// }
-// 
-// // [[Rcpp::export]]
-// int vcl_fncol(SEXP ptrA)
-// {
-//     return vcl_ncol<float>(ptrA);
-// }
-// 
-// // [[Rcpp::export]]
-// int vcl_incol(SEXP ptrA)
-// {
-//     return vcl_ncol<int>(ptrA);
-// }
-
-// // [[Rcpp::export]]
-// int vcl_dnrow(SEXP ptrA)
-// {
-//     return vcl_nrow<double>(ptrA);
-// }
-// 
-// // [[Rcpp::export]]
-// int vcl_fnrow(SEXP ptrA)
-// {
-//     return vcl_nrow<float>(ptrA);
-// }
-// 
-// // [[Rcpp::export]]
-// int vcl_inrow(SEXP ptrA)
-// {
-//     return vcl_nrow<int>(ptrA);
-// }
 
 // [[Rcpp::export]]
 SEXP
@@ -121,10 +86,10 @@ cpp_vcl_nrow(
         return wrap(vcl_nrow<float>(ptrA));
     case 8:
         return wrap(vcl_nrow<double>(ptrA));
-    case 10:
-        return wrap(vcl_nrow<std::complex<float> >(ptrA));
-    case 12:
-        return wrap(vcl_nrow<std::complex<double> >(ptrA));
+    // case 10:
+    //     return wrap(vcl_nrow<std::complex<float> >(ptrA));
+    // case 12:
+    //     return wrap(vcl_nrow<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
@@ -145,10 +110,10 @@ cpp_vcl_ncol(
         return wrap(vcl_ncol<float>(ptrA));
     case 8:
         return wrap(vcl_ncol<double>(ptrA));
-    case 10:
-        return wrap(vcl_ncol<std::complex<float> >(ptrA));
-    case 12:
-        return wrap(vcl_ncol<std::complex<double> >(ptrA));
+    // case 10:
+    //     return wrap(vcl_ncol<std::complex<float> >(ptrA));
+    // case 12:
+    //     return wrap(vcl_ncol<std::complex<double> >(ptrA));
     default:
         throw Rcpp::exception("unknown type detected for vclMatrix object!");
     }
