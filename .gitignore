@@ -13,3 +13,6 @@ src/Makevars
 .httr-oauth
 doc
 Meta
+autom4te.cache
+config.log
+config.status
