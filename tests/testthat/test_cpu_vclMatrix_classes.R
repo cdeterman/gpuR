@@ -11,35 +11,35 @@ v <- rnorm(100)
 vi <- seq.int(100)
 
 
-test_that("CPU vclMatrix complex float class initializer" ,{
-    
-    has_cpu_skip()
-    
-    vclDc <- vclMatrix(Dc, type="fcomplex")
-    
-    expect_is(vclDc, "cvclMatrix")
-    expect_equal(vclDc[], Dc, tolerance=1e-07,
-                 info="vcl complex float matrix elements not equivalent")
-    expect_equal(dim(vclDc), dim(Dc))
-    expect_equal(ncol(vclDc), ncol(Dc))
-    expect_equal(nrow(vclDc), nrow(Dc))
-    expect_equal(typeof(vclDc), "fcomplex")
-})
-
-test_that("CPU vclMatrix complex double class initializer" ,{
-    
-    has_cpu_skip()
-    
-    vclDc <- vclMatrix(Dc, type = "dcomplex")
-    
-    expect_is(vclDc, "zvclMatrix")
-    expect_equal(vclDc[], Dc, tolerance=.Machine$double.eps ^ 0.5, 
-                 info="vcl complex Dcouble matrix elements not equivalent")
-    expect_equal(dim(vclDc), dim(Dc))
-    expect_equal(ncol(vclDc), ncol(Dc))
-    expect_equal(nrow(vclDc), nrow(Dc))
-    expect_equal(typeof(vclDc), "dcomplex")
-})
+# test_that("CPU vclMatrix complex float class initializer" ,{
+#     
+#     has_cpu_skip()
+#     
+#     vclDc <- vclMatrix(Dc, type="fcomplex")
+#     
+#     expect_is(vclDc, "cvclMatrix")
+#     expect_equal(vclDc[], Dc, tolerance=1e-07,
+#                  info="vcl complex float matrix elements not equivalent")
+#     expect_equal(dim(vclDc), dim(Dc))
+#     expect_equal(ncol(vclDc), ncol(Dc))
+#     expect_equal(nrow(vclDc), nrow(Dc))
+#     expect_equal(typeof(vclDc), "fcomplex")
+# })
+# 
+# test_that("CPU vclMatrix complex double class initializer" ,{
+#     
+#     has_cpu_skip()
+#     
+#     vclDc <- vclMatrix(Dc, type = "dcomplex")
+#     
+#     expect_is(vclDc, "zvclMatrix")
+#     expect_equal(vclDc[], Dc, tolerance=.Machine$double.eps ^ 0.5, 
+#                  info="vcl complex Dcouble matrix elements not equivalent")
+#     expect_equal(dim(vclDc), dim(Dc))
+#     expect_equal(ncol(vclDc), ncol(Dc))
+#     expect_equal(nrow(vclDc), nrow(Dc))
+#     expect_equal(typeof(vclDc), "dcomplex")
+# })
 
 test_that("CPU vclMatrix integer class initializer" ,{
     
