@@ -3,7 +3,7 @@
 \newcommand{\ghpr}{\href{https://github.com/cdeterman/gpuR/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/cdeterman/gpuR/issues/#1}{##1}}
 
-\section{Version 2.1.0}{
+\section{Version 2.0.2}{
     \itemize{
         \item API Changes:
         \itemize{

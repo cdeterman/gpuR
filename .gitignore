@@ -3,9 +3,13 @@
 .RData
 src/*.o
 src/*.a
+inst/include/loader/x64
+inst/include/loader/i386
 inst/include/loader/*.o
 inst/include/loader/*.a
 *.so
 *.dll
 src/Makevars
 .httr-oauth
+doc
+Meta

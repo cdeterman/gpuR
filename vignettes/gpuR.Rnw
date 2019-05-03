@@ -145,7 +145,7 @@ Most linear algebra methods have been created to be executed for the
 \Rclass{gpuMatrix} and \Rclass{gpuVector} objects.  These methods include basic 
 Arithmetic functions \Rcode{\%*\%}, \Rcode{+}, \Rcode{-}, \Rcode{*}, 
 \Rcode{/}, \Rcode{t}, \Rcode{crossprod}, \Rcode{tcrossprod}, \Rcode{colMeans},
-\Rcode{colSums}, \Rcode{rowMean}, and \Rcode{rowSums}.  Math functions include 
+\Rcode{colSums}, \Rcode{rowMeans}, and \Rcode{rowSums}.  Math functions include 
 \Rcode{sin}, \Rcode{asin}, \Rcode{sinh}, \Rcode{cos}, \Rcode{acos},
 \Rcode{cosh}, \Rcode{tan}, \Rcode{atan}, \Rcode{tanh}, \Rcode{exp}, 
 \Rcode{log}, \Rcode{log10}, \Rcode{exp}, \Rcode{abs}, \Rcode{max}, and
