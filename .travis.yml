@@ -1,5 +1,7 @@
 matrix:
   include:
+    - r: devel
+    - r: release
     - os: linux
       addons:
         apt:
