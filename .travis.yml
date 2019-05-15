@@ -1,17 +1,3 @@
-matrix:
-  include:
-    - r: devel
-    - r: release
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - clang-5.0
-      env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-
 #whitelist branches
 branches:
   only:
@@ -20,6 +6,7 @@ branches:
     - develop
 
 language: r
+cache: packages
 
 dist: trusty
 sudo: required
@@ -39,10 +26,6 @@ env:
 compiler:
   - g++
   
-
-r_build_args: --no-build-vignettes --no-manual --no-resave-data
-r_check_args: --no-build-vignettes --no-manual
-
 r_binary_packages:
   - devtools
   - Rcpp
@@ -57,32 +40,48 @@ r_github_packages:
   - cdeterman/RViennaCL
   - jimhester/covr
   
-before_install:
-  - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
-  - HOMEDIR="$PWD"
-  - eval "$(MATRIX_EVAL)"
-  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq || true
-  - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-5.0 lldb-5.0 libclang-5.0-dev
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
-  - |
-    cd ..
-    git clone -b release_1_0 https://github.com/pocl/pocl.git pocl
-    cd pocl
-    mkdir build
-    cd build
-    cmake -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} -DCMAKE_INSTALL_PREFIX=/usr ..
-    make
-    sudo make install
-  - cd $HOMEDIR
-  - sudo ldconfig
-  - export CXX="g++-4.8"
+r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_check_args: --no-build-vignettes --no-manual
 
-after_success:
-  - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
-  - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls(line_exclusions = "inst/include/CL/cl.hpp");codecov(line_exclusions = "inst/include/CL/cl.hpp")'
+matrix:
+  include:
+    - r: devel
+    - r: release
+      before_install:
+      - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
+      - HOMEDIR="$PWD"
+      - eval "$(MATRIX_EVAL)"
+      - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc)-updates main restricted"
+      - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+      - sudo apt-get update -qq || true
+      - sudo apt-get install -qq -y --force-yes opencl-headers g++-4.8 cmake git libtool libhwloc-dev wget g++ pkg-config libpthread-stubs0-dev clang-5.0 lldb-5.0 libclang-5.0-dev
+      - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+      - sudo ln -s /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /usr/lib/libgfortran.so
+      - |
+        cd ..
+        git clone -b release_1_0 https://github.com/pocl/pocl.git pocl
+        cd pocl
+        mkdir build
+        cd build
+        cmake -DWITH_LLVM_CONFIG=${POCL_LLVM_CONFIG} -DCMAKE_INSTALL_PREFIX=/usr ..
+        make
+        sudo make install
+      - cd $HOMEDIR
+      - sudo ldconfig
+      - export CXX="g++-4.8"
+      after_success:
+      - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
+      - Rscript -e 'options(covr.gcov = "gcov-4.8");library(covr);coveralls(line_exclusions = "inst/include/CL/cl.hpp");codecov(line_exclusions = "inst/include/CL/cl.hpp")'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+
 
 notifications:
   email:
