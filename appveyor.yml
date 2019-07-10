@@ -8,7 +8,7 @@ shallow_clone: true
 
 environment:
   global:
-    R_BUILD_ARGS: "--no-manual --keep-empty-dirs"
+    R_BUILD_ARGS: "--no-manual --keep-empty-dirs --no-build-vignettes"
     R_CHECK_ARGS: "--no-multiarch --no-build-vignettes --no-manual --no-tests"
 
 # $ErrActionPreference = "Stop" when we tighten this up.

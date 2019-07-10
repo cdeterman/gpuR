@@ -124,12 +124,12 @@ setGeneric("deepcopy", function(object, ...){
 #     standardGeneric("colSums")
 # }, useAsDefault=base::colSums)
 
-#' @export
-setGeneric("colSums", function(x, na.rm = FALSE, dims = 1, ...)
-    standardGeneric("colSums"),
-    useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
-        base::colSums(x, na.rm=na.rm, dims=dims, ...),
-              signature = "x")
+# #' @export
+# setGeneric("colSums", function(x, na.rm = FALSE, dims = 1, ...)
+#     standardGeneric("colSums"),
+#     useAsDefault = function(x, na.rm = FALSE, dims = 1, ...)
+#         base::colSums(x, na.rm=na.rm, dims=dims, ...),
+#               signature = "x")
 
 
 # setGeneric("rowSums", function(x, na.rm = FALSE, dims = 1, ...)
