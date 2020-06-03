@@ -12,6 +12,11 @@ env:
     - R_CHECK_ARGS="--no-build-vignettes --no-manual"
     - OPENCL_INC="/Users/travis/build/cdeterman/gpuR/opencl_headers"
 
+addons:
+  homebrew:
+    packages:
+    update: true
+
 before_install:
   - brew update
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
