@@ -1,4 +1,4 @@
-language: objective-c
+language: r
 osx_image: xcode8
 
 sudo: required
@@ -20,28 +20,21 @@ addons:
 before_install:
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
   - clang -v
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - wget https://www.khronos.org/registry/cl/api/2.1/cl.hpp
   - pwd
   - mkdir opencl_headers
   - mkdir opencl_headers/OpenCL
   - cp /System/Library/Frameworks/OpenCL.framework/Headers/* opencl_headers/OpenCL/
   - mv cl.hpp opencl_headers/OpenCL/
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
 
-install:
-  - ./travis-tool.sh install_github cdeterman/RViennaCL
-  - ./travis-tool.sh install_deps 
+r_github_packages:
+  - cdeterman/RViennaCL
 
 before_script:
   - R CMD INSTALL .
-
-script:
-  - ./travis-tool.sh run_tests
-
-after_failure:
-  - ./travis-tool.sh dump_logs
+  
+after_success:
+  - Rscript -e 'devtools::install();library(gpuR);library(methods);devtools::test()'
 
 notifications:
   email:
