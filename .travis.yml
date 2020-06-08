@@ -18,7 +18,6 @@ addons:
     update: true
 
 before_install:
-  - brew update
   - if [ -n "$GH_TOKEN" ]; then git config --global github.accesstoken ${GH_TOKEN}; fi;
   - clang -v
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
