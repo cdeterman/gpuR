@@ -25,6 +25,7 @@ before_install:
   - pwd
   - mkdir opencl_headers
   - mkdir opencl_headers/OpenCL
+  - ls /System/Library/Frameworks/OpenCL.framework
   - cp /System/Library/Frameworks/OpenCL.framework/Headers/* opencl_headers/OpenCL/
   - mv cl.hpp opencl_headers/OpenCL/
   - chmod 755 ./travis-tool.sh
