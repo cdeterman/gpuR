@@ -25,7 +25,7 @@ before_install:
   - pwd
   - mkdir opencl_headers
   - mkdir opencl_headers/OpenCL
-  - ls /System/Library/Frameworks/OpenCL.framework/Versions/Current/OpenCL
+  - ls /System/Library/Frameworks/
   - ls /System/Library/Frameworks/OpenCL.framework/Libraries
   - cp /System/Library/Frameworks/OpenCL.framework/Headers/* opencl_headers/OpenCL/
   - mv cl.hpp opencl_headers/OpenCL/
